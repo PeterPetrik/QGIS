@@ -1,0 +1,59 @@
+# TODO merge with INSTALL
+
+  X. Building for Android (cross compilation)
+  ========================
+
+  X.1. Install Android cross-compilation tools
+  ============================================
+
+We need to install all dependencies for Android development as mentioned here http://doc.qt.io/qt-5/androidgs.html
+
+For this you need JDK (openjdk) Apache Ant, Qt5.9, Android SDK and Crystax NDK
+
+For my Kubuntu 16.04, I have used this:
+
+
+  1) sudo apt-get install openjdk-8-jre
+  2) sudo apt-get install ant 1.8+
+  3) download Qt Online Installer and install Qt5.9.2 gcc_x64, android ARMv7 build tools.
+  4) install Android studio and with it install SDK version 15
+     you may need to install 32bit libraries
+       sudo dpkg --add-architecture i386
+       sudo apt -get update
+       sudo apt-get install libc6:i386 libncurses5:i386 libstdc++6:i386 lib32z1 libbz2-1.0:i386
+  5) Install Crystax NDK (https://www.crystax.net/en required by CMake)
+
+So at the end, I have this strucure
+   /opt/android-studio (GUI can be used to update/install other SDKs)
+   /opt/android/sdk (folder selected by android-studio for SDKs)
+   /opt/android/crystax-ndk-10.3.2 (NDK for building C++)
+   /opt/Qt (Qt 5.9.2 for android arm and 64b desktop, QtCreator)
+
+
+  Now try to open QtCreator, setup Kit for Android developent (GCC compiler for NDK, select SDK in "devices", select Qt for android).
+  Once done, try to compile any QML example from QtCreator ("New project-> select QtQuick template), deploy on your device and try
+
+  x.2. Install QGIS via OSGeo4A
+  =============================
+
+  clone OSGeo4A OSGeo4A (follow https://github.com/opengisch/OSGeo4A/blob/master/README.md)
+  cp config.conf.init -> config.conf
+  set paths
+
+      export ANDROIDNDKVER=r10e
+      export ANDROIDAPI=15 # min 15 max 21
+      export ANDROIDSDK="/opt/android/sdk"
+      export ANDROIDNDK="/opt/android/crystax-ndk-10.3.2"
+      export QTSDK="/opt/Qt/5.9.2"
+      export O4A_qfield_DIR="/home/peter/qmobile/repo/QField"
+      export O4A_qgis_DIR="/home/peter/qmobile/repo/QGIS"
+
+  make sure you have gnu/stub.h include (sudo apt-get install libc6-dev-i386)
+  sudo apt-get install libc6-dev-amd64
+
+
+  x.3. Deploy
+  ===========
+
+TODO
+
