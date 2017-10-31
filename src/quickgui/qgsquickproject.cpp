@@ -1,25 +1,25 @@
-#include "project.h"
+#include "qgsquickproject.h"
 
 #include <qgsproject.h>
 #include <qgslayertree.h>
 
-Project* Project::sInstance = 0;
+QgsQuickProject* QgsQuickProject::sInstance = 0;
 
-Project::Project(QObject *parent)
+QgsQuickProject::QgsQuickProject(QObject *parent)
   : QObject(parent)
 {
 
 }
 
 
-Project* Project::instance()
+QgsQuickProject* QgsQuickProject::instance()
 {
   if (!sInstance)
-    sInstance = new Project();
+    sInstance = new QgsQuickProject();
   return sInstance;
 }
 
-void Project::setProjectFile(const QString& filename)
+void QgsQuickProject::setProjectFile(const QString& filename)
 {
   mFilename = filename;
 
@@ -30,7 +30,7 @@ void Project::setProjectFile(const QString& filename)
   emit projectFileChanged();
 }
 
-QList< QgsMapLayer* > Project::layers() const
+QList< QgsMapLayer* > QgsQuickProject::layers() const
 {
   QgsLayerTreeGroup* root = QgsProject::instance()->layerTreeRoot();
   //qDebug("root: %s", root->dump().toLocal8Bit().data());

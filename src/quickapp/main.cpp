@@ -102,19 +102,22 @@ int main(int argc, char *argv[])
   ::setenv("QGIS_PREFIX_PATH", QGIS_PREFIX_PATH, true);
 #endif
   init_qgis();
+  qDebug("QGIS_PREFIX_PATH: %s", ::getenv("QGIS_PREFIX_PATH"));
   qDebug("%s", QgsApplication::showSettings().toLocal8Bit().data());
   QString dataDir(::getenv("QGIS_QUICK_DATA_PATH"));
+
   QString projectFile = dataDir + "/test_project.qgs";
 
   QQmlEngine engine;
   QQmlComponent component(&engine, QUrl("qrc:/main.qml"));
   QObject *object = component.create();
-
+  if( object == 0 )
+  {
+      qDebug() << "Unable to create: main.qml";
+      return EXIT_FAILURE;
+  }
   qDebug() << "project file: " << projectFile;
   object->setProperty("projectFile", projectFile);
-
-  //QQmlApplicationEngine engine;
-  //engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
 
   return app.exec();
 }
