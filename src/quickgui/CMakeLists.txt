@@ -1,30 +1,28 @@
 SET(QGIS_QUICK_GUI_MOC_HDRS
-  qgsqmapcanvas.h
+  qgsquickmapcanvas.h
+  qgsquickplugin.h
 
   mapengine.h
   mapimage.h
   maplayer.h
   mapview.h
-
-  plugin.h
-  project.h
+  qgsquickproject.h
 )
 
 SET(QGIS_QUICK_GUI_SRC
-  qgsqmapcanvas.cpp
+  qgsquickmapcanvas.cpp
+  qgsquickplugin.cpp
 
-  plugin.cpp
   mapengine.cpp
   mapimage.cpp
   maplayer.cpp
   mapview.cpp
-
-  project.cpp
+  qgsquickproject.cpp
 )
 
 SET(QGIS_QUICK_GUI_QMLS
   qmldir
-  qgsqmapcanvas.qml
+  qgsquickmapcanvas.qml
 )
 
 INCLUDE_DIRECTORIES(
@@ -80,29 +78,31 @@ FOREACH (QML_FILE ${QGIS_QUICK_GUI_QMLS})
   CONFIGURE_FILE(${QML_FILE} ${QUICK_GUI_RUNTIME_DIR}/${QML_FILENAME} COPYONLY)
 ENDFOREACH(QML_FILE)
 
-ADD_LIBRARY(qgis-quick-gui MODULE ${QGIS_QUICK_GUI_SRC} ${QGIS_QUICK_GUI_MOC_HDRS} ${QGIS_QUICK_GUI_MOC_SRCS} ${QGIS_QUICK_GUI_QMLS})
-TARGET_LINK_LIBRARIES(qgis-quick-gui Qt5::Quick Qt5::Qml qgis_core Qt5::Xml Qt5::Widgets Qt5::Concurrent Qt5::Positioning)
-SET_TARGET_PROPERTIES(qgis-quick-gui PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${QUICK_GUI_RUNTIME_DIR})
+ADD_LIBRARY(qgis_quick MODULE ${QGIS_QUICK_GUI_SRC} ${QGIS_QUICK_GUI_MOC_HDRS} ${QGIS_QUICK_GUI_MOC_SRCS} ${QGIS_QUICK_GUI_QMLS})
+TARGET_LINK_LIBRARIES(qgis_quick Qt5::Quick Qt5::Qml qgis_core Qt5::Xml Qt5::Widgets Qt5::Concurrent Qt5::Positioning)
+SET_TARGET_PROPERTIES(qgis_quick PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${QUICK_GUI_RUNTIME_DIR})
 ADD_DEFINITIONS(-DCORE_EXPORT=)
 
 # QML Types Info (QtCreator QML)
-SET(QGIS_QUICK_QUI_TYPEINFO ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/QgisQuick/QgisQuick.qmltypes})
+SET(QGIS_QUICK_QUI_TYPEINFO ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/QgisQuick/QgisQuick.qmltypes)
 FIND_PROGRAM(qmlplugindump_exe qmlplugindump)
 IF(NOT qmlplugindump_exe)
   MESSAGE(FATAL_ERROR "Could not locate qmlplugindump.")
 ELSE (NOT qmlplugindump_exe)
   MESSAGE(STATUS "qmlplugindump: ${qmlplugindump_exe}")
   ADD_CUSTOM_COMMAND(
-      OUTPUT ${QGIS_QUICK_QUI_TYPEINFO}
+      TARGET qgis_quick
       COMMAND ${qmlplugindump_exe}
       ARGS QgisQuick 1.0 ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} --output ${QGIS_QUICK_QUI_TYPEINFO}
-      DEPENDS qgis-quick-gui ${QGIS_QUICK_GUI_QMLS}
+      DEPENDS ${QGIS_QUICK_GUI_QMLS}
+      POST_BUILD
   )
 ENDIF(NOT qmlplugindump_exe)
+SET(QML_IMPORT_PATH "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}" CACHE STRING "Qt Creator extra QML import paths")
 
 # QML plugin installation
 SET(QUICK_GUI_INSTALL_DIR ${QGIS_QML_DIR}/QgisQuick)
-INSTALL(TARGETS qgis-quick-gui
+INSTALL(TARGETS qgis_quick
   RUNTIME DESTINATION ${QUICK_GUI_INSTALL_DIR}
   LIBRARY DESTINATION ${QUICK_GUI_INSTALL_DIR}
 )

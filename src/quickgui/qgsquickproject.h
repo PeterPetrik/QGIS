@@ -1,17 +1,17 @@
-#ifndef PROJECT_H
-#define PROJECT_H
+#ifndef QGSQUICKPROJECT_H
+#define QGSQUICKPROJECT_H
 
 #include <QObject>
 
 class QgsMapLayer;
 
-class Project : public QObject
+class QgsQuickProject : public QObject
 {
   Q_OBJECT
   Q_PROPERTY(QString projectFile READ projectFile WRITE setProjectFile NOTIFY projectFileChanged)
   Q_PROPERTY(QList< QgsMapLayer* > layers READ layers NOTIFY projectFileChanged)
 public:
-  static Project* instance();
+  static QgsQuickProject* instance();
 
   void setProjectFile(const QString& filename);
   QString projectFile() const { return mFilename; }
@@ -24,11 +24,11 @@ signals:
 public slots:
 
 protected:
-  explicit Project(QObject *parent = 0);
+  explicit QgsQuickProject(QObject *parent = 0);
 
-  static Project* sInstance;
+  static QgsQuickProject* sInstance;
 
   QString mFilename;
 };
 
-#endif // PROJECT_H
+#endif // QGSQUICKPROJECT_H
