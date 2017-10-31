@@ -1,11 +1,11 @@
 import QtQuick 2.0
 import QtQuick.Window 2.2
-import qgis 1.0
+import QgisQuick 1.0 as QgsQ
 
 Rectangle {
     id: canvas
 
-    property MapView view: MapView {
+    property QgsQ.MapView view: QgsQ.MapView {
         size: Qt.size(canvas.width, canvas.height)
 
         onChanged: {
@@ -24,7 +24,7 @@ Rectangle {
     property rect initialExtent
     property bool _imgViewInitialized: false
 
-    property MapEngine engine: MapEngine { view: canvas.view }
+    property QgsQ.MapEngine engine: QgsQ.MapEngine { view: canvas.view }
 
     // emitted when a single point is clicked
     signal clicked(real x, real y)
@@ -35,14 +35,14 @@ Rectangle {
     color: "white"
 
 
-    MapImage {
+    QgsQ.MapImage {
         id: mapImage
 
         mapEngine: canvas.engine
 
-        property MapView view: MapView { parentView: canvas.view }
+        property QgsQ.MapView view: QgsQ.MapView { parentView: canvas.view }
 
-        property MapView viewRequest: MapView { }
+        property QgsQ.MapView viewRequest: QgsQ.MapView { }
 
         onMapImageChanged: {
             console.log("map image changed: resetting center + mupp")

@@ -1,6 +1,6 @@
-#include "mapcanvas.h"
+#include "qgsqmapcanvas.h"
 
-MapCanvas::MapCanvas(QQuickItem *parent):
+QgsQMapCanvas::QgsQMapCanvas(QQuickItem *parent):
   QQuickItem(parent)
 {
   // By default, QQuickItem does not draw anything. If you subclass
@@ -10,7 +10,7 @@ MapCanvas::MapCanvas(QQuickItem *parent):
   // setFlag(ItemHasContents, true);
 }
 
-MapCanvas::~MapCanvas()
+QgsQMapCanvas::~QgsQMapCanvas()
 {
 }
 
