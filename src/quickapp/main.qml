@@ -27,20 +27,25 @@ Window {
     height: 600
 
     Component.onCompleted: {
-        QgsQuick.Project.projectFile = Qt.binding(function() { return projectFile })
-        canvas.mapSettings.layers = Qt.binding(function() { return QgsQuick.Project.layers })
-        layerTreeView.model = Qt.binding(function() { return QgsQuick.Project.layerTreeModel })
+        console.log("*** ALL LOADED! ***")
+    }
+
+
+    QgsQuick.Project {
+        id: project
+        fileName: projectFile
     }
 
     QgsQuick.MapCanvas {
         id: canvas
         anchors.fill: parent
+        mapSettings.layers: project.layers
     }
-
 
     QgsQuick.LayerTreeView {
         id: layerTreeView
         anchors.fill: parent
+        model: project.layerTreeModel
     }
 
 }

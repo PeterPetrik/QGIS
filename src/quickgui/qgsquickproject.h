@@ -20,37 +20,34 @@
 
 class QgsMapLayer;
 class QgsQuickLayerTreeModel;
+class QgsProject;
 
 class QgsQuickProject : public QObject
 {
   Q_OBJECT
-  Q_PROPERTY(QString projectFile READ projectFile WRITE setProjectFile NOTIFY projectFileChanged)
+  Q_PROPERTY(QString fileName READ projectFile WRITE setProjectFile NOTIFY projectFileChanged)
   Q_PROPERTY(QList< QgsMapLayer* > layers READ layers NOTIFY projectFileChanged)
-  Q_PROPERTY(QgsQuickLayerTreeModel* layerTreeModel READ layerTreeModel NOTIFY layerTreeModelChanged)
+  Q_PROPERTY(QgsQuickLayerTreeModel* layerTreeModel READ layerTreeModel NOTIFY projectFileChanged)
 
 public:
-  static QgsQuickProject* instance();
-
   void setProjectFile(const QString& filename);
-  QString projectFile() const { return mFilename; }
+  QString projectFile() const;
 
   QgsQuickLayerTreeModel* layerTreeModel() const;
-
   QList< QgsMapLayer* > layers() const;
 
 signals:
   void projectFileChanged();
-  void layerTreeModelChanged();
 
 public slots:
 
 protected:
   explicit QgsQuickProject(QObject *parent = 0);
+  ~QgsQuickProject();
 
-  static QgsQuickProject* sInstance;
-
+private:
+  QgsProject* mProject;
   QgsQuickLayerTreeModel* mLayerTreeModel;
-  QString mFilename;
 };
 
 #endif // QGSQUICKPROJECT_H
