@@ -24,6 +24,13 @@
 #include <qgsproject.h>
 #include <qgspoint.h>
 
+/**
+ * \ingroup quick
+ * The QgsQuickMapSettings class encapsulates QgsMapSettings class to offer
+ * settings of configuration of map rendering via QML properties.
+ *
+ * \since QGIS 3.2
+ */
 class QgsQuickMapSettings : public QObject
 {
     Q_OBJECT
