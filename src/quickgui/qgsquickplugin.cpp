@@ -19,20 +19,9 @@
 #include "qgsquickmapcanvasmap.h"
 #include "qgsquicklayertreemodel.h"
 
-#include "qgsnetworkaccessmanager.h"
-#include <qgsapplication.h>
-#include <qgsproviderregistry.h>
 #include <qgsmaplayer.h>
 
 #include <qqml.h>
-
-static QObject *_projectProvider(QQmlEngine *engine, QJSEngine *scriptEngine)
-{
-  Q_UNUSED(engine)
-  Q_UNUSED(scriptEngine)
-  return QgsQuickProject::instance();
-}
-
 
 void QgisQuickPlugin::registerTypes(const char *uri)
 {
@@ -40,8 +29,7 @@ void QgisQuickPlugin::registerTypes(const char *uri)
 
   qmlRegisterType<QgsQuickMapSettings>(uri, 1, 0, "MapSettings");
   qmlRegisterType<QgsQuickMapCanvasMap>(uri, 1, 0, "MapCanvasMap");
-
-  qmlRegisterSingletonType<QgsQuickProject>(uri, 1, 0, "Project", _projectProvider);
+  qmlRegisterType<QgsQuickProject>(uri, 1, 0, "Project");
 
   qRegisterMetaType< QList<QgsMapLayer*> >( "QList<QgsMapLayer*>" );
   qRegisterMetaType< QgsQuickLayerTreeModel* >("QgsQuickLayerTreeModel*");

@@ -19,44 +19,50 @@
 #include <qgsproject.h>
 #include <qgslayertree.h>
 
-QgsQuickProject* QgsQuickProject::sInstance = 0;
-
 QgsQuickProject::QgsQuickProject(QObject *parent)
   : QObject(parent)
 {
+    mProject = new QgsProject(parent);
+    mLayerTreeModel = new QgsQuickLayerTreeModel(mProject->layerTreeRoot());
 }
 
-
-QgsQuickProject* QgsQuickProject::instance()
+QgsQuickProject::~QgsQuickProject()
 {
-  if (!sInstance)
-    sInstance = new QgsQuickProject();
-  return sInstance;
+    if (mLayerTreeModel) {
+        delete mLayerTreeModel;
+        mLayerTreeModel = 0;
+    }
+
+    delete mProject;
+    mProject = 0;
+}
+
+QString QgsQuickProject::projectFile() const {
+    return mProject->fileName();
 }
 
 void QgsQuickProject::setProjectFile(const QString& filename)
 {
-  mFilename = filename;
-
-  QgsProject::instance()->setFileName(filename);
-  bool res = QgsProject::instance()->read();
+  mProject->setFileName(filename);
+  bool res = mProject->read();
   qDebug("load project: %d", res);
 
-  // TODO free resource!
-  mLayerTreeModel = new QgsQuickLayerTreeModel(QgsProject::instance()->layerTreeRoot());
+  if (mLayerTreeModel) {
+      delete mLayerTreeModel;
+      mLayerTreeModel = 0;
+  }
+  mLayerTreeModel = new QgsQuickLayerTreeModel(mProject->layerTreeRoot());
 
   emit projectFileChanged();
 }
 
 QgsQuickLayerTreeModel *QgsQuickProject::layerTreeModel() const {
-    Q_ASSERT(mLayerTreeModel);
     return mLayerTreeModel;
 }
 
 QList< QgsMapLayer* > QgsQuickProject::layers() const
 {
-  QgsLayerTreeGroup* root = QgsProject::instance()->layerTreeRoot();
-  //qDebug("root: %s", root->dump().toLocal8Bit().data());
+  QgsLayerTreeGroup* root = mProject->layerTreeRoot();
   QList< QgsMapLayer* > list;
   foreach (QgsLayerTreeLayer* nodeLayer, root->findLayers())
   {
