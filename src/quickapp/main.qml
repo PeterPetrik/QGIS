@@ -15,13 +15,11 @@ Window {
 
     Component.onCompleted: {
         QgsQuick.Project.projectFile = Qt.binding(function() { return projectFile })
-      //  canvas.engine.layers = Qt.binding(function() { return QgsQuick.Project.layers })
+        canvas.mapSettings.layers = Qt.binding(function() { return QgsQuick.Project.layers })
     }
 
     QgsQuick.MapCanvas {
         id: canvas
         anchors.fill: parent
-        engine.destinationCRS: "EPSG:4326" //"EPSG:3857"  // pseudo Mercator projection
     }
-
 }

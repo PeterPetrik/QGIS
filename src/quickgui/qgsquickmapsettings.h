@@ -1,0 +1,107 @@
+/***************************************************************************
+  qgsquickmapsettings.h
+  --------------------------------------
+  Date                 : 27.12.2014
+  Copyright            : (C) 2014 by Matthias Kuhn
+  Email                : matthias (at) opengis.ch
+ ***************************************************************************
+ *                                                                         *
+ *   This program is free software; you can redistribute it and/or modify  *
+ *   it under the terms of the GNU General Public License as published by  *
+ *   the Free Software Foundation; either version 2 of the License, or     *
+ *   (at your option) any later version.                                   *
+ *                                                                         *
+ ***************************************************************************/
+
+#ifndef QGSQUICKMAPSETTINGS_H
+#define QGSQUICKMAPSETTINGS_H
+
+#include <QObject>
+
+#include <qgsrectangle.h>
+#include <qgsmapthemecollection.h>
+#include <qgsmapsettings.h>
+#include <qgsproject.h>
+#include <qgspoint.h>
+
+class QgsQuickMapSettings : public QObject
+{
+    Q_OBJECT
+
+    Q_PROPERTY( QgsRectangle extent READ extent WRITE setExtent NOTIFY extentChanged )
+    Q_PROPERTY( QgsRectangle visibleExtent READ visibleExtent NOTIFY visibleExtentChanged )
+    Q_PROPERTY( double mapUnitsPerPixel READ mapUnitsPerPixel NOTIFY mapUnitsPerPixelChanged )
+    Q_PROPERTY( double rotation READ rotation WRITE setRotation NOTIFY rotationChanged )
+    Q_PROPERTY( QSize outputSize READ outputSize WRITE setOutputSize NOTIFY outputSizeChanged )
+    Q_PROPERTY( double outputDpi READ outputDpi WRITE setOutputDpi NOTIFY outputDpiChanged )
+    Q_PROPERTY( QgsCoordinateReferenceSystem destinationCrs READ destinationCrs WRITE setDestinationCrs NOTIFY destinationCrsChanged )
+    Q_PROPERTY( QList<QgsMapLayer*> layers READ layers WRITE setLayers NOTIFY layersChanged )
+
+  public:
+    QgsQuickMapSettings( QObject* parent = 0 );
+    ~QgsQuickMapSettings();
+
+    QgsRectangle extent() const;
+    void setExtent( const QgsRectangle& extent );
+
+    Q_INVOKABLE void setCenter( const QgsPoint& center );
+
+    double mapUnitsPerPixel() const;
+
+    QgsRectangle visibleExtent() const;
+
+    /**
+     * Convert a map coordinate to screen pixel coordinates
+     *
+     * @param p A coordinate in map coordinates
+     *
+     * @return A coordinate in pixel / screen space
+     */
+    Q_INVOKABLE QPointF coordinateToScreen( const QgsPoint& p ) const;
+
+
+    /**
+     * Convert a screen coordinate to a map coordinate
+     *
+     * @param p A coordinate in pixel / screen coordinates
+     *
+     * @return A coordinate in map coordinates
+     */
+    Q_INVOKABLE QgsPoint screenToCoordinate( const QPointF& p ) const;
+
+    double rotation() const;
+    void setRotation( double rotation );
+
+    QgsMapSettings mapSettings() const;
+
+    QSize outputSize() const;
+    void setOutputSize( const QSize& outputSize );
+
+    double outputDpi() const;
+    void setOutputDpi( double outputDpi );
+
+    QgsCoordinateReferenceSystem destinationCrs() const;
+    void setDestinationCrs( const QgsCoordinateReferenceSystem& destinationCrs );
+
+    QList<QgsMapLayer*> layers() const;
+    void setLayers( const QList<QgsMapLayer*>& layers );
+
+  signals:
+    void extentChanged();
+    void destinationCrsChanged();
+    void mapUnitsPerPixelChanged();
+    void rotationChanged();
+    void visibleExtentChanged();
+    void outputSizeChanged();
+    void outputDpiChanged();
+    void layersChanged();
+
+  private slots:
+    void onReadProject( const QDomDocument& doc );
+
+  private:
+    QgsMapSettings mMapSettings;
+
+};
+
+#endif // QGSQUICKMAPSETTINGS_H
