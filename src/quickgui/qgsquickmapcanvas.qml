@@ -1,175 +1,141 @@
+/***************************************************************************
+  qgsquickmapcanvas.qml
+  --------------------------------------
+  Date                 : 10.12.2014
+  Copyright            : (C) 2014 by Matthias Kuhn
+  Email                : matthias (at) opengis.ch
+ ***************************************************************************
+ *                                                                         *
+ *   This program is free software; you can redistribute it and/or modify  *
+ *   it under the terms of the GNU General Public License as published by  *
+ *   the Free Software Foundation; either version 2 of the License, or     *
+ *   (at your option) any later version.                                   *
+ *                                                                         *
+ ***************************************************************************/
+
 import QtQuick 2.0
-import QtQuick.Window 2.2
+import QtQuick.Controls 1.2
+import QtQml 2.2
 import QgisQuick 1.0 as QgsQuick
 
-Rectangle {
-    id: canvas
+Item {
+  id: mapArea
+  property alias mapSettings: mapCanvasWrapper.mapSettings
+  property alias isRendering: mapCanvasWrapper.isRendering
+  property alias incrementalRendering: mapCanvasWrapper.incrementalRendering
 
-    property QgsQuick.MapView view: QgsQuick.MapView {
-        size: Qt.size(canvas.width, canvas.height)
+  signal clicked(var mouse)
 
-        onChanged: {
-            if (size.width > 0 && size.height > 0 && mupp == 0) {
-                console.debug("setting extent - INITIAL")
-                this.fromExtent(engine.fullExtent())
-            }
-            if (!_imgViewInitialized && valid) {
-                console.debug("setting image's view - INITIAL")
-                _imgViewInitialized = true
-                mapImage.refreshMapImage()
-            }
-        }
+  /**
+   * Freezes the map canvas refreshes.
+   *
+   * In case of repeated geometry changes (animated resizes, pinch, pan...)
+   * triggering refreshes all the time can cause severe performance impacts.
+   *
+   * If freeze is called, an internal counter is incremented and only when the
+   * counter is 0, refreshes will happen.
+   * It is therefore important to call freeze() and unfreeze() exactly the same
+   * number of times.
+   */
+  function freeze(id) {
+    mapCanvasWrapper.__freezecount[id] = true
+    mapCanvasWrapper.freeze = true
+  }
+
+  function unfreeze(id) {
+    delete mapCanvasWrapper.__freezecount[id]
+    mapCanvasWrapper.freeze = Object.keys(mapCanvasWrapper.__freezecount).length !== 0
+  }
+
+  QgsQuick.MapCanvasMap {
+    id: mapCanvasWrapper
+
+    anchors.fill: parent
+
+    property var __freezecount: ({})
+
+    freeze: false
+  }
+
+  PinchArea {
+    id: pinchArea
+
+    anchors.fill: parent
+
+    onPinchStarted: {
+      freeze('pinch')
     }
 
-    property rect initialExtent
-    property bool _imgViewInitialized: false
-
-    property QgsQuick.MapEngine engine: QgsQuick.MapEngine { view: canvas.view }
-
-    // emitted when a single point is clicked
-    signal clicked(real x, real y)
-
-    // emitted when a single point is clicked for a longer time
-    signal pressAndHold(real x, real y)
-
-    color: "white"
-
-
-    QgsQuick.MapImage {
-        id: mapImage
-
-        mapEngine: canvas.engine
-
-        property QgsQuick.MapView view: QgsQuick.MapView { parentView: canvas.view }
-
-        property QgsQuick.MapView viewRequest: QgsQuick.MapView { }
-
-        onMapImageChanged: {
-            console.log("map image changed: resetting center + mupp")
-            mapImage.view.copyFrom(mapImage.viewRequest)
-        }
-
-        function refreshMapImage() {
-            viewRequest.copyFrom(canvas.view)
-            console.log("refreshMapImage " + viewRequest.center + " + " + viewRequest.mupp + " + " + viewRequest.size + " = " + viewRequest.toExtent())
-            mapImage.refreshMap(viewRequest)
-        }
-
-        x: mapImage.view.dxToParent
-        y: mapImage.view.dyToParent
-        width: mapImage.view.scaleToParent * mapImage.view.size.width
-        height: mapImage.view.scaleToParent * mapImage.view.size.height
+    onPinchUpdated: {
+      mapCanvasWrapper.zoom( pinch.center, pinch.previousScale / pinch.scale )
+      mapCanvasWrapper.pan( pinch.center, pinch.previousCenter )
     }
 
+    onPinchFinished: {
+      unfreeze('pinch')
+      mapCanvasWrapper.refresh()
+    }
 
-    PinchArea {
-        id: pinchArea
-        anchors.fill: canvas
-
-        // initial values
-        property point startCenter
-        property real startMupp
-
-        onPinchStarted: {
-            startCenter = canvas.view.center
-            startMupp = canvas.view.mupp
-        }
-        onPinchUpdated: {
-            canvas.view.mupp = startMupp / pinch.scale
-
-            var dx = (pinch.center.x - pinch.startCenter.x) * canvas.view.mupp
-            var dy = -(pinch.center.y - pinch.startCenter.y) * canvas.view.mupp
-            canvas.view.center = Qt.point(startCenter.x - dx, startCenter.y - dy)
-        }
-        onPinchFinished: {
-            mapImage.refreshMapImage()
-        }
-
-    // mouse area needs to be inside pinch area in order to have
-    // both pinch and mouse area working together
     MouseArea {
-        id: mouseArea
-        anchors.fill: pinchArea
+      id: mouseArea
 
-        property bool panning: false
-        property point panStart
-        property point centerStart
+      property point __initialPosition
+      property point __lastPosition
 
-        property bool zooming: false
+      anchors.fill : parent
 
-        function isDragging(x,y) {
-            // leave some tolerance before we consider that user is dragging the map
-            return Math.abs(panStart.x - x) > Screen.pixelDensity*1 || Math.abs(panStart.y - y) > Screen.pixelDensity*1
+      onDoubleClicked: {
+        var center = Qt.point( mouse.x, mouse.y )
+        mapCanvasWrapper.zoom( center, 0.8 )
+        // mapCanvasWrapper.pan( pinch.center, pinch.previousCenter )
+      }
+
+      onClicked: {
+        if ( mouse.button === Qt.RightButton )
+        {
+          var center = Qt.point( mouse.x, mouse.y )
+          mapCanvasWrapper.zoom( center, 1.2 )
         }
+        else
+        {
+          var distance = Math.abs( mouse.x - __initialPosition.x ) + Math.abs( mouse.y - __initialPosition.y )
 
-        onPressed: {
-            if (mouse.button == Qt.LeftButton) {
-                panStart = Qt.point( mouse.x, mouse.y )
-                centerStart = view.center
-            }
+          if ( distance < 5 * dp)
+            mapArea.clicked( mouse )
         }
+      }
 
-        onReleased: {
-            if (mouse.button == Qt.LeftButton) {
-                if (!panning)
-                    canvas.clicked(mouse.x, mouse.y)
-                else
-                {
-                    panning = false
-                    mapImage.refreshMapImage()
-                }
+      onPressed: {
+        __lastPosition = Qt.point( mouse.x, mouse.y)
+        __initialPosition = __lastPosition
+        freeze('pan')
+      }
 
-            }
-        }
+      onReleased: {
+        unfreeze('pan')
+      }
 
-        onPositionChanged: {
-            if (!panning && (mouse.buttons & Qt.LeftButton) && isDragging(mouse.x, mouse.y))
-                panning = true
+      onPositionChanged: {
+        var currentPosition = Qt.point( mouse.x, mouse.y )
+        mapCanvasWrapper.pan( currentPosition, __lastPosition )
+        __lastPosition = currentPosition
+      }
 
-            if (panning) {
-                var dx = (mouse.x - panStart.x) * canvas.view.mupp
-                var dy = -(mouse.y - panStart.y) * canvas.view.mupp
-                canvas.view.center = Qt.point(centerStart.x - dx, centerStart.y - dy)
-            }
-        }
+      onCanceled: {
+        unfreezePanTimer.start()
+      }
 
-        onPressAndHold: if (!panning) canvas.pressAndHold(mouse.x, mouse.y)
+      onWheel: {
+        mapCanvasWrapper.zoom( Qt.point( wheel.x, wheel.y ), Math.pow( 0.8, wheel.angleDelta.y / 60 ) )
+      }
 
-        function temporaryZoom(d) {
-            if (!zooming)
-            {
-                zooming = true
-            }
-            view.mupp /= d
-
-            zoomRefreshTimer.restart()
-        }
-
-        Timer {
-             id: zoomRefreshTimer
-             interval: 100
-             onTriggered: {
-                 mapImage.refreshMapImage()
-                 mouseArea.zooming = false
-             }
-         }
-
-        onWheel: {
-            if (wheel.angleDelta.y > 0)
-                temporaryZoom(1.1)
-            else if (wheel.angleDelta.y < 0)
-                temporaryZoom(0.9)
-        }
-
-        onDoubleClicked: {
-            if (mouse.button == Qt.RightButton)
-                temporaryZoom(1.1)
-            else
-                temporaryZoom(0.9)
-        }
-
+      Timer {
+        id: unfreezePanTimer
+        interval: 500;
+        running: false;
+        repeat: false
+        onTriggered: unfreeze('pan')
+      }
     }
-
-    }
-
+  }
 }

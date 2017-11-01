@@ -1,23 +1,15 @@
 SET(QGIS_QUICK_GUI_MOC_HDRS
-  qgsquickmapcanvas.h
-  qgsquickplugin.h
-
-  mapengine.h
-  mapimage.h
-  maplayer.h
-  mapview.h
   qgsquickproject.h
+  qgsquickmapcanvasmap.h
+  qgsquickplugin.h
+  qgsquickmapsettings.h
 )
 
 SET(QGIS_QUICK_GUI_SRC
-  qgsquickmapcanvas.cpp
-  qgsquickplugin.cpp
-
-  mapengine.cpp
-  mapimage.cpp
-  maplayer.cpp
-  mapview.cpp
   qgsquickproject.cpp
+  qgsquickplugin.cpp
+  qgsquickmapcanvasmap.cpp
+  qgsquickmapsettings.cpp
 )
 
 SET(QGIS_QUICK_GUI_QMLS
@@ -83,22 +75,24 @@ TARGET_LINK_LIBRARIES(qgis_quick Qt5::Quick Qt5::Qml qgis_core Qt5::Xml Qt5::Wid
 SET_TARGET_PROPERTIES(qgis_quick PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${QUICK_GUI_RUNTIME_DIR})
 ADD_DEFINITIONS(-DCORE_EXPORT=)
 
-# QML Types Info (QtCreator QML)
-SET(QGIS_QUICK_QUI_TYPEINFO ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/QgisQuick/QgisQuick.qmltypes)
-FIND_PROGRAM(qmlplugindump_exe qmlplugindump)
-IF(NOT qmlplugindump_exe)
-  MESSAGE(FATAL_ERROR "Could not locate qmlplugindump.")
-ELSE (NOT qmlplugindump_exe)
-  MESSAGE(STATUS "qmlplugindump: ${qmlplugindump_exe}")
-  ADD_CUSTOM_COMMAND(
-      TARGET qgis_quick
-      COMMAND ${qmlplugindump_exe}
-      ARGS QgisQuick 1.0 ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} --output ${QGIS_QUICK_QUI_TYPEINFO}
-      DEPENDS ${QGIS_QUICK_GUI_QMLS}
-      POST_BUILD
-  )
-ENDIF(NOT qmlplugindump_exe)
-SET(QML_IMPORT_PATH "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}" CACHE STRING "Qt Creator extra QML import paths")
+# QML Types Info (QtCreator QML, only usefull for development, so skip for android)
+IF(NOT ${CMAKE_SYSTEM_NAME} MATCHES "Android")
+  SET(QGIS_QUICK_QUI_TYPEINFO ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/QgisQuick/QgisQuick.qmltypes)
+  FIND_PROGRAM(qmlplugindump_exe qmlplugindump)
+  IF(NOT qmlplugindump_exe)
+    MESSAGE(FATAL_ERROR "Could not locate qmlplugindump.")
+  ELSE (NOT qmlplugindump_exe)
+    MESSAGE(STATUS "qmlplugindump: ${qmlplugindump_exe}")
+    ADD_CUSTOM_COMMAND(
+        TARGET qgis_quick
+        COMMAND ${qmlplugindump_exe}
+        ARGS QgisQuick 1.0 ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} --output ${QGIS_QUICK_QUI_TYPEINFO}
+        DEPENDS ${QGIS_QUICK_GUI_QMLS}
+        POST_BUILD
+    )
+  ENDIF(NOT qmlplugindump_exe)
+  SET(QML_IMPORT_PATH "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}" CACHE STRING "Qt Creator extra QML import paths")
+ENDIF(IF(NOT ${CMAKE_SYSTEM_NAME} MATCHES "Android"))
 
 # QML plugin installation
 SET(QUICK_GUI_INSTALL_DIR ${QGIS_QML_DIR}/QgisQuick)

@@ -1,4 +1,4 @@
 module QgisQuick
 plugin qgis_quick
-MapCanvas 1.0 qgisquickmapcanvas.qml
+MapCanvas 1.0 qgsquickmapcanvas.qml
 typeinfo QgisQuick.qmltypes
