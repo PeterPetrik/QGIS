@@ -1,9 +1,9 @@
 /***************************************************************************
   qgsquickplugin.cpp
   --------------------------------------
-  Date                 : Nov 2015
-  Copyright            : (C) 2015 by Martin Dobias
-  Email                : wonder dot sk at gmail dot com
+  Date                 : Nov 2017
+  Copyright            : (C) 2017 by Peter Petrik
+  Email                : zilolv at gmail dot com
  ***************************************************************************
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -17,6 +17,7 @@
 #include "qgsquickproject.h"
 #include "qgsquickmapsettings.h"
 #include "qgsquickmapcanvasmap.h"
+#include "qgsquicklayertreemodel.h"
 
 #include "qgsnetworkaccessmanager.h"
 #include <qgsapplication.h>
@@ -38,9 +39,11 @@ void QgisQuickPlugin::registerTypes(const char *uri)
   qDebug("REGISTERING QQmlExtensionInterface: QgisQuickPlugin");
 
   qmlRegisterType<QgsQuickMapSettings>(uri, 1, 0, "MapSettings");
-  qmlRegisterType<QgsQuickMapCanvasMap>(uri, 1, 0, "MapCanvasMap");  
+  qmlRegisterType<QgsQuickMapCanvasMap>(uri, 1, 0, "MapCanvasMap");
 
   qmlRegisterSingletonType<QgsQuickProject>(uri, 1, 0, "Project", _projectProvider);
 
   qRegisterMetaType< QList<QgsMapLayer*> >( "QList<QgsMapLayer*>" );
+  qRegisterMetaType< QgsQuickLayerTreeModel* >("QgsQuickLayerTreeModel*");
+
 }

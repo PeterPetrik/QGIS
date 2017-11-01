@@ -14,6 +14,7 @@
  ***************************************************************************/
 
 #include "qgsquickproject.h"
+#include "qgsquicklayertreemodel.h"
 
 #include <qgsproject.h>
 #include <qgslayertree.h>
@@ -23,7 +24,6 @@ QgsQuickProject* QgsQuickProject::sInstance = 0;
 QgsQuickProject::QgsQuickProject(QObject *parent)
   : QObject(parent)
 {
-
 }
 
 
@@ -42,7 +42,15 @@ void QgsQuickProject::setProjectFile(const QString& filename)
   bool res = QgsProject::instance()->read();
   qDebug("load project: %d", res);
 
+  // TODO free resource!
+  mLayerTreeModel = new QgsQuickLayerTreeModel(QgsProject::instance()->layerTreeRoot());
+
   emit projectFileChanged();
+}
+
+QgsQuickLayerTreeModel *QgsQuickProject::layerTreeModel() const {
+    Q_ASSERT(mLayerTreeModel);
+    return mLayerTreeModel;
 }
 
 QList< QgsMapLayer* > QgsQuickProject::layers() const

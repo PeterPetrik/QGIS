@@ -1,5 +1,5 @@
 /***************************************************************************
-  main.qml
+  qgsquicklayertreemodel.h
   --------------------------------------
   Date                 : Nov 2017
   Copyright            : (C) 2017 by Peter Petrik
@@ -13,34 +13,40 @@
  *                                                                         *
  ***************************************************************************/
 
-import QtQuick 2.4
-import QtQuick.Controls 2.2
-import QtQuick.Window 2.2
-import QgisQuick 1.0 as QgsQuick
 
-Window {
-    property string projectFile
+#ifndef QGSQUICKLAYERTREEMODEL_H
+#define QGSQUICKLAYERTREEMODEL_H
 
-    visible: true
+#include <QSortFilterProxyModel>
 
-    width: 800
-    height: 600
+class QgsLayerTree;
+class QgsLayerTreeModel;
+class QgsProject;
 
-    Component.onCompleted: {
-        QgsQuick.Project.projectFile = Qt.binding(function() { return projectFile })
-        canvas.mapSettings.layers = Qt.binding(function() { return QgsQuick.Project.layers })
-        layerTreeView.model = Qt.binding(function() { return QgsQuick.Project.layerTreeModel })
-    }
+class QgsQuickLayerTreeModel : public QSortFilterProxyModel
+{
+    Q_OBJECT
 
-    QgsQuick.MapCanvas {
-        id: canvas
-        anchors.fill: parent
-    }
+  public:
+    enum Roles
+    {
+      Name = Qt::UserRole + 1
+    };
+    Q_ENUMS( Roles )
 
+    explicit QgsQuickLayerTreeModel( QgsLayerTree* layerTree, QObject* parent = nullptr );
 
-    QgsQuick.LayerTreeView {
-        id: layerTreeView
-        anchors.fill: parent
-    }
+    Q_INVOKABLE QVariant data( const QModelIndex& index, int role ) const override;
 
-}
+    QHash<int, QByteArray> roleNames() const override;
+
+  signals:
+    void mapThemeChanged();
+
+  private:
+    QgsLayerTreeModel* mLayerTreeModel;
+    QString mMapTheme;
+    QgsProject* mProject;
+};
+
+#endif // QGSQUICKLAYERTREEMODEL_H

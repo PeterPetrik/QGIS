@@ -1,5 +1,5 @@
 /***************************************************************************
-  main.qml
+  qgsquicklayertreemodel.qml
   --------------------------------------
   Date                 : Nov 2017
   Copyright            : (C) 2017 by Peter Petrik
@@ -13,34 +13,32 @@
  *                                                                         *
  ***************************************************************************/
 
-import QtQuick 2.4
-import QtQuick.Controls 2.2
-import QtQuick.Window 2.2
+import QtQuick 2.0
 import QgisQuick 1.0 as QgsQuick
 
-Window {
-    property string projectFile
+Rectangle {
+    property var model
 
-    visible: true
+    //width: 180; height: 200
+    opacity: 0.7
 
-    width: 800
-    height: 600
-
-    Component.onCompleted: {
-        QgsQuick.Project.projectFile = Qt.binding(function() { return projectFile })
-        canvas.mapSettings.layers = Qt.binding(function() { return QgsQuick.Project.layers })
-        layerTreeView.model = Qt.binding(function() { return QgsQuick.Project.layerTreeModel })
+    Component {
+        id: layerTreeItemDelegate
+        Item {
+            width: 180; height: 40
+            Column {
+                Text { text: '<b>Name:</b> ' + name }
+            }
+        }
     }
 
-    QgsQuick.MapCanvas {
-        id: canvas
-        anchors.fill: parent
-    }
-
-
-    QgsQuick.LayerTreeView {
+    ListView {
         id: layerTreeView
         anchors.fill: parent
-    }
+        model: parent.model
 
+        delegate: layerTreeItemDelegate
+        highlight: Rectangle { color: "lightsteelblue"; radius: 5 }
+        focus: true
+    }
 }

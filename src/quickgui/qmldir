@@ -1,4 +1,5 @@
 module QgisQuick
 plugin qgis_quick
 MapCanvas 1.0 qgsquickmapcanvas.qml
+LayerTreeView 1.0 qgsquicklayertreeview.qml
 typeinfo QgisQuick.qmltypes

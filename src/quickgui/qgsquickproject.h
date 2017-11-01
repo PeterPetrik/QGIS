@@ -19,22 +19,28 @@
 #include <QObject>
 
 class QgsMapLayer;
+class QgsQuickLayerTreeModel;
 
 class QgsQuickProject : public QObject
 {
   Q_OBJECT
   Q_PROPERTY(QString projectFile READ projectFile WRITE setProjectFile NOTIFY projectFileChanged)
   Q_PROPERTY(QList< QgsMapLayer* > layers READ layers NOTIFY projectFileChanged)
+  Q_PROPERTY(QgsQuickLayerTreeModel* layerTreeModel READ layerTreeModel NOTIFY layerTreeModelChanged)
+
 public:
   static QgsQuickProject* instance();
 
   void setProjectFile(const QString& filename);
   QString projectFile() const { return mFilename; }
 
+  QgsQuickLayerTreeModel* layerTreeModel() const;
+
   QList< QgsMapLayer* > layers() const;
 
 signals:
   void projectFileChanged();
+  void layerTreeModelChanged();
 
 public slots:
 
@@ -43,6 +49,7 @@ protected:
 
   static QgsQuickProject* sInstance;
 
+  QgsQuickLayerTreeModel* mLayerTreeModel;
   QString mFilename;
 };
 

@@ -3,6 +3,7 @@ SET(QGIS_QUICK_GUI_MOC_HDRS
   qgsquickmapcanvasmap.h
   qgsquickplugin.h
   qgsquickmapsettings.h
+  qgsquicklayertreemodel.h
 )
 
 SET(QGIS_QUICK_GUI_SRC
@@ -10,11 +11,13 @@ SET(QGIS_QUICK_GUI_SRC
   qgsquickplugin.cpp
   qgsquickmapcanvasmap.cpp
   qgsquickmapsettings.cpp
+  qgsquicklayertreemodel.cpp
 )
 
 SET(QGIS_QUICK_GUI_QMLS
   qmldir
   qgsquickmapcanvas.qml
+  qgsquicklayertreeview.qml
 )
 
 INCLUDE_DIRECTORIES(
@@ -92,7 +95,7 @@ IF(NOT ${CMAKE_SYSTEM_NAME} MATCHES "Android")
     )
   ENDIF(NOT qmlplugindump_exe)
   SET(QML_IMPORT_PATH "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}" CACHE STRING "Qt Creator extra QML import paths")
-ENDIF(IF(NOT ${CMAKE_SYSTEM_NAME} MATCHES "Android"))
+ENDIF(NOT ${CMAKE_SYSTEM_NAME} MATCHES "Android")
 
 # QML plugin installation
 SET(QUICK_GUI_INSTALL_DIR ${QGIS_QML_DIR}/QgisQuick)
