@@ -347,6 +347,9 @@ ENDIF(WITH_CORE)
 # build our version of astyle
 SET (WITH_ASTYLE FALSE CACHE BOOL "If you plan to contribute you should reindent with scripts/prepare-commit.sh (using 'our' astyle)")
 
+# QML
+SET(QML_IMPORT_PATH "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}" CACHE PATH "QML directory for QML autocomplete")
+
 #############################################################
 # testing
 # whether unit tests should be build
@@ -564,7 +567,7 @@ IF (WITH_CORE)
       SET (QGIS_PLUGIN_SUBDIR_REV  ../../MacOS)
       SET (DEFAULT_INCLUDE_SUBDIR  include/qgis)
       SET (DEFAULT_QML_SUBDIR     qml)
-      
+
       # Set server moodules path to DEFAULT_LIBEXEC_SUBDIR+'/server'
       SET (DEFAULT_SERVER_MODULE_SUBDIR ${DEFAULT_LIBEXEC_SUBDIR}/server)
 

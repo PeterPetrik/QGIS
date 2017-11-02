@@ -16,10 +16,10 @@
 import QtQuick 2.4
 import QtQuick.Controls 2.2
 import QtQuick.Window 2.2
+import QtQuick.Layouts 1.3
 import QgisQuick 1.0 as QgsQuick
 
 Window {
-    property string projectFile
 
     visible: true
 
@@ -30,22 +30,59 @@ Window {
         console.log("*** ALL LOADED! ***")
     }
 
-
     QgsQuick.Project {
         id: project
-        fileName: projectFile
+        fileName: qgisProject
     }
 
-    QgsQuick.MapCanvas {
-        id: canvas
+
+    RowLayout {
+        id: mainLayout
         anchors.fill: parent
-        mapSettings.layers: project.layers
-    }
+        spacing: 6
 
-    QgsQuick.LayerTreeView {
-        id: layerTreeView
-        anchors.fill: parent
-        model: project.layerTreeModel
-    }
+        QgsQuick.LayerTreeView {
+            id: layerTreeView
+            model: project.layerTreeModel
 
+            Layout.fillHeight: true
+            Layout.minimumWidth: 150
+            Layout.maximumWidth: 300
+        }
+
+        QgsQuick.MapCanvas {
+            id: mapCanvas
+            mapSettings.layers: project.layers
+
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+        }
+    }
+/*
+    Rectangle {
+        anchors.right: parent.right
+        anchors.bottom: parent.bottom
+        anchors.margins: 20 // Sets all margins at once
+        width: 80
+        height: 80
+        color: "orange"
+    }
+*/
+
+    QgsQuick.ScaleBar {
+        id: scaleBar
+        //visible: true
+        //mapSettings: mapCanvas.mapSettings
+        preferredWidth: 300 * dp
+        mapSettings: mapCanvas.mapSettings
+
+
+
+        anchors.right: parent.right
+        anchors.bottom: parent.bottom
+        anchors.margins: 20 // Sets all margins at once
+        //width: 800
+        //height: 80
+        //color: "orange"
+    }
 }
