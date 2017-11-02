@@ -17,6 +17,12 @@
 #include <QQmlApplicationEngine>
 #include <QQmlComponent>
 #include <QtDebug>
+#include <QDesktopWidget>
+#include <QQmlContext>
+
+#ifndef NDEBUG
+#include <QQmlDebuggingEnabler>
+#endif
 
 #ifdef ANDROID
 #include <QFile>
@@ -109,9 +115,20 @@ static void init_qgis()
   qDebug("qgis_init %f [s]", t.elapsed()/1000.0);
 }
 
+float calculateDevicePixels() {
+    int dpiX = QApplication::desktop()->physicalDpiX();
+    int dpiY = QApplication::desktop()->physicalDpiY();
+    int dpi = dpiX < dpiY ? dpiX : dpiY; // In case of asymetrical DPI. Improbable
+    float dp = dpi * 0.00768443;
+    return dp;
+}
+
 int main(int argc, char *argv[])
 {
   QgsApplication app(argc, argv, true);
+#ifndef NDEBUG
+  QQmlDebuggingEnabler enabler;
+#endif
 
 #ifdef QGIS_PREFIX_PATH
   ::setenv("QGIS_PREFIX_PATH", QGIS_PREFIX_PATH, true);
@@ -119,11 +136,20 @@ int main(int argc, char *argv[])
   init_qgis();
   qDebug("QGIS_PREFIX_PATH: %s", ::getenv("QGIS_PREFIX_PATH"));
   qDebug("%s", QgsApplication::showSettings().toLocal8Bit().data());
-  QString dataDir(::getenv("QGIS_QUICK_DATA_PATH"));
-
-  QString projectFile = dataDir + "/test_project.qgs";
 
   QQmlEngine engine;
+
+  // Set Project File
+  QString dataDir(::getenv("QGIS_QUICK_DATA_PATH"));
+  QString projectFile = dataDir + "/test_project.qgs";
+  qDebug() << "project file: " << projectFile;
+  engine.rootContext()->setContextProperty( "qgisProject", projectFile );
+
+  // Set Device Pixels
+  float dp = calculateDevicePixels();
+  qDebug() << "device pixels: " << dp;
+  engine.rootContext()->setContextProperty( "devicePixels", dp );
+
   QQmlComponent component(&engine, QUrl("qrc:/main.qml"));
   QObject *object = component.create();
   if( object == 0 )
@@ -133,8 +159,6 @@ int main(int argc, char *argv[])
   } else {
       qDebug() << "main.qml created";
   }
-  qDebug() << "project file: " << projectFile;
-  object->setProperty("projectFile", projectFile);
 
   return app.exec();
 }

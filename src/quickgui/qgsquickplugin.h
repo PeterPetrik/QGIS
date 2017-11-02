@@ -17,6 +17,9 @@
 #define QGSQUICKPLUGIN_H
 
 #include <QQmlExtensionPlugin>
+#include <QObject>
+#include <QQmlEngine>
+#include <QJSEngine>
 
 class QgisQuickPlugin : public QQmlExtensionPlugin
 {
