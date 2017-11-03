@@ -50,7 +50,6 @@ public:
   ~QgsQuickScaleBarKit();
 
   void setMapSettings(QgsQuickMapSettings* mapSettings);
-
   int width() const;
   QString text() const;
 
