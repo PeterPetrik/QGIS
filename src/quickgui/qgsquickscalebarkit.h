@@ -16,6 +16,8 @@
 #ifndef QGSQUICKSCALEBARKIT_H
 #define QGSQUICKSCALEBARKIT_H
 
+#include "qgis_quick.h"
+
 #include <QObject>
 #include <QString>
 
@@ -26,23 +28,26 @@ class QgsDistanceArea;
  * \ingroup quick
  *
  * The class QgsQuickScaleBarKit encapsulates the utilies to calculate
- * scale bar width, and associated text (e.g. 50 km). Width is updated
- * in such way that is prioritize "nice" text (e.g. 20 km, 100) over
- * text with some decimals (e.g. 21 km, 72.4 km)
+ * scale bar properties
  *
  * It requires connection to mapSettings of the active canvas to automatically
- * update text and width.
+ * update text and width
+ *
+ * From preferred width in pixel, it calculates the width (pixel) of scalebar
+ * distance in meters or kilometers (int) rounded to "nice" number (e.g. 72.4 to 100)
+ * and units text (e.g. km)
  *
  * \since QGIS 3.2
  */
-class QgsQuickScaleBarKit : public QObject
+class QUICK_EXPORT QgsQuickScaleBarKit : public QObject
 {
   Q_OBJECT
 
   Q_PROPERTY( int preferredWidth MEMBER mPreferredWidth NOTIFY preferredWidthChanged)
   Q_PROPERTY( QgsQuickMapSettings* mapSettings MEMBER mMapSettings WRITE setMapSettings NOTIFY mapSettingsChanged)
 
-  Q_PROPERTY( QString text READ text NOTIFY scaleBarChanged )
+  Q_PROPERTY( QString units READ units NOTIFY scaleBarChanged )
+  Q_PROPERTY( int distance READ distance NOTIFY scaleBarChanged )
   Q_PROPERTY( int width READ width NOTIFY scaleBarChanged )
 
 public:
@@ -51,7 +56,8 @@ public:
 
   void setMapSettings(QgsQuickMapSettings* mapSettings);
   int width() const;
-  QString text() const;
+  int distance() const;
+  QString units() const;
 
 signals:
   void scaleBarChanged();
@@ -60,7 +66,6 @@ signals:
 
 public slots:
   void updateScaleBar();
-  void listenToMapSettingConnections();
 
 private:
   double screenUnitsToMeters() const;
@@ -68,9 +73,10 @@ private:
   QgsQuickMapSettings* mMapSettings;
   QgsDistanceArea* mDistanceArea;
 
-  int mPreferredWidth;
-  int mWidth;
-  QString mText;
+  int mPreferredWidth; // pixels
+  int mWidth; // pixels
+  int mDistance; // in meters or kilometers, rounded
+  QString mUnits; // km or m
 };
 
 

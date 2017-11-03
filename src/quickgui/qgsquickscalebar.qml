@@ -69,7 +69,7 @@ Item {
 
     Label {
         id: label
-        text: scaleBarKit.text
+        text: scaleBarKit.distance + " " + scaleBarKit.units
 
         anchors.left: rectBar.right
         anchors.leftMargin: labelBarMargin

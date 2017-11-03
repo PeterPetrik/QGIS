@@ -28,13 +28,13 @@ QgsQuickScaleBarKit::QgsQuickScaleBarKit(QObject *parent)
     ,mDistanceArea(new QgsDistanceArea)
     ,mPreferredWidth(300)
     ,mWidth(mPreferredWidth)
-    ,mText("")
+    ,mDistance(0)
+    ,mUnits("")
 {
     mDistanceArea->setEllipsoid("WGS84");
 
     connect(this, SIGNAL(mapSettingsChanged()), this, SLOT(updateScaleBar()));
     connect(this, SIGNAL(preferredWidthChanged()), this, SLOT(updateScaleBar()));
-
 }
 
 QgsQuickScaleBarKit::~QgsQuickScaleBarKit() {
@@ -66,21 +66,16 @@ void QgsQuickScaleBarKit::setMapSettings(QgsQuickMapSettings* mapSettings) {
     emit mapSettingsChanged();
 }
 
-void QgsQuickScaleBarKit::listenToMapSettingConnections() {
-    updateScaleBar();
-
-    if (mMapSettings) {
-
-    }
-}
-
 int QgsQuickScaleBarKit::width() const {
     return mWidth;
 }
 
+QString QgsQuickScaleBarKit::units() const {
+    return mUnits;
+}
 
-QString QgsQuickScaleBarKit::text() const {
-    return mText;
+int QgsQuickScaleBarKit::distance() const {
+    return mDistance;
 }
 
 double QgsQuickScaleBarKit::screenUnitsToMeters() const
@@ -101,12 +96,12 @@ void QgsQuickScaleBarKit::updateScaleBar()
   if (!mMapSettings)
     return;
 
-  QString text("m");
   double dist = screenUnitsToMeters(); // meters
-
   if (dist > 1000.0) {
       dist = dist / 1000.0; // meters to kilometers
-      text = "km";
+      mUnits = "km";
+  } else {
+      mUnits = "m";
   }
 
   // we want to show nice round distances e.g. 200 km instead of e.g. 273 km
@@ -122,12 +117,10 @@ void QgsQuickScaleBarKit::updateScaleBar()
     round_digit = 2;
   else
     round_digit = 5;
-  double round_dist = round_digit * base;
 
-  mWidth = mPreferredWidth * round_dist/dist;
-  mText = QString("%1 ").arg(round_dist) + text;
-
-  qDebug() << "ScaleBar: " << mPreferredWidth << " " << mWidth << " " << mText;
+  mDistance = round_digit * base;
+  mWidth = mPreferredWidth * mDistance/dist;
+  qDebug() << "Scale: " << mWidth << "px -> " << mDistance << " " << mUnits;
 
   emit scaleBarChanged();
 }

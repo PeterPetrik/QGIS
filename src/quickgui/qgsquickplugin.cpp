@@ -17,7 +17,6 @@
 #include "qgsquickproject.h"
 #include "qgsquickmapsettings.h"
 #include "qgsquickmapcanvasmap.h"
-#include "qgsquicklayertreemodel.h"
 
 #include <qgsmaplayer.h>
 #include <qgsquickscalebarkit.h>
@@ -34,5 +33,6 @@ void QgisQuickPlugin::registerTypes(const char *uri)
   qmlRegisterType<QgsQuickScaleBarKit>(uri, 1, 0, "ScaleBarKit");
 
   qRegisterMetaType< QList<QgsMapLayer*> >( "QList<QgsMapLayer*>" );
-  qRegisterMetaType< QgsQuickLayerTreeModel* >("QgsQuickLayerTreeModel*");
+
 }
+

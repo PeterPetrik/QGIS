@@ -1,5 +1,5 @@
 /***************************************************************************
-  qgsquicklayertreemodel.h
+  qgsquicklayertreemodel.qml
   --------------------------------------
   Date                 : Nov 2017
   Copyright            : (C) 2017 by Peter Petrik
@@ -13,40 +13,36 @@
  *                                                                         *
  ***************************************************************************/
 
+import QtQuick 2.0
+import QgisQuickApp 1.0
 
-#ifndef QGSQUICKLAYERTREEMODEL_H
-#define QGSQUICKLAYERTREEMODEL_H
 
-#include <QSortFilterProxyModel>
+Rectangle {
+    property alias project: layerTreeModel.project
+    opacity: 0.7
 
-class QgsLayerTree;
-class QgsLayerTreeModel;
-class QgsProject;
+    LayerTreeModel {
+        id: layerTreeModel
+    }
 
-class QgsQuickLayerTreeModel : public QSortFilterProxyModel
-{
-    Q_OBJECT
+    Component {
+        id: layerTreeItemDelegate
+        Item {
+            width: 180; height: 40
+            Column {
+                Text { text: '<b>Name:</b> ' + name }
+            }
+        }
+    }
 
-  public:
-    enum Roles
-    {
-      Name = Qt::UserRole + 1
-    };
-    Q_ENUMS( Roles )
+    ListView {
+        id: layerTreeView
+        anchors.fill: parent
 
-    explicit QgsQuickLayerTreeModel( QgsLayerTree* layerTree, QObject* parent = nullptr );
+        model: layerTreeModel
 
-    Q_INVOKABLE QVariant data( const QModelIndex& index, int role ) const override;
-
-    QHash<int, QByteArray> roleNames() const override;
-
-  signals:
-    void mapThemeChanged();
-
-  private:
-    QgsLayerTreeModel* mLayerTreeModel;
-    QString mMapTheme;
-    QgsProject* mProject;
-};
-
-#endif // QGSQUICKLAYERTREEMODEL_H
+        delegate: layerTreeItemDelegate
+        highlight: Rectangle { color: "lightsteelblue"; radius: 5 }
+        focus: true
+    }
+}

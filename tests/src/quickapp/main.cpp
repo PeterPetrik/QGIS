@@ -19,6 +19,7 @@
 #include <QtDebug>
 #include <QDesktopWidget>
 #include <QQmlContext>
+#include <qqml.h>
 
 #ifndef NDEBUG
 #include <QQmlDebuggingEnabler>
@@ -29,7 +30,13 @@
 #include <QDir>
 #endif
 
+#ifndef ANDROID
+#include <QCommandLineParser>
+#include <qgis.h>
+#endif 
+
 #include "qgsapplication.h"
+#include "qgsquicklayertreemodel.h"
 
 static void init_qgis()
 {
@@ -104,8 +111,6 @@ static void init_qgis()
   }
 
   QgsApplication::setPkgDataPath(qgisDataPath);
-#else
-  ::setenv("QGIS_QUICK_DATA_PATH", QGIS_QUICK_DATA_PATH, true);
 #endif
 
   // make sure the DB exists - otherwise custom projections will be failing
@@ -123,6 +128,10 @@ float calculateDevicePixels() {
     return dp;
 }
 
+void initDeclarative() {
+      qmlRegisterType< QgsQuickLayerTreeModel >("QgisQuickApp", 1, 0, "LayerTreeModel");
+}
+
 int main(int argc, char *argv[])
 {
   QgsApplication app(argc, argv, true);
@@ -138,9 +147,14 @@ int main(int argc, char *argv[])
   qDebug("%s", QgsApplication::showSettings().toLocal8Bit().data());
 
   QQmlEngine engine;
+  initDeclarative();
 
   // Set Project File
+#ifdef QGIS_QUICK_DATA_PATH
+  QString dataDir(QGIS_QUICK_DATA_PATH);
+#else
   QString dataDir(::getenv("QGIS_QUICK_DATA_PATH"));
+#endif
   QString projectFile = dataDir + "/test_project.qgs";
   qDebug() << "project file: " << projectFile;
   engine.rootContext()->setContextProperty( "qgisProject", projectFile );
@@ -159,6 +173,18 @@ int main(int argc, char *argv[])
   } else {
       qDebug() << "main.qml created";
   }
+
+  // Set up the QSettings environment must be done after qapp is created
+  QCoreApplication::setOrganizationName( "QGIS" );
+  QCoreApplication::setOrganizationDomain( "qgis.org" );
+  QCoreApplication::setApplicationName( "QGIS Quick" );
+  QCoreApplication::setApplicationVersion(Qgis::QGIS_VERSION);
+
+  #ifndef ANDROID
+  QCommandLineParser parser;
+  parser.addVersionOption();
+  parser.process(app);
+  #endif
 
   return app.exec();
 }

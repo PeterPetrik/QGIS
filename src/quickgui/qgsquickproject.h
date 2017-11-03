@@ -16,25 +16,25 @@
 #ifndef QGSQUICKPROJECT_H
 #define QGSQUICKPROJECT_H
 
+#include "qgis_quick.h"
+
 #include <QObject>
 
 class QgsMapLayer;
-class QgsQuickLayerTreeModel;
 class QgsProject;
 
-class QgsQuickProject : public QObject
+class QUICK_EXPORT QgsQuickProject : public QObject
 {
   Q_OBJECT
   Q_PROPERTY(QString fileName READ projectFile WRITE setProjectFile NOTIFY projectFileChanged)
   Q_PROPERTY(QList< QgsMapLayer* > layers READ layers NOTIFY projectFileChanged)
-  Q_PROPERTY(QgsQuickLayerTreeModel* layerTreeModel READ layerTreeModel NOTIFY projectFileChanged)
+  Q_PROPERTY(QgsProject* project READ project)
 
 public:
   void setProjectFile(const QString& filename);
   QString projectFile() const;
-
-  QgsQuickLayerTreeModel* layerTreeModel() const;
   QList< QgsMapLayer* > layers() const;
+  QgsProject* project() const;
 
 signals:
   void projectFileChanged();
@@ -47,7 +47,6 @@ protected:
 
 private:
   QgsProject* mProject;
-  QgsQuickLayerTreeModel* mLayerTreeModel;
 };
 
 #endif // QGSQUICKPROJECT_H

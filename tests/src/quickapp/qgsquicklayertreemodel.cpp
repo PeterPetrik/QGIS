@@ -20,18 +20,40 @@
 #include <qgslayertree.h>
 #include <qgsvectorlayer.h>
 #include <qgslayertreemodellegendnode.h>
+#include <qgsproject.h>
+#include <qgsquickproject.h>
 
 #include <QString>
 
-QgsQuickLayerTreeModel::QgsQuickLayerTreeModel( QgsLayerTree* layerTree, QObject* parent )
+QgsQuickLayerTreeModel::QgsQuickLayerTreeModel( QObject* parent )
   : QSortFilterProxyModel( parent )
+  , mProject(0)
+  , mLayerTreeModel(0)
 {
-  mLayerTreeModel = new QgsLayerTreeModel( layerTree, this );
-  setSourceModel( mLayerTreeModel );
+  connect( this, &QgsQuickLayerTreeModel::projectChanged, this, &QgsQuickLayerTreeModel::onReadProject );
+}
+
+void QgsQuickLayerTreeModel::onReadProject() {
+    Q_ASSERT(mProject);
+
+    QgsLayerTree* layerTree = mProject->project()->layerTreeRoot();
+
+    if (mLayerTreeModel) {
+        delete mLayerTreeModel;
+    }
+    mLayerTreeModel = new QgsLayerTreeModel(layerTree , this );
+    setSourceModel( mLayerTreeModel );
+
+    qDebug() << "QgsQuickLayerTreeModel qgsproject loaded " << mProject->projectFile();
+
+    reset();
 }
 
 QVariant QgsQuickLayerTreeModel::data( const QModelIndex& index, int role ) const
 {
+  if (!mLayerTreeModel)
+      return QVariant();
+
   switch ( role )
   {
     case Name:
