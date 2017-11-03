@@ -16,6 +16,7 @@
 #ifndef QGSQUICKMAPCANVASMAP_H
 #define QGSQUICKMAPCANVASMAP_H
 
+#include "qgis_quick.h"
 #include <QtQuick/QQuickItem>
 #include <QFutureSynchronizer>
 #include <QTimer>
@@ -28,7 +29,7 @@ class QgsMapRendererCache;
 class QgsLabelingResults;
 class MapSettings;
 
-class QgsQuickMapCanvasMap : public QQuickItem
+class QUICK_EXPORT QgsQuickMapCanvasMap : public QQuickItem
 {
     Q_OBJECT
 

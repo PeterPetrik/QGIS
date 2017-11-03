@@ -18,6 +18,7 @@
 
 #include <QObject>
 
+#include "qgis_quick.h"
 #include <qgsrectangle.h>
 #include <qgsmapthemecollection.h>
 #include <qgsmapsettings.h>
@@ -31,7 +32,7 @@
  *
  * \since QGIS 3.2
  */
-class QgsQuickMapSettings : public QObject
+class QUICK_EXPORT QgsQuickMapSettings : public QObject
 {
     Q_OBJECT
 

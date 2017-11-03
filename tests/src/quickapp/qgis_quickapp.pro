@@ -21,7 +21,7 @@ INCLUDEPATH += \
 
 LIBS += -L$${OSGEO4A_STAGE_DIR}/$$ANDROID_TARGET_ARCH$$/lib
 INCLUDEPATH += $${OSGEO4A_STAGE_DIR}/$$ANDROID_TARGET_ARCH$$/include
-LIBS += -lqgis_core
+LIBS += -lqgis_core -lqgis_quick
 
 DEFINES += "CORE_EXPORT="
 
@@ -30,16 +30,14 @@ QT += network svg printsupport sql
 QT += script opengl
   
 
-SOURCES += main.cpp
-HEADERS +=
+SOURCES += main.cpp \
+           qgsquicklayertreemodel.cpp
+           
+HEADERS += qgsquicklayertreemodel.h
 
 RESOURCES += qml.qrc
-# i18n.qrc \
-# img.qrc
 
-TRANSLATIONS +=
-# i18n/manioc_sk.ts \
-# i18n/manioc_es.ts
+# TRANSLATIONS +=
 
 lupdate_only {
     SOURCES += *.qml
@@ -76,6 +74,7 @@ ANDROID_EXTRA_LIBS += \
     $${OSGEO4A_STAGE_DIR}/$$ANDROID_TARGET_ARCH$$/lib/libspatialite.so \
     $${OSGEO4A_STAGE_DIR}/$$ANDROID_TARGET_ARCH$$/lib/libqca-qt5.so \
     $${OSGEO4A_STAGE_DIR}/$$ANDROID_TARGET_ARCH$$/lib/libqgis_core.so \
+    $${OSGEO4A_STAGE_DIR}/$$ANDROID_TARGET_ARCH$$/lib/libqgis_quick.so \
     $${OSGEO4A_STAGE_DIR}/$$ANDROID_TARGET_ARCH$$/lib/libqgis_native.so \
     $${OSGEO4A_STAGE_DIR}/$$ANDROID_TARGET_ARCH$$/lib/libqt5keychain.so \
     $${OSGEO4A_STAGE_DIR}/$$ANDROID_TARGET_ARCH$$/lib/libzip.so \

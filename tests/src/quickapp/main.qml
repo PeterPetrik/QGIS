@@ -18,6 +18,7 @@ import QtQuick.Controls 2.2
 import QtQuick.Window 2.2
 import QtQuick.Layouts 1.3
 import QgisQuick 1.0 as QgsQuick
+import '.' as QgsQuickApp
 
 Window {
 
@@ -35,15 +36,14 @@ Window {
         fileName: qgisProject
     }
 
-
     RowLayout {
         id: mainLayout
         anchors.fill: parent
         spacing: 6
 
-        QgsQuick.LayerTreeView {
+        QgsQuickApp.LayerTreeView {
             id: layerTreeView
-            model: project.layerTreeModel
+            project: project
 
             Layout.fillHeight: true
             Layout.minimumWidth: 150
@@ -58,31 +58,14 @@ Window {
             Layout.fillHeight: true
         }
     }
-/*
-    Rectangle {
-        anchors.right: parent.right
-        anchors.bottom: parent.bottom
-        anchors.margins: 20 // Sets all margins at once
-        width: 80
-        height: 80
-        color: "orange"
-    }
-*/
 
     QgsQuick.ScaleBar {
         id: scaleBar
-        //visible: true
-        //mapSettings: mapCanvas.mapSettings
-        preferredWidth: 300 * dp
+        preferredWidth: 300 * devicePixels
         mapSettings: mapCanvas.mapSettings
-
-
 
         anchors.right: parent.right
         anchors.bottom: parent.bottom
-        anchors.margins: 20 // Sets all margins at once
-        //width: 800
-        //height: 80
-        //color: "orange"
+        anchors.margins: 20
     }
 }

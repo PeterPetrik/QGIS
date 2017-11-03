@@ -1,5 +1,5 @@
 /***************************************************************************
-  qgsquicklayertreemodel.qml
+  qgsquicklayertreemodel.h
   --------------------------------------
   Date                 : Nov 2017
   Copyright            : (C) 2017 by Peter Petrik
@@ -13,32 +13,43 @@
  *                                                                         *
  ***************************************************************************/
 
-import QtQuick 2.0
-import QgisQuick 1.0 as QgsQuick
 
-Rectangle {
-    property var model
+#ifndef QGSQUICKLAYERTREEMODEL_H
+#define QGSQUICKLAYERTREEMODEL_H
 
-    //width: 180; height: 200
-    opacity: 0.7
+#include <QSortFilterProxyModel>
 
-    Component {
-        id: layerTreeItemDelegate
-        Item {
-            width: 180; height: 40
-            Column {
-                Text { text: '<b>Name:</b> ' + name }
-            }
-        }
-    }
+class QgsLayerTree;
+class QgsLayerTreeModel;
+class QgsQuickProject;
 
-    ListView {
-        id: layerTreeView
-        anchors.fill: parent
-        model: parent.model
+class QgsQuickLayerTreeModel : public QSortFilterProxyModel
+{
+    Q_OBJECT
+    Q_PROPERTY( QgsQuickProject* project MEMBER mProject NOTIFY projectChanged)
 
-        delegate: layerTreeItemDelegate
-        highlight: Rectangle { color: "lightsteelblue"; radius: 5 }
-        focus: true
-    }
-}
+  public:
+    enum Roles
+    {
+      Name = Qt::UserRole + 1
+    };
+    Q_ENUMS( Roles )
+
+    explicit QgsQuickLayerTreeModel(QObject* parent = nullptr );
+
+    Q_INVOKABLE QVariant data( const QModelIndex& index, int role ) const override;
+
+    QHash<int, QByteArray> roleNames() const override;
+
+  signals:
+    void projectChanged();
+
+  private slots:
+    void onReadProject();
+
+  private:
+    QgsQuickProject* mProject;
+    QgsLayerTreeModel* mLayerTreeModel;
+};
+
+#endif // QGSQUICKLAYERTREEMODEL_H
