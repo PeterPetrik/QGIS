@@ -164,6 +164,10 @@ int main(int argc, char *argv[])
   qDebug() << "device pixels: " << dp;
   engine.rootContext()->setContextProperty( "devicePixels", dp );
 
+  // Some settings for About dialog
+  engine.rootContext()->setContextProperty( "qgisVersion", Qgis::QGIS_VERSION );
+
+
   QQmlComponent component(&engine, QUrl("qrc:/main.qml"));
   QObject *object = component.create();
   if( object == 0 )
