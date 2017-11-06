@@ -17,9 +17,10 @@ import QtQuick 2.0
 import QgisQuickApp 1.0
 
 
-Rectangle {
+Item {
     property alias project: layerTreeModel.project
-    opacity: 0.7
+
+    height: layerTreeView.contentHeight
 
     LayerTreeModel {
         id: layerTreeModel
@@ -27,22 +28,25 @@ Rectangle {
 
     Component {
         id: layerTreeItemDelegate
-        Item {
-            width: 180; height: 40
-            Column {
-                Text { text: '<b>Name:</b> ' + name }
-            }
+        Rectangle {
+          id: wrapper
+          width: 90
+          height: info.height
+          color: ListView.isCurrentItem ? "lightsteelblue" : "transparent"
+          Text {
+            id: info
+            text: name
+          }
         }
     }
 
     ListView {
         id: layerTreeView
+        spacing: 9
+        contentHeight: 300
         anchors.fill: parent
-
         model: layerTreeModel
-
         delegate: layerTreeItemDelegate
-        highlight: Rectangle { color: "lightsteelblue"; radius: 5 }
         focus: true
     }
 }
