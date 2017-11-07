@@ -28,10 +28,6 @@ Window {
     width: 800
     height: 600
 
-    Component.onCompleted: {
-        console.log("*** ALL LOADED! ***")
-    }
-
     QgsQuick.Project {
         id: project
         fileName: qgisProject
@@ -39,10 +35,15 @@ Window {
 
     QgsQuick.MapCanvas {
         id: mapCanvas
+        dp: devicePixels
         mapSettings.project: project
         mapSettings.layers: project.layers
         width: parent.width
         height: parent.height
+
+        onClicked: {
+            identifyKit.identify( Qt.point( mouse.x, mouse.y ) )
+        }
     }
 
     ColumnLayout {
@@ -94,7 +95,7 @@ Window {
 
     QgsQuick.IdentifyKit {
         id: identifyKit
-        project: project
+        mapSettings: mapCanvas.mapSettings
     }
 
     QgsQuick.ScaleBar {

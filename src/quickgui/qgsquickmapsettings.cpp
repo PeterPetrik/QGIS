@@ -14,6 +14,7 @@
  ***************************************************************************/
 
 #include "qgsquickmapsettings.h"
+#include "qgsquickproject.h"
 
 #include <qgsmaplayer.h>
 #include <qgsproject.h>
@@ -24,6 +25,7 @@
 
 QgsQuickMapSettings::QgsQuickMapSettings( QObject* parent )
   : QObject( parent )
+  , mProject(0)
 {
   // Connect signals for derived values
   connect( this, &QgsQuickMapSettings::destinationCrsChanged, this, &QgsQuickMapSettings::mapUnitsPerPixelChanged );
@@ -45,14 +47,16 @@ void QgsQuickMapSettings::setProject(QgsQuickProject* project) {
 
     // If we have already something connected, disconnect it!
     if (mProject) {
-        disconnect(mProject, 0, this, 0);
+        Q_ASSERT(mProject->project());
+        disconnect(mProject->project(), 0, this, 0);
     }
 
     mProject = project;
 
     // Connect all signals
     if (mProject) {
-        connect( mProject, &QgsProject::readProject, this, &QgsQuickMapSettings::onReadProject );
+        Q_ASSERT(mProject->project());
+        connect( mProject->project(), &QgsProject::readProject, this, &QgsQuickMapSettings::onReadProject );
     }
 
     emit projectChanged();
