@@ -1,0 +1,16 @@
+module QgisQuick
+plugin qgis_quick_plugin
+
+MapCanvas 1.0 qgsquickmapcanvas.qml
+LayerTreeView 1.0 qgsquicklayertreeview.qml
+ScaleBar 1.0 qgsquickscalebar.qml
+FeatureForm 1.0 qgsquickfeatureform.qml
+
+CheckBox 1.0 qgsquickcheckbox.qml
+DateTime 1.0 qgsquickdatetime.qml
+ExternalResource 1.0 qgsquickexternalresource.qml
+RelationReference 1.0 qgsquickrelationreference.qml
+TextEdit 1.0 qgsquicktextedit.qml
+ValueMap 1.0 qgsquickvaluemap.qml
+
+typeinfo QgisQuick.qmltypes

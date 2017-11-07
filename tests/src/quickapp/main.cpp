@@ -162,7 +162,7 @@ int main(int argc, char *argv[])
   // Set Device Pixels
   float dp = calculateDevicePixels();
   qDebug() << "device pixels: " << dp;
-  engine.rootContext()->setContextProperty( "devicePixels", dp );
+  engine.rootContext()->setContextProperty( "dp", dp );
 
   // Some settings for About dialog
   engine.rootContext()->setContextProperty( "qgisVersion", Qgis::QGIS_VERSION );

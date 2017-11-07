@@ -10,9 +10,16 @@ SET(QGIS_QUICK_PLUGIN_SRC
 )
 
 SET(QGIS_QUICK_PLUGIN_QMLS
-  qmldir
-  qgsquickmapcanvas.qml
-  qgsquickscalebar.qml
+  qml/qmldir
+  qml/qgsquickmapcanvas.qml
+  qml/qgsquickscalebar.qml
+  qml/qgsquickfeatureform.qml
+  qml/editor/qgsquickcheckbox.qml
+  qml/editor/qgsquickdatetime.qml
+  qml/editor/qgsquickexternalresource.qml
+  qml/editor/qgsquickrelationreference.qml
+  qml/editor/qgsquicktextedit.qml
+  qml/editor/qgsquickvaluemap.qml
 )
 
 SET(QGIS_QUICK_GUI_MOC_HDRS

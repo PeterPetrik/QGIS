@@ -1,5 +1,5 @@
 /***************************************************************************
-  main.qml
+  AboutPage.qml
   --------------------------------------
   Date                 : Nov 2017
   Copyright            : (C) 2017 by Peter Petrik
@@ -19,47 +19,20 @@ import QtQuick.Window 2.2
 import QtQuick.Layouts 1.3
 import '.'
 
-Window {
-
-    visible: true
-
-    width: 800
-    height: 600
-
-    TabBar {
-        id: bar
-        width: parent.width
-
-        TabButton {
-            text: qsTr("Map")
+Item {
+    ColumnLayout {
+        Text {
+            text: qsTr( "QGIS Version: %1").arg( qgisVersion )
+        }
+        Text {
+            text: qsTr( "Project: %1").arg( qgisProject )
+        }
+        Text {
+            text: qsTr( "Device Pixels: %1").arg( dp )
+        }
+        Item{
+            Layout.minimumHeight: 20 * dp
         }
 
-        TabButton {
-            text: qsTr("Gallery")
-        }
-        TabButton {
-            text: qsTr("About")
-        }
-    }
-
-    StackLayout {
-        id: stack
-        width: parent.width
-        anchors.top: bar.bottom
-
-        currentIndex: bar.currentIndex
-
-        MapPage
-        {
-            id: mapTab
-        }
-
-        GalleryPage {
-            id: galleryTab
-        }
-
-        AboutPage {
-            id: aboutTab
-        }
     }
 }

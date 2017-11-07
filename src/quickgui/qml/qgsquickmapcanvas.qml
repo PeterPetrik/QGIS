@@ -23,7 +23,6 @@ Item {
   property alias mapSettings: mapCanvasWrapper.mapSettings
   property alias isRendering: mapCanvasWrapper.isRendering
   property alias incrementalRendering: mapCanvasWrapper.incrementalRendering
-  property real dp: 1.0 //devicePixels
 
   signal clicked(var mouse)
 
