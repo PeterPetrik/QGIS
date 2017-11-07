@@ -1,5 +1,5 @@
 /***************************************************************************
-  qgsquickidentifytool.cpp
+  qgsquickidentifykit.cpp
  ---------------------
   Date                 : 30.8.2016
   Copyright            : (C) 2016 by Matthias Kuhn
@@ -45,16 +45,16 @@ void QgsQuickIdentifyKit::setMapSettings( QgsQuickMapSettings* mapSettings )
   emit mapSettingsChanged();
 }
 
-void QgsQuickIdentifyKit::identify( const QPointF& point ) const
+
+QList<QgsQuickIdentifyKit::IdentifyResult> QgsQuickIdentifyKit::identify( const QPointF& point )
 {
-  //if ( !mModel || !mMapSettings )
+  QList<IdentifyResult> results;
+
   if ( !mMapSettings )
   {
-    qWarning() << "Unable to use IdentifyTool without mapSettings or model property set.";
-    return;
+    qWarning() << "Unable to use IdentifyKit without mapSettings property set.";
+    return results;
   }
-
-  // mModel->clear();
 
   QgsPointXY mapPoint = mMapSettings->mapSettings().mapToPixel().toMapCoordinates( point.toPoint() );
 
@@ -71,16 +71,42 @@ void QgsQuickIdentifyKit::identify( const QPointF& point ) const
     QgsVectorLayer* vl = qobject_cast<QgsVectorLayer*>( layer );
     if ( vl )
     {
-      QList<IdentifyResult> results = identifyVectorLayer( vl, mapPoint );
+        QgsFeatureList featureList = identifyVectorLayer( vl, mapPoint );
 
-      // mModel->appendFeatures( results );
+        Q_FOREACH( const QgsFeature& feature, featureList ) {
+            results.append(IdentifyResult(vl, feature));
+        }
     }
   }
+
+  qDebug() << "IdentifyKit identified " << results.count() << " results";
+  return results;
 }
 
-QList<QgsQuickIdentifyKit::IdentifyResult> QgsQuickIdentifyKit::identifyVectorLayer ( QgsVectorLayer* layer, const QgsPointXY& point ) const
+
+QgsFeatureList QgsQuickIdentifyKit::identify( QgsVectorLayer* layer, const QPointF& point ) {
+    QgsFeatureList results;
+
+    Q_ASSERT(layer);
+
+    if ( !mMapSettings )
+    {
+      qWarning() << "Unable to use IdentifyKit without mapSettings property set.";
+      return results;
+    }
+    QgsPointXY mapPoint = mMapSettings->mapSettings().mapToPixel().toMapCoordinates( point.toPoint() );
+
+    results = identifyVectorLayer(layer, mapPoint);
+
+    qDebug() << "IdentifyKit identified " << results.count() << " results for layer " << layer->name();
+
+    return results;
+}
+
+
+QgsFeatureList QgsQuickIdentifyKit::identifyVectorLayer ( QgsVectorLayer* layer, const QgsPointXY& point ) const
 {
-  QList<IdentifyResult> results;
+  QgsFeatureList results;
 
   if ( !layer || !layer->isSpatial() )
     return results;
@@ -141,7 +167,7 @@ QList<QgsQuickIdentifyKit::IdentifyResult> QgsQuickIdentifyKit::identifyVectorLa
     if ( filter && !renderer->willRenderFeature( const_cast<QgsFeature&>( feature ), context ) )
       continue;
 
-    results.append( IdentifyResult( layer, feature ) );
+    results.append( feature );
   }
 
   if ( renderer && renderer->capabilities() & QgsFeatureRenderer::ScaleDependent )
@@ -151,22 +177,6 @@ QList<QgsQuickIdentifyKit::IdentifyResult> QgsQuickIdentifyKit::identifyVectorLa
 
   return results;
 }
-
-/*
-MultiFeatureListModel* QgsQuickIdentifyKit::model() const
-{
-  return mModel;
-}
-
-void QgsQuickIdentifyKit::setModel( MultiFeatureListModel* model )
-{
-  if ( model == mModel )
-    return;
-
-  mModel = model;
-  emit modelChanged();
-}
-*/
 
 double QgsQuickIdentifyKit::searchRadiusMU( const QgsRenderContext& context ) const
 {

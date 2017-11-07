@@ -1,5 +1,5 @@
 /***************************************************************************
-  qgsquickidentifytool.h
+  qgsquickidentifykit.h
  ---------------------
   Date                 : 30.8.2016
   Copyright            : (C) 2016 by Matthias Kuhn
@@ -13,11 +13,11 @@
  *                                                                         *
  ***************************************************************************/
 
-#ifndef QGSQUICKIDENTIFYTOOL_H
-#define QGSQUICKIDENTIFYTOOL_H
+#ifndef QGSQUICKIDENTIFYKIT_H
+#define QGSQUICKIDENTIFYKIT_H
 
 #include <QObject>
-
+#include "qgis_quick.h"
 #include <qgsfeature.h>
 #include <qgspoint.h>
 #include <qgsmapsettings.h>
@@ -27,16 +27,12 @@ class QgsQuickProject;
 class QgsMapLayer;
 class QgsQuickMapSettings;
 class QgsVectorLayer;
-//class MultiFeatureListModel;
 
-class QgsQuickIdentifyKit : public QObject
+class QUICK_EXPORT QgsQuickIdentifyKit : public QObject
 {
     Q_OBJECT
-
-    Q_PROPERTY( QgsQuickProject* project MEMBER mProject NOTIFY projectChanged)
     Q_PROPERTY( QgsQuickMapSettings* mapSettings READ mapSettings WRITE setMapSettings NOTIFY mapSettingsChanged )
     Q_PROPERTY( double searchRadiusMm READ searchRadiusMm WRITE setSearchRadiusMm NOTIFY searchRadiusMmChanged )
-    //Q_PROPERTY( MultiFeatureListModel* model READ model WRITE setModel NOTIFY modelChanged )
 
   public:
     struct IdentifyResult
@@ -58,34 +54,25 @@ class QgsQuickIdentifyKit : public QObject
 
     double searchRadiusMm() const;
     void setSearchRadiusMm( double searchRadiusMm );
-/*
-    MultiFeatureListModel* model() const;
-    void setModel( MultiFeatureListModel* model );
-*/
 
-  signals:
-    void projectChanged();
+    Q_INVOKABLE QList<IdentifyResult> identify( const QPointF& point );
+    Q_INVOKABLE QgsFeatureList identify( QgsVectorLayer* layer, const QPointF& point );
+
+   signals:
     void mapSettingsChanged();
     void searchRadiusMmChanged();
-    //void modelChanged();
-
-  public slots:
-    void identify( const QPointF& point ) const;
-
-    QList<IdentifyResult> identifyVectorLayer( QgsVectorLayer* layer, const QgsPointXY& point ) const;
 
   private:
     QgsQuickProject* mProject;
     QgsQuickMapSettings* mMapSettings;
-    /*
-    MultiFeatureListModel* mModel;
-*/
+
     double searchRadiusMU( const QgsRenderContext& context ) const;
     double searchRadiusMU() const;
 
     QgsRectangle toLayerCoordinates( QgsMapLayer* layer, const QgsRectangle& rect ) const;
+    QgsFeatureList identifyVectorLayer( QgsVectorLayer* layer, const QgsPointXY& point ) const;
 
     double mSearchRadiusMm;
 };
 
-#endif // QGSQUICKIDENTIFYTOOL_H
+#endif // QGSQUICKIDENTIFYKIT_H

@@ -23,6 +23,7 @@ Item {
   property alias mapSettings: mapCanvasWrapper.mapSettings
   property alias isRendering: mapCanvasWrapper.isRendering
   property alias incrementalRendering: mapCanvasWrapper.incrementalRendering
+  property real dp: 1.0 //devicePixels
 
   signal clicked(var mouse)
 
@@ -100,7 +101,7 @@ Item {
         {
           var distance = Math.abs( mouse.x - __initialPosition.x ) + Math.abs( mouse.y - __initialPosition.y )
 
-          if ( distance < 5 * dp)
+          if ( distance < 5 * mapArea.dp)
             mapArea.clicked( mouse )
         }
       }

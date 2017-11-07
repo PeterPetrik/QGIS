@@ -15,6 +15,7 @@
 
 #include "qgsquickmapcanvasmap.h"
 #include "qgsquickmapsettings.h"
+#include "qgsquickproject.h"
 
 #include <qgsmaprendererparalleljob.h>
 #include <qgsvectorlayer.h>
@@ -105,9 +106,10 @@ void QgsQuickMapCanvasMap::refreshMap()
   expressionContext << QgsExpressionContextUtils::globalScope()
                     << QgsExpressionContextUtils::mapSettingsScope( mapSettings );
 
-  QgsProject project = mMapSettings->project();
+  QgsQuickProject* project = mMapSettings->project();
   if (project) {
-    expressionContext << QgsExpressionContextUtils::projectScope( project );
+    Q_ASSERT(project->project());
+    expressionContext << QgsExpressionContextUtils::projectScope( project->project() );
   }
 
   mapSettings.setExpressionContext( expressionContext );

@@ -57,6 +57,7 @@ class QUICK_EXPORT QgsQuickMapSettings : public QObject
 
     void setProject(QgsQuickProject* project);
     QgsQuickProject* project() const;
+
     Q_INVOKABLE void setCenter( const QgsPoint& center );
 
     double mapUnitsPerPixel() const;
