@@ -39,8 +39,8 @@ Window {
 
     QgsQuick.MapCanvas {
         id: mapCanvas
+        mapSettings.project: project
         mapSettings.layers: project.layers
-
         width: parent.width
         height: parent.height
     }
@@ -65,6 +65,11 @@ Window {
                 name: "LAYERS";
                 PropertyChanges { target: about; visible: false}
                 PropertyChanges { target: layerTreeView; visible: true}
+            },
+            State {
+                name: "IDENTIFY";
+                PropertyChanges { target: about; visible: false}
+                PropertyChanges { target: layerTreeView; visible: false}
             }
         ]
 
@@ -79,6 +84,17 @@ Window {
             text: "About"
             onClicked: parent.state = "ABOUT"
         }
+
+        Button {
+            id: identifyButton
+            text: "Identify"
+            onClicked: parent.state = "IDENTIFY"
+        }
+    }
+
+    QgsQuick.IdentifyKit {
+        id: identifyKit
+        project: project
     }
 
     QgsQuick.ScaleBar {

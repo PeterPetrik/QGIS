@@ -20,6 +20,7 @@ SET(QGIS_QUICK_GUI_MOC_HDRS
   qgsquickmapcanvasmap.h
   qgsquickmapsettings.h
   qgsquickscalebarkit.h
+  qgsquickidentifykit.h
 )
 
 SET(QGIS_QUICK_GUI_HDRS
@@ -31,6 +32,7 @@ SET(QGIS_QUICK_GUI_SRC
   qgsquickmapcanvasmap.cpp
   qgsquickmapsettings.cpp
   qgsquickscalebarkit.cpp
+  qgsquickidentifykit.cpp
 )
 
 INCLUDE_DIRECTORIES(
