@@ -17,6 +17,7 @@
 #include "qgsquickproject.h"
 #include "qgsquickmapsettings.h"
 #include "qgsquickmapcanvasmap.h"
+#include "qgsquickidentifykit.h"
 
 #include <qgsmaplayer.h>
 #include <qgsquickscalebarkit.h>
@@ -31,6 +32,7 @@ void QgisQuickPlugin::registerTypes(const char *uri)
   qmlRegisterType<QgsQuickMapCanvasMap>(uri, 1, 0, "MapCanvasMap");
   qmlRegisterType<QgsQuickProject>(uri, 1, 0, "Project");
   qmlRegisterType<QgsQuickScaleBarKit>(uri, 1, 0, "ScaleBarKit");
+  qmlRegisterType<QgsQuickIdentifyKit>(uri, 1, 0, "IdentifyKit");
 
   qRegisterMetaType< QList<QgsMapLayer*> >( "QList<QgsMapLayer*>" );
 

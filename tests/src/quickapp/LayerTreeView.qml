@@ -32,7 +32,8 @@ Item {
           id: wrapper
           width: 90
           height: info.height
-          color: ListView.isCurrentItem ? "lightsteelblue" : "transparent"
+          //color: ListView.isCurrentItem ? "lightsteelblue" : "transparent"
+          color: "transparent"
           Text {
             id: info
             text: name

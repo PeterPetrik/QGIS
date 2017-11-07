@@ -34,7 +34,7 @@ public:
   void setProjectFile(const QString& filename);
   QString projectFile() const;
   QList< QgsMapLayer* > layers() const;
-  QgsProject* project() const;
+  QgsProject* project() const; // never returns NULL
 
 signals:
   void projectFileChanged();

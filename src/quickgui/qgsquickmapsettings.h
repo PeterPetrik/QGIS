@@ -25,6 +25,8 @@
 #include <qgsproject.h>
 #include <qgspoint.h>
 
+class QgsQuickProject;
+
 /**
  * \ingroup quick
  * The QgsQuickMapSettings class encapsulates QgsMapSettings class to offer
@@ -36,6 +38,7 @@ class QUICK_EXPORT QgsQuickMapSettings : public QObject
 {
     Q_OBJECT
 
+    Q_PROPERTY( QgsQuickProject* project READ project WRITE setProject NOTIFY projectChanged )
     Q_PROPERTY( QgsRectangle extent READ extent WRITE setExtent NOTIFY extentChanged )
     Q_PROPERTY( QgsRectangle visibleExtent READ visibleExtent NOTIFY visibleExtentChanged )
     Q_PROPERTY( double mapUnitsPerPixel READ mapUnitsPerPixel NOTIFY mapUnitsPerPixelChanged )
@@ -52,6 +55,8 @@ class QUICK_EXPORT QgsQuickMapSettings : public QObject
     QgsRectangle extent() const;
     void setExtent( const QgsRectangle& extent );
 
+    void setProject(QgsQuickProject* project);
+    QgsQuickProject* project() const;
     Q_INVOKABLE void setCenter( const QgsPoint& center );
 
     double mapUnitsPerPixel() const;
@@ -95,6 +100,7 @@ class QUICK_EXPORT QgsQuickMapSettings : public QObject
     void setLayers( const QList<QgsMapLayer*>& layers );
 
   signals:
+    void projectChanged();
     void extentChanged();
     void destinationCrsChanged();
     void mapUnitsPerPixelChanged();
@@ -108,6 +114,7 @@ class QUICK_EXPORT QgsQuickMapSettings : public QObject
     void onReadProject( const QDomDocument& doc );
 
   private:
+    QgsQuickProject* mProject;
     QgsMapSettings mMapSettings;
 
 };

@@ -32,12 +32,34 @@ QgsQuickMapSettings::QgsQuickMapSettings( QObject* parent )
   connect( this, &QgsQuickMapSettings::extentChanged, this, &QgsQuickMapSettings::visibleExtentChanged );
   connect( this, &QgsQuickMapSettings::rotationChanged, this, &QgsQuickMapSettings::visibleExtentChanged );
   connect( this, &QgsQuickMapSettings::outputSizeChanged, this, &QgsQuickMapSettings::visibleExtentChanged );
-  connect( QgsProject::instance(), &QgsProject::readProject, this, &QgsQuickMapSettings::onReadProject );
 }
 
 QgsQuickMapSettings::~QgsQuickMapSettings()
 {
 
+}
+
+void QgsQuickMapSettings::setProject(QgsQuickProject* project) {
+    if (project == mProject)
+        return;
+
+    // If we have already something connected, disconnect it!
+    if (mProject) {
+        disconnect(mProject, 0, this, 0);
+    }
+
+    mProject = project;
+
+    // Connect all signals
+    if (mProject) {
+        connect( mProject, &QgsProject::readProject, this, &QgsQuickMapSettings::onReadProject );
+    }
+
+    emit projectChanged();
+}
+
+QgsQuickProject* QgsQuickMapSettings::project() const {
+    return mProject;
 }
 
 QgsRectangle QgsQuickMapSettings::extent() const
