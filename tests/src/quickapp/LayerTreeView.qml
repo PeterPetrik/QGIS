@@ -1,5 +1,5 @@
 /***************************************************************************
-  qgsquicklayertreemodel.qml
+  LayerTreeView.qml
   --------------------------------------
   Date                 : Nov 2017
   Copyright            : (C) 2017 by Peter Petrik

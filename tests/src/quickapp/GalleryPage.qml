@@ -1,5 +1,5 @@
 /***************************************************************************
-  main.qml
+  EditorGalleryPage.qml
   --------------------------------------
   Date                 : Nov 2017
   Copyright            : (C) 2017 by Peter Petrik
@@ -17,49 +17,25 @@ import QtQuick 2.4
 import QtQuick.Controls 2.2
 import QtQuick.Window 2.2
 import QtQuick.Layouts 1.3
-import '.'
 
-Window {
+import QgisQuick 1.0 as QgsQuick
 
-    visible: true
+Item {
+    Grid {
+        columns: 2
+        spacing: 15
 
-    width: 800
-    height: 600
+        Text {text: qsTr( "ScaleBar")}
+        QgsQuick.ScaleBar {}
 
-    TabBar {
-        id: bar
-        width: parent.width
 
-        TabButton {
-            text: qsTr("Map")
-        }
+        Text {text: qsTr( "ValueMap")}
+        Item {height: 50; width: 100; QgsQuick.ValueMap {}}
 
-        TabButton {
-            text: qsTr("Gallery")
-        }
-        TabButton {
-            text: qsTr("About")
-        }
-    }
+        Text {text: qsTr( "Test3")}
+        Text {text: qsTr( "Test3")}
 
-    StackLayout {
-        id: stack
-        width: parent.width
-        anchors.top: bar.bottom
-
-        currentIndex: bar.currentIndex
-
-        MapPage
-        {
-            id: mapTab
-        }
-
-        GalleryPage {
-            id: galleryTab
-        }
-
-        AboutPage {
-            id: aboutTab
-        }
+        Text {text: qsTr( "Test4")}
+        Text {text: qsTr( "Test4")}
     }
 }
