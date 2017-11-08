@@ -17,6 +17,7 @@
 #include <QQmlApplicationEngine>
 #include <QQmlComponent>
 #include <QtDebug>
+#include <QQmlError>
 #include <QDesktopWidget>
 #include <QQmlContext>
 #include <qqml.h>
@@ -144,7 +145,6 @@ int main(int argc, char *argv[])
 #endif
   init_qgis();
   qDebug("QGIS_PREFIX_PATH: %s", ::getenv("QGIS_PREFIX_PATH"));
-  qDebug("%s", QgsApplication::showSettings().toLocal8Bit().data());
 
   QQmlEngine engine;
   initDeclarative();
@@ -167,16 +167,29 @@ int main(int argc, char *argv[])
   // Some settings for About dialog
   engine.rootContext()->setContextProperty( "qgisVersion", Qgis::QGIS_VERSION );
 
-
   QQmlComponent component(&engine, QUrl("qrc:/main.qml"));
   QObject *object = component.create();
+  \
+  if (!component.errors().isEmpty()) {
+      qDebug("%s", QgsApplication::showSettings().toLocal8Bit().data());
+
+      qDebug() << "****************************************";
+      qDebug() << "*****        QML errors:           *****";
+      qDebug() << "****************************************";
+      for(const QQmlError& error: component.errors()) {
+        qDebug() << "  " << error;
+      }
+      qDebug() << "****************************************";
+      qDebug() << "****************************************";
+  }
+
   if( object == 0 )
   {
-      qDebug() << "Unable to create: main.qml";
+      qDebug() << "FATAL ERROR: unable to create main.qml";
       return EXIT_FAILURE;
-  } else {
-      qDebug() << "main.qml created";
   }
+
+
 
   // Set up the QSettings environment must be done after qapp is created
   QCoreApplication::setOrganizationName( "QGIS" );

@@ -1,0 +1,158 @@
+/***************************************************************************
+  submodel.cpp - SubModel
+
+ ---------------------
+ begin                : 16.9.2016
+ copyright            : (C) 2016 by Matthias Kuhn
+ email                : matthias@opengis.ch
+ ***************************************************************************
+ *                                                                         *
+ *   This program is free software; you can redistribute it and/or modify  *
+ *   it under the terms of the GNU General Public License as published by  *
+ *   the Free Software Foundation; either version 2 of the License, or     *
+ *   (at your option) any later version.                                   *
+ *                                                                         *
+ ***************************************************************************/
+#include "qgsquicksubmodel.h"
+#include <QDebug>
+
+QgsQuickSubModel::QgsQuickSubModel( QObject* parent )
+  : QAbstractItemModel( parent )
+{
+
+}
+
+QModelIndex QgsQuickSubModel::index( int row, int column, const QModelIndex& parent ) const
+{
+  QModelIndex sourceIndex = mModel->index( row, column, parent.isValid() ? mapToSource( parent ) : static_cast<QModelIndex>( mRootIndex ) );
+  return mapFromSource( sourceIndex );
+}
+
+QModelIndex QgsQuickSubModel::parent( const QModelIndex& child ) const
+{
+  QModelIndex idx = mModel->parent( child );
+  if ( idx == mRootIndex )
+    return QModelIndex();
+  else
+    return mapFromSource( idx );
+}
+
+int QgsQuickSubModel::rowCount( const QModelIndex& parent ) const
+{
+  return mModel->rowCount( parent.isValid() ? mapToSource( parent ) : static_cast<QModelIndex>( mRootIndex ) );
+}
+
+int QgsQuickSubModel::columnCount( const QModelIndex& parent ) const
+{
+  return mModel->columnCount( parent.isValid() ? mapToSource( parent ) : static_cast<QModelIndex>( mRootIndex ) );
+}
+
+QVariant QgsQuickSubModel::data( const QModelIndex& index, int role ) const
+{
+  return mModel->data( mapToSource( index ), role );
+}
+
+bool QgsQuickSubModel::setData( const QModelIndex& index, const QVariant& value, int role )
+{
+  return mModel->setData( mapToSource( index ), value, role );
+}
+
+QHash<int, QByteArray> QgsQuickSubModel::roleNames() const
+{
+  return mModel->roleNames();
+}
+
+QModelIndex QgsQuickSubModel::rootIndex() const
+{
+  return mRootIndex;
+}
+
+void QgsQuickSubModel::setRootIndex( const QModelIndex& rootIndex )
+{
+  if ( rootIndex == mRootIndex )
+    return;
+
+  beginResetModel();
+  mRootIndex = rootIndex;
+  endResetModel();
+  emit rootIndexChanged();
+}
+
+QAbstractItemModel* QgsQuickSubModel::model() const
+{
+  return mModel;
+}
+
+void QgsQuickSubModel::setModel( QAbstractItemModel* model )
+{
+  if ( model == mModel )
+    return;
+
+  connect( model, &QAbstractItemModel::rowsAboutToBeInserted, this, &QgsQuickSubModel::onRowsAboutToBeInserted );
+  connect( model, &QAbstractItemModel::rowsInserted, this, &QgsQuickSubModel::onRowsInserted );
+  connect( model, &QAbstractItemModel::rowsAboutToBeRemoved, this, &QgsQuickSubModel::onRowsAboutToBeRemoved );
+  connect( model, &QAbstractItemModel::rowsRemoved, this, &QgsQuickSubModel::onRowsRemoved );
+  connect( model, &QAbstractItemModel::modelAboutToBeReset, this, &QgsQuickSubModel::onModelAboutToBeReset );
+  connect( model, &QAbstractItemModel::modelReset, this, &QAbstractItemModel::modelReset );
+  connect( model, &QAbstractItemModel::dataChanged, this, &QgsQuickSubModel::onDataChanged );
+
+  mModel = model;
+  emit modelChanged();
+}
+
+void QgsQuickSubModel::onRowsAboutToBeInserted( const QModelIndex& parent, int first, int last )
+{
+  emit beginInsertRows( mapFromSource( parent ), first, last );
+}
+
+void QgsQuickSubModel::onRowsInserted( const QModelIndex& parent, int first, int last )
+{
+  Q_UNUSED( parent )
+  Q_UNUSED( first )
+  Q_UNUSED( last )
+  emit endInsertRows();
+}
+
+void QgsQuickSubModel::onRowsAboutToBeRemoved( const QModelIndex& parent, int first, int last )
+{
+  emit beginRemoveRows( mapFromSource( parent ), first, last );
+}
+
+void QgsQuickSubModel::onRowsRemoved( const QModelIndex& parent, int first, int last )
+{
+  Q_UNUSED( parent )
+  Q_UNUSED( first )
+  Q_UNUSED( last )
+  emit endRemoveRows();
+}
+
+void QgsQuickSubModel::onModelAboutToBeReset()
+{
+  mMappings.clear();
+}
+
+void QgsQuickSubModel::onDataChanged( const QModelIndex& topLeft, const QModelIndex& bottomRight, const QVector<int>& roles )
+{
+  emit dataChanged( mapFromSource( topLeft ), mapFromSource( bottomRight ), roles );
+}
+
+QModelIndex QgsQuickSubModel::mapFromSource( const QModelIndex& sourceIndex ) const
+{
+  if ( sourceIndex == mRootIndex || !sourceIndex.isValid() )
+    return QModelIndex();
+
+  if ( !mMappings.contains( sourceIndex.internalId() ) )
+  {
+    mMappings.insert( sourceIndex.internalId(), sourceIndex.parent() );
+  }
+
+  return createIndex( sourceIndex.row(), sourceIndex.column(), sourceIndex.internalId() );
+}
+
+QModelIndex QgsQuickSubModel::mapToSource( const QModelIndex& index ) const
+{
+  if ( !index.isValid() )
+    return mRootIndex;
+
+  return mModel->index( index.row(), index.column(), mMappings.find( index.internalId() ).value() );
+}

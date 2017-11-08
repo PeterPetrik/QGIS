@@ -22,6 +22,7 @@
 #include <qgslayertreemodellegendnode.h>
 #include <qgsproject.h>
 #include <qgsquickproject.h>
+#include "qgsvectorlayer.h"
 
 #include <QString>
 
@@ -29,19 +30,57 @@ QgsQuickLayerTreeModel::QgsQuickLayerTreeModel( QObject* parent )
   : QSortFilterProxyModel( parent )
   , mProject(0)
   , mLayerTreeModel(0)
+  , mLayerTree(0)
 {
   connect( this, &QgsQuickLayerTreeModel::projectChanged, this, &QgsQuickLayerTreeModel::onReadProject );
 }
 
-void QgsQuickLayerTreeModel::onReadProject() {
-    Q_ASSERT(mProject);
-
-    QgsLayerTree* layerTree = mProject->project()->layerTreeRoot();
-
+QgsQuickLayerTreeModel::~QgsQuickLayerTreeModel() {
+    if (mLayerTree) {
+        delete mLayerTree;
+    }
     if (mLayerTreeModel) {
         delete mLayerTreeModel;
     }
-    mLayerTreeModel = new QgsLayerTreeModel(layerTree , this );
+}
+
+void QgsQuickLayerTreeModel::setProject(QgsQuickProject* project) {
+    if (project == mProject)
+        return;
+
+    // If we have already something connected, disconnect it!
+    if (mProject) {
+        Q_ASSERT(mProject->project());
+        disconnect(mProject->project(), 0, this, 0);
+    }
+
+    mProject = project;
+
+    // Connect all signals
+    if (mProject) {
+        Q_ASSERT(mProject->project());
+        connect( mProject->project(), &QgsProject::readProject, this, &QgsQuickLayerTreeModel::onReadProject );
+    }
+
+    emit projectChanged();
+}
+
+void QgsQuickLayerTreeModel::onReadProject() {
+    Q_ASSERT(mProject);
+    if (mLayerTree) {
+        delete mLayerTree;
+    }
+    if (mLayerTreeModel) {
+        delete mLayerTreeModel;
+    }
+
+    mLayerTree = new QgsLayerTree();
+    for(QgsMapLayer* layer: mProject->layers()) {
+        if (layer->isValid() && (layer->type() == QgsMapLayer::VectorLayer) )
+            mLayerTree->addLayer(layer);
+    }
+
+    mLayerTreeModel = new QgsLayerTreeModel(mLayerTree , this );
     setSourceModel( mLayerTreeModel );
 
     qDebug() << "QgsQuickLayerTreeModel qgsproject loaded " << mProject->projectFile();
@@ -69,6 +108,22 @@ QVariant QgsQuickLayerTreeModel::data( const QModelIndex& index, int role ) cons
         return QVariant();
       }
     }
+
+    case VectorLayer:
+    {
+      QgsLayerTreeNode* node = mLayerTreeModel->index2node( mapToSource( index ) );
+      if ( QgsLayerTree::isLayer( node ) )
+      {
+        QgsLayerTreeLayer* nodeLayer = QgsLayerTree::toLayer( node );
+        QgsVectorLayer* layer = qobject_cast<QgsVectorLayer*>( nodeLayer->layer() );
+        return QVariant::fromValue<QgsVectorLayer*>( layer );
+      }
+      else
+      {
+        return QVariant();
+      }
+    }
+
     default:
       return QSortFilterProxyModel::data( index, role );
   }
@@ -78,5 +133,11 @@ QHash<int, QByteArray> QgsQuickLayerTreeModel::roleNames() const
 {
   QHash<int, QByteArray> roleNames = QSortFilterProxyModel::roleNames();
   roleNames[Name] = "name";
+  roleNames[VectorLayer] = "vectorLayer";
+
   return roleNames;
+}
+
+QModelIndex QgsQuickLayerTreeModel::index( int row ) const {
+    return QSortFilterProxyModel::index(row, 0);
 }

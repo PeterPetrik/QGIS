@@ -15,39 +15,40 @@
 
 import QtQuick 2.0
 import QgisQuickApp 1.0
-
+import QtQuick.Controls 2.2
+import QgisQuick 1.0 as QgsQuick
 
 Item {
     property alias project: layerTreeModel.project
+    property var currentLayer
 
     height: layerTreeView.contentHeight
+
+    Rectangle {
+        id: background
+        width: column.width
+        height: column.height
+        color: "white"
+    }
 
     LayerTreeModel {
         id: layerTreeModel
     }
 
-    Component {
-        id: layerTreeItemDelegate
-        Rectangle {
-          id: wrapper
-          width: 90
-          height: info.height
-          //color: ListView.isCurrentItem ? "lightsteelblue" : "transparent"
-          color: "transparent"
-          Text {
-            id: info
-            text: name
-          }
+    Column {
+        id: column
+        Repeater {
+            model: layerTreeModel
+            RadioDelegate {
+                checked: index == 0
+                text: name
+                onCheckedChanged: {
+                    if (checked) {
+                        currentLayer = layerTreeModel.data(layerTreeModel.index(index), LayerTreeModel.VectorLayer);
+                        console.log("active layer:", text, "(", currentLayer, ")");
+                    }
+                }
+            }
         }
-    }
-
-    ListView {
-        id: layerTreeView
-        spacing: 9
-        contentHeight: 300
-        anchors.fill: parent
-        model: layerTreeModel
-        delegate: layerTreeItemDelegate
-        focus: true
     }
 }

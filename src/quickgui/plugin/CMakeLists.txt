@@ -1,0 +1,128 @@
+############################################################
+# sources
+
+SET(QGIS_QUICK_PLUGIN_MOC_HDRS
+  qgsquickplugin.h
+)
+
+SET(QGIS_QUICK_PLUGIN_SRC
+  qgsquickplugin.cpp
+)
+
+SET(QGIS_QUICK_PLUGIN_RESOURCES
+  editor/qgsquickcheckbox.qml
+  editor/qgsquickdatetime.qml
+  editor/qgsquickexternalresource.qml
+  editor/qgsquickrelationreference.qml
+  editor/qgsquicktextedit.qml
+  editor/qgsquickvaluemap.qml
+    
+  qgsquickmapcanvas.qml
+  qgsquickscalebar.qml
+  qgsquickfeatureform.qml
+  qssquickbutton.qml
+  qgsquickdigitizingtoolbar.qml
+
+  qmldir
+
+  js/qgsquickstyle.js
+)
+
+SET(QGIS_QUICK_PLUGIN_THEMES_DIR themes)
+
+INCLUDE_DIRECTORIES(
+  ${CMAKE_CURRENT_SOURCE_DIR}
+  ${CMAKE_CURRENT_BINARY_DIR}
+
+  ${CMAKE_SOURCE_DIR}/src/core
+  ${CMAKE_SOURCE_DIR}/src/core/annotations
+  ${CMAKE_SOURCE_DIR}/src/core/auth
+  ${CMAKE_SOURCE_DIR}/src/core/composer
+  ${CMAKE_SOURCE_DIR}/src/core/fieldformatter
+  ${CMAKE_SOURCE_DIR}/src/core/geometry
+  ${CMAKE_SOURCE_DIR}/src/core/layertree
+  ${CMAKE_SOURCE_DIR}/src/core/layout
+  ${CMAKE_SOURCE_DIR}/src/core/locator
+  ${CMAKE_SOURCE_DIR}/src/core/metadata
+  ${CMAKE_SOURCE_DIR}/src/core/providers/memory
+  ${CMAKE_SOURCE_DIR}/src/core/raster
+  ${CMAKE_SOURCE_DIR}/src/core/scalebar
+  ${CMAKE_SOURCE_DIR}/src/core/symbology
+  ${CMAKE_SOURCE_DIR}/src/core/effects
+  ${CMAKE_SOURCE_DIR}/src/core/metadata
+  ${CMAKE_SOURCE_DIR}/src/core/expression
+  ${CMAKE_SOURCE_DIR}/src/quickgui
+  
+  ${CMAKE_BINARY_DIR}/src/core
+  ${CMAKE_BINARY_DIR}/src/quickgui
+)
+
+INCLUDE_DIRECTORIES(SYSTEM
+  ${LIBZIP_INCLUDE_DIRS}
+  ${SPATIALINDEX_INCLUDE_DIR}
+  ${PROJ_INCLUDE_DIR}
+  ${GEOS_INCLUDE_DIR}
+  ${GDAL_INCLUDE_DIR}
+  ${EXPAT_INCLUDE_DIR}
+  ${SQLITE3_INCLUDE_DIR}
+  ${SPATIALITE_INCLUDE_DIR}
+  ${QCA_INCLUDE_DIR}
+  ${QTKEYCHAIN_INCLUDE_DIR}
+)
+
+ADD_DEFINITIONS(-DCORE_EXPORT=)
+
+
+
+############################################################
+# qgis_quick_plugin module (QML) library
+
+QT5_WRAP_CPP(QGIS_QUICK_PLUGIN_MOC_SRCS ${QGIS_QUICK_PLUGIN_MOC_HDRS})
+IF(MSVC)
+  SET_SOURCE_FILES_PROPERTIES(${QGIS_QUICK_PLUGIN_MOC_SRCS} PROPERTIES COMPILE_FLAGS "/wd4512 /wd4996" )
+ELSE(MSVC)
+  SET_SOURCE_FILES_PROPERTIES(${QGIS_QUICK_PLUGIN_MOC_SRCS} PROPERTIES COMPILE_FLAGS "-Wno-deprecated-declarations" )
+ENDIF(MSVC)
+
+SET(QGIS_QUICK_PLUGIN_RUNTIME_DIR ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/QgisQuick)
+FOREACH (RESOURCE_FILE ${QGIS_QUICK_PLUGIN_RESOURCES})
+  GET_FILENAME_COMPONENT(RESOURCE_FILENAME ${RESOURCE_FILE} NAME)
+  CONFIGURE_FILE(${RESOURCE_FILE} ${QGIS_QUICK_PLUGIN_RUNTIME_DIR}/${RESOURCE_FILENAME} COPYONLY)
+ENDFOREACH(RESOURCE_FILE)
+
+FILE(COPY ${QGIS_QUICK_PLUGIN_THEMES_DIR} DESTINATION ${QGIS_QUICK_PLUGIN_RUNTIME_DIR})
+
+ADD_LIBRARY(qgis_quick_plugin MODULE
+    ${QGIS_QUICK_PLUGIN_SRC}
+    ${QGIS_QUICK_PLUGIN_MOC_HDRS}
+    ${QGIS_QUICK_PLUGIN_MOC_SRCS}
+    ${QGIS_QUICK_PLUGIN_RESOURCES}
+)
+TARGET_LINK_LIBRARIES(qgis_quick_plugin qgis_quick)
+SET_TARGET_PROPERTIES(qgis_quick_plugin PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${QGIS_QUICK_PLUGIN_RUNTIME_DIR})
+TARGET_COMPILE_DEFINITIONS(qgis_quick_plugin PRIVATE "-DQUICK_EXPORT=" "-DDQT_NO_FOREACH")
+
+IF(QMLPLUGINDUMP_FOUND)
+  # QML Types Info (QtCreator QML, only usefull for development)
+  SET(QGIS_QUICK_QUI_TYPEINFO ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/QgisQuick/qgisquick.qmltypes)
+  ADD_CUSTOM_COMMAND(
+      TARGET qgis_quick_plugin
+      COMMAND ${QMLPLUGINDUMP_EXECUTABLE}
+      ARGS QgisQuick 1.0 ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} --output ${QGIS_QUICK_QUI_TYPEINFO} --noinstantiate
+      DEPENDS ${QGIS_QUICK_PLUGIN_RESOURCES}
+      WORKING_DIRECTORY "${QMLPLUGINDUMP_WORK_DIR}"
+      POST_BUILD
+  )
+ENDIF(QMLPLUGINDUMP_FOUND)
+
+# Installation
+SET(QUICK_GUI_INSTALL_DIR ${QGIS_QML_DIR}/QgisQuick)
+INSTALL(TARGETS qgis_quick_plugin
+  RUNTIME DESTINATION ${QUICK_GUI_INSTALL_DIR}
+  LIBRARY DESTINATION ${QUICK_GUI_INSTALL_DIR}
+)
+INSTALL(FILES ${QGIS_QUICK_GUI_QMLS} ${QGIS_QUICK_QUI_TYPEINFO}
+  DESTINATION ${QUICK_GUI_INSTALL_DIR}
+)
+INSTALL(DIRECTORY ${QGIS_QUICK_PLUGIN_THEMES_DIR}
+    DESTINATION ${QUICK_GUI_INSTALL_DIR})

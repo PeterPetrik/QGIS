@@ -26,20 +26,26 @@ class QgsQuickProject;
 class QgsQuickLayerTreeModel : public QSortFilterProxyModel
 {
     Q_OBJECT
-    Q_PROPERTY( QgsQuickProject* project MEMBER mProject NOTIFY projectChanged)
+    Q_PROPERTY( QgsQuickProject* project MEMBER mProject WRITE setProject NOTIFY projectChanged)
 
   public:
     enum Roles
     {
-      Name = Qt::UserRole + 1
+      Name = Qt::UserRole + 1,
+      VectorLayer
     };
     Q_ENUMS( Roles )
 
     explicit QgsQuickLayerTreeModel(QObject* parent = nullptr );
+    ~QgsQuickLayerTreeModel();
 
     Q_INVOKABLE QVariant data( const QModelIndex& index, int role ) const override;
 
+    Q_INVOKABLE QModelIndex index( int row ) const;
+
     QHash<int, QByteArray> roleNames() const override;
+
+    void setProject(QgsQuickProject* project);
 
   signals:
     void projectChanged();
@@ -50,6 +56,7 @@ class QgsQuickLayerTreeModel : public QSortFilterProxyModel
   private:
     QgsQuickProject* mProject;
     QgsLayerTreeModel* mLayerTreeModel;
+    QgsLayerTree* mLayerTree;
 };
 
 #endif // QGSQUICKLAYERTREEMODEL_H

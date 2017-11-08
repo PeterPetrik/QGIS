@@ -23,13 +23,26 @@ import '.' as QgsQuickApp
 Item {
     visible: true
 
-    width: 800 //TODO how to take from parent?
-    height: 700 //TODO how to take from parent?
+    Item {
+      id: stateMachine
+
+      states: [
+        State {
+          name: "browse"
+        },
+
+        State {
+          name: "digitize"
+        }
+      ]
+      state: "browse"
+    }
 
     QgsQuick.Project {
         id: project
         fileName: qgisProject
     }
+
     QgsQuick.MapCanvas {
         id: mapCanvas
         mapSettings.project: project
@@ -39,40 +52,6 @@ Item {
 
         onClicked: {
             identifyKit.identify( Qt.point( mouse.x, mouse.y ) )
-        }
-    }
-
-    ColumnLayout {
-        id: mainMenu
-        anchors.left: parent.left
-        anchors.top: parent.top
-        anchors.margins: 20 // Sets all margins at once
-        states: [
-            State {
-                name: "" // Default state
-                PropertyChanges { target: about; visible: false}
-                PropertyChanges { target: layerTreeView; visible: false}
-            },
-            State {
-                name: "LAYERS";
-                PropertyChanges { target: layerTreeView; visible: true}
-            },
-            State {
-                name: "IDENTIFY";
-                PropertyChanges { target: layerTreeView; visible: false}
-            }
-        ]
-
-        Button {
-            id: layersButton
-            text: "Layers"
-            onClicked: parent.state = "LAYERS"
-        }
-
-        Button {
-            id: identifyButton
-            text: "Identify"
-            onClicked: parent.state = "IDENTIFY"
         }
     }
 
@@ -93,15 +72,43 @@ Item {
 
     QgsQuickApp.LayerTreeView {
         id: layerTreeView
-        visible: false
+        visible: true
         project: project
 
         anchors.top: parent.top
-        anchors.left: mainMenu.right
+        anchors.left: parent.left
         anchors.margins: 20 // Sets all margins at once
     }
+/*
+    QgsQuick.Rubberband {
+      id: digitizingRubberband
+      width: 2 * dp
 
-    /*
+      mapSettings: mapCanvas.mapSettings
+
+      model: QgsQuick.RubberbandModel {
+        currentCoordinate: coordinateLocator.currentCoordinate
+        vectorLayer: layerTreeView.currentLayer
+        crs: mapCanvas.mapSettings.destinationCrs
+      }
+
+      anchors.fill: parent
+
+      visible: stateMachine.state === "digitize"
+    }
+
+
+    QgsQuick.FeatureModel {
+      id: digitizingFeature
+      currentLayer: layerTreeView.currentLayer
+
+      geometry: QgsQuick.Geometry {
+        id: digitizingGeometry
+        rubberbandModel: digitizingRubberband.model
+        vectorLayer: layerTreeView.currentLayer
+      }
+    }
+
     QgsQuick.FeatureForm {
       id: overlayFeatureForm
 
@@ -111,9 +118,9 @@ Item {
       width: parent.width
 
 
-      //model: AttributeFormModel {
-      //  featureModel: digitizingFeature
-      //}
+      model: QgsQuick.AttributeFormModel {
+        featureModel: digitizingFeature
+      }
 
 
       state: "Add"
@@ -124,11 +131,11 @@ Item {
         visible = false
 
 
-        //if ( state === "Add" )
-        //  digitizingRubberband.model.reset()
-        //
+        if ( state === "Add" )
+          digitizingRubberband.model.reset()
+
       }
       onCancelled: visible = false
     }
-    */
+*/
 }
