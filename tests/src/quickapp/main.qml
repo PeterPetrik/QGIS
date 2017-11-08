@@ -20,11 +20,11 @@ import QtQuick.Layouts 1.3
 import '.'
 
 Window {
-
+    id: mainWindow
     visible: true
 
-    width: 800
-    height: 600
+    minimumWidth: 800
+    minimumHeight: 600
 
     TabBar {
         id: bar
@@ -52,6 +52,9 @@ Window {
         MapPage
         {
             id: mapTab
+
+            width: mainWindow.width
+            height: mainWindow.height - bar.height
         }
 
         GalleryPage {

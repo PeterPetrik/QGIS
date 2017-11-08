@@ -23,19 +23,36 @@ import QgisQuick 1.0 as QgsQuick
 Item {
     Grid {
         columns: 2
-        spacing: 15
+        spacing: 25
 
         Text {text: qsTr( "ScaleBar")}
         QgsQuick.ScaleBar {}
 
 
+        Text {text: qsTr( "TextEdit")}
+        Item {
+            width: 200; height: 50
+            Loader {
+                anchors.fill: parent
+                sourceComponent: QgsQuick.TextEdit {
+                    property var value: "Hello Text Edit!"
+                    property var config: {"UseHtml": false, "IsMultiline": false}
+                    property var field: {"isNumeric": false}
+                }
+                //source: './qgsquicktextedit.qml'
+            }
+        }
+
         Text {text: qsTr( "ValueMap")}
-        Item {height: 50; width: 100; QgsQuick.ValueMap {}}
-
-        Text {text: qsTr( "Test3")}
-        Text {text: qsTr( "Test3")}
-
-        Text {text: qsTr( "Test4")}
-        Text {text: qsTr( "Test4")}
+        Item {
+            width: 200; height: 50
+            Loader {
+                anchors.fill: parent
+                sourceComponent: QgsQuick.ValueMap {
+                    property var value: "a"
+                    property var config: {"map": {"A": "a", "B": "b", "C": "c"}}
+                }
+            }
+        }
     }
 }

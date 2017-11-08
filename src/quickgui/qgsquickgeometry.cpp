@@ -1,0 +1,90 @@
+#include "qgsquickgeometry.h"
+
+#include <qgspoint.h>
+#include <qgslinestring.h>
+#include <qgspolygon.h>
+#include <qgsvectorlayer.h>
+
+QgsQuickGeometry::QgsQuickGeometry( QObject* parent )
+  : QObject( parent )
+{
+
+}
+
+QgsGeometry QgsQuickGeometry::asQgsGeometry() const
+{
+  QgsAbstractGeometry* geom = nullptr;
+
+  if ( !mVectorLayer )
+    return QgsGeometry();
+
+  switch ( mVectorLayer->geometryType() )
+  {
+    case QgsWkbTypes::PointGeometry:
+    {
+      geom = new QgsPoint( mRubberbandModel->currentPoint(  mVectorLayer->crs() ) );
+      break;
+    }
+    case QgsWkbTypes::LineGeometry:
+    {
+      QgsLineString* line = new QgsLineString();
+      line->setPoints( mRubberbandModel->pointSequence( mVectorLayer->crs() ) );
+      geom = line;
+      break;
+    }
+    case QgsWkbTypes::PolygonGeometry:
+    {
+      QgsPolygonV2* polygon = new QgsPolygonV2();
+      QgsLineString* ring = new QgsLineString();
+      ring->setPoints( mRubberbandModel->pointSequence( mVectorLayer->crs() ) );
+      polygon->setExteriorRing( ring );
+      geom = polygon;
+      break;
+    }
+
+    break;
+    case QgsWkbTypes::UnknownGeometry:
+      break;
+    case QgsWkbTypes::NullGeometry:
+      break;
+
+  }
+
+  // QgsCoordinateTransform ct( mRubberbandModel->crs(), mVectorLayer->crs() );
+  // return ct.transform( QgsGeometry( geom ) );
+  return QgsGeometry( geom );
+}
+
+QgsQuickRubberbandModel* QgsQuickGeometry::rubberbandModel() const
+{
+  return mRubberbandModel;
+}
+
+void QgsQuickGeometry::setRubberbandModel(QgsQuickRubberbandModel *rubberbandModel )
+{
+  if ( mRubberbandModel == rubberbandModel )
+    return;
+
+  mRubberbandModel = rubberbandModel;
+
+  emit rubberbandModelChanged();
+}
+
+void QgsQuickGeometry::applyRubberband()
+{
+  // TODO: Will need to be implemented for multipart features or polygons with holes.
+}
+
+QgsVectorLayer* QgsQuickGeometry::vectorLayer() const
+{
+  return mVectorLayer;
+}
+
+void QgsQuickGeometry::setVectorLayer( QgsVectorLayer* vectorLayer )
+{
+  if ( mVectorLayer == vectorLayer )
+    return;
+
+  mVectorLayer = vectorLayer;
+  emit vectorLayerChanged();
+}
