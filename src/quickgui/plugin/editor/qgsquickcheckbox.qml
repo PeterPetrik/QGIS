@@ -1,7 +1,5 @@
 import QtQuick 2.0
-
-// TODO Controls 2
-import QtQuick.Controls 1.4
+import QtQuick.Controls 2.2
 
 Item {
   signal valueChanged( var value, bool isNull )
