@@ -22,6 +22,7 @@ QgsQuickProject::QgsQuickProject(QObject *parent)
   : QObject(parent)
 {
     mProject = new QgsProject(parent);
+    connect( mProject, &QgsProject::homePathChanged, this, &QgsQuickProject::homePathChanged );
 }
 
 QgsProject* QgsQuickProject::project() const
@@ -37,6 +38,10 @@ QgsQuickProject::~QgsQuickProject()
 
 QString QgsQuickProject::projectFile() const {
     return mProject->fileName();
+}
+
+QString QgsQuickProject::homePath() const {
+    return mProject->homePath();
 }
 
 void QgsQuickProject::setProjectFile(const QString& filename)

@@ -1,7 +1,7 @@
 import QtQuick 2.5
 
 // TODO Controls 2
-import QtQuick.Controls 1.4
+//import QtQuick.Controls 1.4
 
 //import org.qgis 1.0
 //import "../js/style.js" as Style
@@ -17,7 +17,7 @@ Item {
 
   height: Math.max(image.height, button.height)
 
-  property PictureSource __pictureSource
+  property QgsQuick.PictureSource __pictureSource
 
   Image {
     property var currentValue: value
@@ -31,7 +31,7 @@ Item {
       if (image.status === Image.Error)
         QgsQuick.Style.getThemeIcon("ic_broken_image_black_24dp")
       else if (currentValue)
-        'file://' + qgisProject.homePath + '/' + currentValue
+        'file://' + homePath + '/' + currentValue
       else
         QgsQuick.Style.getThemeIcon("ic_photo_notavailable_white_48dp")
     }
@@ -41,7 +41,7 @@ Item {
 
       onClicked: {
         if (currentValue)
-          platformUtilities.open(image.source, "image/*");
+          QgsQuick.Utils.open(image.source, "image/*");
       }
     }
   }
@@ -56,7 +56,7 @@ Item {
 
     bgcolor: "transparent"
 
-    onClicked: __pictureSource = platformUtilities.getPicture(qgisProject.homePath + '/DCIM')
+    onClicked: __pictureSource = QgsQuick.Utils.getPicture(homePath + '/DCIM')
 
     iconSource: Style.getThemeIcon("ic_camera_alt_border_24dp")
   }

@@ -13,6 +13,8 @@ SET(QGIS_QUICK_GUI_MOC_HDRS
   qgsquickrubberband.h
   qgsquickrubberbandmodel.h
   qgsquicksubmodel.h
+  qgsquickpicturesource.h
+  qgsquickutils.h
 )
 
 SET(QGIS_QUICK_GUI_HDRS
@@ -34,6 +36,8 @@ SET(QGIS_QUICK_GUI_SRC
   qgsquickrubberbandmodel.cpp
   qgsquicksgrubberband.cpp
   qgsquicksubmodel.cpp
+  qgsquickpicturesource.cpp
+  qgsquickutils.cpp
 )
 
 INCLUDE_DIRECTORIES(

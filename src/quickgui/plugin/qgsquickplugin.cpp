@@ -26,13 +26,23 @@
 #include "qgsquickrubberbandmodel.h"
 #include "qgsquicksgrubberband.h"
 #include "qgsquicksubmodel.h"
+#include "qgsquickpicturesource.h"
 
 #include <qgsmaplayer.h>
 #include <qgsquickscalebarkit.h>
+#include <qgsquickutils.h>
+
 
 #include <qgsvectorlayer.h>
 
 #include <qqml.h>
+
+static QObject *_utilsProvider(QQmlEngine *engine, QJSEngine *scriptEngine)
+{
+  Q_UNUSED(engine)
+  Q_UNUSED(scriptEngine)
+  return QgsQuickUtils::instance();
+}
 
 void QgisQuickPlugin::registerTypes(const char *uri)
 {
@@ -50,10 +60,13 @@ void QgisQuickPlugin::registerTypes(const char *uri)
   qmlRegisterType<QgsQuickRubberband>(uri, 1, 0, "Rubberband");
   qmlRegisterType<QgsQuickRubberbandModel>(uri, 1, 0, "RubberbandModel");
   qmlRegisterType<QgsQuickSubModel>(uri, 1, 0, "SubModel");
+  qmlRegisterType<QgsQuickPictureSource>(uri, 1, 0, "PictureSource");
 
   qmlRegisterType<QgsVectorLayer>(uri, 1, 0, "VectorLayer"); //TODO create separate quick class????
 
   qRegisterMetaType< QList<QgsMapLayer*> >( "QList<QgsMapLayer*>" );
   qRegisterMetaType< QList<QgsQuickIdentifyKit::IdentifyResult> >( "QList<IdentifyResult>" );
+
+  qmlRegisterSingletonType<QgsQuickUtils>(uri, 1, 0, "Utils", _utilsProvider);
 }
 
