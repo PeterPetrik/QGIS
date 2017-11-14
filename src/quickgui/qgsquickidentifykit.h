@@ -37,6 +37,7 @@ class QUICK_EXPORT QgsQuickIdentifyKit : public QObject
   public:
     struct IdentifyResult
     {
+      IdentifyResult(): layer(0) {}
       IdentifyResult ( QgsMapLayer* layer, const QgsFeature& feature )
         : layer( layer )
         , feature( feature )
@@ -55,8 +56,7 @@ class QUICK_EXPORT QgsQuickIdentifyKit : public QObject
     double searchRadiusMm() const;
     void setSearchRadiusMm( double searchRadiusMm );
 
-    Q_INVOKABLE QList<IdentifyResult> identify( const QPointF& point );
-    Q_INVOKABLE QgsFeatureList identify( QgsVectorLayer* layer, const QPointF& point );
+    Q_INVOKABLE QgsFeature identifyOne( QgsVectorLayer* layer, const QPointF& point );
 
    signals:
     void mapSettingsChanged();
@@ -65,6 +65,9 @@ class QUICK_EXPORT QgsQuickIdentifyKit : public QObject
   private:
     QgsQuickProject* mProject;
     QgsQuickMapSettings* mMapSettings;
+
+    QList<IdentifyResult> identify( const QPointF& point ); //TODO expose to QML
+    QgsFeatureList identify( QgsVectorLayer* layer, const QPointF& point ); //TODO expose to QML
 
     double searchRadiusMU( const QgsRenderContext& context ) const;
     double searchRadiusMU() const;

@@ -1,5 +1,5 @@
 /***************************************************************************
-  main.qml
+  MapPage.qml
   --------------------------------------
   Date                 : Nov 2017
   Copyright            : (C) 2017 by Peter Petrik
@@ -15,54 +15,143 @@
 
 import QtQuick 2.4
 import QtQuick.Controls 2.2
+import QtQuick.Dialogs 1.2
+import QtQuick.Layouts 1.2
 import QtQuick.Window 2.2
-import QtQuick.Layouts 1.3
-import '.'
+import QgisQuick 1.0 as QgsQuick
+import '.' as QgsQuickApp
 
 Window {
-    id: mainWindow
     visible: true
 
-    minimumWidth: 800
-    minimumHeight: 600
+    width: 800
+    height: 600
 
-    TabBar {
-        id: bar
+    Item {
+      id: stateMachine
+
+      states: [
+        State {
+          name: "browse"
+        },
+
+        State {
+          name: "digitize"
+        }
+      ]
+      state: "browse"
+    }
+
+    QgsQuick.Project {
+        id: project
+        fileName: qgisProject
+    }
+
+    QgsQuick.MapCanvas {
+        id: mapCanvas
+
+        property var vectorLayer: layerTreeView.currentLayer
+
+        mapSettings.project: project
+        mapSettings.layers: project.layers
         width: parent.width
+        height: parent.height
 
-        TabButton {
-            text: qsTr("Map")
-        }
+        onClicked: {
+            var feature = identifyKit.identifyOne( vectorLayer, Qt.point( mouse.x, mouse.y ) )
+            if (feature.isValid)
+            {
+                overlayFeatureForm.visible = false;
+            } else {
+                overlayFeatureForm.visible = true;
+                overlayFeatureForm.state = "Edit";
+                digitizingFeature.feature = feature;
 
-        TabButton {
-            text: qsTr("Gallery")
-        }
-        TabButton {
-            text: qsTr("About")
+            }
         }
     }
 
-    StackLayout {
-        id: stack
-        width: parent.width
-        anchors.top: bar.bottom
-
-        currentIndex: bar.currentIndex
-
-        MapPage
-        {
-            id: mapTab
-
-            width: mainWindow.width
-            height: mainWindow.height - bar.height
-        }
-
-        GalleryPage {
-            id: galleryTab
-        }
-
-        AboutPage {
-            id: aboutTab
-        }
+    QgsQuick.IdentifyKit {
+        id: identifyKit
+        mapSettings: mapCanvas.mapSettings
     }
+
+    QgsQuick.ScaleBar {
+        id: scaleBar
+        preferredWidth: 300 * dp
+        mapSettings: mapCanvas.mapSettings
+
+        anchors.right: parent.right
+        anchors.bottom: parent.bottom
+        anchors.margins: 20
+    }
+
+    QgsQuickApp.LayerTreeView {
+        id: layerTreeView
+        visible: true
+        project: project
+
+        anchors.top: parent.top
+        anchors.left: parent.left
+        anchors.margins: 20 // Sets all margins at once
+    }
+
+    QgsQuick.Rubberband {
+      id: digitizingRubberband
+      width: 2 * dp
+
+      mapSettings: mapCanvas.mapSettings
+
+      model: QgsQuick.RubberbandModel {
+        currentCoordinate: coordinateLocator.currentCoordinate
+        vectorLayer: layerTreeView.currentLayer
+        crs: mapCanvas.mapSettings.destinationCrs
+      }
+
+      anchors.fill: parent
+
+      visible: stateMachine.state === "digitize"
+    }
+
+
+    QgsQuick.FeatureModel {
+      id: digitizingFeature
+      currentLayer: layerTreeView.currentLayer
+
+      geometry: QgsQuick.Geometry {
+        id: digitizingGeometry
+        rubberbandModel: digitizingRubberband.model
+        vectorLayer: layerTreeView.currentLayer
+      }
+    }
+
+    QgsQuick.FeatureForm {
+      id: overlayFeatureForm
+
+      anchors { right: parent.right; top: parent.top; bottom: parent.bottom }
+
+      //width: qfieldSettings.fullScreenIdentifyView ? parent.width : parent.width / 3
+      width: parent.width/ 3
+
+
+      model: QgsQuick.AttributeFormModel {
+        featureModel: digitizingFeature
+      }
+
+
+      state: "Add"
+
+      visible: false
+
+      onSaved: {
+        visible = false
+
+
+        if ( state === "Add" )
+          digitizingRubberband.model.reset()
+
+      }
+      onCancelled: visible = false
+    }
+
 }

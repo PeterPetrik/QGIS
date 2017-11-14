@@ -100,7 +100,7 @@ Item {
         {
           var distance = Math.abs( mouse.x - __initialPosition.x ) + Math.abs( mouse.y - __initialPosition.y )
 
-          if ( distance < 5 * mapArea.dp)
+          if ( distance < 5 * dp)
             mapArea.clicked( mouse )
         }
       }

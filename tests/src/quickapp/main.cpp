@@ -45,7 +45,7 @@ static void init_qgis()
   if (::getenv("QGIS_PREFIX_PATH") == 0)
   {
     qDebug("== Must set QGIS_PREFIX_PATH in order to get QGIS Quick module running! ==");
-    return;
+    //return;
   }
 #endif
 
@@ -137,7 +137,7 @@ int main(int argc, char *argv[])
 {
   QgsApplication app(argc, argv, true);
 #ifndef NDEBUG
-  QQmlDebuggingEnabler enabler;
+  //QQmlDebuggingEnabler enabler;
 #endif
 
 #ifdef QGIS_PREFIX_PATH

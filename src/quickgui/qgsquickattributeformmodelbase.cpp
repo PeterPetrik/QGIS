@@ -95,15 +95,19 @@ void QgsQuickAttributeFormModelBase::setFeatureModel( QgsQuickFeatureModel* feat
   if ( mFeatureModel == featureModel )
     return;
 
-  disconnect( mFeatureModel, &QgsQuickFeatureModel::currentLayerChanged, this, &QgsQuickAttributeFormModelBase::onLayerChanged );
-  disconnect( mFeatureModel, &QgsQuickFeatureModel::featureChanged, this, &QgsQuickAttributeFormModelBase::onFeatureChanged );
-  disconnect( mFeatureModel, &QgsQuickFeatureModel::modelReset, this, &QgsQuickAttributeFormModelBase::onFeatureChanged );
+  if (mFeatureModel) {
+    disconnect( mFeatureModel, &QgsQuickFeatureModel::currentLayerChanged, this, &QgsQuickAttributeFormModelBase::onLayerChanged );
+    disconnect( mFeatureModel, &QgsQuickFeatureModel::featureChanged, this, &QgsQuickAttributeFormModelBase::onFeatureChanged );
+    disconnect( mFeatureModel, &QgsQuickFeatureModel::modelReset, this, &QgsQuickAttributeFormModelBase::onFeatureChanged );
+  }
 
   mFeatureModel = featureModel;
 
-  connect( mFeatureModel, &QgsQuickFeatureModel::currentLayerChanged, this, &QgsQuickAttributeFormModelBase::onLayerChanged );
-  connect( mFeatureModel, &QgsQuickFeatureModel::featureChanged, this, &QgsQuickAttributeFormModelBase::onFeatureChanged );
-  connect( mFeatureModel, &QgsQuickFeatureModel::modelReset, this, &QgsQuickAttributeFormModelBase::onFeatureChanged );
+  if (mFeatureModel) {
+    connect( mFeatureModel, &QgsQuickFeatureModel::currentLayerChanged, this, &QgsQuickAttributeFormModelBase::onLayerChanged );
+    connect( mFeatureModel, &QgsQuickFeatureModel::featureChanged, this, &QgsQuickAttributeFormModelBase::onFeatureChanged );
+    connect( mFeatureModel, &QgsQuickFeatureModel::modelReset, this, &QgsQuickAttributeFormModelBase::onFeatureChanged );
+  }
 
   emit featureModelChanged();
 }

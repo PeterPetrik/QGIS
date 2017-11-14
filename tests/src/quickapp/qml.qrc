@@ -2,8 +2,5 @@
     <qresource prefix="/">
         <file>main.qml</file>
         <file>LayerTreeView.qml</file>
-        <file>AboutPage.qml</file>
-        <file>GalleryPage.qml</file>
-        <file>MapPage.qml</file>
     </qresource>
 </RCC>

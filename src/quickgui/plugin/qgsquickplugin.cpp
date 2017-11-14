@@ -32,6 +32,7 @@
 #include <qgsquickscalebarkit.h>
 #include <qgsquickutils.h>
 #include <qgsrelationmanager.h>
+#include "qgsfeature.h"
 
 #include <qgsvectorlayer.h>
 
@@ -62,11 +63,14 @@ void QgisQuickPlugin::registerTypes(const char *uri)
   qmlRegisterType<QgsQuickSubModel>(uri, 1, 0, "SubModel");
   qmlRegisterType<QgsQuickPictureSource>(uri, 1, 0, "PictureSource");
 
+  //qmlRegisterType< QgsFeature >(uri, 1, 0, "Feature" );
   qmlRegisterType<QgsRelationManager>(uri, 1, 0, "RelationManager"); //TODO create separate quick class????
   qmlRegisterType<QgsVectorLayer>(uri, 1, 0, "VectorLayer"); //TODO create separate quick class????
 
   qRegisterMetaType< QList<QgsMapLayer*> >( "QList<QgsMapLayer*>" );
-  qRegisterMetaType< QList<QgsQuickIdentifyKit::IdentifyResult> >( "QList<IdentifyResult>" );
+  //qRegisterMetaType< QList<QgsQuickIdentifyKit::IdentifyResult> >( "QList<IdentifyResult>" );
+  //qRegisterMetaType< QgsFeatureList > ( "FeatureList" );
+  qRegisterMetaType< QgsFeature > ( "Feature ");
 
   qmlRegisterSingletonType<QgsQuickUtils>(uri, 1, 0, "Utils", _utilsProvider);
 }
