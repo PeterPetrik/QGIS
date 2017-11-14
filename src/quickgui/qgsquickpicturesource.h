@@ -1,10 +1,9 @@
 /***************************************************************************
-  picturesource.h - PictureSource
-
- ---------------------
- begin                : 5.7.2016
- copyright            : (C) 2016 by Matthias Kuhn
- email                : matthias@opengis.ch
+ qgsquickpicturesource.h
+  --------------------------------------
+  Date                 : 5.7.2016
+  Copyright            : (C) 2016 by Matthias Kuhn
+  Email                : matthias@opengis.ch
  ***************************************************************************
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -13,6 +12,7 @@
  *   (at your option) any later version.                                   *
  *                                                                         *
  ***************************************************************************/
+
 #ifndef QGSQUICKPICTURESOURCE_H
 #define QGSQUICKPICTURESOURCE_H
 

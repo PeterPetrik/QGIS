@@ -1,10 +1,9 @@
 /***************************************************************************
-  rubberbandmodel.cpp - RubberbandModel
-
- ---------------------
- begin                : 10.6.2016
- copyright            : (C) 2016 by Matthias Kuhn
- email                : matthias@opengis.ch
+ qgsquicksrubberbandmodel.cpp
+  --------------------------------------
+  Date                 : 10.6.2016
+  Copyright            : (C) 2016 by Matthias Kuhn
+  Email                : matthias@opengis.ch
  ***************************************************************************
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -13,6 +12,7 @@
  *   (at your option) any later version.                                   *
  *                                                                         *
  ***************************************************************************/
+
 #include "qgsquickrubberbandmodel.h"
 #include <qgsvectorlayer.h>
 

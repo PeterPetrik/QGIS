@@ -1,9 +1,9 @@
 /***************************************************************************
-  qgsquickmapcanvas.qml
+ qgsquickmapcanvas.qml
   --------------------------------------
   Date                 : 10.12.2014
   Copyright            : (C) 2014 by Matthias Kuhn
-  Email                : matthias (at) opengis.ch
+  Email                : matthias@opengis.ch
  ***************************************************************************
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *

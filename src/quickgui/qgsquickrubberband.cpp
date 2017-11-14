@@ -1,10 +1,9 @@
 /***************************************************************************
-  rubberband.cpp - Rubberband
-
- ---------------------
- begin                : 11.6.2016
- copyright            : (C) 2016 by Matthias Kuhn (OPENGIS.ch)
- email                : matthias@opengis.ch
+ qgsquicksrubberband.cpp
+  --------------------------------------
+  Date                 : 11.6.2016
+  Copyright            : (C) 2016 by Matthias Kuhn
+  Email                : matthias@opengis.ch
  ***************************************************************************
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
