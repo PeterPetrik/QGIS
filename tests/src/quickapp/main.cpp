@@ -88,7 +88,7 @@ static void init_qgis()
     qgisDataFiles << "lines.shp" <<"lines.dbf" << "lines.prj" << "lines.shx";
     qgisDataFiles << "points.shp" <<"points.dbf" << "points.prj" << "points.shx";
     qgisDataFiles << "polys.shp" <<"polys.dbf" << "polys.prj" << "polys.shx";
-    qgisDataFiles << "test_project.qgs";
+    qgisDataFiles << "test_project.qgs" << "photo.png";
 
     foreach (const QString& dataFile, qgisDataFiles)
     {

@@ -22,10 +22,10 @@
   <mapcanvas>
     <units>degrees</units>
     <extent>
-      <xmin>-115.1212862022961616</xmin>
-      <ymin>19.96114832951051454</ymin>
-      <xmax>-78.23179337157220914</xmax>
-      <ymax>43.29036640820035586</ymax>
+      <xmin>-119.80118356386469713</xmin>
+      <ymin>23.95241214538275187</ymin>
+      <xmax>-82.91169073314071625</xmax>
+      <ymax>47.28163022407258609</ymax>
     </extent>
     <rotation>0</rotation>
     <projections>0</projections>
@@ -164,6 +164,15 @@
         </edittype>
         <edittype widgetv2type="TextEdit" name="Value">
           <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
+        </edittype>
+        <edittype widgetv2type="CheckBox" name="Blocked">
+          <widgetv2config fieldEditable="1" UncheckedState="free" constraint="" CheckedState="blocked" labelOnTop="0" constraintDescription="" notNull="0"/>
+        </edittype>
+        <edittype widgetv2type="ExternalResource" name="Situation">
+          <widgetv2config RelativeStorage="0" fieldEditable="1" DocumentViewer="0" FileWidgetButton="1" constraint="" FileWidget="1" StorageMode="0" labelOnTop="0" constraintDescription="" notNull="0" FileWidgetFilter=""/>
+        </edittype>
+        <edittype widgetv2type="DateTime" name="BlockStart">
+          <widgetv2config fieldEditable="1" calendar_popup="0" allow_null="0" display_format="yyyy-MM-dd" field_format="yyyy-MM-dd" constraint="" labelOnTop="0" constraintDescription="" notNull="0"/>
         </edittype>
       </edittypes>
       <renderer-v2 attr="Name" forceraster="0" symbollevels="0" type="categorizedSymbol" enableorderby="0">
@@ -438,6 +447,9 @@
       <aliases>
         <alias field="Name" index="0" name=""/>
         <alias field="Value" index="1" name=""/>
+        <alias field="Blocked" index="2" name=""/>
+        <alias field="Situation" index="3" name=""/>
+        <alias field="BlockStart" index="4" name=""/>
       </aliases>
       <excludeAttributesWMS/>
       <excludeAttributesWFS/>
@@ -447,6 +459,9 @@
           <column width="-1" hidden="0" type="field" name="Name"/>
           <column width="-1" hidden="0" type="field" name="Value"/>
           <column width="-1" hidden="1" type="actions"/>
+          <column width="-1" hidden="0" type="field" name="Blocked"/>
+          <column width="-1" hidden="0" type="field" name="Situation"/>
+          <column width="-1" hidden="0" type="field" name="BlockStart"/>
         </columns>
       </attributetableconfig>
       <editform>.</editform>
@@ -480,6 +495,9 @@ def my_form_open(dialog, layer, feature):
       <defaults>
         <default field="Name" expression=""/>
         <default field="Value" expression=""/>
+        <default field="Blocked" expression=""/>
+        <default field="Situation" expression=""/>
+        <default field="BlockStart" expression=""/>
       </defaults>
       <previewExpression>COALESCE( "Name", '&lt;NULL>' )</previewExpression>
     </maplayer>
@@ -516,8 +534,12 @@ def my_form_open(dialog, layer, feature):
         <map-layer-style name=""/>
       </map-layer-style-manager>
       <edittypes>
-        <edittype widgetv2type="TextEdit" name="Class">
-          <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
+        <edittype widgetv2type="ValueMap" name="Class">
+          <widgetv2config fieldEditable="1" constraint="" labelOnTop="0" constraintDescription="" notNull="1">
+            <value key="B52" value="B52"/>
+            <value key="Biplane" value="Biplane"/>
+            <value key="Jet" value="Jet"/>
+          </widgetv2config>
         </edittype>
         <edittype widgetv2type="TextEdit" name="Heading">
           <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
@@ -932,8 +954,11 @@ def my_form_open(dialog, layer, feature):
         <map-layer-style name=""/>
       </map-layer-style-manager>
       <edittypes>
-        <edittype widgetv2type="TextEdit" name="Name">
-          <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
+        <edittype widgetv2type="ValueMap" name="Name">
+          <widgetv2config fieldEditable="1" constraint="" labelOnTop="0" constraintDescription="" notNull="0">
+            <value key="Dam" value="Dam"/>
+            <value key="Lake" value="Lake"/>
+          </widgetv2config>
         </edittype>
         <edittype widgetv2type="TextEdit" name="Value">
           <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>

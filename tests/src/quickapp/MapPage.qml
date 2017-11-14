@@ -79,7 +79,7 @@ Item {
         anchors.left: parent.left
         anchors.margins: 20 // Sets all margins at once
     }
-/*
+
     QgsQuick.Rubberband {
       id: digitizingRubberband
       width: 2 * dp
@@ -137,5 +137,5 @@ Item {
       }
       onCancelled: visible = false
     }
-*/
+
 }
