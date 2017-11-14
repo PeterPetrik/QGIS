@@ -22,6 +22,12 @@
 
 class QgsMapLayer;
 class QgsProject;
+class QgsRelationManager;
+
+/* TODO
+ * Probably can be removed altogether. We just need a property for layers for mapsettings, everything else
+ * can be taken from QgsProject
+ */
 
 class QUICK_EXPORT QgsQuickProject : public QObject
 {
@@ -30,13 +36,14 @@ class QUICK_EXPORT QgsQuickProject : public QObject
   Q_PROPERTY(QList< QgsMapLayer* > layers READ layers NOTIFY projectFileChanged)
   Q_PROPERTY(QgsProject* project READ project)
   Q_PROPERTY(QString homePath READ homePath NOTIFY homePathChanged )
+  Q_PROPERTY(QgsRelationManager* relationManager READ relationManager )
   
 public:
   void setProjectFile(const QString& filename);
   QString projectFile() const;
   QList< QgsMapLayer* > layers() const;
   QgsProject* project() const; // never returns NULL
-
+  QgsRelationManager* relationManager() const;
   QString homePath() const;
 
 signals:

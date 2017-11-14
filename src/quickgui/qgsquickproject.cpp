@@ -44,6 +44,10 @@ QString QgsQuickProject::homePath() const {
     return mProject->homePath();
 }
 
+QgsRelationManager* QgsQuickProject::relationManager() const {
+    return mProject->relationManager();
+}
+
 void QgsQuickProject::setProjectFile(const QString& filename)
 {
   mProject->setFileName(filename);

@@ -13,7 +13,6 @@ SET(QGIS_QUICK_PLUGIN_RESOURCES
   editor/qgsquickcheckbox.qml
   editor/qgsquickdatetime.qml
   editor/qgsquickexternalresource.qml
-  editor/qgsquickrelationreference.qml
   editor/qgsquicktextedit.qml
   editor/qgsquickvaluemap.qml
     
