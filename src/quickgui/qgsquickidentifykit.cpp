@@ -83,6 +83,16 @@ QList<QgsQuickIdentifyKit::IdentifyResult> QgsQuickIdentifyKit::identify( const 
   return results;
 }
 
+QgsFeature QgsQuickIdentifyKit::identifyOne( QgsVectorLayer* layer, const QPointF& point ) {
+    QgsFeatureList results = identify(layer, point);
+    if (results.empty()) {
+        QgsFeature f = QgsFeature();
+        f.setValid(false);
+        return f;
+    } else {
+        return results.first();
+    }
+}
 
 QgsFeatureList QgsQuickIdentifyKit::identify( QgsVectorLayer* layer, const QPointF& point ) {
     QgsFeatureList results;

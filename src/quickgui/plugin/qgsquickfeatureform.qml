@@ -230,7 +230,29 @@ Page {
         id: placeholder
         height: childrenRect.height
         anchors { left: parent.left; right: rememberCheckbox.left; top: constraintDescriptionLabel.bottom }
+/*
+        Component {
+            id: textEdit
+            QgsQuick.TextEdit {
+                          property var value: AttributeValue
+                          property var config: EditorWidgetConfig
+                          property var widget: EditorWidget
+                          property var field: Field
+                          property var constraintValid: ConstraintValid
+            }
+        }
 
+        Component {
+            id: checkBox
+            QgsQuick.CheckBox {
+                          property var value: AttributeValue
+                          property var config: EditorWidgetConfig
+                          property var widget: EditorWidget
+                          property var field: Field
+                          property var constraintValid: ConstraintValid
+            }
+        }
+*/
         Loader {
           id: attributeEditorLoader
 
@@ -238,22 +260,21 @@ Page {
           anchors { left: parent.left; right: parent.right }
 
           enabled: form.state !== "ReadOnly" && !!AttributeEditable
+          active: widget !== 'Hidden'
+
+
           property var value: AttributeValue
           property var config: EditorWidgetConfig
-          property var widget: EditorWidget
+          property string widget: EditorWidget
           property var field: Field
           property var constraintValid: ConstraintValid
-
-          active: widget !== 'Hidden'
-          //source: 'editorwidgets/' + widget + '.qml'
-          source: "qgsquicktextedit.qml"
+          source: 'qgsquick' + widget.toLowerCase() + '.qml'
 
           onStatusChanged: {
             if ( attributeEditorLoader.status === Loader.Error )
             {
-              console.warn( "Editor widget type '" + EditorWidget + "' not avaliable." )
-              // source = 'editorwidgets/TextEdit.qml'
-              source = 'qgsquicktextedit.qml'
+              console.warn( "Editor widget type '" + EditorWidget + "' is not supported" );
+              attributeEditorLoader.source = 'qgsquicktextedit.qml';
             }
           }
         }
