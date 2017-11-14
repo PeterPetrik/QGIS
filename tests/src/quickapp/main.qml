@@ -86,6 +86,8 @@ Window {
         anchors.margins: 20
     }
 
+
+
     QgsQuickApp.LayerTreeView {
         id: layerTreeView
         visible: true

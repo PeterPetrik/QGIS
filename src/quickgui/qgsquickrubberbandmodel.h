@@ -1,10 +1,9 @@
 /***************************************************************************
-  rubberbandmodel.h - RubberbandModel
-
- ---------------------
- begin                : 10.6.2016
- copyright            : (C) 2016 by Matthias Kuhn
- email                : matthias@opengis.ch
+ qgsquicksrubberbandmodel.h
+  --------------------------------------
+  Date                 : 10.6.2016
+  Copyright            : (C) 2016 by Matthias Kuhn
+  Email                : matthias@opengis.ch
  ***************************************************************************
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -13,6 +12,7 @@
  *   (at your option) any later version.                                   *
  *                                                                         *
  ***************************************************************************/
+
 #ifndef QGSQUICKRUBBERBANDMODEL_H
 #define QGSQUICKRUBBERBANDMODEL_H
 

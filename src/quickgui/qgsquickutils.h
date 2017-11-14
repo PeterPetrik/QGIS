@@ -1,13 +1,10 @@
 /***************************************************************************
-                            androidplatformutilities.h  -  utilities for qfield
-
-                              -------------------
-              begin                : February 2016
-              copyright            : (C) 2016 by Matthias Kuhn
-              email                : matthias@opengis.ch
- ***************************************************************************/
-
-/***************************************************************************
+  qgsquickutils.h
+  --------------------------------------
+  Date                 : Nov 2017
+  Copyright            : (C) 2017 by Peter Petrik
+  Email                : zilolv at gmail dot com
+ ***************************************************************************
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *

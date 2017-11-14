@@ -1,10 +1,9 @@
 /***************************************************************************
-  submodel.h - SubModel
-
- ---------------------
- begin                : 16.9.2016
- copyright            : (C) 2016 by Matthias Kuhn
- email                : matthias@opengis.ch
+ qgsquicksubmodel.h
+  --------------------------------------
+  Date                 : 16.9.2016
+  Copyright            : (C) 2016 by Matthias Kuhn
+  Email                : matthias@opengis.ch
  ***************************************************************************
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
