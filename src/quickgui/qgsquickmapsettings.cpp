@@ -14,7 +14,6 @@
  ***************************************************************************/
 
 #include "qgsquickmapsettings.h"
-#include "qgsquickproject.h"
 
 #include <qgsmaplayer.h>
 #include <qgsproject.h>
@@ -41,28 +40,31 @@ QgsQuickMapSettings::~QgsQuickMapSettings()
 
 }
 
-void QgsQuickMapSettings::setProject(QgsQuickProject* project) {
+void QgsQuickMapSettings::setProject(QgsProject* project) {
     if (project == mProject)
         return;
 
     // If we have already something connected, disconnect it!
     if (mProject) {
-        Q_ASSERT(mProject->project());
-        disconnect(mProject->project(), 0, this, 0);
+        disconnect(mProject, 0, this, 0);
     }
 
     mProject = project;
 
     // Connect all signals
     if (mProject) {
-        Q_ASSERT(mProject->project());
-        connect( mProject->project(), &QgsProject::readProject, this, &QgsQuickMapSettings::onReadProject );
-    }
+        connect( mProject, &QgsProject::readProject, this, &QgsQuickMapSettings::onReadProject );
 
+        // TODO: we have a problem here, since project can have alread .qgs loaded, so
+        // we are unable to get DOM to reload project settings for the canvas
+        // fortunately setProject is used only once at the very beginning of the run,
+        // so it should work ....
+        setDestinationCrs(mProject->crs());
+    }
     emit projectChanged();
 }
 
-QgsQuickProject* QgsQuickMapSettings::project() const {
+QgsProject* QgsQuickMapSettings::project() const {
     return mProject;
 }
 

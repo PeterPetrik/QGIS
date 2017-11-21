@@ -21,7 +21,6 @@
 #include <qgsvectorlayer.h>
 #include <qgslayertreemodellegendnode.h>
 #include <qgsproject.h>
-#include <qgsquickproject.h>
 #include "qgsvectorlayer.h"
 
 #include <QString>
@@ -44,22 +43,20 @@ QgsQuickLayerTreeModel::~QgsQuickLayerTreeModel() {
     }
 }
 
-void QgsQuickLayerTreeModel::setProject(QgsQuickProject* project) {
+void QgsQuickLayerTreeModel::setProject(QgsProject* project) {
     if (project == mProject)
         return;
 
     // If we have already something connected, disconnect it!
     if (mProject) {
-        Q_ASSERT(mProject->project());
-        disconnect(mProject->project(), 0, this, 0);
+        disconnect(mProject, 0, this, 0);
     }
 
     mProject = project;
 
     // Connect all signals
     if (mProject) {
-        Q_ASSERT(mProject->project());
-        connect( mProject->project(), &QgsProject::readProject, this, &QgsQuickLayerTreeModel::onReadProject );
+        connect( mProject, &QgsProject::readProject, this, &QgsQuickLayerTreeModel::onReadProject );
     }
 
     emit projectChanged();
@@ -75,15 +72,17 @@ void QgsQuickLayerTreeModel::onReadProject() {
     }
 
     mLayerTree = new QgsLayerTree();
+    /* TODO !!!!
     for(QgsMapLayer* layer: mProject->layers()) {
         if (layer->isValid() && (layer->type() == QgsMapLayer::VectorLayer) )
             mLayerTree->addLayer(layer);
     }
+    */
 
     mLayerTreeModel = new QgsLayerTreeModel(mLayerTree , this );
     setSourceModel( mLayerTreeModel );
 
-    qDebug() << "QgsQuickLayerTreeModel qgsproject loaded " << mProject->projectFile();
+    qDebug() << "QgsQuickLayerTreeModel qgsproject loaded " << mProject->fileName();
 
     reset();
 }

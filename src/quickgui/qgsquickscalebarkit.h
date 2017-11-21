@@ -66,6 +66,7 @@ signals:
 
 public slots:
   void updateScaleBar();
+  void setCrs();
 
 private:
   double screenUnitsToMeters() const;

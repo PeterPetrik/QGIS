@@ -15,7 +15,6 @@
 
 #include "qgsquickmapcanvasmap.h"
 #include "qgsquickmapsettings.h"
-#include "qgsquickproject.h"
 
 #include <qgsmaprendererparalleljob.h>
 #include <qgsvectorlayer.h>
@@ -25,6 +24,7 @@
 #include <qgspallabeling.h>
 #include <QSGSimpleTextureNode>
 #include <QtConcurrent>
+#include <qgsproject.h>
 
 QgsQuickMapCanvasMap::QgsQuickMapCanvasMap(  QQuickItem* parent )
   : QQuickItem( parent )
@@ -106,10 +106,9 @@ void QgsQuickMapCanvasMap::refreshMap()
   expressionContext << QgsExpressionContextUtils::globalScope()
                     << QgsExpressionContextUtils::mapSettingsScope( mapSettings );
 
-  QgsQuickProject* project = mMapSettings->project();
+  QgsProject* project = mMapSettings->project();
   if (project) {
-    Q_ASSERT(project->project());
-    expressionContext << QgsExpressionContextUtils::projectScope( project->project() );
+    expressionContext << QgsExpressionContextUtils::projectScope( project );
   }
 
   mapSettings.setExpressionContext( expressionContext );

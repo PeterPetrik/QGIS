@@ -20,9 +20,9 @@ import QgisQuick 1.0 as QgsQuick
 Item {
     property alias mapSettings: scaleBarKit.mapSettings
     property alias preferredWidth: scaleBarKit.preferredWidth
-    property int scaleBarLineWidth: 3  // line width of the scale bar
-    property int scaleBarNotchHeight: 10 // height of the left and right notch
-    property int labelBarMargin: 8 // how far is the label from the scale bar
+    property int scaleBarLineWidth: 3 * QgsQuick.Utils.dp  // line width of the scale bar
+    property int scaleBarNotchHeight: 10 * QgsQuick.Utils.dp // height of the left and right notch
+    property int labelBarMargin: 8 * QgsQuick.Utils.dp // how far is the label from the scale bar
 
     QgsQuick.ScaleBarKit {
         id: scaleBarKit

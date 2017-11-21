@@ -30,7 +30,7 @@ Item {
 
     Item {
       anchors { right: parent.right; left: parent.left }
-      Layout.minimumHeight: 48 * dp
+      Layout.minimumHeight: 48 * QgsQuick.Utils.dp
 
       Rectangle {
         anchors.fill: parent

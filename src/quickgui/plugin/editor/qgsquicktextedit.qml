@@ -1,6 +1,7 @@
 import QtQuick 2.0
 import QtQuick.Controls 2.2
 import QtQuick 2.5
+import QgisQuick 1.0 as QgsQuick
 
 Item {
   signal valueChanged(var value, bool isNull)
@@ -9,9 +10,9 @@ Item {
 
   TextField {
     id: textField
-    height: textArea.height == 0 ? fontMetrics.height + 20 * dp : 0
-    topPadding: 10 * dp
-    bottomPadding: 10 * dp
+    height: textArea.height == 0 ? fontMetrics.height + 20 * QgsQuick.Utils.dp : 0
+    topPadding: 10 * QgsQuick.Utils.dp
+    bottomPadding: 10 * QgsQuick.Utils.dp
     visible: height !== 0
     anchors.left: parent.left
     anchors.right: parent.right
@@ -23,8 +24,8 @@ Item {
 
     background: Rectangle {
       y: textField.height - height - textField.bottomPadding / 2
-      implicitWidth: 120 * dp
-      height: textField.activeFocus ? 2 * dp : 1 * dp
+      implicitWidth: 120 * QgsQuick.Utils.dp
+      height: textField.activeFocus ? 2 * QgsQuick.Utils.dp : 1 * QgsQuick.Utils.dp
       color: textField.activeFocus ? "#4CAF50" : "#C8E6C9"
     }
 

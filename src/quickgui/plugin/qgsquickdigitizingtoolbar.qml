@@ -25,8 +25,8 @@ Row {
   property bool isDigitizing: rubberbandModel.vertexCount > 1 //!< Readonly
   visible: rubberbandModel.vectorLayer !== null
 
-  spacing: 4 * dp
-  padding: 4 * dp
+  spacing: 4 * QgsQuick.Utils.dp
+  padding: 4 * QgsQuick.Utils.dp
 
   signal vertexAdded
   signal vertexRemoved

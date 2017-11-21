@@ -34,8 +34,18 @@ QgsQuickUtils* QgsQuickUtils::instance()
   return sInstance;
 }
 
-QgsQuickUtils::QgsQuickUtils(QObject *parent):QObject(parent)
+QgsQuickUtils::QgsQuickUtils(QObject *parent):
+    QObject(parent)
+  , mDevicePixels(1.0f)
 {
+}
+
+
+void QgsQuickUtils::setDevicePixels(qreal dp) {
+    if (mDevicePixels != dp) {
+        mDevicePixels = dp;
+        emit devicePixelsChanged();
+    }
 }
 
 PictureSource* QgsQuickUtils::getPicture( const QString& prefix )
@@ -60,6 +70,7 @@ PictureSource* QgsQuickUtils::getPicture( const QString& prefix )
   return pictureSource;
 #else
     Q_UNUSED(prefix);
+    return nullptr;
 #endif
 }
 

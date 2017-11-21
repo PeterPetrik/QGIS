@@ -15,7 +15,6 @@
 
 #include "qgsquickidentifykit.h"
 
-#include "qgsquickproject.h"
 #include "qgsquickmapsettings.h"
 //#include "multifeaturelistmodel.h"
 
@@ -28,7 +27,6 @@ QgsQuickIdentifyKit::QgsQuickIdentifyKit( QObject *parent )
   , mMapSettings( nullptr )
   , mSearchRadiusMm( 8 )
 {
-
 }
 
 QgsQuickMapSettings* QgsQuickIdentifyKit::mapSettings() const
@@ -46,9 +44,9 @@ void QgsQuickIdentifyKit::setMapSettings( QgsQuickMapSettings* mapSettings )
 }
 
 
-QList<QgsQuickIdentifyKit::IdentifyResult> QgsQuickIdentifyKit::identify( const QPointF& point )
+QList<QgsQuickIdentifyResult> QgsQuickIdentifyKit::identify( const QPointF& point )
 {
-  QList<IdentifyResult> results;
+  QList<QgsQuickIdentifyResult> results;
 
   if ( !mMapSettings )
   {
@@ -60,7 +58,7 @@ QList<QgsQuickIdentifyKit::IdentifyResult> QgsQuickIdentifyKit::identify( const 
 
   QStringList noIdentifyLayerIdList;
   if (mMapSettings->project()) {
-    noIdentifyLayerIdList = mMapSettings->project()->project()->nonIdentifiableLayers();
+    noIdentifyLayerIdList = mMapSettings->project()->nonIdentifiableLayers();
   }
 
   Q_FOREACH( QgsMapLayer* layer, mMapSettings->mapSettings().layers() )
@@ -74,7 +72,7 @@ QList<QgsQuickIdentifyKit::IdentifyResult> QgsQuickIdentifyKit::identify( const 
         QgsFeatureList featureList = identifyVectorLayer( vl, mapPoint );
 
         Q_FOREACH( const QgsFeature& feature, featureList ) {
-            results.append(IdentifyResult(vl, feature));
+            results.append(QgsQuickIdentifyResult(feature, vl));
         }
     }
   }
@@ -89,6 +87,17 @@ QgsFeature QgsQuickIdentifyKit::identifyOne( QgsVectorLayer* layer, const QPoint
         QgsFeature f = QgsFeature();
         f.setValid(false);
         return f;
+    } else {
+        return results.first();
+    }
+}
+
+
+QgsQuickIdentifyResult QgsQuickIdentifyKit::identifyOne( const QPointF& point ) {
+    QList<QgsQuickIdentifyResult> results = identify(point);
+    if (results.empty()) {
+        QgsQuickIdentifyResult emptyRes;
+        return emptyRes;
     } else {
         return results.first();
     }
