@@ -1,11 +1,11 @@
 ############################################################
 # sources
 SET(QGIS_QUICK_GUI_MOC_HDRS
-  qgsquickproject.h
   qgsquickmapcanvasmap.h
   qgsquickmapsettings.h
   qgsquickscalebarkit.h
   qgsquickidentifykit.h
+  qgsquickidentifyresult.h
   qgsquickattributeformmodel.h
   qgsquickattributeformmodelbase.h
   qgsquickfeaturemodel.h
@@ -23,11 +23,11 @@ SET(QGIS_QUICK_GUI_HDRS
 )
 
 SET(QGIS_QUICK_GUI_SRC
-  qgsquickproject.cpp
   qgsquickmapcanvasmap.cpp
   qgsquickmapsettings.cpp
   qgsquickscalebarkit.cpp
   qgsquickidentifykit.cpp
+  qgsquickidentifyresult.cpp
   qgsquickattributeformmodel.cpp
   qgsquickattributeformmodelbase.cpp
   qgsquickfeaturemodel.cpp
@@ -104,6 +104,30 @@ INSTALL(TARGETS qgis_quick
   ARCHIVE DESTINATION ${QGIS_LIB_DIR}
   FRAMEWORK DESTINATION ${QGIS_FW_SUBDIR}
   PUBLIC_HEADER DESTINATION ${QGIS_INCLUDE_DIR})
+
+IF(NOT APPLE)
+  INSTALL(FILES ${QGIS_QUICK_GUI_HDRS} ${QGIS_QUICK_GUI_MOC_HDRS} DESTINATION ${QGIS_INCLUDE_DIR})
+ELSE(NOT APPLE)
+  SET_TARGET_PROPERTIES(qgis_quick PROPERTIES
+    CLEAN_DIRECT_OUTPUT 1
+    FRAMEWORK 1
+    FRAMEWORK_VERSION "${CPACK_PACKAGE_VERSION_MAJOR}.${CPACK_PACKAGE_VERSION_MINOR}"
+    MACOSX_FRAMEWORK_INFO_PLIST "${CMAKE_SOURCE_DIR}/mac/framework.info.plist.in"
+    MACOSX_FRAMEWORK_SHORT_VERSION_STRING ${COMPLETE_VERSION}
+    MACOSX_FRAMEWORK_IDENTIFIER org.qgis.qgis3_quick
+    BUILD_WITH_INSTALL_RPATH TRUE
+    PUBLIC_HEADER "${QGIS_QUICK_GUI_HDRS};${QGIS_QUICK_GUI_MOC_HDRS}"
+    LINK_FLAGS "${CMAKE_SHARED_LINKER_FLAGS}"
+  )
+  # generated export header does not get copied with PUBLIC_HEADER files
+  ADD_CUSTOM_COMMAND(TARGET qgis_quick
+    POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy qgis_quick.h
+            "${QGIS_OUTPUT_DIRECTORY}/${QGIS_LIB_SUBDIR}/qgis_core.framework/Headers"
+    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+    DEPENDS qgis_quick.h
+  )
+ENDIF(NOT APPLE)
 
 ############################################################
 # qgis_quick_plugin module (QML) library

@@ -26,15 +26,27 @@ class PictureSource;
 class QUICK_EXPORT QgsQuickUtils: public QObject
 {
   Q_OBJECT
+
+  Q_PROPERTY( qreal dp MEMBER mDevicePixels WRITE setDevicePixels NOTIFY devicePixelsChanged )
+
   public:
     static QgsQuickUtils* instance();
+
 
     virtual PictureSource* getPicture( const QString &prefix );
     virtual void open( const QString& data, const QString& type );
 
+    void setDevicePixels(qreal dp);
+
+signals:
+    void devicePixelsChanged();
+
   protected:
     explicit QgsQuickUtils(QObject *parent = 0);
     static QgsQuickUtils* sInstance;
+
+    /* Visual settings */
+    qreal mDevicePixels;
 };
 
 #endif // QGSQUICKUTILS_H

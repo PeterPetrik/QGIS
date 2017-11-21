@@ -21,12 +21,12 @@
 
 class QgsLayerTree;
 class QgsLayerTreeModel;
-class QgsQuickProject;
+class QgsProject;
 
 class QgsQuickLayerTreeModel : public QSortFilterProxyModel
 {
     Q_OBJECT
-    Q_PROPERTY( QgsQuickProject* project MEMBER mProject WRITE setProject NOTIFY projectChanged)
+    Q_PROPERTY( QgsProject* project MEMBER mProject WRITE setProject NOTIFY projectChanged)
 
   public:
     enum Roles
@@ -45,7 +45,7 @@ class QgsQuickLayerTreeModel : public QSortFilterProxyModel
 
     QHash<int, QByteArray> roleNames() const override;
 
-    void setProject(QgsQuickProject* project);
+    void setProject(QgsProject *project);
 
   signals:
     void projectChanged();
@@ -54,7 +54,7 @@ class QgsQuickLayerTreeModel : public QSortFilterProxyModel
     void onReadProject();
 
   private:
-    QgsQuickProject* mProject;
+    QgsProject* mProject;
     QgsLayerTreeModel* mLayerTreeModel;
     QgsLayerTree* mLayerTree;
 };

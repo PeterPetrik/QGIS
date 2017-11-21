@@ -22,10 +22,9 @@
 #include <qgsrectangle.h>
 #include <qgsmapthemecollection.h>
 #include <qgsmapsettings.h>
-#include <qgsproject.h>
 #include <qgspoint.h>
 
-class QgsQuickProject;
+class QgsProject;
 
 /**
  * \ingroup quick
@@ -38,7 +37,7 @@ class QUICK_EXPORT QgsQuickMapSettings : public QObject
 {
     Q_OBJECT
 
-    Q_PROPERTY( QgsQuickProject* project READ project WRITE setProject NOTIFY projectChanged )
+    Q_PROPERTY( QgsProject* project READ project WRITE setProject NOTIFY projectChanged )
     Q_PROPERTY( QgsRectangle extent READ extent WRITE setExtent NOTIFY extentChanged )
     Q_PROPERTY( QgsRectangle visibleExtent READ visibleExtent NOTIFY visibleExtentChanged )
     Q_PROPERTY( double mapUnitsPerPixel READ mapUnitsPerPixel NOTIFY mapUnitsPerPixelChanged )
@@ -55,8 +54,8 @@ class QUICK_EXPORT QgsQuickMapSettings : public QObject
     QgsRectangle extent() const;
     void setExtent( const QgsRectangle& extent );
 
-    void setProject(QgsQuickProject* project);
-    QgsQuickProject* project() const;
+    void setProject(QgsProject* project);
+    QgsProject* project() const;
 
     Q_INVOKABLE void setCenter( const QgsPoint& center );
 
@@ -115,7 +114,7 @@ class QUICK_EXPORT QgsQuickMapSettings : public QObject
     void onReadProject( const QDomDocument& doc );
 
   private:
-    QgsQuickProject* mProject;
+    QgsProject* mProject;
     QgsMapSettings mMapSettings;
 
 };

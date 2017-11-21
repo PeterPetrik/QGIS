@@ -1,6 +1,8 @@
 function getThemeIcon(name) {
 
-  var ppi = dp / 0.00768443;
+
+//  var ppi = dp / 0.00768443;
+  var ppi =  1.0 / 0.00768443;
 
   var ppiRange
   if ( ppi >= 360 )

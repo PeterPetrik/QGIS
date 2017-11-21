@@ -92,7 +92,7 @@ Page {
       TabBar {
         id: tabRow
         visible: model.hasTabs
-        height: 48 * dp
+        height: 48 * QgsQuick.Utils.dp
 
         Connections {
           target: master
@@ -110,11 +110,11 @@ Page {
           TabButton {
             id: tabButton
             text: Name
-            leftPadding: 8 * dp
-            rightPadding: 8 * dp
+            leftPadding: 8 * QgsQuick.Utils.dp
+            rightPadding: 8 * QgsQuick.Utils.dp
 
             width: contentItem.width + leftPadding + rightPadding
-            height: 48 * dp
+            height: 48 * QgsQuick.Utils.dp
 
             contentItem: Text {
               // Make sure the width is derived from the text so we can get wider
@@ -152,7 +152,7 @@ Page {
           id: formPage
           property int currentIndex: index
 
-          anchors.fill: swipeView
+          //anchors.fill: swipeView
 
           Rectangle {
             //anchors.fill: swipeView
@@ -172,7 +172,7 @@ Page {
               // section header: group box name
               Rectangle {
                 width: parent.width
-                height: section === "" ? 0 : 30 * dp
+                height: section === "" ? 0 : 30 * QgsQuick.Utils.dp
                 color: "lightGray"
 
                 Text {
@@ -191,7 +191,14 @@ Page {
             model: QgsQuick.SubModel {
               id: contentModel
               model: form.model
-              rootIndex: form.model.hasTabs ? form.model.index(currentIndex, 0) : undefined
+
+              // TODO modified
+              Binding on rootIndex {
+                  when: form.model.hasTabs
+                  value: form.model.index(currentIndex, 0)
+              }
+
+              //rootIndex: form.model.hasTabs ? form.model.index(currentIndex, 0) : undefined
             }
 
             delegate: fieldItem
@@ -215,7 +222,7 @@ Page {
       anchors {
         left: parent.left
         right: parent.right
-        leftMargin: 12 * dp
+        leftMargin: 12 * QgsQuick.Utils.dp
       }
 
       Controls.Label {
@@ -245,29 +252,7 @@ Page {
         id: placeholder
         height: childrenRect.height
         anchors { left: parent.left; right: rememberCheckbox.left; top: constraintDescriptionLabel.bottom }
-/*
-        Component {
-            id: textEdit
-            QgsQuick.TextEdit {
-                          property var value: AttributeValue
-                          property var config: EditorWidgetConfig
-                          property var widget: EditorWidget
-                          property var field: Field
-                          property var constraintValid: ConstraintValid
-            }
-        }
 
-        Component {
-            id: checkBox
-            QgsQuick.CheckBox {
-                          property var value: AttributeValue
-                          property var config: EditorWidgetConfig
-                          property var widget: EditorWidget
-                          property var field: Field
-                          property var constraintValid: ConstraintValid
-            }
-        }
-*/
         Loader {
           id: attributeEditorLoader
 
@@ -355,7 +340,7 @@ Page {
   /** The title toolbar **/
   ToolBar {
     id: toolbar
-    height: visible ? 48 * dp : 0
+    height: visible ? 48 * QgsQuick.Utils.dp : 0
     visible: form.state === 'Add'
     anchors {
       top: parent.top

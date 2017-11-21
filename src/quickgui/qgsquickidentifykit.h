@@ -17,11 +17,14 @@
 #define QGSQUICKIDENTIFYKIT_H
 
 #include <QObject>
+#include <QPair>
+
 #include "qgis_quick.h"
 #include <qgsfeature.h>
 #include <qgspoint.h>
 #include <qgsmapsettings.h>
 #include <qgsrendercontext.h>
+#include <qgsquickidentifyresult.h>
 
 class QgsQuickProject;
 class QgsMapLayer;
@@ -34,20 +37,7 @@ class QUICK_EXPORT QgsQuickIdentifyKit : public QObject
     Q_PROPERTY( QgsQuickMapSettings* mapSettings READ mapSettings WRITE setMapSettings NOTIFY mapSettingsChanged )
     Q_PROPERTY( double searchRadiusMm READ searchRadiusMm WRITE setSearchRadiusMm NOTIFY searchRadiusMmChanged )
 
-  public:
-    struct IdentifyResult
-    {
-      IdentifyResult(): layer(0) {}
-      IdentifyResult ( QgsMapLayer* layer, const QgsFeature& feature )
-        : layer( layer )
-        , feature( feature )
-      {}
-
-      QgsMapLayer* layer;
-      QgsFeature feature;
-    };
-
-  public:
+  public:   
     explicit QgsQuickIdentifyKit( QObject *parent = 0 );
 
     QgsQuickMapSettings* mapSettings() const;
@@ -57,6 +47,10 @@ class QUICK_EXPORT QgsQuickIdentifyKit : public QObject
     void setSearchRadiusMm( double searchRadiusMm );
 
     Q_INVOKABLE QgsFeature identifyOne( QgsVectorLayer* layer, const QPointF& point );
+    Q_INVOKABLE QgsQuickIdentifyResult identifyOne( const QPointF& point );
+
+    Q_INVOKABLE QList<QgsQuickIdentifyResult> identify( const QPointF& point );
+    Q_INVOKABLE QgsFeatureList identify( QgsVectorLayer* layer, const QPointF& point );
 
    signals:
     void mapSettingsChanged();
@@ -65,9 +59,6 @@ class QUICK_EXPORT QgsQuickIdentifyKit : public QObject
   private:
     QgsQuickProject* mProject;
     QgsQuickMapSettings* mMapSettings;
-
-    QList<IdentifyResult> identify( const QPointF& point ); //TODO expose to QML
-    QgsFeatureList identify( QgsVectorLayer* layer, const QPointF& point ); //TODO expose to QML
 
     double searchRadiusMU( const QgsRenderContext& context ) const;
     double searchRadiusMU() const;

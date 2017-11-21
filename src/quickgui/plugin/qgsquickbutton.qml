@@ -16,6 +16,7 @@
 import QtQuick.Controls 1.4 as Controls
 import QtQuick.Controls.Styles 1.4
 import QtQuick 2.5
+import QgisQuick 1.0 as QgsQuick
 
 Item {
   id: item
@@ -36,8 +37,8 @@ Item {
     rotation.angle = rotation.angle ? 0 : 180
   }
 
-  height: 48 * dp
-  width: 48 * dp
+  height: 48 * QgsQuick.Utils.dp
+  width: 48 * QgsQuick.Utils.dp
 
   Controls.Button {
     id: button

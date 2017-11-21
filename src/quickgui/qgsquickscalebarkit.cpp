@@ -33,6 +33,7 @@ QgsQuickScaleBarKit::QgsQuickScaleBarKit(QObject *parent)
 {
     mDistanceArea->setEllipsoid("WGS84");
 
+    connect(this, SIGNAL(mapSettingsChanged()), this, SLOT(setCrs()));
     connect(this, SIGNAL(mapSettingsChanged()), this, SLOT(updateScaleBar()));
     connect(this, SIGNAL(preferredWidthChanged()), this, SLOT(updateScaleBar()));
 }
@@ -61,9 +62,19 @@ void QgsQuickScaleBarKit::setMapSettings(QgsQuickMapSettings* mapSettings) {
         connect(mMapSettings, SIGNAL(visibleExtentChanged()), this, SLOT(updateScaleBar()));
         connect(mMapSettings, SIGNAL(outputSizeChanged()), this, SLOT(updateScaleBar()));
         connect(mMapSettings, SIGNAL(outputDpiChanged()), this, SLOT(updateScaleBar()));
+
+        connect(mMapSettings, SIGNAL(destinationCrsChanged()), this, SLOT(setCrs()));
     }
 
     emit mapSettingsChanged();
+}
+
+void QgsQuickScaleBarKit::setCrs() {
+    Q_ASSERT(mDistanceArea);
+
+    if (mMapSettings) {
+        mDistanceArea->setSourceCrs(mMapSettings->destinationCrs());
+    }
 }
 
 int QgsQuickScaleBarKit::width() const {
@@ -87,7 +98,7 @@ double QgsQuickScaleBarKit::screenUnitsToMeters() const
     QSize s = mMapSettings->outputSize();
     QPoint pointCenter(s.width()/2, s.height()/2);
     QgsPointXY p1 = mMapSettings->screenToCoordinate(pointCenter);
-    QgsPointXY p2 = mMapSettings->screenToCoordinate(pointCenter+QPoint(mWidth,0));
+    QgsPointXY p2 = mMapSettings->screenToCoordinate(pointCenter+QPoint(mPreferredWidth,0));
     return mDistanceArea->measureLine(p1, p2);
 }
 

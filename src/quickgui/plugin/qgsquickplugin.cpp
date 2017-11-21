@@ -14,7 +14,6 @@
  ***************************************************************************/
 
 #include "qgsquickplugin.h"
-#include "qgsquickproject.h"
 #include "qgsquickmapsettings.h"
 #include "qgsquickmapcanvasmap.h"
 #include "qgsquickidentifykit.h"
@@ -33,8 +32,10 @@
 #include <qgsquickutils.h>
 #include <qgsrelationmanager.h>
 #include "qgsfeature.h"
+#include <qgsproject.h>
 
 #include <qgsvectorlayer.h>
+#include "qgsquickidentifyresult.h"
 
 #include <qqml.h>
 
@@ -51,7 +52,6 @@ void QgisQuickPlugin::registerTypes(const char *uri)
 
   qmlRegisterType<QgsQuickMapSettings>(uri, 1, 0, "MapSettings");
   qmlRegisterType<QgsQuickMapCanvasMap>(uri, 1, 0, "MapCanvasMap");
-  qmlRegisterType<QgsQuickProject>(uri, 1, 0, "Project");
   qmlRegisterType<QgsQuickScaleBarKit>(uri, 1, 0, "ScaleBarKit");
   qmlRegisterType<QgsQuickIdentifyKit>(uri, 1, 0, "IdentifyKit");
   qmlRegisterType<QgsQuickAttributeFormModel>(uri, 1, 0, "AttributeFormModel");
@@ -62,15 +62,22 @@ void QgisQuickPlugin::registerTypes(const char *uri)
   qmlRegisterType<QgsQuickRubberbandModel>(uri, 1, 0, "RubberbandModel");
   qmlRegisterType<QgsQuickSubModel>(uri, 1, 0, "SubModel");
   qmlRegisterType<QgsQuickPictureSource>(uri, 1, 0, "PictureSource");
+  //qmlRegisterType<QgsQuickIdentifyResult>(uri, 1, 0, "IdentifyResult");
 
   //qmlRegisterType< QgsFeature >(uri, 1, 0, "Feature" );
   qmlRegisterType<QgsRelationManager>(uri, 1, 0, "RelationManager"); //TODO create separate quick class????
   qmlRegisterType<QgsVectorLayer>(uri, 1, 0, "VectorLayer"); //TODO create separate quick class????
+  qmlRegisterType<QgsProject>(uri, 1, 0, "Project");
 
+  qRegisterMetaType<QgsQuickIdentifyResult>("QgsQuickIdentifyResult");
+  qRegisterMetaType<QgsPoint>("QgsPoint");
   qRegisterMetaType< QList<QgsMapLayer*> >( "QList<QgsMapLayer*>" );
+
   //qRegisterMetaType< QList<QgsQuickIdentifyKit::IdentifyResult> >( "QList<IdentifyResult>" );
   //qRegisterMetaType< QgsFeatureList > ( "FeatureList" );
-  qRegisterMetaType< QgsFeature > ( "Feature ");
+  qRegisterMetaType< QgsFeature > ( "QgsFeature ");
+  qRegisterMetaType< QgsFeatureId > ( "QgsFeatureId ");
+  qRegisterMetaType< QgsAttributes > ( "QgsAttributes ");
 
   qmlRegisterSingletonType<QgsQuickUtils>(uri, 1, 0, "Utils", _utilsProvider);
 }

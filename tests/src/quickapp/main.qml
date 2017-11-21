@@ -39,7 +39,7 @@ Window {
           name: "digitize"
         }
       ]
-      state: "browse"
+      state: "digitize" ? digitizeCheckBox.checked : "browse"
     }
 
     QgsQuick.Project {
@@ -86,7 +86,25 @@ Window {
         anchors.margins: 20
     }
 
+    Item {
+        anchors.left: parent.left
+        anchors.bottom: parent.bottom
+        anchors.margins: 20
+        width: digitizeCheckBox.width
+        height: digitizeCheckBox.height
 
+        Rectangle {
+            width: parent.width
+            height: parent.height
+            color: white
+        }
+
+        CheckBox {
+            id: digitizeCheckBox
+            checked: false
+            text: qsTr("Digitize")
+        }
+    }
 
     QgsQuickApp.LayerTreeView {
         id: layerTreeView
