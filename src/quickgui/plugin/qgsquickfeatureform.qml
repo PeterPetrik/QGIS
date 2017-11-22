@@ -14,17 +14,13 @@
  ***************************************************************************/
 
 import QtQuick 2.6
-import QtQuick.Controls 2.0
-import QtQuick.Controls 1.4 as Controls
+import QtQuick.Controls 2.2
 import QtQuick.Layouts 1.3
 import QtGraphicalEffects 1.0
 import QtQml.Models 2.2
 import QtQml 2.2
 
-//import org.qgis 1.0
-//import org.qfield 1.0
 import QgisQuick 1.0 as QgsQuick
-//import "js/style.js" as Style
 
 Page {
   signal saved
@@ -225,7 +221,7 @@ Page {
         leftMargin: 12 * QgsQuick.Utils.dp
       }
 
-      Controls.Label {
+      Label {
         id: fieldLabel
 
         text: Name || ''
@@ -233,7 +229,7 @@ Page {
         color: ConstraintValid ? "black" : "#c0392b"
       }
 
-      Controls.Label {
+      Label {
         id: constraintDescriptionLabel
         anchors {
           left: parent.left
@@ -298,7 +294,7 @@ Page {
         }
       }
 
-      Controls.CheckBox {
+      CheckBox {
         id: rememberCheckbox
         checked: RememberValue ? true : false
 

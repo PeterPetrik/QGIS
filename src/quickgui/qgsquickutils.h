@@ -21,7 +21,7 @@
 #include <QObject>
 #include <QString>
 
-class PictureSource;
+class QgsQuickPictureSource;
 
 class QUICK_EXPORT QgsQuickUtils: public QObject
 {
@@ -33,7 +33,7 @@ class QUICK_EXPORT QgsQuickUtils: public QObject
     static QgsQuickUtils* instance();
 
 
-    virtual PictureSource* getPicture( const QString &prefix );
+    virtual QgsQuickPictureSource* getPicture( const QString &prefix );
     virtual void open( const QString& data, const QString& type );
 
     void setDevicePixels(qreal dp);

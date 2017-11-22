@@ -41,7 +41,10 @@ QgsQuickSGRubberband::QgsQuickSGRubberband( const QVector<QgsPoint>& points, Qgs
     case QgsWkbTypes::PolygonGeometry:
     {
       appendChildNode( createLineGeometry( points, width ) );
+#if 0
+//FIXME
       appendChildNode( createPolygonGeometry( points ) );
+#endif
       break;
     }
 

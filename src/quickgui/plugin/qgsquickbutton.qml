@@ -13,8 +13,7 @@
  *                                                                         *
  ***************************************************************************/
 
-import QtQuick.Controls 1.4 as Controls
-import QtQuick.Controls.Styles 1.4
+import QtQuick.Controls 2.2
 import QtQuick 2.5
 import QgisQuick 1.0 as QgsQuick
 
@@ -40,10 +39,11 @@ Item {
   height: 48 * QgsQuick.Utils.dp
   width: 48 * QgsQuick.Utils.dp
 
-  Controls.Button {
+  Button {
     id: button
     anchors.fill: parent
 
+    /* TODO
     style: ButtonStyle {
       background: Rectangle {
         implicitWidth: 100
@@ -60,6 +60,7 @@ Item {
         }
       }
     }
+    */
 
     MouseArea {
       anchors.fill: parent
