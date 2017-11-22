@@ -54,8 +54,7 @@ void QgisQuickPlugin::registerTypes(const char *uri)
   qmlRegisterType<QgsQuickMapCanvasMap>(uri, 1, 0, "MapCanvasMap");
   qmlRegisterType<QgsQuickScaleBarKit>(uri, 1, 0, "ScaleBarKit");
   qmlRegisterType<QgsQuickIdentifyKit>(uri, 1, 0, "IdentifyKit");
-  qmlRegisterType<QgsQuickAttributeFormModel>(uri, 1, 0, "AttributeFormModel");
-  qmlRegisterType<QgsQuickAttributeFormModelBase>(uri, 1, 0, "AttributeFormModelBase");
+
   qmlRegisterType<QgsQuickFeatureModel>(uri, 1, 0, "FeatureModel");
   qmlRegisterType<QgsQuickGeometry>(uri, 1, 0, "Geometry");
   qmlRegisterType<QgsQuickRubberband>(uri, 1, 0, "Rubberband");
@@ -79,6 +78,13 @@ void QgisQuickPlugin::registerTypes(const char *uri)
   qRegisterMetaType< QgsFeatureId > ( "QgsFeatureId ");
   qRegisterMetaType< QgsAttributes > ( "QgsAttributes ");
 
+  qmlRegisterType<QgsQuickAttributeFormModel>(uri, 1, 0, "AttributeFormModel");
+  //qmlRegisterType<QgsQuickAttributeFormModelBase>(uri, 1, 0, "AttributeFormModelBase");
+  //qRegisterMetaType<QgsQuickAttributeFormModel>( "AttributeFormModel");
+  //qRegisterMetaType<QgsQuickAttributeFormModelBase>( "AttributeFormModelBase");
+
   qmlRegisterSingletonType<QgsQuickUtils>(uri, 1, 0, "Utils", _utilsProvider);
+
+  qDebug("REGISTERING FINISHED");
 }
 

@@ -19,10 +19,12 @@
 #include <QMap>
 #include <QString>
 #include <QDebug>
+#include <QThread>
 
 #ifdef ANDROID
 #include <QAndroidJniEnvironment>
 #include <QAndroidJniObject>
+#include <QtAndroid>
 #endif
 
 QgsQuickUtils* QgsQuickUtils::sInstance = 0;
@@ -30,7 +32,10 @@ QgsQuickUtils* QgsQuickUtils::sInstance = 0;
 QgsQuickUtils* QgsQuickUtils::instance()
 {
   if (!sInstance)
+  {
+    qDebug() << "QgsQuickUtils created: " << QThread::currentThreadId();
     sInstance = new QgsQuickUtils();
+  }
   return sInstance;
 }
 
@@ -48,18 +53,19 @@ void QgsQuickUtils::setDevicePixels(qreal dp) {
     }
 }
 
-PictureSource* QgsQuickUtils::getPicture( const QString& prefix )
+QgsQuickPictureSource* QgsQuickUtils::getPicture( const QString& prefix )
 {
-#ifdef ANDROID
+#if 0
+//#ifdef ANDROID
   QAndroidJniObject actionImageCapture = QAndroidJniObject::getStaticObjectField( "android/provider/MediaStore", "ACTION_IMAGE_CAPTURE", "Ljava/lang/String;" );
 
   QAndroidJniObject intent = QAndroidJniObject( "android/content/Intent", "(Ljava/lang/String;)V", actionImageCapture.object<jstring>() );
 
-  PictureSource* pictureSource = nullptr;
+  QgsQuickPictureSource* pictureSource = nullptr;
 
   if ( actionImageCapture.isValid() && intent.isValid() )
   {
-    pictureSource = new PictureSource( prefix );
+    pictureSource = new QgsQuickPictureSource( prefix );
     QtAndroid::startActivity( intent.object<jobject>(), 101, pictureSource );
   }
   else
@@ -76,7 +82,8 @@ PictureSource* QgsQuickUtils::getPicture( const QString& prefix )
 
 void QgsQuickUtils::open( const QString& data, const QString& type )
 {
-#ifdef ANDROID
+#if 0
+//#ifdef ANDROID
   QAndroidJniObject actionView = QAndroidJniObject::getStaticObjectField( "android/intent/action", "ACTION_VIEW", "Ljava/lang/String;" );
 
   QAndroidJniObject intent = QAndroidJniObject( "android/content/Intent", "(Ljava/lang/String;)V", actionView.object<jstring>() );

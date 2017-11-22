@@ -18,6 +18,7 @@
 
 QgsQuickSubModel::QgsQuickSubModel( QObject* parent )
   : QAbstractItemModel( parent )
+  , mModel(0)
 {
 
 }

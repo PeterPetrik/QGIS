@@ -1,11 +1,4 @@
 import QtQuick 2.5
-
-// TODO Controls 2
-//import QtQuick.Controls 1.4
-
-//import org.qgis 1.0
-//import "../js/style.js" as Style
-//import ".." as QField
 import QgisQuick 1.0 as QgsQuick
 
 

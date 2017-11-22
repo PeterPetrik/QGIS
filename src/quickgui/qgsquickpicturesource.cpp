@@ -15,8 +15,6 @@
 
 #include "qgsquickpicturesource.h"
 #ifdef ANDROID
-//#include "qgsmessagelog.h"
-//#include "qgsapplication.h"
 #include <QAndroidJniEnvironment>
 #include <QtAndroid>
 #include <QDir>
@@ -26,7 +24,8 @@
 
 QgsQuickPictureSource::QgsQuickPictureSource( const QString& prefix )
   : QObject( 0 )
-#ifdef ANDROID
+#if 0
+//#ifdef ANDROID
   , QAndroidActivityResultReceiver()
   , mPrefix( prefix )
 #endif
@@ -40,8 +39,9 @@ QgsQuickPictureSource::~QgsQuickPictureSource()
 {
 }
 
-#ifdef ANDROID
-void AndroidPictureSource::handleActivityResult( int receiverRequestCode, int resultCode, const QAndroidJniObject& data )
+#if 0
+//#ifdef ANDROID
+void QgsQuickPictureSource::handleActivityResult( int receiverRequestCode, int resultCode, const QAndroidJniObject& data )
 {
   jint RESULT_OK = QAndroidJniObject::getStaticField<jint>( "android/app/Activity", "RESULT_OK" );
   if ( receiverRequestCode == 101 && resultCode == RESULT_OK )

@@ -2,7 +2,8 @@ import QtQuick 2.0
 import QtQuick.Controls 2.0
 
 // TODO Controls 2
-import QtQuick.Controls 1.4 as Controls
+// import QtQuick.Controls 1.4 as Controls
+
 import QtQuick.Layouts 1.1
 
 //import "../js/style.js" as Style

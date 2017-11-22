@@ -21,10 +21,4 @@ Button 1.0 qgsquickbutton.qml
 DigitizingToolbar 1.0 qgsquickdigitizingtoolbar.qml
 Style 1.0 qgsquickstyle.js
 
-# CheckBox 1.0 qgsquickcheckbox.qml
-# DateTime 1.0 qgsquickdatetime.qml
-# ExternalResource 1.0 qgsquickexternalresource.qml
-# TextEdit 1.0 qgsquicktextedit.qml
-# ValueMap 1.0 qgsquickvaluemap.qml
-
 typeinfo QgisQuick.qmltypes
