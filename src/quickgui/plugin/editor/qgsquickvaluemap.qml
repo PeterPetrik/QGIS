@@ -9,10 +9,11 @@ Item {
   anchors {
     left: parent.left
     right: parent.right
-    rightMargin: 10 * QgsQuick.Utils.dp
+    rightMargin: 10 * QgsQuick.Style.dp
   }
 
-  height: childrenRect.height + 10 * QgsQuick.Utils.dp
+  height: childrenRect.height + 10 * QgsQuick.Style.dp
+
 
 
   ComboBox {
@@ -57,7 +58,7 @@ Item {
     // [hidpi fixes]
     delegate: ItemDelegate {
       width: comboBox.width
-      height: 36 * QgsQuick.Utils.dp
+      height: 36 * QgsQuick.Style.dp
       text: modelData
       font.weight: comboBox.currentIndex === index ? Font.DemiBold : Font.Normal
       font.pointSize: 12
@@ -65,7 +66,7 @@ Item {
     }
 
     contentItem: Text {
-      height: 36 * QgsQuick.Utils.dp
+      height: 36 * QgsQuick.Style.dp
       text: comboBox.displayText
       horizontalAlignment: Text.AlignLeft
       verticalAlignment: Text.AlignVCenter
@@ -73,8 +74,8 @@ Item {
     }
 
     background: Item {
-      implicitWidth: 120 * QgsQuick.Utils.dp
-      implicitHeight: 36 * QgsQuick.Utils.dp
+      implicitWidth: 120 * QgsQuick.Style.dp
+      implicitHeight: 36 * QgsQuick.Style.dp
 
       Rectangle {
         anchors.fill: parent

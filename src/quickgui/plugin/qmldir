@@ -14,8 +14,6 @@ module QgisQuick
 plugin qgis_quick_plugin
 
 MapCanvas 1.0 qgsquickmapcanvas.qml
-LayerTreeView 1.0 qgsquicklayertreeview.qml
-ScaleBar 1.0 qgsquickscalebar.qml
 FeatureForm 1.0 qgsquickfeatureform.qml
 Button 1.0 qgsquickbutton.qml
 

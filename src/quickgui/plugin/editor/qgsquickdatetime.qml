@@ -25,7 +25,7 @@ Item {
 
     Item {
       anchors { right: parent.right; left: parent.left }
-      Layout.minimumHeight: 48 * QgsQuick.Utils.dp
+      Layout.minimumHeight: 48 * QgsQuick.Style.dp
 
       Rectangle {
         anchors.fill: parent

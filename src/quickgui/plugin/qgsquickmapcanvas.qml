@@ -100,7 +100,7 @@ Item {
         {
           var distance = Math.abs( mouse.x - __initialPosition.x ) + Math.abs( mouse.y - __initialPosition.y )
 
-          if ( distance < 5 * QgsQuick.Utils.dp)
+          if ( distance < 5 * QgsQuick.Style.dp)
             mapArea.clicked( mouse )
         }
       }

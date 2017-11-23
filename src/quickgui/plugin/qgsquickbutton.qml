@@ -36,8 +36,8 @@ Item {
     rotation.angle = rotation.angle ? 0 : 180
   }
 
-  height: 48 * QgsQuick.Utils.dp
-  width: 48 * QgsQuick.Utils.dp
+  height: 48 * QgsQuick.Style.dp
+  width: 48 * QgsQuick.Style.dp
 
   Button {
     id: button

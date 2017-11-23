@@ -76,7 +76,7 @@ Window {
         mapSettings: mapCanvas.mapSettings
     }
 
-    QgsQuick.ScaleBar {
+    QgsQuickApp.ScaleBar {
         id: scaleBar
         preferredWidth: 300 * dp
         mapSettings: mapCanvas.mapSettings

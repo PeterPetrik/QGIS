@@ -36,6 +36,7 @@
 
 #include <qgsvectorlayer.h>
 #include "qgsquickidentifyresult.h"
+#include "qgsquickstyle.h"
 
 #include <qqml.h>
 
@@ -44,6 +45,13 @@ static QObject *_utilsProvider(QQmlEngine *engine, QJSEngine *scriptEngine)
   Q_UNUSED(engine)
   Q_UNUSED(scriptEngine)
   return QgsQuickUtils::instance();
+}
+
+static QObject *_styleProvider(QQmlEngine *engine, QJSEngine *scriptEngine)
+{
+  Q_UNUSED(engine)
+  Q_UNUSED(scriptEngine)
+  return QgsQuickUtils::instance()->style();
 }
 
 void QgisQuickPlugin::registerTypes(const char *uri)
@@ -84,6 +92,7 @@ void QgisQuickPlugin::registerTypes(const char *uri)
   //qRegisterMetaType<QgsQuickAttributeFormModelBase>( "AttributeFormModelBase");
 
   qmlRegisterSingletonType<QgsQuickUtils>(uri, 1, 0, "Utils", _utilsProvider);
+  qmlRegisterSingletonType<QgsQuickStyle>(uri, 1, 0, "Style", _styleProvider);
 
   qDebug("REGISTERING FINISHED");
 }

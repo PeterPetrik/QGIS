@@ -1,5 +1,5 @@
 /***************************************************************************
-  qgsquickutils.h
+  qgsquickstyle.h
   --------------------------------------
   Date                 : Nov 2017
   Copyright            : (C) 2017 by Peter Petrik
@@ -13,8 +13,8 @@
  *                                                                         *
  ***************************************************************************/
 
-#ifndef QGSQUICKUTILS_H
-#define QGSQUICKUTILS_H
+#ifndef QGSQUICKSTYLE_H
+#define QGSQUICKSTYLE_H
 
 #include "qgis_quick.h"
 
@@ -22,40 +22,29 @@
 #include <QString>
 #include <QUrl>
 
-class QgsQuickPictureSource;
-class QgsQuickStyle;
-
-class QUICK_EXPORT QgsQuickUtils: public QObject
+class QUICK_EXPORT QgsQuickStyle: public QObject
 {
   Q_OBJECT
 
-  public:
-    static QgsQuickUtils* instance();
+  Q_PROPERTY( qreal dp READ devicePixels WRITE setDevicePixels NOTIFY devicePixelsChanged )
+  Q_PROPERTY( QString theme READ themeDir WRITE setThemeDir NOTIFY themeDirChanged )
 
-    // Common
-    Q_INVOKABLE bool fileExists(QString path);
+public:
+  explicit QgsQuickStyle(QObject *parent = 0);
 
-    // Themes
-    Q_INVOKABLE QUrl getThemeIcon(const QString& name); //from custom theme dir or default if not found in the theme dir
+  qreal devicePixels() const;
+  QString themeDir() const;
 
-    // Android picture capture
-    Q_INVOKABLE QgsQuickPictureSource* getPicture( const QString &prefix );
-    Q_INVOKABLE void open( const QString& data, const QString& type );
-
-    QgsQuickStyle* style() const; //if you want to access it from QML, use Style QML singleton!
+  void setDevicePixels(qreal dp);
+  void setThemeDir(QString dir);
 
 signals:
     void devicePixelsChanged();
     void themeDirChanged();
 
 private:
-    explicit QgsQuickUtils(QObject *parent = 0);
-    ~QgsQuickUtils();
-
-    static QgsQuickUtils* sInstance;
-
-    //created and owned by the singleton
-    QgsQuickStyle* mStyle;
+    QString mThemeDir;
+    qreal mDevicePixels;
 };
 
-#endif // QGSQUICKUTILS_H
+#endif // QGSQUICKSTYLE_H
