@@ -2,7 +2,7 @@ import QtQuick 2.0
 import QtQuick.Controls 2.2
 import QtQuick.Layouts 1.1
 import QgisQuick 1.0 as QgsQuick
-
+import QtQuick.Controls 1.4 as Controls1
 /*
   * field_format
   * display_format
@@ -72,7 +72,8 @@ Item {
       parent: ApplicationWindow.overlay
 
       ColumnLayout {
-        Controls.Calendar {
+
+        Controls1.Calendar {
           id: calendar
           selectedDate: currentValue
           weekNumbersVisible: true
