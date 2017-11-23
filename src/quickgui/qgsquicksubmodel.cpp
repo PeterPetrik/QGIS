@@ -20,7 +20,6 @@ QgsQuickSubModel::QgsQuickSubModel( QObject* parent )
   : QAbstractItemModel( parent )
   , mModel(0)
 {
-
 }
 
 QModelIndex QgsQuickSubModel::index( int row, int column, const QModelIndex& parent ) const

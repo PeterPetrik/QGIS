@@ -67,7 +67,7 @@ void QgisQuickPlugin::registerTypes(const char *uri)
   qmlRegisterType<QgsQuickGeometry>(uri, 1, 0, "Geometry");
   qmlRegisterType<QgsQuickRubberband>(uri, 1, 0, "Rubberband");
   qmlRegisterType<QgsQuickRubberbandModel>(uri, 1, 0, "RubberbandModel");
-  qmlRegisterType<QgsQuickSubModel>(uri, 1, 0, "SubModel");
+
   qmlRegisterType<QgsQuickPictureSource>(uri, 1, 0, "PictureSource");
   //qmlRegisterType<QgsQuickIdentifyResult>(uri, 1, 0, "IdentifyResult");
 
@@ -86,7 +86,9 @@ void QgisQuickPlugin::registerTypes(const char *uri)
   qRegisterMetaType< QgsFeatureId > ( "QgsFeatureId ");
   qRegisterMetaType< QgsAttributes > ( "QgsAttributes ");
 
+  qmlRegisterType<QgsQuickSubModel>(uri, 1, 0, "SubModel");
   qmlRegisterType<QgsQuickAttributeFormModel>(uri, 1, 0, "AttributeFormModel");
+
   //qmlRegisterType<QgsQuickAttributeFormModelBase>(uri, 1, 0, "AttributeFormModelBase");
   //qRegisterMetaType<QgsQuickAttributeFormModel>( "AttributeFormModel");
   //qRegisterMetaType<QgsQuickAttributeFormModelBase>( "AttributeFormModelBase");

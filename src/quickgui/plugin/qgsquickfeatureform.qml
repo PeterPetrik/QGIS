@@ -14,11 +14,15 @@
  ***************************************************************************/
 
 import QtQuick 2.6
-import QtQuick.Controls 2.2
+import QtQuick.Controls 2.0
 import QtQuick.Layouts 1.3
 import QtGraphicalEffects 1.0
 import QtQml.Models 2.2
 import QtQml 2.2
+
+// We use calendar in datetime widget that is not
+// yet implemented in Controls 2.2
+import QtQuick.Controls 1.4 as Controls1
 
 import QgisQuick 1.0 as QgsQuick
 
@@ -148,10 +152,8 @@ Page {
           id: formPage
           property int currentIndex: index
 
-          //anchors.fill: swipeView
-
           Rectangle {
-            //anchors.fill: swipeView
+            anchors.fill: swipeView
             color: "white"
           }
 
@@ -187,14 +189,7 @@ Page {
             model: QgsQuick.SubModel {
               id: contentModel
               model: form.model
-
-              // TODO modified
-              Binding on rootIndex {
-                  when: form.model.hasTabs
-                  value: form.model.index(currentIndex, 0)
-              }
-
-              //rootIndex: form.model.hasTabs ? form.model.index(currentIndex, 0) : undefined
+              rootIndex: form.model.hasTabs ? form.model.index(currentIndex, 0) : undefined
             }
 
             delegate: fieldItem
@@ -256,21 +251,20 @@ Page {
           anchors { left: parent.left; right: parent.right }
 
           enabled: form.state !== "ReadOnly" && !!AttributeEditable
-          active: widget !== 'Hidden'
-
 
           property var value: AttributeValue
           property var config: EditorWidgetConfig
-          property string widget: EditorWidget
+          property var widget: EditorWidget
           property var field: Field
           property var constraintValid: ConstraintValid
-          source: 'qgsquick' + widget.toLowerCase() + '.qml'
+          active: widget !== 'Hidden'
+          source: 'qgsquick' + widget.toLowerCase() + '.qml' // todo move to C++
 
           onStatusChanged: {
             if ( attributeEditorLoader.status === Loader.Error )
             {
               console.warn( "Editor widget type '" + EditorWidget + "' is not supported" );
-              attributeEditorLoader.source = 'qgsquicktextedit.qml';
+              source = 'qgsquicktextedit.qml'; // todo move to C++
             }
           }
         }

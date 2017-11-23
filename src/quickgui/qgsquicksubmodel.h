@@ -17,6 +17,7 @@
 
 #include "qgis_quick.h"
 #include <QAbstractItemModel>
+#include "qgsquickattributeformmodel.h"
 
 class QUICK_EXPORT QgsQuickSubModel : public QAbstractItemModel
 {
