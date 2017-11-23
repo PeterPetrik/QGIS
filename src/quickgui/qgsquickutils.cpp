@@ -15,6 +15,7 @@
 
 #include "qgsquickutils.h"
 #include "qgsquickpicturesource.h"
+#include "qgsquickstyle.h"
 
 #include <QMap>
 #include <QString>
@@ -43,8 +44,19 @@ QgsQuickUtils* QgsQuickUtils::instance()
 
 QgsQuickUtils::QgsQuickUtils(QObject *parent):
     QObject(parent)
-  , mDevicePixels(1.0f)
 {
+    mStyle = new QgsQuickStyle();
+}
+
+QgsQuickUtils::~QgsQuickUtils() {
+    if (mStyle){
+        mStyle = 0;
+        delete mStyle;
+    }
+}
+
+QgsQuickStyle* QgsQuickUtils::style() const {
+    return mStyle;
 }
 
 bool QgsQuickUtils::fileExists(QString path) {
@@ -58,7 +70,9 @@ bool QgsQuickUtils::fileExists(QString path) {
 }
 
 QUrl QgsQuickUtils::getThemeIcon(const QString& name) {
-    float ppi = mDevicePixels / 0.00768443;
+    Q_ASSERT(mStyle);
+
+    float ppi = mStyle->devicePixels() / 0.00768443;
     QString ppitype;
 
     if ( ppi >= 360 )
@@ -73,22 +87,13 @@ QUrl QgsQuickUtils::getThemeIcon(const QString& name) {
         ppitype = "mdpi";
 
     // Check in custom dir
-    QString path(mThemeDir + "/" + ppitype + "/" + name + ".png");
+    QString path(mStyle->themeDir() + "/" + ppitype + "/" + name + ".png");
     if (!fileExists(path)) {
         path = "qrc:/" + ppitype + "/" + name + ".png";
     }
     qDebug() << "Using icon " << name << " from " << path;
     return QUrl(path);
 }
-
-/*
-void QgsQuickUtils::setDevicePixels(qreal dp) {
-    if (mDevicePixels != dp) {
-        mDevicePixels = dp;
-        emit devicePixelsChanged();
-    }
-}
-*/
 
 QgsQuickPictureSource* QgsQuickUtils::getPicture( const QString& prefix )
 {

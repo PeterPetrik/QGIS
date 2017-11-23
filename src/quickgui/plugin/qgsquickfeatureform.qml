@@ -88,7 +88,7 @@ Page {
       TabBar {
         id: tabRow
         visible: model.hasTabs
-        height: 48 * QgsQuick.Utils.dp
+        height: 48 * QgsQuick.Style.dp
 
         Connections {
           target: master
@@ -106,11 +106,11 @@ Page {
           TabButton {
             id: tabButton
             text: Name
-            leftPadding: 8 * QgsQuick.Utils.dp
-            rightPadding: 8 * QgsQuick.Utils.dp
+            leftPadding: 8 * QgsQuick.Style.dp
+            rightPadding: 8 * QgsQuick.Style.dp
 
             width: contentItem.width + leftPadding + rightPadding
-            height: 48 * QgsQuick.Utils.dp
+            height: 48 * QgsQuick.Style.dp
 
             contentItem: Text {
               // Make sure the width is derived from the text so we can get wider
@@ -168,7 +168,7 @@ Page {
               // section header: group box name
               Rectangle {
                 width: parent.width
-                height: section === "" ? 0 : 30 * QgsQuick.Utils.dp
+                height: section === "" ? 0 : 30 * QgsQuick.Style.dp
                 color: "lightGray"
 
                 Text {
@@ -218,7 +218,7 @@ Page {
       anchors {
         left: parent.left
         right: parent.right
-        leftMargin: 12 * QgsQuick.Utils.dp
+        leftMargin: 12 * QgsQuick.Style.dp
       }
 
       Label {
@@ -336,7 +336,7 @@ Page {
   /** The title toolbar **/
   ToolBar {
     id: toolbar
-    height: visible ? 48 * QgsQuick.Utils.dp : 0
+    height: visible ? 48 * QgsQuick.Style.dp : 0
     visible: form.state === 'Add'
     anchors {
       top: parent.top

@@ -12,11 +12,12 @@ Item {
 
   property QgsQuick.PictureSource __pictureSource
 
+
   Image {
     property var currentValue: value
 
     id: image
-    width: 200 * QgsQuick.Utils.dp
+    width: 200 * QgsQuick.Style.dp
     autoTransform: true
     fillMode: Image.PreserveAspectFit
 
@@ -41,8 +42,8 @@ Item {
 
   QgsQuick.Button {
     id: button
-    width: 36 * QgsQuick.Utils.dp
-    height: 36 * QgsQuick.Utils.dp
+    width: 36 * QgsQuick.Style.dp
+    height: 36 * QgsQuick.Style.dp
 
     anchors.right: parent.right
     anchors.bottom: parent.bottom
