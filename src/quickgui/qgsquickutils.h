@@ -20,6 +20,7 @@
 
 #include <QObject>
 #include <QString>
+#include <QUrl>
 
 class QgsQuickPictureSource;
 
@@ -27,23 +28,33 @@ class QUICK_EXPORT QgsQuickUtils: public QObject
 {
   Q_OBJECT
 
-  Q_PROPERTY( qreal dp MEMBER mDevicePixels WRITE setDevicePixels NOTIFY devicePixelsChanged )
+  Q_PROPERTY( qreal dp MEMBER mDevicePixels NOTIFY devicePixelsChanged )
+  Q_PROPERTY( QString theme MEMBER mThemeDir NOTIFY themeDirChanged )
 
   public:
     static QgsQuickUtils* instance();
 
+    // Common
+    Q_INVOKABLE bool fileExists(QString path);
 
-    virtual QgsQuickPictureSource* getPicture( const QString &prefix );
-    virtual void open( const QString& data, const QString& type );
+    // Themes
+    Q_INVOKABLE QUrl getThemeIcon(const QString& name); //from custom theme dir or default if not found in the theme dir
 
-    void setDevicePixels(qreal dp);
+    // Android picture capture
+    Q_INVOKABLE QgsQuickPictureSource* getPicture( const QString &prefix );
+    Q_INVOKABLE void open( const QString& data, const QString& type );
+
 
 signals:
     void devicePixelsChanged();
+    void themeDirChanged();
 
   protected:
     explicit QgsQuickUtils(QObject *parent = 0);
     static QgsQuickUtils* sInstance;
+
+    // Themes
+    QString mThemeDir;
 
     /* Visual settings */
     qreal mDevicePixels;

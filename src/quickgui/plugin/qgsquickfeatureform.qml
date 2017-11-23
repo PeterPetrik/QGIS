@@ -355,7 +355,7 @@ Page {
           fillMode: Image.Pad
           horizontalAlignment: Image.AlignHCenter
           verticalAlignment: Image.AlignVCenter
-          source: QgsQuick.Style.getThemeIcon( "ic_save_white_24dp" )
+          source: QgsQuick.Utils.getThemeIcon( "ic_save_white_24dp" )
         }
         background: Rectangle {
           color: model.constraintsValid ? "#212121" : "#bdc3c7"
@@ -401,7 +401,7 @@ Page {
           fillMode: Image.Pad
           horizontalAlignment: Image.AlignHCenter
           verticalAlignment: Image.AlignVCenter
-          source: QgsQuick.Style.getThemeIcon( "ic_close_white_24dp" )
+          source: QgsQuick.Utils.getThemeIcon( "ic_close_white_24dp" )
         }
 
         onClicked: {

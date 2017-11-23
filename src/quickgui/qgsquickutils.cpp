@@ -20,6 +20,8 @@
 #include <QString>
 #include <QDebug>
 #include <QThread>
+#include <QFileInfo>
+#include <QLibraryInfo>
 
 #ifdef ANDROID
 #include <QAndroidJniEnvironment>
@@ -45,13 +47,48 @@ QgsQuickUtils::QgsQuickUtils(QObject *parent):
 {
 }
 
+bool QgsQuickUtils::fileExists(QString path) {
+    QFileInfo check_file(path);
+    // check if file exists and if yes: Is it really a file and no directory?
+    if (check_file.exists() && check_file.isFile()) {
+        return true;
+    } else {
+        return false;
+    }
+}
 
+QUrl QgsQuickUtils::getThemeIcon(const QString& name) {
+    float ppi = mDevicePixels / 0.00768443;
+    QString ppitype;
+
+    if ( ppi >= 360 )
+        ppitype = "xxxhdpi";
+    else if ( ppi >= 270 )
+        ppitype = "xxhdpi";
+    else if ( ppi >= 180 )
+        ppitype = "xhdpi";
+    else if ( ppi >= 135 )
+        ppitype = "hdpi";
+    else
+        ppitype = "mdpi";
+
+    // Check in custom dir
+    QString path(mThemeDir + "/" + ppitype + "/" + name + ".png");
+    if (!fileExists(path)) {
+        path = "qrc:/" + ppitype + "/" + name + ".png";
+    }
+    qDebug() << "Using icon " << name << " from " << path;
+    return QUrl(path);
+}
+
+/*
 void QgsQuickUtils::setDevicePixels(qreal dp) {
     if (mDevicePixels != dp) {
         mDevicePixels = dp;
         emit devicePixelsChanged();
     }
 }
+*/
 
 QgsQuickPictureSource* QgsQuickUtils::getPicture( const QString& prefix )
 {
