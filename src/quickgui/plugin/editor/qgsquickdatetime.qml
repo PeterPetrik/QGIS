@@ -1,12 +1,6 @@
 import QtQuick 2.0
-import QtQuick.Controls 2.0
-
-// TODO Controls 2
-// import QtQuick.Controls 1.4 as Controls
-
+import QtQuick.Controls 2.2
 import QtQuick.Layouts 1.1
-
-//import "../js/style.js" as Style
 import QgisQuick 1.0 as QgsQuick
 
 /*
@@ -56,7 +50,7 @@ Item {
         }
 
         Image {
-          source: QgsQuick.Style.getThemeIcon("ic_clear_black_18dp")
+          source: QgsQuick.Utils.getThemeIcon("ic_clear_black_18dp")
           anchors.left: parent.right
           visible: main.currentValue !== undefined && config['allow_null']
 

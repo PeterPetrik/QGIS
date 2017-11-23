@@ -22,11 +22,11 @@ Item {
 
     source: {
       if (image.status === Image.Error)
-        QgsQuick.Style.getThemeIcon("ic_broken_image_black_24dp")
+        QgsQuick.Utils.getThemeIcon("ic_broken_image_black_24dp")
       else if (currentValue)
         'file://' + homePath + '/' + currentValue
       else
-        QgsQuick.Style.getThemeIcon("ic_photo_notavailable_white_48dp")
+        QgsQuick.Utils.getThemeIcon("ic_photo_notavailable_white_48dp")
     }
 
     MouseArea {
@@ -51,7 +51,7 @@ Item {
 
     onClicked: __pictureSource = QgsQuick.Utils.getPicture(homePath + '/DCIM')
 
-    iconSource: Style.getThemeIcon("ic_camera_alt_border_24dp")
+    iconSource: QgsQuick.Utils.getThemeIcon("ic_camera_alt_border_24dp")
   }
 
   Connections {

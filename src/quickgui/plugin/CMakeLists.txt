@@ -20,11 +20,8 @@ SET(QGIS_QUICK_PLUGIN_RESOURCES
   qgsquickscalebar.qml
   qgsquickfeatureform.qml
   qgsquickbutton.qml
-  qgsquickdigitizingtoolbar.qml
 
   qmldir
-
-  js/qgsquickstyle.js
 )
 
 SET(QGIS_QUICK_PLUGIN_THEMES_DIR themes)
