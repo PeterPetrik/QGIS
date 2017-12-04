@@ -97,8 +97,7 @@ QUrl QgsQuickUtils::getThemeIcon(const QString& name) {
 
 QgsQuickPictureSource* QgsQuickUtils::getPicture( const QString& prefix )
 {
-#if 0
-//#ifdef ANDROID
+#ifdef ANDROID
   QAndroidJniObject actionImageCapture = QAndroidJniObject::getStaticObjectField( "android/provider/MediaStore", "ACTION_IMAGE_CAPTURE", "Ljava/lang/String;" );
 
   QAndroidJniObject intent = QAndroidJniObject( "android/content/Intent", "(Ljava/lang/String;)V", actionImageCapture.object<jstring>() );
@@ -116,16 +115,12 @@ QgsQuickPictureSource* QgsQuickUtils::getPicture( const QString& prefix )
   }
 
   return pictureSource;
-#else
-    Q_UNUSED(prefix);
-    return nullptr;
 #endif
 }
 
 void QgsQuickUtils::open( const QString& data, const QString& type )
 {
-#if 0
-//#ifdef ANDROID
+#ifdef ANDROID
   QAndroidJniObject actionView = QAndroidJniObject::getStaticObjectField( "android/intent/action", "ACTION_VIEW", "Ljava/lang/String;" );
 
   QAndroidJniObject intent = QAndroidJniObject( "android/content/Intent", "(Ljava/lang/String;)V", actionView.object<jstring>() );

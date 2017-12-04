@@ -15,6 +15,5 @@ plugin qgis_quick_plugin
 
 MapCanvas 1.0 qgsquickmapcanvas.qml
 FeatureForm 1.0 qgsquickfeatureform.qml
-Button 1.0 qgsquickbutton.qml
 
 typeinfo qgisquick.qmltypes
