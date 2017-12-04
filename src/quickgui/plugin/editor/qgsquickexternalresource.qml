@@ -1,4 +1,5 @@
 import QtQuick 2.5
+import QtQuick.Controls 2.0
 import QgisQuick 1.0 as QgsQuick
 
 
@@ -24,7 +25,7 @@ Item {
     source: {
       if (image.status === Image.Error)
         QgsQuick.Utils.getThemeIcon("ic_broken_image_black_24dp")
-      else if (currentValue)
+      else if (image.currentValue)
         'file://' + homePath + '/' + currentValue
       else
         QgsQuick.Utils.getThemeIcon("ic_photo_notavailable_white_48dp")
@@ -34,13 +35,13 @@ Item {
       anchors.fill: parent
 
       onClicked: {
-        if (currentValue)
+        if (image.currentValue)
           QgsQuick.Utils.open(image.source, "image/*");
       }
     }
   }
 
-  QgsQuick.Button {
+  Button {
     id: button
     width: 36 * QgsQuick.Style.dp
     height: 36 * QgsQuick.Style.dp
@@ -48,11 +49,13 @@ Item {
     anchors.right: parent.right
     anchors.bottom: parent.bottom
 
-    bgcolor: "transparent"
-
     onClicked: __pictureSource = QgsQuick.Utils.getPicture(homePath + '/DCIM')
 
-    iconSource: QgsQuick.Utils.getThemeIcon("ic_camera_alt_border_24dp")
+    background: Image {
+        source: QgsQuick.Utils.getThemeIcon("ic_camera_alt_border_24dp")
+        width: button.width
+        height: button.height
+    }
   }
 
   Connections {

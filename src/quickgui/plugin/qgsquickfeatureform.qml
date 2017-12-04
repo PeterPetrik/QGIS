@@ -26,13 +26,14 @@ import QtQuick.Controls 1.4 as Controls1
 
 import QgisQuick 1.0 as QgsQuick
 
-Page {
+Item {
   signal saved
   signal cancelled
   signal aboutToSave
 
   property QgsQuick.AttributeFormModel model
   property alias toolbarVisible: toolbar.visible
+  property QgsQuick.Project project
 
   function reset() {
     master.reset()
@@ -257,6 +258,8 @@ Page {
           property var widget: EditorWidget
           property var field: Field
           property var constraintValid: ConstraintValid
+          property var homePath: form.project ? form.project.homePath : ""
+
           active: widget !== 'Hidden'
           source: 'qgsquick' + widget.toLowerCase() + '.qml' // todo move to C++
 

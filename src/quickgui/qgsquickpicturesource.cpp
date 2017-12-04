@@ -24,8 +24,7 @@
 
 QgsQuickPictureSource::QgsQuickPictureSource( const QString& prefix )
   : QObject( 0 )
-#if 0
-//#ifdef ANDROID
+#ifdef ANDROID
   , QAndroidActivityResultReceiver()
   , mPrefix( prefix )
 #endif
@@ -39,8 +38,7 @@ QgsQuickPictureSource::~QgsQuickPictureSource()
 {
 }
 
-#if 0
-//#ifdef ANDROID
+#ifdef ANDROID
 void QgsQuickPictureSource::handleActivityResult( int receiverRequestCode, int resultCode, const QAndroidJniObject& data )
 {
   jint RESULT_OK = QAndroidJniObject::getStaticField<jint>( "android/app/Activity", "RESULT_OK" );

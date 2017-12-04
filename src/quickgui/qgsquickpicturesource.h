@@ -21,8 +21,7 @@
 #include <QObject>
 #include <QString>
 
-#if 0
-//#ifdef ANDROID
+#ifdef ANDROID
 #include <QAndroidActivityResultReceiver>
 #endif
 
@@ -32,8 +31,7 @@
  */
 class QUICK_EXPORT QgsQuickPictureSource :
         public QObject
-#if 0
-//#ifdef ANDROID
+#ifdef ANDROID
         , public QAndroidActivityResultReceiver
 #endif
 {
@@ -43,8 +41,7 @@ class QUICK_EXPORT QgsQuickPictureSource :
     explicit QgsQuickPictureSource( const QString& prefix = QString() );
     virtual ~QgsQuickPictureSource();
 
-#if 0
-//#ifdef ANDROID
+#ifdef ANDROID
     void handleActivityResult( int receiverRequestCode, int resultCode, const QAndroidJniObject& data ) override;
 #endif
 
@@ -54,8 +51,7 @@ class QUICK_EXPORT QgsQuickPictureSource :
      */
     void pictureReceived( const QString& path );
 
-#if 0
-//#ifdef ANDROID
+#ifdef ANDROID
   private:
     QString mPrefix;
 #endif

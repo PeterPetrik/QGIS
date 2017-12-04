@@ -30,8 +30,10 @@ Item {
       Rectangle {
         anchors.fill: parent
         id: backgroundRect
-        border.color: comboBox.pressed ? "#17a81a" : "#21be2b"
-        border.width: comboBox.visualFocus ? 2 : 1
+        // border.color: comboBox.pressed ? "#17a81a" : "#21be2b"
+        border.color: "#17a81a"
+        //border.width: comboBox.visualFocus ? 2 : 1
+        border.width: 2
         color: "#dddddd"
         radius: 2
       }
@@ -75,7 +77,7 @@ Item {
 
         Controls1.Calendar {
           id: calendar
-          selectedDate: currentValue
+          selectedDate: main.currentValue
           weekNumbersVisible: true
           focus: false
 

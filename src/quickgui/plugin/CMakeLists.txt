@@ -18,7 +18,6 @@ SET(QGIS_QUICK_PLUGIN_RESOURCES
     
   qgsquickmapcanvas.qml
   qgsquickfeatureform.qml
-  qgsquickbutton.qml
 
   qmldir
 )
