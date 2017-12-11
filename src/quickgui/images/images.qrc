@@ -152,5 +152,8 @@
         <file>xxxhdpi/ic_save_white_24dp.png</file>
         <file>xxxhdpi/ic_settings_white_24dp.png</file>
         <file>xxxhdpi/ic_undo_white_24dp.png</file>
+        <file>mdpi/ic_navigation_black_48px.png</file>
+        <file>xxhdpi/ic_navigation_black_48px.png</file>
+        <file>xxxhdpi/ic_navigation_black_48px.png</file>
     </qresource>
 </RCC>

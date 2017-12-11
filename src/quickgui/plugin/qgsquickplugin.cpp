@@ -37,6 +37,9 @@
 #include <qgsvectorlayer.h>
 #include "qgsquickidentifyresult.h"
 #include "qgsquickstyle.h"
+#include "qgsquickcoordinatetransformer.h"
+#include "qgsquickpositionkit.h"
+#include "qgspointxy.h"
 
 #include <qqml.h>
 
@@ -54,6 +57,7 @@ static QObject *_styleProvider(QQmlEngine *engine, QJSEngine *scriptEngine)
   return QgsQuickUtils::instance()->style();
 }
 
+
 void QgisQuickPlugin::registerTypes(const char *uri)
 {
   qDebug("REGISTERING QQmlExtensionInterface: QgisQuick");
@@ -62,6 +66,7 @@ void QgisQuickPlugin::registerTypes(const char *uri)
   qmlRegisterType<QgsQuickMapCanvasMap>(uri, 1, 0, "MapCanvasMap");
   qmlRegisterType<QgsQuickScaleBarKit>(uri, 1, 0, "ScaleBarKit");
   qmlRegisterType<QgsQuickIdentifyKit>(uri, 1, 0, "IdentifyKit");
+  qmlRegisterType<QgsQuickPositionKit>(uri, 1, 0, "PositionKit");
 
   qmlRegisterType<QgsQuickFeatureModel>(uri, 1, 0, "FeatureModel");
   qmlRegisterType<QgsQuickGeometry>(uri, 1, 0, "Geometry");
@@ -70,14 +75,17 @@ void QgisQuickPlugin::registerTypes(const char *uri)
 
   qmlRegisterType<QgsQuickPictureSource>(uri, 1, 0, "PictureSource");
   //qmlRegisterType<QgsQuickIdentifyResult>(uri, 1, 0, "IdentifyResult");
+  qmlRegisterType<QgsQuickCoordinateTransformer>(uri, 1, 0, "CoordinateTransformer");
 
   //qmlRegisterType< QgsFeature >(uri, 1, 0, "Feature" );
   qmlRegisterType<QgsRelationManager>(uri, 1, 0, "RelationManager"); //TODO create separate quick class????
   qmlRegisterType<QgsVectorLayer>(uri, 1, 0, "VectorLayer"); //TODO create separate quick class????
   qmlRegisterType<QgsProject>(uri, 1, 0, "Project");
 
+
   qRegisterMetaType<QgsQuickIdentifyResult>("QgsQuickIdentifyResult");
   qRegisterMetaType<QgsPoint>("QgsPoint");
+  qRegisterMetaType<QgsPointXY>("QgsPointXY");
   qRegisterMetaType< QList<QgsMapLayer*> >( "QList<QgsMapLayer*>" );
 
   //qRegisterMetaType< QList<QgsQuickIdentifyKit::IdentifyResult> >( "QList<IdentifyResult>" );
@@ -85,6 +93,7 @@ void QgisQuickPlugin::registerTypes(const char *uri)
   qRegisterMetaType< QgsFeature > ( "QgsFeature ");
   qRegisterMetaType< QgsFeatureId > ( "QgsFeatureId ");
   qRegisterMetaType< QgsAttributes > ( "QgsAttributes ");
+  qRegisterMetaType< QgsCoordinateReferenceSystem >("QgsCoordinateReferenceSystem ");
 
   qmlRegisterType<QgsQuickSubModel>(uri, 1, 0, "SubModel");
   qmlRegisterType<QgsQuickAttributeFormModel>(uri, 1, 0, "AttributeFormModel");
@@ -95,6 +104,8 @@ void QgisQuickPlugin::registerTypes(const char *uri)
 
   qmlRegisterSingletonType<QgsQuickUtils>(uri, 1, 0, "Utils", _utilsProvider);
   qmlRegisterSingletonType<QgsQuickStyle>(uri, 1, 0, "Style", _styleProvider);
+
+
 
   qDebug("REGISTERING FINISHED");
 }

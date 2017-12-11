@@ -18,12 +18,16 @@
 
 #include "qgis_quick.h"
 
+#include "qgspointxy.h"
+#include "qgspoint.h"
+
 #include <QObject>
 #include <QString>
 #include <QUrl>
 
 class QgsQuickPictureSource;
 class QgsQuickStyle;
+class QgsCoordinateReferenceSystem;
 
 class QUICK_EXPORT QgsQuickUtils: public QObject
 {
@@ -31,6 +35,12 @@ class QUICK_EXPORT QgsQuickUtils: public QObject
 
   public:
     static QgsQuickUtils* instance();
+
+    // CRS and geometry
+    Q_INVOKABLE QgsCoordinateReferenceSystem coordinateReferenceSystemFromEpsgId(long epsg) const; //if you want to create CRS from QML
+    Q_INVOKABLE QgsPointXY pointFactory(double x, double y) const;
+
+    Q_INVOKABLE QgsPointXY transformPoint(QgsCoordinateReferenceSystem srcCrs, QgsCoordinateReferenceSystem destCrs, QgsPointXY srcPoint) const;
 
     // Common
     Q_INVOKABLE bool fileExists(QString path);
@@ -42,7 +52,8 @@ class QUICK_EXPORT QgsQuickUtils: public QObject
     Q_INVOKABLE QgsQuickPictureSource* getPicture( const QString &prefix );
     Q_INVOKABLE void open( const QString& data, const QString& type );
 
-    QgsQuickStyle* style() const; //if you want to access it from QML, use Style QML singleton!
+    // Singletons
+    QgsQuickStyle* style() const; //if you want to access it from QML, use Style QML singleton
 
 signals:
     void devicePixelsChanged();
@@ -56,6 +67,9 @@ private:
 
     //created and owned by the singleton
     QgsQuickStyle* mStyle;
+    // created and owned by the sigleton to be able to use static functions
+    QgsCoordinateReferenceSystem* mCoordinateReferenceSystem;
+
 };
 
 #endif // QGSQUICKUTILS_H

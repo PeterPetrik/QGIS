@@ -16,6 +16,8 @@
 #include "qgsquickutils.h"
 #include "qgsquickpicturesource.h"
 #include "qgsquickstyle.h"
+#include "qgscoordinatereferencesystem.h"
+#include "qgscoordinatetransform.h"
 
 #include <QMap>
 #include <QString>
@@ -46,17 +48,40 @@ QgsQuickUtils::QgsQuickUtils(QObject *parent):
     QObject(parent)
 {
     mStyle = new QgsQuickStyle();
+    mCoordinateReferenceSystem = new QgsCoordinateReferenceSystem();
 }
 
 QgsQuickUtils::~QgsQuickUtils() {
     if (mStyle){
-        mStyle = 0;
         delete mStyle;
+        mStyle = 0;
     }
+
+    if (mCoordinateReferenceSystem) {
+        delete mCoordinateReferenceSystem;
+        mCoordinateReferenceSystem = 0;
+    }
+}
+
+QgsCoordinateReferenceSystem QgsQuickUtils::coordinateReferenceSystemFromEpsgId(long epsg) const {
+    return QgsCoordinateReferenceSystem::fromEpsgId(epsg);
 }
 
 QgsQuickStyle* QgsQuickUtils::style() const {
     return mStyle;
+}
+
+QgsPointXY QgsQuickUtils::pointFactory(double x, double y) const {
+    return QgsPointXY(x, y);
+}
+
+QgsPointXY QgsQuickUtils::transformPoint(QgsCoordinateReferenceSystem srcCrs, QgsCoordinateReferenceSystem destCrs, QgsPointXY srcPoint) const {
+    QgsCoordinateTransform mTransform;
+    mTransform.setSourceCrs(srcCrs);
+    mTransform.setDestinationCrs(destCrs);
+    mTransform.initialize();
+    QgsPointXY pt = mTransform.transform( srcPoint );
+    return pt;
 }
 
 bool QgsQuickUtils::fileExists(QString path) {
