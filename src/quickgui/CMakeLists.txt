@@ -16,6 +16,8 @@ SET(QGIS_QUICK_GUI_MOC_HDRS
   qgsquickpicturesource.h
   qgsquickutils.h
   qgsquickstyle.h
+  qgsquickpositionkit.h
+  qgsquickcoordinatetransformer.h
 )
 
 SET(QGIS_QUICK_GUI_HDRS
@@ -39,7 +41,9 @@ SET(QGIS_QUICK_GUI_SRC
   qgsquicksubmodel.cpp
   qgsquickpicturesource.cpp
   qgsquickutils.cpp
+  qgsquickpositionkit.cpp
   qgsquickstyle.cpp
+  qgsquickcoordinatetransformer.cpp
 )
 
 INCLUDE_DIRECTORIES(

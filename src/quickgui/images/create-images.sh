@@ -1,6 +1,8 @@
 #!/bin/bash
 
-FILES=images/themes/qfield/nodpi/*.svg
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+FILES=$DIR/nodpi/*.svg
 for f in $FILES
 do
   filename=$(basename "$f")
@@ -25,6 +27,6 @@ do
         res=96
         ;;
     esac
-    inkscape -z -e images/themes/qfield/$size/$filename.png -w $res -h $res $f
+    inkscape -z -e $DIR/$size/$filename.png -w $res -h $res $f
   done
 done
