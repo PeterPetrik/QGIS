@@ -38,8 +38,8 @@ class QUICK_EXPORT QgsQuickUtils: public QObject
 
     // CRS and geometry
     Q_INVOKABLE QgsCoordinateReferenceSystem coordinateReferenceSystemFromEpsgId(long epsg) const; //if you want to create CRS from QML
-    Q_INVOKABLE QgsPointXY pointFactory(double x, double y) const;
-
+    Q_INVOKABLE QgsPointXY pointXYFactory(double x, double y) const;
+    Q_INVOKABLE QgsPoint pointFactory(double x, double y) const;
     Q_INVOKABLE QgsPointXY transformPoint(QgsCoordinateReferenceSystem srcCrs, QgsCoordinateReferenceSystem destCrs, QgsPointXY srcPoint) const;
 
     // Common

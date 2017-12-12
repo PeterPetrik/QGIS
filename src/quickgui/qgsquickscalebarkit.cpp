@@ -132,7 +132,7 @@ void QgsQuickScaleBarKit::updateScaleBar()
 
   mDistance = round_digit * base;
   mWidth = mPreferredWidth * mDistance/dist;
-  qDebug() << "Scale: " << mWidth << "px -> " << mDistance << " " << mUnits;
+  //qDebug() << "Scale: " << mWidth << "px -> " << mDistance << " " << mUnits;
 
   emit scaleBarChanged();
 }

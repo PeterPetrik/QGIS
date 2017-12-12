@@ -153,14 +153,15 @@ Item {
           id: formPage
           property int currentIndex: index
 
-          Rectangle {
-            anchors.fill: swipeView
-            color: "white"
-          }
-
           /**
            * The main form content area
            */
+          Rectangle {
+             width: parent.width
+             height: parent.height
+             color: "white"
+          }
+
           ListView {
             id: content
             anchors.fill: parent
@@ -399,6 +400,10 @@ Item {
           horizontalAlignment: Image.AlignHCenter
           verticalAlignment: Image.AlignVCenter
           source: QgsQuick.Utils.getThemeIcon( "ic_close_white_24dp" )
+        }
+
+        background: Rectangle {
+          color: "#212121"
         }
 
         onClicked: {

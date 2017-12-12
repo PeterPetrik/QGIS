@@ -71,9 +71,14 @@ QgsQuickStyle* QgsQuickUtils::style() const {
     return mStyle;
 }
 
-QgsPointXY QgsQuickUtils::pointFactory(double x, double y) const {
+QgsPointXY QgsQuickUtils::pointXYFactory(double x, double y) const {
     return QgsPointXY(x, y);
 }
+
+QgsPoint QgsQuickUtils::pointFactory(double x, double y) const {
+    return QgsPoint(x, y);
+}
+
 
 QgsPointXY QgsQuickUtils::transformPoint(QgsCoordinateReferenceSystem srcCrs, QgsCoordinateReferenceSystem destCrs, QgsPointXY srcPoint) const {
     QgsCoordinateTransform mTransform;

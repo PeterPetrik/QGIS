@@ -67,9 +67,6 @@ Item {
         rotation: positionKit.direction
         x: positionMarker.screenPosition.x
         y: positionMarker.screenPosition.y
-
-        onXChanged: console.log("PositionMarker: gps: " + gpsPosition + " -> map: " + mapPosition + " -> screen: "+ screenPosition)
-
         width: positionMarker.size
     }
 }
