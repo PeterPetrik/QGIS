@@ -76,7 +76,7 @@ void QgsQuickPositionKit::replacePositionSource(QGeoPositionInfoSource* source) 
 
 void QgsQuickPositionKit::positionUpdated(const QGeoPositionInfo &info)
 {
-  qDebug() << "Position updated:" << info;
+  // qDebug() << "Position updated:" << info;
   mPosition = QgsPoint(info.coordinate().longitude(),
                        info.coordinate().latitude(),
                        info.coordinate().altitude());
