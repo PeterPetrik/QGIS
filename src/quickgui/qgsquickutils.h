@@ -53,6 +53,7 @@ class QUICK_EXPORT QgsQuickUtils: public QObject
     Q_INVOKABLE void open( const QString& data, const QString& type );
 
     // Singletons
+    void setStyle( QgsQuickStyle *style );
     QgsQuickStyle* style() const; //if you want to access it from QML, use Style QML singleton
 
 signals:
@@ -65,8 +66,8 @@ private:
 
     static QgsQuickUtils* sInstance;
 
-    //created and owned by the singleton
-    QgsQuickStyle* mStyle;
+    // style - not owned by this class
+    QgsQuickStyle* mStyle = nullptr;
     // created and owned by the sigleton to be able to use static functions
     QgsCoordinateReferenceSystem* mCoordinateReferenceSystem;
 

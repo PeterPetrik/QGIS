@@ -47,15 +47,10 @@ QgsQuickUtils* QgsQuickUtils::instance()
 QgsQuickUtils::QgsQuickUtils(QObject *parent):
     QObject(parent)
 {
-    mStyle = new QgsQuickStyle();
     mCoordinateReferenceSystem = new QgsCoordinateReferenceSystem();
 }
 
 QgsQuickUtils::~QgsQuickUtils() {
-    if (mStyle){
-        delete mStyle;
-        mStyle = 0;
-    }
 
     if (mCoordinateReferenceSystem) {
         delete mCoordinateReferenceSystem;
@@ -65,6 +60,11 @@ QgsQuickUtils::~QgsQuickUtils() {
 
 QgsCoordinateReferenceSystem QgsQuickUtils::coordinateReferenceSystemFromEpsgId(long epsg) const {
     return QgsCoordinateReferenceSystem::fromEpsgId(epsg);
+}
+
+void QgsQuickUtils::setStyle( QgsQuickStyle *style ) {
+  Q_ASSERT( !mStyle && "Style must be assigned only once!" );
+  mStyle = style;
 }
 
 QgsQuickStyle* QgsQuickUtils::style() const {
