@@ -21,6 +21,7 @@ QgsQuickPositionKit::QgsQuickPositionKit(QObject *parent)
   , mDirection(-1)
   , mHasPosition(false)
   , mIsSimulated(false)
+  , mSource(nullptr)
 {
   use_gps_location();
 }
