@@ -29,6 +29,14 @@ class QgsMapRendererCache;
 class QgsLabelingResults;
 class MapSettings;
 
+/**
+ * \ingroup quick
+ * This class implements a visual Qt Quick Item that does map rendering
+ * according to the current map settings. Client code is expected to use
+ * MapCanvas item rather than using this class directly.
+ *
+ * \since QGIS 3.2
+ */
 class QUICK_EXPORT QgsQuickMapCanvasMap : public QQuickItem
 {
     Q_OBJECT

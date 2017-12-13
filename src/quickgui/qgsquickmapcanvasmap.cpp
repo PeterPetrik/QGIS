@@ -389,6 +389,9 @@ void QgsQuickMapCanvasMap::zoomToFullExtent()
 
 void QgsQuickMapCanvasMap::refresh()
 {
+  if ( mMapSettings->outputSize().isNull() )
+    return;  // the map image size has not been set yet
+
   if ( !mFreeze )
     mRefreshTimer.start( 1 );
 }
