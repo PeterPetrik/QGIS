@@ -91,9 +91,9 @@ class QUICK_EXPORT QgsQuickFeatureModel : public QAbstractListModel
     bool commit();
     bool startEditing();
 
-    QgsVectorLayer* mLayer;
+    QgsVectorLayer* mLayer = nullptr;
     QgsFeature mFeature;
-    QgsQuickGeometry* mGeometry;
+    QgsQuickGeometry* mGeometry = nullptr;
     QVector<bool> mRememberedAttributes;
 };
 
