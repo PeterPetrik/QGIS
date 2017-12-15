@@ -16,8 +16,19 @@
 #ifndef QGSQUICKATTRIBUTEFORMMODELBASE_H
 #define QGSQUICKATTRIBUTEFORMMODELBASE_H
 
+/// @cond PRIVATE
+
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the QGIS API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+
 #include <QStandardItemModel>
-#include<QStack>
+#include <QStack>
 
 #include <qgseditformconfig.h>
 #include <qgsexpressioncontext.h>
@@ -25,7 +36,20 @@
 
 #include "qgsquickfeaturemodel.h"
 
-class QUICK_EXPORT QgsQuickAttributeFormModelBase : public QStandardItemModel
+/**
+ * \ingroup quick
+ * This is an internal class used as the source model for QgsQuickAttributeFormModel.
+ *
+ * The model is based on vector layer's edit form config (QgsEditFormConfig). It supports
+ * auto-generated editor layouts and "tab" layout (layout defined with groups and tabs).
+ * The form layout gets flattened into a list, each row has a bunch of roles with values
+ * extracted from the edit form config.
+ *
+ * \sa QgsQuickAttributeFormModel
+ *
+ * \since QGIS 3.2
+ */
+class QgsQuickAttributeFormModelBase : public QStandardItemModel
 {
     Q_OBJECT
 
@@ -94,5 +118,7 @@ class QUICK_EXPORT QgsQuickAttributeFormModelBase : public QStandardItemModel
     QgsExpressionContext mExpressionContext;
     bool mConstraintsValid;
 };
+
+/// @endcond
 
 #endif // QGSQUICKATTRIBUTEFORMMODELBASE_H

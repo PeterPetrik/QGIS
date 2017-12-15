@@ -18,11 +18,24 @@
 
 #include <QSortFilterProxyModel>
 
-#include "qgsquickattributeformmodelbase.h"
 #include "qgis_quick.h"
 
+class QgsQuickAttributeFormModelBase;
 class QgsQuickFeatureModel;
 
+/**
+ * \ingroup quick
+ * This is a model implementation for attribute form of a feature from a vector layer.
+ *
+ * It is a wrapper around QgsQuickAttributeFormModelBase that adds filtering
+ * of attribute (attributes may be visible or hidden based on expressions).
+ *
+ * \note QML Type: AttributeFormModel
+ *
+ * \sa QgsQuickAttributeFormModelBase
+ *
+ * \since QGIS 3.2
+ */
 class QUICK_EXPORT QgsQuickAttributeFormModel : public QSortFilterProxyModel
 {
     Q_OBJECT
