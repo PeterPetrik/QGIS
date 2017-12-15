@@ -22,6 +22,14 @@
 
 #include <qgspoint.h>
 
+/**
+ * \ingroup quick
+ * Helper class for transform of coordinates (QgsPoint) to a different coordinate reference system.
+ *
+ * \note QML Type: CoordinateTransformer
+ *
+ * \since QGIS 3.2
+ */
 class QUICK_EXPORT QgsQuickCoordinateTransformer : public QObject
 {
     Q_OBJECT
