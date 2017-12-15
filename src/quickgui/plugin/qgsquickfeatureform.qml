@@ -349,6 +349,8 @@ Item {
       ToolButton {
         id: saveButton
 
+        visible: form.state !== "ReadOnly"
+
         contentItem: Image {
           fillMode: Image.Pad
           horizontalAlignment: Image.AlignHCenter
