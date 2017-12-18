@@ -9,7 +9,9 @@ SET(QGIS_QUICK_GUI_MOC_HDRS
   qgsquickattributeformmodel.h
   qgsquickattributeformmodelbase.h
   qgsquickfeaturemodel.h
+  qgsquickfeaturemodelhighlight.h
   qgsquickgeometry.h
+  qgsquickmaptransform.h
   qgsquickrubberband.h
   qgsquickrubberbandmodel.h
   qgsquicksubmodel.h
@@ -34,7 +36,9 @@ SET(QGIS_QUICK_GUI_SRC
   qgsquickattributeformmodel.cpp
   qgsquickattributeformmodelbase.cpp
   qgsquickfeaturemodel.cpp
+  qgsquickfeaturemodelhighlight.cpp
   qgsquickgeometry.cpp
+  qgsquickmaptransform.cpp
   qgsquickrubberband.cpp
   qgsquickrubberbandmodel.cpp
   qgsquicksgrubberband.cpp
