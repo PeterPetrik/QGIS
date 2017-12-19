@@ -75,6 +75,12 @@ class QUICK_EXPORT QgsQuickFeatureModel : public QAbstractListModel
     Q_INVOKABLE bool save();
 
     /**
+     * Will delete the current feature from the layer and commit the changes.
+     * @return Success of the operation
+     */
+    Q_INVOKABLE bool deleteFeature();
+
+    /**
      * Will reset the feature to the original values and dismiss any buffered edits.
      */
     Q_INVOKABLE void reset();
