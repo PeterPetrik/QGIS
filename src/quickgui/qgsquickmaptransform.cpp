@@ -39,12 +39,18 @@ QgsQuickMapSettings* QgsQuickMapTransform::mapSettings() const
 
 void QgsQuickMapTransform::setMapSettings( QgsQuickMapSettings* mapSettings )
 {
-  if ( mapSettings != mMapSettings )
-  {
-    mMapSettings = mapSettings;
+  if ( mapSettings == mMapSettings )
+    return;
+
+  if ( mMapSettings )
+    disconnect( mMapSettings, &QgsQuickMapSettings::visibleExtentChanged, this, &QgsQuickMapTransform::updateMatrix );
+
+  mMapSettings = mapSettings;
+
+  if ( mMapSettings )
     connect( mMapSettings, &QgsQuickMapSettings::visibleExtentChanged, this, &QgsQuickMapTransform::updateMatrix );
-    emit mapSettingsChanged();
-  }
+
+  emit mapSettingsChanged();
 }
 
 void QgsQuickMapTransform::updateMatrix()
