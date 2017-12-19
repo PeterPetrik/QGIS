@@ -44,6 +44,9 @@ class QUICK_EXPORT QgsQuickUtils: public QObject
 
     // Common
     Q_INVOKABLE bool fileExists(QString path);
+    Q_INVOKABLE void copyFile(QString sourcePath, QString targetPath);
+    Q_INVOKABLE void remove(QString path);
+    Q_INVOKABLE QString getFileName(QString path);
 
     // Themes
     Q_INVOKABLE QUrl getThemeIcon(const QString& name); //from custom theme dir or default if not found in the theme dir

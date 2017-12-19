@@ -11,9 +11,6 @@ Item {
 
   height: Math.max(image.height, button.height)
 
-  property QgsQuick.PictureSource __pictureSource
-
-
   Image {
     property var currentValue: value
 
@@ -25,8 +22,9 @@ Item {
     source: {
       if (image.status === Image.Error)
         QgsQuick.Utils.getThemeIcon("ic_broken_image_black_24dp")
-      else if (image.currentValue)
-        'file://' + homePath + '/' + currentValue
+      else if (image.currentValue) {
+          homePath + '/' + currentValue
+      }
       else
         QgsQuick.Utils.getThemeIcon("ic_photo_notavailable_white_48dp")
     }
@@ -49,7 +47,10 @@ Item {
     anchors.right: parent.right
     anchors.bottom: parent.bottom
 
-    onClicked: __pictureSource = QgsQuick.Utils.getPicture(homePath + '/DCIM')
+    onClicked: {
+        photoCapturePanel.visible = true
+        photoCapturePanel.targetDir = homePath
+    }
 
     background: Image {
         source: QgsQuick.Utils.getThemeIcon("ic_camera_alt_border_24dp")
@@ -59,9 +60,12 @@ Item {
   }
 
   Connections {
-    target: __pictureSource
-    onPictureReceived: {
-      valueChanged('DCIM/' + path, false)
+    target: photoCapturePanel
+    onVisibleChanged    : {
+        if (!photoCapturePanel.visible && photoCapturePanel.lastPhotoName !== "") {
+            image.source = photoCapturePanel.lastPhotoName
+            //currentvalue = photoCapturePanel.lastPhotoName
+        }
     }
   }
 }
