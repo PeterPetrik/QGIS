@@ -93,10 +93,13 @@ Drawer {
             }
         }
 
+        // Flipped VideoOutput on android - known ButtonGroup
+        // https://bugreports.qt.io/browse/QTBUG-64764
         VideoOutput {
             source: camera
             focus : visible // to receive focus and capture key events when visible
             anchors.fill: parent
+            autoOrientation: true
 
             Rectangle {
                 id: captureBtn
@@ -135,49 +138,12 @@ Drawer {
                 }
 
             }
-
-            // Photo capture button
-            //            Button {
-            //                id: captureBtn
-            //                text: ""
-            //                //implicitWidth: height
-            //                anchors.right: parent.right
-            //                anchors.verticalCenter: parent.verticalCenter
-            //                //Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-            //                property string source: QgsQuick.Utils.getThemeIcon("ic_camera_alt_border_24dp")
-
-            //                onClicked: {
-            //                    if (targetDir !== "") {
-            //                        camera.imageCapture.captureToLocation(photoPanel.targetDir);
-            //                    } else {
-            //                        camera.imageCapture.capture();
-            //                        // TODO copy image to project file
-            //                    }
-            //                    photoPreview.visible = true;
-            //                }
-
-            //            }
         }
 
         Image {
             id: photoPreview
-            width: window.width
-            height: window.height
-
-            //            Button {
-            //                text: qsTr("OK")
-            //                anchors.bottom: parent.bottom
-            //                anchors.left: parent.left
-            //                anchors.margins: 10
-            //                visible: camera.imageCapture.capturedImagePath != ""
-
-            //                onClicked: {
-            //                    console.log(camera.imageCapture.capturedImagePath)
-            //                    captureItem.saveImage = true
-            //                    photoPanel.visible = false
-            //                    photoPanel.lastPhotoName = QgsQuick.Utils.getFileName(camera.imageCapture.capturedImagePath)
-            //                }
-            //            }
+            width: camera.width
+            height: camera.height
 
             // Cancel button
             Image {
@@ -223,25 +189,6 @@ Drawer {
                     }
                 }
             }
-
-            //            Button {
-            //                text: qsTr("Cancel")
-            //                anchors.bottom: parent.bottom
-            //                anchors.right: parent.right
-            //                anchors.margins: 10
-            //                width: photoPanel.iconSize
-            //                height: photoPanel.iconSize
-            //                visible: camera.imageCapture.capturedImagePath != ""
-
-            //                onClicked: {
-            //                    captureItem.saveImage = false
-            //                    photoPreview.visible = false
-            //                    if (camera.imageCapture.capturedImagePath != "") {
-            //                        QgsQuick.Utils.remove(camera.imageCapture.capturedImagePath)
-            //                    }
-            //                }
-
-            //            }
         }
     }
 }

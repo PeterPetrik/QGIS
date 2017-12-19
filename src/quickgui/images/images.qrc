@@ -156,24 +156,19 @@
         <file>xxhdpi/ic_navigation_black_48px.png</file>
         <file>xxxhdpi/ic_navigation_black_48px.png</file>
         <file>hdpi/ic_add_to_photos.png</file>
-        <file>hdpi/ic_add_to_photos_black_24px.png</file>
         <file>hdpi/ic_clear_black_24px.png</file>
         <file>hdpi/ic_navigation_black_48px.png</file>
         <file>mdpi/ic_add_to_photos.png</file>
-        <file>mdpi/ic_add_to_photos_black_24px.png</file>
         <file>mdpi/ic_clear_black_24px.png</file>
         <file>nodpi/ic_add_to_photos.svg</file>
         <file>nodpi/ic_clear_black_24px.svg</file>
         <file>nodpi/ic_navigation_black_48px.svg</file>
         <file>xhdpi/ic_add_to_photos.png</file>
-        <file>xhdpi/ic_add_to_photos_black_24px.png</file>
         <file>xhdpi/ic_clear_black_24px.png</file>
         <file>xhdpi/ic_navigation_black_48px.png</file>
         <file>xxhdpi/ic_add_to_photos.png</file>
-        <file>xxhdpi/ic_add_to_photos_black_24px.png</file>
         <file>xxhdpi/ic_clear_black_24px.png</file>
         <file>xxxhdpi/ic_add_to_photos.png</file>
-        <file>xxxhdpi/ic_add_to_photos_black_24px.png</file>
         <file>xxxhdpi/ic_clear_black_24px.png</file>
     </qresource>
 </RCC>
