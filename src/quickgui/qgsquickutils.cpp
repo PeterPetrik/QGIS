@@ -25,6 +25,9 @@
 #include <QThread>
 #include <QFileInfo>
 #include <QLibraryInfo>
+#include <QDir>
+#include <QFile>
+#include <QDebug>
 
 #ifdef ANDROID
 #include <QAndroidJniEnvironment>
@@ -98,6 +101,48 @@ bool QgsQuickUtils::fileExists(QString path) {
         return false;
     }
 }
+
+void QgsQuickUtils::copyFile(QString sourcePath, QString targetPath)
+{
+    if (!fileExists(sourcePath)) {
+        qDebug() << "Source file does not exist!" << sourcePath;
+        return;
+    }
+
+    if ( !QDir::root().mkpath( targetPath ) )
+    {
+      //QgsApplication::messageLog()->logMessage( tr( "Could not create folder %1" ).arg( targetPath ), "QField", QgsMessageLog::CRITICAL );
+      qDebug() << "Could not create folder " << targetPath;
+      return;
+    }
+
+    QDir dir( targetPath );
+    QString filename( QFile( sourcePath ).fileName() );
+
+    if ( !QFile( sourcePath ).rename( dir.absoluteFilePath( filename ) ) )
+    {
+      qDebug() << "Couldn't rename file! Trying to copy instead";
+      if ( !QFile( sourcePath ).copy( dir.absoluteFilePath( filename ) ) )
+      {
+        //QgsApplication::messageLog()->logMessage( tr( "Image %1 could not be copied to project folder %2.", "QField", QgsMessageLog::CRITICAL ).arg( sourcePath.toString(), targetPath ) );
+        qDebug() << "Image " << sourcePath << " could not be copied to project folder " << targetPath;
+        return;
+      }
+    }
+}
+
+void QgsQuickUtils::remove(QString path)
+{
+    QFile::remove(path);
+}
+
+QString QgsQuickUtils::getFileName(QString path)
+{
+    qDebug() << "Image " << path << " present ";
+    qDebug() << "Image name" << QFile( path ).fileName() << "tralala";;
+    return QFile( path ).fileName();
+}
+
 
 QUrl QgsQuickUtils::getThemeIcon(const QString& name) {
     Q_ASSERT(mStyle);

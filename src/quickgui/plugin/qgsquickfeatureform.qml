@@ -34,6 +34,7 @@ Item {
   property QgsQuick.AttributeFormModel model
   property alias toolbarVisible: toolbar.visible
   property QgsQuick.Project project
+  property var photoCapturePanel
 
   function reset() {
     master.reset()
@@ -260,6 +261,7 @@ Item {
           property var field: Field
           property var constraintValid: ConstraintValid
           property var homePath: form.project ? form.project.homePath : ""
+          property var photoCapturePanel: form.photoCapturePanel
 
           active: widget !== 'Hidden'
           source: 'qgsquick' + widget.toLowerCase() + '.qml' // todo move to C++
