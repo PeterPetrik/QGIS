@@ -40,6 +40,7 @@ class QUICK_NO_EXPORT QgsQuickSGRubberband : public QSGNode
 
   private:
     QSGGeometryNode* createLineGeometry( const QVector<QgsPoint>& points, qreal width );
+    QSGGeometryNode* createPointGeometry( const QgsPoint& point, qreal width );
     QSGGeometryNode* createPolygonGeometry( const QVector<QgsPoint>& points );
 
     QSGFlatColorMaterial mMaterial;
