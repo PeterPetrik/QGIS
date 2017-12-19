@@ -20,7 +20,9 @@
 #include "qgsquickattributeformmodel.h"
 #include "qgsquickattributeformmodelbase.h"
 #include "qgsquickfeaturemodel.h"
+#include "qgsquickfeaturemodelhighlight.h"
 #include "qgsquickgeometry.h"
+#include "qgsquickmaptransform.h"
 #include "qgsquickrubberband.h"
 #include "qgsquickrubberbandmodel.h"
 #include "qgsquicksgrubberband.h"
@@ -77,6 +79,8 @@ void QgisQuickPlugin::registerTypes(const char *uri)
   qmlRegisterType<QgsQuickGeometry>(uri, 1, 0, "Geometry");
   qmlRegisterType<QgsQuickRubberband>(uri, 1, 0, "Rubberband");
   qmlRegisterType<QgsQuickRubberbandModel>(uri, 1, 0, "RubberbandModel");
+  qmlRegisterType<QgsQuickFeatureModelHighlight>(uri, 1, 0, "FeatureModelHighlight");
+  qmlRegisterType<QgsQuickMapTransform>(uri, 1, 0, "MapTransform");
 
   qmlRegisterType<QgsQuickPictureSource>(uri, 1, 0, "PictureSource");
   //qmlRegisterType<QgsQuickIdentifyResult>(uri, 1, 0, "IdentifyResult");

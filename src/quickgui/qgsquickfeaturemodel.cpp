@@ -173,6 +173,25 @@ bool QgsQuickFeatureModel::save()
   return rv;
 }
 
+bool QgsQuickFeatureModel::deleteFeature()
+{
+  if ( !mLayer )
+    return false;
+
+  bool rv = true;
+
+  if ( !startEditing() )
+  {
+    rv = false;
+  }
+
+  if ( !mLayer->deleteFeature( mFeature.id() ) )
+    QgsMessageLog::logMessage( tr( "Cannot delete feature" ), "QField", QgsMessageLog::WARNING );
+  rv = commit();
+
+  return rv;
+}
+
 void QgsQuickFeatureModel::reset()
 {
   if ( !mLayer )

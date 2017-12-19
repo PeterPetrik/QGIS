@@ -15,6 +15,7 @@
 
 import QtQuick 2.6
 import QtQuick.Controls 2.0
+import QtQuick.Dialogs 1.2
 import QtQuick.Layouts 1.3
 import QtGraphicalEffects 1.0
 import QtQml.Models 2.2
@@ -334,7 +335,7 @@ Item {
   }
 
   /** The title toolbar **/
-  ToolBar {
+  Item {
     id: toolbar
     height: visible ? 48 * QgsQuick.Style.dp : 0
     visible: form.state === 'Add'
@@ -351,6 +352,8 @@ Item {
       ToolButton {
         id: saveButton
 
+        visible: form.state !== "ReadOnly"
+
         contentItem: Image {
           fillMode: Image.Pad
           horizontalAlignment: Image.AlignHCenter
@@ -366,6 +369,25 @@ Item {
         onClicked: {
           save()
         }
+      }
+
+      ToolButton {
+          id: deleteButton
+
+          visible: form.state === "Edit"
+
+          contentItem: Image {
+              fillMode: Image.Pad
+              horizontalAlignment: Image.AlignHCenter
+              verticalAlignment: Image.AlignVCenter
+              source: QgsQuick.Utils.getThemeIcon( "ic_delete_forever_white_24dp" )
+          }
+
+          background: Rectangle {
+            color: "#212121"
+          }
+
+          onClicked: deleteDialog.visible = true
       }
 
       Label {
@@ -416,4 +438,25 @@ Item {
       }
     }
   }
+
+  MessageDialog {
+    id: deleteDialog
+
+    visible: false
+
+    title: qsTr( "Delete feature" )
+    text: qsTr( "Really delete this feature?" )
+    icon: StandardIcon.Warning
+    standardButtons: StandardButton.Ok | StandardButton.Cancel
+    onAccepted: {
+      model.featureModel.deleteFeature()
+      visible = false
+
+      cancelled()
+    }
+    onRejected: {
+      visible = false
+    }
+  }
+
 }

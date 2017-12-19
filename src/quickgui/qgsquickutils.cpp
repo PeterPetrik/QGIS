@@ -18,6 +18,7 @@
 #include "qgsquickstyle.h"
 #include "qgscoordinatereferencesystem.h"
 #include "qgscoordinatetransform.h"
+#include "qgsvectorlayer.h"
 
 #include <QMap>
 #include <QString>
@@ -90,6 +91,19 @@ QgsPointXY QgsQuickUtils::transformPoint(QgsCoordinateReferenceSystem srcCrs, Qg
     mTransform.initialize();
     QgsPointXY pt = mTransform.transform( srcPoint );
     return pt;
+}
+
+QgsFeature QgsQuickUtils::featureFromGps(const QgsPoint &gpsPoint, QgsVectorLayer *layer) const
+{
+  QgsGeometry geom( gpsPoint.clone() );
+  geom.transform( QgsCoordinateTransform( QgsCoordinateReferenceSystem( "EPSG:4326" ), layer->crs() ) );
+
+  QgsFeature f;
+  f.setGeometry( geom );
+  f.setFields( layer->fields() );
+  QgsAttributes attrs( f.fields().count() );
+  f.setAttributes( attrs );
+  return f;
 }
 
 bool QgsQuickUtils::fileExists(QString path) {

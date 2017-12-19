@@ -20,6 +20,15 @@
 #include "qgsquickgeometry.h"
 #include "qgis_quick.h"
 
+
+/**
+ * \ingroup quick
+ * Item model implementation for attributes of QgsFeature: each attribute gets a row in the model.
+ *
+ * \note QML Type: FeatureModel
+ *
+ * \since QGIS 3.2
+ */
 class QUICK_EXPORT QgsQuickFeatureModel : public QAbstractListModel
 {
     Q_OBJECT
@@ -31,9 +40,9 @@ class QUICK_EXPORT QgsQuickFeatureModel : public QAbstractListModel
   public:
     enum FeatureRoles
     {
-      AttributeName = Qt::UserRole + 1,
-      AttributeValue,
-      Field,
+      AttributeName = Qt::UserRole + 1,  //!< attribute's display name (the original field name or a custom alias)
+      AttributeValue,                    //!< value of the feature's attribute
+      Field,                             //!< field definition (QgsField)
       RememberAttribute
     };
 
@@ -64,6 +73,12 @@ class QUICK_EXPORT QgsQuickFeatureModel : public QAbstractListModel
      * @return Success of the operation
      */
     Q_INVOKABLE bool save();
+
+    /**
+     * Will delete the current feature from the layer and commit the changes.
+     * @return Success of the operation
+     */
+    Q_INVOKABLE bool deleteFeature();
 
     /**
      * Will reset the feature to the original values and dismiss any buffered edits.
