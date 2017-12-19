@@ -20,7 +20,7 @@ import QgisQuick 1.0 as QgsQuick
 
 Item {
     id: positionMarker
-    property int size: 250 * QgsQuick.Style.dp
+    property int size: 48 * QgsQuick.Style.dp
 
     property QgsQuick.MapSettings mapSettings // required to be connected from parent!
 
@@ -28,10 +28,22 @@ Item {
                                             // longitude, latitude, and radius, all in degrees WSG84
                                             // e.g. simulatePositionLongLatRad = [60, 10, 0.02]
 
-    property var screenPosition: mapSettings.coordinateToScreen(wgs84toMapCrs.projectedPosition) // in pixels
+    property point screenPosition  // in pixels
     property alias mapPosition: wgs84toMapCrs.projectedPosition // in map coordinates
     property alias gpsPosition: positionKit.position // in WGS84 coordinates
 
+    onMapSettingsChanged: update_location()
+    onGpsPositionChanged: update_location()
+
+    Connections {
+        target: mapSettings
+        onVisibleExtentChanged: update_location()
+    }
+
+    function update_location() {
+        if (mapSettings)
+            screenPosition = mapSettings.coordinateToScreen(wgs84toMapCrs.projectedPosition)
+    }
 
     //TODO maybe create function to parse project layers (or mapsettings) and their extent and calculate some reasonable
     // values instead of hardcoding them in the application?
@@ -65,8 +77,9 @@ Item {
         source: QgsQuick.Utils.getThemeIcon("ic_navigation_black_48px")
         fillMode: Image.PreserveAspectFit
         rotation: positionKit.direction
-        x: positionMarker.screenPosition.x
-        y: positionMarker.screenPosition.y
+        x: positionMarker.screenPosition.x - width/2
+        y: positionMarker.screenPosition.y - height/2
         width: positionMarker.size
+        height: width
     }
 }
