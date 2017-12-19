@@ -81,6 +81,56 @@ QList<QgsQuickIdentifyResult> QgsQuickIdentifyKit::identify( const QPointF& poin
   return results;
 }
 
+static QgsFeature _closestFeature( const QgsFeatureList &results, const QgsMapSettings &mapSettings, QgsVectorLayer *layer, const QPointF &point )
+{
+  QgsPointXY mapPoint = mapSettings.mapToPixel().toMapCoordinates( point.toPoint() );
+  QgsGeometry mapPointGeom( QgsGeometry::fromPoint( mapPoint ) );
+  QgsCoordinateTransform ctLayerToMap = mapSettings.layerTransform( layer );
+
+  Q_ASSERT( results.count() != 0 );
+  double distMin = 1e10;
+  int iMin = -1;
+  for ( int i = 0; i < results.count(); ++i )
+  {
+    QgsGeometry geom( results.at( i ).geometry() );
+    geom.transform( ctLayerToMap );
+
+    double dist = geom.distance( mapPointGeom );
+    if ( dist < distMin )
+    {
+      iMin = i;
+      distMin = dist;
+    }
+  }
+  return results.at( iMin );
+}
+
+
+static QgsQuickIdentifyResult _closestFeature( const QList<QgsQuickIdentifyResult> &results, const QgsMapSettings &mapSettings, const QPointF &point )
+{
+  QgsPointXY mapPoint = mapSettings.mapToPixel().toMapCoordinates( point.toPoint() );
+  QgsGeometry mapPointGeom( QgsGeometry::fromPoint( mapPoint ) );
+
+  Q_ASSERT( results.count() != 0 );
+  double distMin = 1e10;
+  int iMin = -1;
+  for ( int i = 0; i < results.count(); ++i )
+  {
+    const QgsQuickIdentifyResult &res = results.at( i );
+    QgsGeometry geom( res.feature().geometry() );
+    geom.transform( mapSettings.layerTransform( res.layer() ) );
+
+    double dist = geom.distance( mapPointGeom );
+    if ( dist < distMin )
+    {
+      iMin = i;
+      distMin = dist;
+    }
+  }
+  return results.at( iMin );
+}
+
+
 QgsFeature QgsQuickIdentifyKit::identifyOne( QgsVectorLayer* layer, const QPointF& point ) {
     QgsFeatureList results = identify(layer, point);
     if (results.empty()) {
@@ -88,7 +138,7 @@ QgsFeature QgsQuickIdentifyKit::identifyOne( QgsVectorLayer* layer, const QPoint
         f.setValid(false);
         return f;
     } else {
-        return results.first();
+        return _closestFeature( results, mMapSettings->mapSettings(), layer, point );
     }
 }
 
@@ -99,7 +149,7 @@ QgsQuickIdentifyResult QgsQuickIdentifyKit::identifyOne( const QPointF& point ) 
         QgsQuickIdentifyResult emptyRes;
         return emptyRes;
     } else {
-        return results.first();
+        return _closestFeature( results, mMapSettings->mapSettings(), point );
     }
 }
 
