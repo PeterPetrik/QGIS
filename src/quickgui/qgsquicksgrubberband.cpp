@@ -26,11 +26,16 @@ QgsQuickSGRubberband::QgsQuickSGRubberband( const QVector<QgsPoint>& points, Qgs
 {
   mMaterial.setColor( color );
 
+  // TODO: support multi-part geometries
+
   switch ( type )
   {
     case QgsWkbTypes::PointGeometry:
-      // TODO: Implement
+    {
+      if ( !points.isEmpty() )
+        appendChildNode( createPointGeometry( points.at( 0 ), width ) );
       break;
+    }
 
     case QgsWkbTypes::LineGeometry:
     {
@@ -68,6 +73,24 @@ QSGGeometryNode* QgsQuickSGRubberband::createLineGeometry( const QVector<QgsPoin
 
   sgGeom->setLineWidth( width );
   sgGeom->setDrawingMode( GL_LINE_STRIP );
+  node->setGeometry( sgGeom );
+  node->setMaterial( &mMaterial );
+  node->setFlag( QSGNode::OwnsGeometry );
+  node->setFlag( QSGNode::OwnedByParent );
+  return node;
+}
+
+QSGGeometryNode *QgsQuickSGRubberband::createPointGeometry( const QgsPoint &point, qreal width )
+{
+  QSGGeometryNode* node = new QSGGeometryNode;
+
+  QSGGeometry* sgGeom = new QSGGeometry( QSGGeometry::defaultAttributes_Point2D(), 1 );
+
+  QSGGeometry::Point2D* vertices = sgGeom->vertexDataAsPoint2D();
+  vertices[0].set( point.x(), point.y() );
+  sgGeom->setDrawingMode( GL_POINTS );
+  sgGeom->setLineWidth( width );
+
   node->setGeometry( sgGeom );
   node->setMaterial( &mMaterial );
   node->setFlag( QSGNode::OwnsGeometry );
