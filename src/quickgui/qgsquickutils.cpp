@@ -152,9 +152,9 @@ void QgsQuickUtils::remove(QString path)
 
 QString QgsQuickUtils::getFileName(QString path)
 {
-    qDebug() << "Image " << path << " present ";
-    qDebug() << "Image name" << QFile( path ).fileName() << "tralala";;
-    return QFile( path ).fileName();
+    QFileInfo fileInfo(path);
+    QString filename(fileInfo.fileName());
+    return filename;
 }
 
 
@@ -177,6 +177,7 @@ QUrl QgsQuickUtils::getThemeIcon(const QString& name) {
 
     // Check in custom dir
     QString path(mStyle->themeDir() + "/" + ppitype + "/" + name + ".png");
+    qDebug() << "Custom icon from " << path;
     if (!fileExists(path)) {
         path = "qrc:/" + ppitype + "/" + name + ".png";
     }

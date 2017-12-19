@@ -63,8 +63,7 @@ Item {
     target: photoCapturePanel
     onVisibleChanged    : {
         if (!photoCapturePanel.visible && photoCapturePanel.lastPhotoName !== "") {
-            image.source = photoCapturePanel.lastPhotoName
-            //currentvalue = photoCapturePanel.lastPhotoName
+            image.source = homePath + "/" + photoCapturePanel.lastPhotoName
         }
     }
   }
