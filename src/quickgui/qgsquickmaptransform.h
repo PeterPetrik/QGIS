@@ -44,7 +44,7 @@ class QUICK_EXPORT QgsQuickMapTransform : public QQuickTransform
     void updateMatrix();
 
   private:
-    QgsQuickMapSettings* mMapSettings;
+    QgsQuickMapSettings* mMapSettings = nullptr;
     QMatrix4x4 mMatrix;
 };
 
