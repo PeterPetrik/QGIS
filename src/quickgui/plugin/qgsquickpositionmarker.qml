@@ -31,6 +31,7 @@ Item {
     property point screenPosition  // in pixels
     property alias mapPosition: wgs84toMapCrs.projectedPosition // in map coordinates
     property alias gpsPosition: positionKit.position // in WGS84 coordinates
+    property alias positionKit: positionKit
 
     onMapSettingsChanged: update_location()
     onGpsPositionChanged: update_location()

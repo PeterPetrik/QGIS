@@ -43,8 +43,6 @@ class QUICK_EXPORT QgsQuickUtils: public QObject
     Q_INVOKABLE QgsPointXY pointXYFactory(double x, double y) const;
     Q_INVOKABLE QgsPoint pointFactory(double x, double y) const;
     Q_INVOKABLE QgsPointXY transformPoint(QgsCoordinateReferenceSystem srcCrs, QgsCoordinateReferenceSystem destCrs, QgsPointXY srcPoint) const;
-    //! Creates a new QgsFeature with point geometry from the given GPS point (in WGS84)
-    Q_INVOKABLE QgsFeature featureFromGps( const QgsPoint &gpsPoint, QgsVectorLayer *layer ) const;
 
     // Common
     Q_INVOKABLE bool fileExists(QString path);
