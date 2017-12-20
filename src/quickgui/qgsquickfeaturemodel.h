@@ -33,7 +33,7 @@ class QUICK_EXPORT QgsQuickFeatureModel : public QAbstractListModel
 {
     Q_OBJECT
     Q_PROPERTY( QgsFeature feature READ feature WRITE setFeature NOTIFY featureChanged )
-    Q_PROPERTY( QgsQuickGeometry* geometry MEMBER mGeometry NOTIFY geometryChanged )
+    //Q_PROPERTY( QgsQuickGeometry* geometry MEMBER mGeometry NOTIFY geometryChanged )
     Q_PROPERTY( QgsVectorLayer* currentLayer READ layer WRITE setCurrentLayer NOTIFY currentLayerChanged )
     Q_ENUMS( FeatureRoles )
 
@@ -93,11 +93,11 @@ class QUICK_EXPORT QgsQuickFeatureModel : public QAbstractListModel
     QVector<bool> rememberedAttributes() const;
 
   public slots:
-    void applyGeometry();
+    //void applyGeometry();
 
   signals:
     void featureChanged();
-    void geometryChanged();
+    //void geometryChanged();
     void currentLayerChanged();
 
     void warning( const QString& text );
@@ -108,7 +108,7 @@ class QUICK_EXPORT QgsQuickFeatureModel : public QAbstractListModel
 
     QgsVectorLayer* mLayer = nullptr;
     QgsFeature mFeature;
-    QgsQuickGeometry* mGeometry = nullptr;
+    //QgsQuickGeometry* mGeometry = nullptr;
     QVector<bool> mRememberedAttributes;
 };
 
