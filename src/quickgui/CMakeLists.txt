@@ -15,7 +15,6 @@ SET(QGIS_QUICK_GUI_MOC_HDRS
   qgsquickrubberband.h
   qgsquickrubberbandmodel.h
   qgsquicksubmodel.h
-  qgsquickpicturesource.h
   qgsquickutils.h
   qgsquickstyle.h
   qgsquickpositionkit.h
@@ -43,7 +42,6 @@ SET(QGIS_QUICK_GUI_SRC
   qgsquickrubberbandmodel.cpp
   qgsquicksgrubberband.cpp
   qgsquicksubmodel.cpp
-  qgsquickpicturesource.cpp
   qgsquickutils.cpp
   qgsquickpositionkit.cpp
   qgsquickstyle.cpp

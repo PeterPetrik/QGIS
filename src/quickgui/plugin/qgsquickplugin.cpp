@@ -77,7 +77,6 @@ void QgisQuickPlugin::registerTypes(const char *uri)
   qmlRegisterType<QgsQuickFeatureModelHighlight>(uri, 1, 0, "FeatureModelHighlight");
   qmlRegisterType<QgsQuickMapTransform>(uri, 1, 0, "MapTransform");
 
-  qmlRegisterType<QgsQuickPictureSource>(uri, 1, 0, "PictureSource");
   //qmlRegisterType<QgsQuickIdentifyResult>(uri, 1, 0, "IdentifyResult");
   qmlRegisterType<QgsQuickCoordinateTransformer>(uri, 1, 0, "CoordinateTransformer");
 

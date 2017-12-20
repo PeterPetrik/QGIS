@@ -14,7 +14,6 @@
  ***************************************************************************/
 
 #include "qgsquickutils.h"
-#include "qgsquickpicturesource.h"
 #include "qgsquickstyle.h"
 #include "qgscoordinatereferencesystem.h"
 #include "qgscoordinatetransform.h"
