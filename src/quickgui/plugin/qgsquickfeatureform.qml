@@ -399,7 +399,7 @@ Item {
 
         text:
         {
-          var currentLayer = model.featureModel.currentLayer
+          var currentLayer = model.featureModel.layer
           var layerName = 'N/A'
           if (currentLayer !== null)
             layerName = currentLayer.name

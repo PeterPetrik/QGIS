@@ -95,7 +95,7 @@ void QgsQuickAttributeFormModelBase::setFeatureModel( QgsQuickFeatureModel* feat
     return;
 
   if (mFeatureModel) {
-    disconnect( mFeatureModel, &QgsQuickFeatureModel::currentLayerChanged, this, &QgsQuickAttributeFormModelBase::onLayerChanged );
+    disconnect( mFeatureModel, &QgsQuickFeatureModel::layerChanged, this, &QgsQuickAttributeFormModelBase::onLayerChanged );
     disconnect( mFeatureModel, &QgsQuickFeatureModel::featureChanged, this, &QgsQuickAttributeFormModelBase::onFeatureChanged );
     disconnect( mFeatureModel, &QgsQuickFeatureModel::modelReset, this, &QgsQuickAttributeFormModelBase::onFeatureChanged );
   }
@@ -103,7 +103,7 @@ void QgsQuickAttributeFormModelBase::setFeatureModel( QgsQuickFeatureModel* feat
   mFeatureModel = featureModel;
 
   if (mFeatureModel) {
-    connect( mFeatureModel, &QgsQuickFeatureModel::currentLayerChanged, this, &QgsQuickAttributeFormModelBase::onLayerChanged );
+    connect( mFeatureModel, &QgsQuickFeatureModel::layerChanged, this, &QgsQuickAttributeFormModelBase::onLayerChanged );
     connect( mFeatureModel, &QgsQuickFeatureModel::featureChanged, this, &QgsQuickAttributeFormModelBase::onFeatureChanged );
     connect( mFeatureModel, &QgsQuickFeatureModel::modelReset, this, &QgsQuickAttributeFormModelBase::onFeatureChanged );
   }

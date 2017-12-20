@@ -36,7 +36,7 @@ void QgsQuickFeatureModel::setFeature( const QgsFeature& feature )
   emit featureChanged();
 }
 
-void QgsQuickFeatureModel::setCurrentLayer( QgsVectorLayer* layer )
+void QgsQuickFeatureModel::setLayer( QgsVectorLayer* layer )
 {
   if ( layer == mLayer )
     return;
@@ -50,7 +50,7 @@ void QgsQuickFeatureModel::setCurrentLayer( QgsVectorLayer* layer )
     mRememberedAttributes.fill( false );
   }
 
-  emit currentLayerChanged();
+  emit layerChanged();
 }
 
 QgsVectorLayer* QgsQuickFeatureModel::layer() const
@@ -238,10 +238,12 @@ void QgsQuickFeatureModel::resetAttributes()
   endResetModel();
 }
 
+#if 0
 void QgsQuickFeatureModel::applyGeometry()
 {
   mFeature.setGeometry( mGeometry->asQgsGeometry() );
 }
+#endif
 
 void QgsQuickFeatureModel::create()
 {
