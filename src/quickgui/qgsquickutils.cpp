@@ -49,6 +49,9 @@ QgsQuickUtils::QgsQuickUtils(QObject *parent):
     QObject(parent)
 {
     mCoordinateReferenceSystem = new QgsCoordinateReferenceSystem();
+
+    // style is not owned by the Utils class: it will be passed to QML engine and destroyed by it afterwards
+    setStyle( new QgsQuickStyle );
 }
 
 QgsQuickUtils::~QgsQuickUtils() {
