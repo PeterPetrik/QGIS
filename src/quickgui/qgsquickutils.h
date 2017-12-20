@@ -28,7 +28,6 @@
 
 class QgsFeature;
 class QgsVectorLayer;
-class QgsQuickPictureSource;
 class QgsQuickStyle;
 class QgsCoordinateReferenceSystem;
 
