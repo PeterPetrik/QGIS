@@ -238,10 +238,12 @@ void QgsQuickFeatureModel::resetAttributes()
   endResetModel();
 }
 
+#if 0
 void QgsQuickFeatureModel::applyGeometry()
 {
   mFeature.setGeometry( mGeometry->asQgsGeometry() );
 }
+#endif
 
 void QgsQuickFeatureModel::create()
 {

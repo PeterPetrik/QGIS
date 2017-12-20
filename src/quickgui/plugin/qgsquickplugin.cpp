@@ -76,7 +76,7 @@ void QgisQuickPlugin::registerTypes(const char *uri)
   qmlRegisterType<QgsQuickPositionKit>(uri, 1, 0, "PositionKit");
 
   qmlRegisterType<QgsQuickFeatureModel>(uri, 1, 0, "FeatureModel");
-  qmlRegisterType<QgsQuickGeometry>(uri, 1, 0, "Geometry");
+  //qmlRegisterType<QgsQuickGeometry>(uri, 1, 0, "Geometry");
   qmlRegisterType<QgsQuickRubberband>(uri, 1, 0, "Rubberband");
   qmlRegisterType<QgsQuickRubberbandModel>(uri, 1, 0, "RubberbandModel");
   qmlRegisterType<QgsQuickFeatureModelHighlight>(uri, 1, 0, "FeatureModelHighlight");
