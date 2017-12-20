@@ -276,16 +276,20 @@ Item {
           }
         }
 
-        Connections {
-          target: form
-          onAboutToSave: {
-            try {
-              attributeEditorLoader.item.pushChanges()
-            }
-            catch ( err )
-            {}
-          }
-        }
+        // TODO delete or fix - saving works without it
+//        Connections {
+//          target: form
+//          onAboutToSave: {
+//            try {
+//                console.log("onAboutToSave: " + attributeEditorLoader.item)
+//              attributeEditorLoader.item.pushChanges()
+//            }
+//            catch ( err )
+//            {
+//            console.log("ERROR: " + err)
+//            }
+//          }
+//        }
 
         Connections {
           target: attributeEditorLoader.item

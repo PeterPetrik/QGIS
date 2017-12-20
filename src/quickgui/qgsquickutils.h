@@ -56,10 +56,6 @@ class QUICK_EXPORT QgsQuickUtils: public QObject
     // Themes
     Q_INVOKABLE QUrl getThemeIcon(const QString& name); //from custom theme dir or default if not found in the theme dir
 
-    // Android picture capture
-    Q_INVOKABLE QgsQuickPictureSource* getPicture( const QString &prefix );
-    Q_INVOKABLE void open( const QString& data, const QString& type );
-
     // Singletons
     void setStyle( QgsQuickStyle *style );
     QgsQuickStyle* style() const; //if you want to access it from QML, use Style QML singleton

@@ -28,15 +28,6 @@ Item {
       else
         QgsQuick.Utils.getThemeIcon("ic_photo_notavailable_white_48dp")
     }
-
-    MouseArea {
-      anchors.fill: parent
-
-      onClicked: {
-        if (image.currentValue)
-          QgsQuick.Utils.open(image.source, "image/*");
-      }
-    }
   }
 
   Button {
@@ -63,7 +54,7 @@ Item {
     target: photoCapturePanel
     onVisibleChanged    : {
         if (!photoCapturePanel.visible && photoCapturePanel.lastPhotoName !== "") {
-            image.source = homePath + "/" + photoCapturePanel.lastPhotoName
+            valueChanged(photoCapturePanel.lastPhotoName + "", false)
         }
     }
   }

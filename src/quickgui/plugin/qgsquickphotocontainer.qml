@@ -22,7 +22,6 @@ import QtGraphicalEffects 1.0
 import QgisQuick 1.0 as QgsQuick
 
 Drawer {
-    // photo folder
     property var targetDir
     property var lastPhotoName
     property int iconSize: photoPanel.width/30
@@ -69,8 +68,8 @@ Drawer {
         property bool saveImage: false
 
         id: captureItem
-        width: photoPanel.width
-        height: photoPanel.height
+        width: window.width
+        height: window.height
 
 
         Component.onDestruction: {
@@ -96,6 +95,7 @@ Drawer {
         // Flipped VideoOutput on android - known ButtonGroup
         // https://bugreports.qt.io/browse/QTBUG-64764
         VideoOutput {
+            id: videoOutput
             source: camera
             focus : visible // to receive focus and capture key events when visible
             anchors.fill: parent
@@ -121,8 +121,8 @@ Drawer {
                         if (targetDir !== "") {
                             camera.imageCapture.captureToLocation(photoPanel.targetDir);
                         } else {
+                            // saved to default location - TODO handle this case
                             camera.imageCapture.capture();
-                            // TODO copy image to project file
                         }
                         photoPreview.visible = true;
                     }
@@ -142,11 +142,12 @@ Drawer {
 
         Image {
             id: photoPreview
-            width: camera.width
-            height: camera.height
+            width: videoOutput.width
+            height: videoOutput.height
 
             // Cancel button
             Image {
+                id: cancelBtn
                 width: photoPanel.iconSize
                 height: photoPanel.iconSize
                 anchors.bottom: parent.bottom
@@ -154,6 +155,12 @@ Drawer {
                 anchors.margins: 10
                 visible: camera.imageCapture.capturedImagePath != ""
                 source: QgsQuick.Utils.getThemeIcon("ic_clear_black_18dp")
+
+                ColorOverlay {
+                       anchors.fill: cancelBtn
+                       source: cancelBtn
+                       color: "white"
+                   }
 
 
                 MouseArea {
@@ -171,6 +178,7 @@ Drawer {
 
             // Ok button
             Image {
+                id: confirmBtn
                 width: photoPanel.iconSize
                 height: photoPanel.iconSize
                 anchors.bottom: parent.bottom
@@ -179,10 +187,15 @@ Drawer {
                 visible: camera.imageCapture.capturedImagePath != ""
                 source: QgsQuick.Utils.getThemeIcon("ic_add_to_photos")
 
+                ColorOverlay {
+                       anchors.fill: confirmBtn
+                       source: confirmBtn
+                       color: "white"
+                   }
+
                 MouseArea {
                     anchors.fill: parent
                     onClicked: {
-                        console.log(camera.imageCapture.capturedImagePath)
                         captureItem.saveImage = true
                         photoPanel.visible = false
                         photoPanel.lastPhotoName = QgsQuick.Utils.getFileName(camera.imageCapture.capturedImagePath)
