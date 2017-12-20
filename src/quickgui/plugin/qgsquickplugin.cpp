@@ -56,12 +56,7 @@ static QObject *_styleProvider(QQmlEngine *engine, QJSEngine *scriptEngine)
 {
   Q_UNUSED(engine)
   Q_UNUSED(scriptEngine)
-
-  QgsQuickStyle *style = new QgsQuickStyle;
-
-  QgsQuickUtils::instance()->setStyle( style );  // make style available from utils
-
-  return style;  // the object will be owned by QML engine and destroyed by the engine on exit
+  return QgsQuickUtils::instance()->style();  // the object will be owned by QML engine and destroyed by the engine on exit
 }
 
 
