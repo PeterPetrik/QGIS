@@ -95,19 +95,6 @@ QgsPointXY QgsQuickUtils::transformPoint(QgsCoordinateReferenceSystem srcCrs, Qg
     return pt;
 }
 
-QgsFeature QgsQuickUtils::featureFromGps(const QgsPoint &gpsPoint, QgsVectorLayer *layer) const
-{
-  QgsGeometry geom( gpsPoint.clone() );
-  geom.transform( QgsCoordinateTransform( QgsCoordinateReferenceSystem( "EPSG:4326" ), layer->crs() ) );
-
-  QgsFeature f;
-  f.setGeometry( geom );
-  f.setFields( layer->fields() );
-  QgsAttributes attrs( f.fields().count() );
-  f.setAttributes( attrs );
-  return f;
-}
-
 bool QgsQuickUtils::fileExists(QString path) {
     QFileInfo check_file(path);
     // check if file exists and if yes: Is it really a file and no directory?
