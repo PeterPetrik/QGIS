@@ -22,8 +22,8 @@ Item {
     source: {
       if (image.status === Image.Error)
         QgsQuick.Utils.getThemeIcon("ic_broken_image_black_24dp")
-      else if (image.currentValue) {
-          homePath + '/' + currentValue
+      else if (image.currentValue && QgsQuick.Utils.fileExists(homePath + "/" + image.currentValue)) {
+          homePath + "/" + image.currentValue
       }
       else
         QgsQuick.Utils.getThemeIcon("ic_photo_notavailable_white_48dp")
@@ -54,7 +54,8 @@ Item {
     target: photoCapturePanel
     onVisibleChanged    : {
         if (!photoCapturePanel.visible && photoCapturePanel.lastPhotoName !== "") {
-            valueChanged(photoCapturePanel.lastPhotoName + "", false)
+            image.source = homePath + "/" + photoCapturePanel.lastPhotoName
+            valueChanged(photoCapturePanel.lastPhotoName, false)
         }
     }
   }

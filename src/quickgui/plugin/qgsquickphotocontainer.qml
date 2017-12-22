@@ -138,67 +138,68 @@ Drawer {
                 }
 
             }
-        }
 
-        Image {
-            id: photoPreview
-            width: videoOutput.width
-            height: videoOutput.height
-
-            // Cancel button
             Image {
-                id: cancelBtn
-                width: photoPanel.iconSize
-                height: photoPanel.iconSize
-                anchors.bottom: parent.bottom
-                anchors.left: parent.left
-                anchors.margins: 10
-                visible: camera.imageCapture.capturedImagePath != ""
-                source: QgsQuick.Utils.getThemeIcon("ic_clear_black_18dp")
+                id: photoPreview
+                width: parent.width
+                height: parent.height
+                fillMode: Image.PreserveAspectFit
 
-                ColorOverlay {
-                       anchors.fill: cancelBtn
-                       source: cancelBtn
-                       color: "white"
-                   }
+                // Cancel button
+                Image {
+                    id: cancelBtn
+                    width: photoPanel.iconSize
+                    height: photoPanel.iconSize
+                    anchors.bottom: parent.bottom
+                    anchors.left: parent.left
+                    anchors.margins: 10
+                    visible: camera.imageCapture.capturedImagePath != ""
+                    source: QgsQuick.Utils.getThemeIcon("ic_clear_black_18dp")
 
-
-                MouseArea {
-                    anchors.fill: parent
-                    onClicked: {
-                        captureItem.saveImage = false
-                        photoPreview.visible = false
-                        if (camera.imageCapture.capturedImagePath != "") {
-                            QgsQuick.Utils.remove(camera.imageCapture.capturedImagePath)
-                        }
+                    ColorOverlay {
+                        anchors.fill: cancelBtn
+                        source: cancelBtn
+                        color: "white"
                     }
 
+
+                    MouseArea {
+                        anchors.fill: parent
+                        onClicked: {
+                            captureItem.saveImage = false
+                            photoPreview.visible = false
+                            if (camera.imageCapture.capturedImagePath != "") {
+                                QgsQuick.Utils.remove(camera.imageCapture.capturedImagePath)
+                            }
+                        }
+
+                    }
                 }
-            }
 
-            // Ok button
-            Image {
-                id: confirmBtn
-                width: photoPanel.iconSize
-                height: photoPanel.iconSize
-                anchors.bottom: parent.bottom
-                anchors.right: parent.right
-                anchors.margins: 10
-                visible: camera.imageCapture.capturedImagePath != ""
-                source: QgsQuick.Utils.getThemeIcon("ic_add_to_photos")
+                // Ok button
+                Image {
+                    id: confirmBtn
+                    width: photoPanel.iconSize
+                    height: photoPanel.iconSize
+                    anchors.bottom: parent.bottom
+                    anchors.right: parent.right
+                    anchors.margins: 10
+                    visible: camera.imageCapture.capturedImagePath != ""
+                    source: QgsQuick.Utils.getThemeIcon("ic_add_to_photos")
 
-                ColorOverlay {
-                       anchors.fill: confirmBtn
-                       source: confirmBtn
-                       color: "white"
-                   }
+                    ColorOverlay {
+                        anchors.fill: confirmBtn
+                        source: confirmBtn
+                        color: "white"
+                    }
 
-                MouseArea {
-                    anchors.fill: parent
-                    onClicked: {
-                        captureItem.saveImage = true
-                        photoPanel.visible = false
-                        photoPanel.lastPhotoName = QgsQuick.Utils.getFileName(camera.imageCapture.capturedImagePath)
+                    MouseArea {
+                        anchors.fill: parent
+                        onClicked: {
+                            captureItem.saveImage = true
+                            photoPanel.visible = false
+                            photoPanel.lastPhotoName = QgsQuick.Utils.getFileName(camera.imageCapture.capturedImagePath)
+                        }
                     }
                 }
             }
