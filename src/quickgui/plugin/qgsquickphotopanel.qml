@@ -1,5 +1,5 @@
 /***************************************************************************
- qgsquickpositionmarker.qml
+ qgsquickphotopanel.qml
   --------------------------------------
   Date                 : Dec 2017
   Copyright            : (C) 2017 by Viktor Sklencar
@@ -185,7 +185,7 @@ Drawer {
                     anchors.right: parent.right
                     anchors.margins: 10
                     visible: camera.imageCapture.capturedImagePath != ""
-                    source: QgsQuick.Utils.getThemeIcon("ic_add_to_photos")
+                    source: QgsQuick.Utils.getThemeIcon("ic_check_black_24px")
 
                     ColorOverlay {
                         anchors.fill: confirmBtn
