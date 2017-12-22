@@ -170,5 +170,11 @@
         <file>xxhdpi/ic_clear_black_24px.png</file>
         <file>xxxhdpi/ic_add_to_photos.png</file>
         <file>xxxhdpi/ic_clear_black_24px.png</file>
+        <file>hdpi/ic_check_black_24px.png</file>
+        <file>mdpi/ic_check_black_24px.png</file>
+        <file>nodpi/ic_check_black_24px.svg</file>
+        <file>xhdpi/ic_check_black_24px.png</file>
+        <file>xxhdpi/ic_check_black_24px.png</file>
+        <file>xxxhdpi/ic_check_black_24px.png</file>
     </qresource>
 </RCC>

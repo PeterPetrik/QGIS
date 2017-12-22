@@ -16,6 +16,6 @@ plugin qgis_quick_plugin
 MapCanvas 1.0 qgsquickmapcanvas.qml
 FeatureForm 1.0 qgsquickfeatureform.qml
 PositionMarker 1.0 qgsquickpositionmarker.qml
-PhotoCapture 1.0 qgsquickphotocontainer.qml
+PhotoCapture 1.0 qgsquickphotopanel.qml
 
 typeinfo qgisquick.qmltypes
