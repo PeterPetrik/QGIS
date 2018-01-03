@@ -36,6 +36,8 @@ Item {
   property alias toolbarVisible: toolbar.visible
   property QgsQuick.Project project
 
+  property FeatureFormStyling style: FeatureFormStyling {}
+
   function reset() {
     master.reset()
   }
@@ -94,7 +96,7 @@ Item {
       TabBar {
         id: tabRow
         visible: model.hasTabs
-        height: 48 * QgsQuick.Style.dp
+        height: form.style.tabs.height
 
         Connections {
           target: master
@@ -116,7 +118,7 @@ Item {
             rightPadding: 8 * QgsQuick.Style.dp
 
             width: contentItem.width + leftPadding + rightPadding
-            height: 48 * QgsQuick.Style.dp
+            height: form.style.tabs.height
 
             contentItem: Text {
               // Make sure the width is derived from the text so we can get wider
@@ -124,8 +126,8 @@ Item {
               width: paintedWidth
               text: tabButton.text
               // color: tabButton.down ? "#17a81a" : "#21be2b"
-              color: !tabButton.enabled ? "#999999" : tabButton.down ||
-                                        tabButton.checked ? "#1B5E20" : "#4CAF50"
+              color: !tabButton.enabled ? form.style.tabs.disabledColor : tabButton.down ||
+                                        tabButton.checked ? form.style.tabs.activeColor : form.style.tabs.normalColor
               font.weight: tabButton.checked ? Font.DemiBold : Font.Normal
 
               horizontalAlignment: Text.AlignHCenter
@@ -160,7 +162,8 @@ Item {
           Rectangle {
              width: parent.width
              height: parent.height
-             color: "white"
+             color: form.style.backgroundColor
+             opacity: form.style.backgroundOpacity
           }
 
           ListView {
@@ -173,8 +176,8 @@ Item {
               // section header: group box name
               Rectangle {
                 width: parent.width
-                height: section === "" ? 0 : 30 * QgsQuick.Style.dp
-                color: "lightGray"
+                height: section === "" ? 0 : form.style.group.height
+                color: form.style.group.backgroundColor
 
                 Text {
                   anchors { horizontalCenter: parent.horizontalCenter; verticalCenter: parent.verticalCenter }
@@ -224,7 +227,7 @@ Item {
 
         text: Name || ''
         font.bold: true
-        color: ConstraintValid ? "black" : "#c0392b"
+        color: ConstraintValid ? form.style.constraint.validColor : form.style.constraint.invalidColor
       }
 
       Label {
@@ -239,7 +242,7 @@ Item {
         height: ConstraintValid ? 0 : undefined
         visible: !ConstraintValid
 
-        color: "#e67e22"
+        color: form.style.constraint.descriptionColor
       }
 
       Item {
