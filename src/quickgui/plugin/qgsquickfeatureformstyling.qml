@@ -1,0 +1,27 @@
+import QtQuick 2.0
+
+import QgisQuick 1.0 as QgsQuick
+
+QtObject {
+
+    property color backgroundColor: "white"
+    property real backgroundOpacity: 1
+
+    property QtObject group: QtObject {
+      property color backgroundColor: "lightGray"
+      property real height: 30 * QgsQuick.Style.dp
+    }
+
+    property QtObject tabs: QtObject {
+        property color normalColor: "#4CAF50"
+        property color activeColor: "#1B5E20"
+        property color disabledColor: "#999999"
+        property real height: 48 * QgsQuick.Style.dp
+    }
+
+    property QtObject constraint: QtObject {
+      property color validColor: "black"
+      property color invalidColor: "#c0392b"
+      property color descriptionColor: "#e67e22"
+    }
+}
