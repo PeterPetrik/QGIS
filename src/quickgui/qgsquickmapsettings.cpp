@@ -231,3 +231,14 @@ void QgsQuickMapSettings::setRotation( double rotation )
   mMapSettings.setRotation( rotation );
   emit rotationChanged();
 }
+
+// TODO test @vsklencar
+double QgsQuickMapSettings::convertDistanceToMapUnits(double accuracy)
+{
+    QPointF p1 = coordinateToScreen(QgsPoint(0, 0));
+    QPointF p2 = coordinateToScreen(QgsPoint(accuracy, 0));
+
+    QgsDistanceArea* mDistanceArea = new QgsDistanceArea();
+    double dist = mDistanceArea->measureLine(QgsPointXY(p1.rx(), p1.ry()), QgsPointXY(p2.rx(), p2.ry()));
+    return dist;
+}

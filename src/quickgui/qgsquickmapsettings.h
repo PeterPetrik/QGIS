@@ -85,6 +85,8 @@ class QUICK_EXPORT QgsQuickMapSettings : public QObject
     double rotation() const;
     void setRotation( double rotation );
 
+    Q_INVOKABLE double convertDistanceToMapUnits(double accuracy);
+
     QgsMapSettings mapSettings() const;
 
     QSize outputSize() const;
