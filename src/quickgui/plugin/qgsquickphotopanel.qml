@@ -25,6 +25,7 @@ Drawer {
     property var targetDir
     property var lastPhotoName
     property int iconSize: photoPanel.width/30
+    property var fieldItem
 
     id: photoPanel
     visible: false
@@ -199,6 +200,10 @@ Drawer {
                             captureItem.saveImage = true
                             photoPanel.visible = false
                             photoPanel.lastPhotoName = QgsQuick.Utils.getFileName(camera.imageCapture.capturedImagePath)
+                            if (photoPanel.lastPhotoName !== "") {
+                                fieldItem.image.source = photoPanel.targetDir + "/" + photoPanel.lastPhotoName
+                                fieldItem.valueChanged(photoPanel.lastPhotoName, photoPanel.lastPhotoName === "" || photoPanel.lastPhotoName === null)
+                            }
                         }
                     }
                 }
