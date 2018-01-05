@@ -16,6 +16,7 @@
 import QtQuick 2.3
 import QtQuick.Controls 2.2
 import QtQml 2.2
+import QtGraphicalEffects 1.0
 import QgisQuick 1.0 as QgsQuick
 
 Item {
@@ -32,6 +33,7 @@ Item {
     property alias mapPosition: wgs84toMapCrs.projectedPosition // in map coordinates
     property alias gpsPosition: positionKit.position // in WGS84 coordinates
     property alias positionKit: positionKit
+    property var withAccuracy: true
 
     onMapSettingsChanged: update_location()
     onGpsPositionChanged: update_location()
@@ -73,6 +75,25 @@ Item {
         id: positionKit
     }
 
+    Rectangle {
+        // accuracy === HorizontalAccuracy
+        id: accuracyIndicator
+        visible: withAccuracy
+        x: positionMarker.screenPosition.x - width/2
+        y: positionMarker.screenPosition.y - height/2
+        width: {
+            if (positionKit.accuracy > 0)
+                mapSettings.convertDistanceToMapUnits(positionKit.accuracy)
+            else positionMarker.size
+        }
+        height: accuracyIndicator.width
+        color: "red"
+        border.color: "black"
+        border.width: 1
+        radius: width*0.5
+        opacity: 0.3
+    }
+
     Image {
         id: navigation
         source: QgsQuick.Utils.getThemeIcon("ic_navigation_black_48px")
@@ -83,4 +104,12 @@ Item {
         width: positionMarker.size
         height: width
     }
+
+    ColorOverlay {
+            anchors.fill: navigation
+            source: navigation
+            color: "grey"
+            rotation: positionKit.direction
+            visible: !positionKit.hasPosition
+        }
 }
