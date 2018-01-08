@@ -6,6 +6,9 @@ import QgisQuick 1.0 as QgsQuick
 Item {
   signal valueChanged(var value, bool isNull)
 
+  property var image: image
+
+  id: fieldItem
   anchors.left: parent.left
   anchors.right: parent.right
 
@@ -19,14 +22,17 @@ Item {
     autoTransform: true
     fillMode: Image.PreserveAspectFit
 
-    source: {
-      if (image.status === Image.Error)
-        QgsQuick.Utils.getThemeIcon("ic_broken_image_black_24dp")
-      else if (image.currentValue && QgsQuick.Utils.fileExists(homePath + "/" + image.currentValue)) {
-          homePath + "/" + image.currentValue
-      }
-      else
-        QgsQuick.Utils.getThemeIcon("ic_photo_notavailable_white_48dp")
+    Component.onCompleted: image.source = getSource()
+
+    function getSource() {
+        if (image.status === Image.Error)
+            return QgsQuick.Utils.getThemeIcon("ic_broken_image_black_24dp")
+        else if (image.currentValue && QgsQuick.Utils.fileExists(homePath + "/" + image.currentValue)) {
+            return homePath + "/" + image.currentValue
+        }
+        else       {
+            return QgsQuick.Utils.getThemeIcon("ic_photo_notavailable_white_48dp")
+        }
     }
   }
 
@@ -41,22 +47,13 @@ Item {
     onClicked: {
         photoCapturePanel.visible = true
         photoCapturePanel.targetDir = homePath
+        photoCapturePanel.fieldItem = fieldItem
     }
 
     background: Image {
         source: QgsQuick.Utils.getThemeIcon("ic_camera_alt_border_24dp")
         width: button.width
         height: button.height
-    }
-  }
-
-  Connections {
-    target: photoCapturePanel
-    onVisibleChanged    : {
-        if (!photoCapturePanel.visible && photoCapturePanel.lastPhotoName !== "") {
-            image.source = homePath + "/" + photoCapturePanel.lastPhotoName
-            valueChanged(photoCapturePanel.lastPhotoName, photoCapturePanel.lastPhotoName === "" || photoCapturePanel.lastPhotoName === null)
-        }
     }
   }
 }
