@@ -76,14 +76,13 @@ Item {
     }
 
     Rectangle {
-        // accuracy === HorizontalAccuracy
         id: accuracyIndicator
         visible: withAccuracy
         x: positionMarker.screenPosition.x - width/2
         y: positionMarker.screenPosition.y - height/2
         width: {
             if (positionKit.accuracy > 0)
-                mapSettings.convertDistanceToMapUnits(positionKit.accuracy)
+                QgsQuick.Utils.distanceToMapUnits(mapSettings, positionKit.accuracy, 0, 0, 0) * 2
             else positionMarker.size
         }
         height: accuracyIndicator.width

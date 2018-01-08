@@ -18,6 +18,9 @@
 #include "qgscoordinatereferencesystem.h"
 #include "qgscoordinatetransform.h"
 #include "qgsvectorlayer.h"
+#include "qgsquickmapsettings.h"
+#include "qgsdistancearea.h"
+#include "qgenericatomic.h"
 
 #include <QMap>
 #include <QString>
@@ -94,6 +97,20 @@ QgsPointXY QgsQuickUtils::transformPoint(QgsCoordinateReferenceSystem srcCrs, Qg
     QgsPointXY pt = mTransform.transform( srcPoint );
     return pt;
 }
+
+double QgsQuickUtils::distanceToMapUnits(QgsQuickMapSettings* mapSettings, double x1, double y1, double x2, double y2)
+{
+    QPointF p1 = mapSettings->coordinateToScreen(QgsPoint(x1, y1));
+    QPointF p2 = mapSettings->coordinateToScreen(QgsPoint(x2, y2));
+
+    QgsDistanceArea* mDistanceArea = new QgsDistanceArea();
+    mDistanceArea->setEllipsoid("WGS84");
+    mDistanceArea->setSourceCrs(mapSettings->destinationCrs());
+    double dist = mDistanceArea->measureLine(QgsPointXY(p1.rx(), p1.ry()), QgsPointXY(p2.rx(), p2.ry()));
+    delete mDistanceArea;
+    return dist;
+}
+
 
 bool QgsQuickUtils::fileExists(QString path) {
     QFileInfo check_file(path);
