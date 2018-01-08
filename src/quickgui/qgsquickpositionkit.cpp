@@ -156,7 +156,8 @@ void QgsQuickSimulatedPositionSource::readNextPosition()
   if (info.isValid()) {
       mLastPosition = info;
       info.setAttribute(QGeoPositionInfo::Direction, 360 - int(mAngle)%360);
-      info.setAttribute(QGeoPositionInfo::HorizontalAccuracy, 10000); // 10 km
+      int accuracy = std::rand() % 4000 + 8000; // rand accuracy <8000,12000>m
+      info.setAttribute(QGeoPositionInfo::HorizontalAccuracy, accuracy);
       emit positionUpdated(info);
   }
 }

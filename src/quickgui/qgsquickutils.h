@@ -44,7 +44,7 @@ class QUICK_EXPORT QgsQuickUtils: public QObject
     Q_INVOKABLE QgsPointXY pointXYFactory(double x, double y) const;
     Q_INVOKABLE QgsPoint pointFactory(double x, double y) const;
     Q_INVOKABLE QgsPointXY transformPoint(QgsCoordinateReferenceSystem srcCrs, QgsCoordinateReferenceSystem destCrs, QgsPointXY srcPoint) const;
-    Q_INVOKABLE double distanceToMapUnits(QgsQuickMapSettings* mapSettings, double x1, double y1, double x2, double y2);
+    Q_INVOKABLE double distanceToMapUnits(QgsQuickMapSettings* mapSettings, QgsPoint point1, QgsPoint point2);
 
     // Common
     Q_INVOKABLE bool fileExists(QString path);
