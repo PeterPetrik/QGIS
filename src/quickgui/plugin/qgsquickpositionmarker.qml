@@ -75,14 +75,16 @@ Item {
         id: positionKit
     }
 
+    // GPS accuracy circle-shaped indicator around positionMarker
     Rectangle {
         id: accuracyIndicator
         visible: withAccuracy
         x: positionMarker.screenPosition.x - width/2
         y: positionMarker.screenPosition.y - height/2
         width: {
-            if (positionKit.accuracy > 0)
-                QgsQuick.Utils.distanceToMapUnits(mapSettings, positionKit.accuracy, 0, 0, 0) * 2
+            if (positionKit.accuracy > 0) {
+                QgsQuick.Utils.distanceToMapUnits(mapSettings, QgsQuick.Utils.pointFactory(positionMarker.x - positionKit.accuracy, positionMarker.y), QgsQuick.Utils.pointFactory(positionMarker.x + positionKit.accuracy, positionMarker.y))
+            }
             else positionMarker.size
         }
         height: accuracyIndicator.width
@@ -104,6 +106,7 @@ Item {
         height: width
     }
 
+    // Makes positionMarker (navigation) grey if gps signal is lost
     ColorOverlay {
             anchors.fill: navigation
             source: navigation

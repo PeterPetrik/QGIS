@@ -98,17 +98,17 @@ QgsPointXY QgsQuickUtils::transformPoint(QgsCoordinateReferenceSystem srcCrs, Qg
     return pt;
 }
 
-double QgsQuickUtils::distanceToMapUnits(QgsQuickMapSettings* mapSettings, double x1, double y1, double x2, double y2)
+double QgsQuickUtils::distanceToMapUnits(QgsQuickMapSettings* mapSettings, QgsPoint point1, QgsPoint point2)
 {
-    QPointF p1 = mapSettings->coordinateToScreen(QgsPoint(x1, y1));
-    QPointF p2 = mapSettings->coordinateToScreen(QgsPoint(x2, y2));
+    if (mapSettings == 0) return 0;
 
-    QgsDistanceArea* mDistanceArea = new QgsDistanceArea();
-    mDistanceArea->setEllipsoid("WGS84");
-    mDistanceArea->setSourceCrs(mapSettings->destinationCrs());
-    double dist = mDistanceArea->measureLine(QgsPointXY(p1.rx(), p1.ry()), QgsPointXY(p2.rx(), p2.ry()));
-    delete mDistanceArea;
-    return dist;
+    QPointF p1 = mapSettings->coordinateToScreen(point1);
+    QPointF p2 = mapSettings->coordinateToScreen(point2);
+
+    QgsDistanceArea mDistanceArea;
+    mDistanceArea.setEllipsoid("WGS84");
+    mDistanceArea.setSourceCrs(mapSettings->destinationCrs());
+    return mDistanceArea.measureLine(QgsPointXY(p1.rx(), p1.ry()), QgsPointXY(p2.rx(), p2.ry()));
 }
 
 
