@@ -27,8 +27,9 @@ class QUICK_EXPORT QgsQuickPositionKit : public QObject
   Q_OBJECT
   Q_PROPERTY(QgsPoint position READ position NOTIFY positionChanged) // in WGS84 coords
   Q_PROPERTY(bool hasPosition READ hasPosition NOTIFY hasPositionChanged)
-  Q_PROPERTY(qreal accuracy READ accuracy NOTIFY positionChanged)
+  Q_PROPERTY(qreal accuracy READ accuracy NOTIFY positionChanged) // in meters
   Q_PROPERTY(qreal direction READ direction NOTIFY positionChanged)
+  Q_PROPERTY(QString status READ status NOTIFY statusChanged) // label: position (accuracy), ends with "*" if simulated
   //TODO add timestamp?
   Q_PROPERTY(bool isSimulated READ simulated NOTIFY isSimulatedChanged)
 
@@ -39,6 +40,7 @@ public:
   QgsPoint position() const { return mPosition; }
   qreal accuracy() const { return mAccuracy; }
   qreal direction() const { return mDirection; }
+  QString status() const { return mStatus; }
 
   // We do not want to have the origin point as property
   // We basically want to set it once based on project/map cente and keep
@@ -51,6 +53,7 @@ signals:
   void positionChanged();
   void hasPositionChanged();
   void isSimulatedChanged();
+  void statusChanged();
 
 public slots:
 
@@ -66,6 +69,7 @@ protected:
   qreal mAccuracy; // horizontal accuracy in meters (-1 if not available)
   qreal mDirection; // bearing in degrees clockwise from north to direction of travel (-1 if not available)
   bool mHasPosition;
+  QString mStatus; // human readable GPS position status
 
   // Simulated source
   bool mIsSimulated;
@@ -74,6 +78,8 @@ protected:
 
 private:
   void replacePositionSource(QGeoPositionInfoSource* source);
+  QString calculateStatusLabel();
+
   QGeoPositionInfoSource* gpsSource();
   QGeoPositionInfoSource* simulatedSource(double longitude, double latitude, double radius);
 

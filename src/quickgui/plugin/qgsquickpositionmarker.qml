@@ -33,6 +33,7 @@ Item {
     property alias mapPosition: wgs84toMapCrs.projectedPosition // in map coordinates
     property alias gpsPosition: positionKit.position // in WGS84 coordinates
     property alias positionKit: positionKit
+    property alias gpsStatus: positionKit.status // human readable status message (position + accuracy)
     property var withAccuracy: true
 
     onMapSettingsChanged: update_location()
