@@ -20,6 +20,7 @@ QgsQuickPositionKit::QgsQuickPositionKit(QObject *parent)
   , mAccuracy(-1)
   , mDirection(-1)
   , mHasPosition(false)
+  , mStatus("")
   , mIsSimulated(false)
   , mSource(nullptr)
 {
@@ -45,11 +46,13 @@ QGeoPositionInfoSource*  QgsQuickPositionKit::simulatedSource(double longitude, 
 
 void QgsQuickPositionKit::use_simulated_location(double longitude, double latitude, double radius) {
     QGeoPositionInfoSource* source = simulatedSource(longitude, latitude, radius);
+    mIsSimulated = true;
     replacePositionSource(source);
 }
 
 void QgsQuickPositionKit::use_gps_location() {
     QGeoPositionInfoSource* source = gpsSource();
+    mIsSimulated = false;
     replacePositionSource(source);
 }
 
@@ -98,8 +101,46 @@ void QgsQuickPositionKit::positionUpdated(const QGeoPositionInfo &info)
     mHasPosition = true;
     emit hasPositionChanged();
   }
+
+  QString newStatus = calculateStatusLabel();
+  if (mStatus != newStatus) {
+      mStatus = newStatus;
+      emit statusChanged();
+  }
 }
 
+QString QgsQuickPositionKit::calculateStatusLabel() {
+    QString label;
+
+    if (mHasPosition) {
+        label += QString::number(mPosition.x(), 'f', 3);
+        label += ", ";
+        label += QString::number(mPosition.y(), 'f', 3);
+        if (mAccuracy > 0) {
+            label += QString(" (");
+            if (mAccuracy > 1000) {
+                label += QString::number(mAccuracy/1000.0, 'f', 1);
+                label += QString(" km");
+            } else {
+                if (mAccuracy > 1) {
+                    label += QString::number(mAccuracy, 'f', 1);
+                } else {
+                    label += QString::number(mAccuracy, 'f', 2);
+                }
+                label += QString(" m");
+            }
+            label += QString(")");
+        }
+    } else {
+        label += "signal lost";
+    }
+
+    if (mIsSimulated) {
+        label += " *";
+    }
+
+    return label;
+}
 
 void QgsQuickPositionKit::onUpdateTimeout()
 {
