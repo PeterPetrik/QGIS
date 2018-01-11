@@ -22,7 +22,6 @@
 #include <QString>
 
 class QgsQuickMapSettings;
-class QgsDistanceArea;
 
 /**
  * \ingroup quick
@@ -66,13 +65,9 @@ signals:
 
 public slots:
   void updateScaleBar();
-  void setCrs();
 
 private:
-  double screenUnitsToMeters() const;
-
   QgsQuickMapSettings* mMapSettings;
-  QgsDistanceArea* mDistanceArea;
 
   int mPreferredWidth; // pixels
   int mWidth; // pixels

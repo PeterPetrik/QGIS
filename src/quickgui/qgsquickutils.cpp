@@ -98,19 +98,21 @@ QgsPointXY QgsQuickUtils::transformPoint(QgsCoordinateReferenceSystem srcCrs, Qg
     return pt;
 }
 
-double QgsQuickUtils::distanceToMapUnits(QgsQuickMapSettings* mapSettings, QgsPoint point1, QgsPoint point2)
-{
+double QgsQuickUtils::screenUnitsToMeters(QgsQuickMapSettings* mapSettings, int baseLengthPixels) const {
     if (mapSettings == 0) return 0;
-
-    QPointF p1 = mapSettings->coordinateToScreen(point1);
-    QPointF p2 = mapSettings->coordinateToScreen(point2);
 
     QgsDistanceArea mDistanceArea;
     mDistanceArea.setEllipsoid("WGS84");
     mDistanceArea.setSourceCrs(mapSettings->destinationCrs());
-    return mDistanceArea.measureLine(QgsPointXY(p1.rx(), p1.ry()), QgsPointXY(p2.rx(), p2.ry()));
-}
 
+    // calculate the geographic distance from the central point of extent
+    // to the specified number of points on the right side
+    QSize s = mapSettings->outputSize();
+    QPoint pointCenter(s.width()/2, s.height()/2);
+    QgsPointXY p1 = mapSettings->screenToCoordinate(pointCenter);
+    QgsPointXY p2 = mapSettings->screenToCoordinate(pointCenter+QPoint(baseLengthPixels,0));
+    return mDistanceArea.measureLine(p1, p2);
+}
 
 bool QgsQuickUtils::fileExists(QString path) {
     QFileInfo check_file(path);
@@ -189,4 +191,35 @@ QUrl QgsQuickUtils::getThemeIcon(const QString& name) {
     }
     qDebug() << "Using icon " << name << " from " << path;
     return QUrl(path);
+}
+
+QString QgsQuickUtils::qgsPointToString(const QgsPoint& point, int decimals)
+{
+    QString label;
+    label += QString::number(point.x(), 'f', decimals);
+    label += ", ";
+    label += QString::number(point.y(), 'f', decimals);
+    return label;
+}
+
+QString QgsQuickUtils::distanceToString(qreal dist, int decimals)
+{
+    if (dist < 0) {
+        return "0 m";
+    }
+
+    QString label;
+    if (dist > 1000) {
+        label += QString::number(dist/1000.0, 'f', decimals);
+        label += QString(" km");
+    } else {
+        if (dist > 1) {
+            label += QString::number(dist, 'f', decimals);
+            label += QString(" m");
+        } else {
+            label += QString::number(dist*1000, 'f', decimals);
+            label += QString(" mm");
+        }
+    }
+    return label;
 }

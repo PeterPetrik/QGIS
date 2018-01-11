@@ -380,7 +380,12 @@ void QgsQuickMapCanvasMap::zoomToFullExtent()
   QgsRectangle extent;
   Q_FOREACH( QgsMapLayer* layer, mMapSettings->layers() )
   {
-    extent.combineExtentWith( layer->extent() );
+      if (mMapSettings->destinationCrs() != layer->crs()) {
+          QgsCoordinateTransform transform(layer->crs(), mMapSettings->destinationCrs());
+          extent.combineExtentWith( transform.transformBoundingBox(layer->extent()) );
+      } else {
+          extent.combineExtentWith( layer->extent() );
+      }
   }
   mMapSettings->setExtent( extent );
 

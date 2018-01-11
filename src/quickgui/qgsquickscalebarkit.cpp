@@ -15,6 +15,7 @@
 
 #include "qgsquickscalebarkit.h"
 #include <qgsquickmapsettings.h>
+#include "qgsquickutils.h"
 
 #include <QSize>
 #include <QPoint>
@@ -26,22 +27,16 @@
 QgsQuickScaleBarKit::QgsQuickScaleBarKit(QObject *parent)
     :QObject(parent)
     ,mMapSettings(0)
-    ,mDistanceArea(new QgsDistanceArea)
     ,mPreferredWidth(300)
     ,mWidth(mPreferredWidth)
     ,mDistance(0)
     ,mUnits("")
 {
-    mDistanceArea->setEllipsoid("WGS84");
-
-    connect(this, SIGNAL(mapSettingsChanged()), this, SLOT(setCrs()));
     connect(this, SIGNAL(mapSettingsChanged()), this, SLOT(updateScaleBar()));
     connect(this, SIGNAL(preferredWidthChanged()), this, SLOT(updateScaleBar()));
 }
 
-QgsQuickScaleBarKit::~QgsQuickScaleBarKit() {
-    delete mDistanceArea;
-}
+QgsQuickScaleBarKit::~QgsQuickScaleBarKit() {}
 
 
 void QgsQuickScaleBarKit::setMapSettings(QgsQuickMapSettings* mapSettings) {
@@ -63,19 +58,9 @@ void QgsQuickScaleBarKit::setMapSettings(QgsQuickMapSettings* mapSettings) {
         connect(mMapSettings, SIGNAL(visibleExtentChanged()), this, SLOT(updateScaleBar()));
         connect(mMapSettings, SIGNAL(outputSizeChanged()), this, SLOT(updateScaleBar()));
         connect(mMapSettings, SIGNAL(outputDpiChanged()), this, SLOT(updateScaleBar()));
-
-        connect(mMapSettings, SIGNAL(destinationCrsChanged()), this, SLOT(setCrs()));
     }
 
     emit mapSettingsChanged();
-}
-
-void QgsQuickScaleBarKit::setCrs() {
-    Q_ASSERT(mDistanceArea);
-
-    if (mMapSettings) {
-        mDistanceArea->setSourceCrs(mMapSettings->destinationCrs());
-    }
 }
 
 int QgsQuickScaleBarKit::width() const {
@@ -90,25 +75,12 @@ int QgsQuickScaleBarKit::distance() const {
     return mDistance;
 }
 
-double QgsQuickScaleBarKit::screenUnitsToMeters() const
-{
-    Q_ASSERT(mMapSettings);
-
-    // calculate the geographic distance from the central point of extent
-    // to the specified number of points on the right side
-    QSize s = mMapSettings->outputSize();
-    QPoint pointCenter(s.width()/2, s.height()/2);
-    QgsPointXY p1 = mMapSettings->screenToCoordinate(pointCenter);
-    QgsPointXY p2 = mMapSettings->screenToCoordinate(pointCenter+QPoint(mPreferredWidth,0));
-    return mDistanceArea->measureLine(p1, p2);
-}
-
 void QgsQuickScaleBarKit::updateScaleBar()
 {
   if (!mMapSettings)
     return;
 
-  double dist = screenUnitsToMeters(); // meters
+  double dist = QgsQuickUtils::instance()->screenUnitsToMeters(mMapSettings, mPreferredWidth); // meters
   if (dist > 1000.0) {
       dist = dist / 1000.0; // meters to kilometers
       mUnits = "km";

@@ -176,26 +176,6 @@ void QgsQuickMapSettings::setLayers( const QList<QgsMapLayer*>& layers )
   emit layersChanged();
 }
 
-#if 0
-void MapSettings::setMapTheme( QgsProject* project, const QString& mapThemeName )
-{
-  QStringList layerIds;
-
-  QgsMapThemeCollection::MapThemeRecord mapTheme = project->mapThemeCollection()->mapThemeState( mapThemeName );
-
-  Q_FOREACH( const QgsMapThemeCollection::MapThemeLayerRecord& record, mapTheme.layerRecords() )
-  {
-    record.layer()->styleManager()->setCurrentStyle( mapTheme.perLayerCurrentStyle().value( layerId ) );
-
-    layerIds << layerId;
-  }
-}
-
-mMapSettings.setLayers( layerIds );
-emit layersChanged();
-}
-#endif
-
 void QgsQuickMapSettings::onReadProject( const QDomDocument& doc )
 {
   QDomNodeList nodes = doc.elementsByTagName( "mapcanvas" );

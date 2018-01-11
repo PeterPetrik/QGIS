@@ -32,8 +32,26 @@ Item {
     property point screenPosition  // in pixels
     property alias mapPosition: wgs84toMapCrs.projectedPosition // in map coordinates
     property alias gpsPosition: positionKit.position // in WGS84 coordinates
+    property alias gpsAccuracy: positionKit.accuracy // in meters
     property alias positionKit: positionKit
-    property alias gpsStatus: positionKit.status // human readable status message (position + accuracy)
+    property var gpsPositionLabel: {
+        if (positionKit.hasPosition) {
+            QgsQuick.Utils.qgsPointToString(positionKit.position, 3) // e.g -2.243, 45.441
+        } else {
+            "GPS signal lost"
+        }
+    }
+    property var gpsAccuracyLabel: {
+        if (positionMarker.withAccuracy) {
+            if (positionKit.hasPosition && positionKit.accuracy > 0) {
+                QgsQuick.Utils.distanceToString(positionKit.accuracy, 0) // e.g 1 km or 15 m or 500 mm
+            } else {
+                "GPS accuracy N/A"
+            }
+        } else {
+            ""
+        }
+    }
     property var withAccuracy: true
 
     onMapSettingsChanged: update_location()
@@ -48,10 +66,6 @@ Item {
         if (mapSettings)
             screenPosition = mapSettings.coordinateToScreen(wgs84toMapCrs.projectedPosition)
     }
-
-    //TODO maybe create function to parse project layers (or mapsettings) and their extent and calculate some reasonable
-    // values instead of hardcoding them in the application?
-    // function calculateSimulatedPositionParams(project) { ... }
 
     onSimulatePositionLongLatRadChanged: {
         if (simulatePositionLongLatRad) {
@@ -79,21 +93,29 @@ Item {
     // GPS accuracy circle-shaped indicator around positionMarker
     Rectangle {
         id: accuracyIndicator
-        visible: withAccuracy
+        visible: mapSettings &&
+                 withAccuracy &&
+                 positionKit.hasPosition &&
+                 (positionKit.accuracy > 0) &&
+                 (accuracyIndicator.width > positionMarker.size / 2.0)
         x: positionMarker.screenPosition.x - width/2
         y: positionMarker.screenPosition.y - height/2
         width: {
             if (positionKit.accuracy > 0) {
-                QgsQuick.Utils.distanceToMapUnits(mapSettings, QgsQuick.Utils.pointFactory(positionMarker.x - positionKit.accuracy, positionMarker.y), QgsQuick.Utils.pointFactory(positionMarker.x + positionKit.accuracy, positionMarker.y))
+                var scpm = QgsQuick.Utils.screenUnitsToMeters(positionMarker.mapSettings, 1) // scpm is how much meters is 1 pixel
+                if (scpm > 0)
+                    2 * ( positionKit.accuracy / scpm )
+                else
+                    2
             }
-            else positionMarker.size
+            else 2
         }
         height: accuracyIndicator.width
-        color: "red"
+        color: "blue"
         border.color: "black"
-        border.width: 1
+        border.width: 3
         radius: width*0.5
-        opacity: 0.3
+        opacity: 0.1
     }
 
     Image {

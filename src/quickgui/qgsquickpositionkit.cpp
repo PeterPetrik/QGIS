@@ -20,7 +20,6 @@ QgsQuickPositionKit::QgsQuickPositionKit(QObject *parent)
   , mAccuracy(-1)
   , mDirection(-1)
   , mHasPosition(false)
-  , mStatus("")
   , mIsSimulated(false)
   , mSource(nullptr)
 {
@@ -101,45 +100,6 @@ void QgsQuickPositionKit::positionUpdated(const QGeoPositionInfo &info)
     mHasPosition = true;
     emit hasPositionChanged();
   }
-
-  QString newStatus = calculateStatusLabel();
-  if (mStatus != newStatus) {
-      mStatus = newStatus;
-      emit statusChanged();
-  }
-}
-
-QString QgsQuickPositionKit::calculateStatusLabel() {
-    QString label;
-
-    if (mHasPosition) {
-        label += QString::number(mPosition.x(), 'f', 3);
-        label += ", ";
-        label += QString::number(mPosition.y(), 'f', 3);
-        if (mAccuracy > 0) {
-            label += QString(" (");
-            if (mAccuracy > 1000) {
-                label += QString::number(mAccuracy/1000.0, 'f', 1);
-                label += QString(" km");
-            } else {
-                if (mAccuracy > 1) {
-                    label += QString::number(mAccuracy, 'f', 1);
-                } else {
-                    label += QString::number(mAccuracy, 'f', 2);
-                }
-                label += QString(" m");
-            }
-            label += QString(")");
-        }
-    } else {
-        label += "signal lost";
-    }
-
-    if (mIsSimulated) {
-        label += " *";
-    }
-
-    return label;
 }
 
 void QgsQuickPositionKit::onUpdateTimeout()
@@ -189,7 +149,7 @@ void QgsQuickSimulatedPositionSource::readNextPosition()
   double latitude = mLatitude, longitude = mLongitude;
   latitude += sin(mAngle*M_PI/180) * mFlightRadius;
   longitude += cos(mAngle*M_PI/180) * mFlightRadius;
-  mAngle += 5;
+  mAngle += 1;
 
   QDateTime timestamp = QDateTime::currentDateTime();
   QGeoCoordinate coordinate(latitude, longitude);
@@ -197,7 +157,10 @@ void QgsQuickSimulatedPositionSource::readNextPosition()
   if (info.isValid()) {
       mLastPosition = info;
       info.setAttribute(QGeoPositionInfo::Direction, 360 - int(mAngle)%360);
-      int accuracy = std::rand() % 4000 + 8000; // rand accuracy <8000,12000>m
+      int accuracy = std::rand() % 40 + 20; // rand accuracy <20,55>m and lost (-1)
+      if (accuracy > 55) {
+          accuracy = -1;
+      }
       info.setAttribute(QGeoPositionInfo::HorizontalAccuracy, accuracy);
       emit positionUpdated(info);
   }
