@@ -34,8 +34,8 @@ Drawer {
     dragMargin: 0 // prevents opening the drawer by dragging.
 
     background: Rectangle {
-        color: "#7b909d"
-        opacity: 0.7
+        color: "white"
+        opacity: 0.8
     }
 
     onVisibleChanged: {
@@ -48,21 +48,6 @@ Drawer {
         }
     }
 
-
-    Column {
-        //spacing: 20 * QgsQuick.Style.dp
-        anchors.centerIn: parent
-
-        Text {
-            text: "Photo capture"
-            color: "white"
-            font.pixelSize: photoPanel.width / 20
-            font.bold: true
-            horizontalAlignment: Text.AlignLeft
-            verticalAlignment: Text.AlignVCenter
-        }
-    }
-
     // PhotoCapture item
     Item {
 
@@ -71,7 +56,6 @@ Drawer {
         id: captureItem
         width: window.width
         height: window.height
-
 
         Component.onDestruction: {
             if (!captureItem && camera.imageCapture.capturedImagePath != ""){
@@ -147,22 +131,20 @@ Drawer {
                 fillMode: Image.PreserveAspectFit
 
                 // Cancel button
-                Image {
+                Rectangle {
                     id: cancelBtn
-                    width: photoPanel.iconSize
-                    height: photoPanel.iconSize
-                    anchors.bottom: parent.bottom
-                    anchors.left: parent.left
-                    anchors.margins: 10
                     visible: camera.imageCapture.capturedImagePath != ""
-                    source: QgsQuick.Utils.getThemeIcon("ic_clear_black_18dp")
 
-                    ColorOverlay {
-                        anchors.fill: cancelBtn
-                        source: cancelBtn
-                        color: "white"
-                    }
-
+                    property int borderWidth: 10 * QgsQuick.Style.dp
+                    width: parent.width/20
+                    height: parent.width/20
+                    color: "white"
+                    border.color: "black"
+                    anchors.right: parent.right
+                    anchors.top: confirmBtn.bottom
+                    border.width: borderWidth
+                    radius: width*0.5
+                    antialiasing: true
 
                     MouseArea {
                         anchors.fill: parent
@@ -173,26 +155,32 @@ Drawer {
                                 QgsQuick.Utils.remove(camera.imageCapture.capturedImagePath)
                             }
                         }
+                    }
 
+                    Image {
+                        fillMode: Image.PreserveAspectFit
+                        anchors.centerIn: parent
+                        sourceSize.height: captureBtn.height/2
+                        height: captureBtn.height/2
+                        source: QgsQuick.Utils.getThemeIcon("ic_clear_black_24px")
                     }
                 }
 
-                // Ok button
-                Image {
+                // OK button
+                Rectangle {
                     id: confirmBtn
-                    width: photoPanel.iconSize
-                    height: photoPanel.iconSize
-                    anchors.bottom: parent.bottom
-                    anchors.right: parent.right
-                    anchors.margins: 10
                     visible: camera.imageCapture.capturedImagePath != ""
-                    source: QgsQuick.Utils.getThemeIcon("ic_check_black_24px")
 
-                    ColorOverlay {
-                        anchors.fill: confirmBtn
-                        source: confirmBtn
-                        color: "white"
-                    }
+                    property int borderWidth: 10 * QgsQuick.Style.dp
+                    width: parent.width/20
+                    height: parent.width/20
+                    color: "white"
+                    border.color: "black"
+                    anchors.right: parent.right
+                    anchors.verticalCenter: parent.verticalCenter
+                    border.width: borderWidth
+                    radius: width*0.5
+                    antialiasing: true
 
                     MouseArea {
                         anchors.fill: parent
@@ -205,6 +193,14 @@ Drawer {
                                 fieldItem.valueChanged(photoPanel.lastPhotoName, photoPanel.lastPhotoName === "" || photoPanel.lastPhotoName === null)
                             }
                         }
+                    }
+
+                    Image {
+                        fillMode: Image.PreserveAspectFit
+                        anchors.centerIn: parent
+                        sourceSize.height: captureBtn.height/2
+                        height: captureBtn.height/2
+                        source: QgsQuick.Utils.getThemeIcon("ic_check_black_24px")
                     }
                 }
             }
