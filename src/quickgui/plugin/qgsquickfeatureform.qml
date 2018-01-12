@@ -34,6 +34,7 @@ Item {
 
   property QgsQuick.AttributeFormModel model
   property alias toolbarVisible: toolbar.visible
+  property bool allowRememberAttribute: false // when adding new feature, add checkbox to be able to save the same value for the next feature as default
   property QgsQuick.Project project
 
   property FeatureFormStyling style: FeatureFormStyling {}
@@ -301,7 +302,7 @@ Item {
         id: rememberCheckbox
         checked: RememberValue ? true : false
 
-        visible: form.state === "Add" && EditorWidget !== "Hidden"
+        visible: form.allowRememberAttribute && form.state === "Add" && EditorWidget !== "Hidden"
         width: visible ? undefined : 0
 
         anchors { right: parent.right; top: fieldLabel.bottom }
