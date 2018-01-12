@@ -24,7 +24,7 @@ import QgisQuick 1.0 as QgsQuick
 Drawer {
     property var targetDir
     property var lastPhotoName
-    property int iconSize: photoPanel.width/30
+    property int iconSize: photoPanel.width/20
     property var fieldItem
 
     id: photoPanel

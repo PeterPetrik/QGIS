@@ -353,17 +353,20 @@ Item {
 
       ToolButton {
         id: saveButton
+        Layout.preferredWidth: form.style.toolbutton.size
+        Layout.preferredHeight: form.style.toolbutton.size
 
         visible: form.state !== "ReadOnly"
 
         contentItem: Image {
-          fillMode: Image.Pad
+          fillMode: Image.PreserveAspectFit
+          width: parent.width * 0.8
           horizontalAlignment: Image.AlignHCenter
           verticalAlignment: Image.AlignVCenter
           source: QgsQuick.Utils.getThemeIcon( "ic_save_white_24dp" )
         }
         background: Rectangle {
-          color: model.constraintsValid ? "#212121" : "#bdc3c7"
+          color: model.constraintsValid ? form.style.toolbutton.backgroundColor : form.style.toolbutton.backgroundColorInvalid
         }
 
         enabled: model.constraintsValid
@@ -376,17 +379,21 @@ Item {
       ToolButton {
           id: deleteButton
 
+          Layout.preferredWidth: form.style.toolbutton.size
+          Layout.preferredHeight: form.style.toolbutton.size
+
           visible: form.state === "Edit"
 
           contentItem: Image {
-              fillMode: Image.Pad
+              fillMode: Image.PreserveAspectFit
+              width: parent.width * 0.8
               horizontalAlignment: Image.AlignHCenter
               verticalAlignment: Image.AlignVCenter
               source: QgsQuick.Utils.getThemeIcon( "ic_delete_forever_white_24dp" )
           }
 
           background: Rectangle {
-            color: "#212121"
+            color: form.style.toolbutton.backgroundColor
           }
 
           onClicked: deleteDialog.visible = true
@@ -421,15 +428,19 @@ Item {
         id: closeButton
         anchors.right: parent.right
 
+        Layout.preferredWidth: form.style.toolbutton.size
+        Layout.preferredHeight: form.style.toolbutton.size
+
         contentItem: Image {
-          fillMode: Image.Pad
+          fillMode: Image.PreserveAspectFit
+          width: parent.width * 0.8
           horizontalAlignment: Image.AlignHCenter
           verticalAlignment: Image.AlignVCenter
           source: QgsQuick.Utils.getThemeIcon( "ic_close_white_24dp" )
         }
 
         background: Rectangle {
-          color: "#212121"
+          color: form.style.toolbutton.backgroundColor
         }
 
         onClicked: {

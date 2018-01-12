@@ -38,8 +38,8 @@ Item {
 
   Button {
     id: button
-    width: 36 * QgsQuick.Style.dp
-    height: 36 * QgsQuick.Style.dp
+    width: 45 * QgsQuick.Style.dp
+    height: 45 * QgsQuick.Style.dp
 
     anchors.right: parent.right
     anchors.bottom: parent.bottom

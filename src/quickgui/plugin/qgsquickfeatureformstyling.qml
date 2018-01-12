@@ -24,4 +24,10 @@ QtObject {
       property color invalidColor: "#c0392b"
       property color descriptionColor: "#e67e22"
     }
+
+    property QtObject toolbutton: QtObject {
+        property color backgroundColor: "#212121"
+        property color backgroundColorInvalid: "#bdc3c7"
+        property real size: 80 * QgsQuick.Style.dp
+    }
 }
