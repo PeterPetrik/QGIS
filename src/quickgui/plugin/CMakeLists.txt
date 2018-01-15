@@ -19,6 +19,7 @@ SET(QGIS_QUICK_PLUGIN_RESOURCES
   qgsquickmapcanvas.qml
   qgsquickfeatureform.qml
   qgsquickfeatureformstyling.qml
+  qgsquickmessagelog.qml
   qgsquickpositionmarker.qml
   qgsquickphotopanel.qml
 

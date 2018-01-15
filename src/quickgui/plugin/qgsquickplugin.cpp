@@ -42,6 +42,7 @@
 #include "qgsquickcoordinatetransformer.h"
 #include "qgsquickpositionkit.h"
 #include "qgspointxy.h"
+#include "qgsquickmessagelogmodel.h"
 
 #include <qqml.h>
 
@@ -69,6 +70,7 @@ void QgisQuickPlugin::registerTypes(const char *uri)
   qmlRegisterType<QgsQuickScaleBarKit>(uri, 1, 0, "ScaleBarKit");
   qmlRegisterType<QgsQuickIdentifyKit>(uri, 1, 0, "IdentifyKit");
   qmlRegisterType<QgsQuickPositionKit>(uri, 1, 0, "PositionKit");
+  qmlRegisterType<QgsQuickMessageLogModel>(uri, 1, 0, "MessageLogModel");
 
   qmlRegisterType<QgsQuickFeatureModel>(uri, 1, 0, "FeatureModel");
   //qmlRegisterType<QgsQuickGeometry>(uri, 1, 0, "Geometry");

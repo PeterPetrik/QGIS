@@ -18,5 +18,6 @@ FeatureForm 1.0 qgsquickfeatureform.qml
 FeatureFormStyling 1.0 qgsquickfeatureformstyling.qml
 PositionMarker 1.0 qgsquickpositionmarker.qml
 PhotoCapture 1.0 qgsquickphotopanel.qml
+MessageLog 1.0 qgsquickmessagelog.qml
 
 typeinfo qgisquick.qmltypes
