@@ -23,8 +23,15 @@ class QgsQuickMapSettings;
 class QgsQuickFeatureModel;
 
 /**
+ * \ingroup quick
+ *
  * Creates map highlights for a geometry provided by a FeatureModel.
+ *
  * The highlights are compatible with the QtQuick scene graph.
+ *
+ * \note QML Type: FeatureModelHighlight
+ *
+ * \since QGIS 3.2
  */
 class QUICK_EXPORT QgsQuickFeatureModelHighlight : public QQuickItem
 {

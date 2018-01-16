@@ -22,6 +22,14 @@
 
 #include <QtPositioning/QGeoCoordinate>
 
+/**
+ * \ingroup quick
+ * Helper class to convert QgsQuickRubberbandModel to QgsGeometry
+ *
+ * \note QML Type: Not exported
+ *
+ * \since QGIS 3.2
+ */
 class QUICK_EXPORT QgsQuickGeometry : public QObject
 {
     Q_OBJECT

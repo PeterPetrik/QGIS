@@ -27,12 +27,14 @@ class QgsQuickFeatureModel;
  * \ingroup quick
  * This is a model implementation for attribute form of a feature from a vector layer.
  *
- * It is a wrapper around QgsQuickAttributeFormModelBase that adds filtering
- * of attribute (attributes may be visible or hidden based on expressions).
+ * The model is based on vector layer's edit form config (QgsEditFormConfig). It supports
+ * auto-generated editor layouts and "tab" layout (layout defined with groups and tabs).
+ * The form layout gets flattened into a list, each row has a bunch of roles with values
+ * extracted from the edit form config.
+ *
+ * It also adds filtering of attribute (attributes may be visible or hidden based on expressions).
  *
  * \note QML Type: AttributeFormModel
- *
- * \sa QgsQuickAttributeFormModelBase
  *
  * \since QGIS 3.2
  */

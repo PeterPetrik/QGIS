@@ -21,8 +21,15 @@
 #include "qgis_quick.h"
 
 /**
- * This model will connect to the message log and publish any
- * messages received from there.
+ * \ingroup quick
+ *
+ * This model will connect to the QgsMessageLog and publish any
+ * messages received from there. Can be used as a model for QListView,
+ * for example QgsQuick MessageLog class.
+ *
+ * \note QML Type: MessageLogModel
+ *
+ * \since QGIS 3.2
  */
 class QUICK_EXPORT QgsQuickMessageLogModel : public QAbstractListModel
 {

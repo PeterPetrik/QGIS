@@ -32,6 +32,15 @@ class QgsVectorLayer;
 class QgsQuickStyle;
 class QgsCoordinateReferenceSystem;
 
+/**
+ * \ingroup quick
+ *
+ * Singleton encapsulating the common utilies for QgsQuick library.
+ *
+ * \note QML Type: Style (singleton)
+ *
+ * \since QGIS 3.2
+ */
 class QUICK_EXPORT QgsQuickUtils: public QObject
 {
   Q_OBJECT

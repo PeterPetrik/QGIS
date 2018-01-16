@@ -27,11 +27,16 @@
 class QgsVectorLayer;
 
 /**
+ * \ingroup quick
+ *
  * This model manages a list of vertices.
  *
  * It can be used as a linestring or as a ring in a polygon.
+ *
+ * \note QML Type: RubberbandModel
+ *
+ * \since QGIS 3.2
  */
-
 class QUICK_EXPORT QgsQuickRubberbandModel : public QObject
 {
     Q_OBJECT

@@ -31,6 +31,16 @@ class QgsMapLayer;
 class QgsQuickMapSettings;
 class QgsVectorLayer;
 
+/**
+ * \ingroup quick
+ * Convinient set of tools to get a list of QgsFeatures in a defined radius from a point.
+ * Also possible to get a feature with the closest distance to the point or feature(s) from
+ * specified QgsVectorLayer
+ *
+ * \note QML Type: IdentifyKit
+ *
+ * \since QGIS 3.2
+ */
 class QUICK_EXPORT QgsQuickIdentifyKit : public QObject
 {
     Q_OBJECT

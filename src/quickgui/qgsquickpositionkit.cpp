@@ -14,6 +14,7 @@
  ***************************************************************************/
 
 #include "qgsquickpositionkit.h"
+#include "qgsquicksimulatedpositionsource.h"
 
 QgsQuickPositionKit::QgsQuickPositionKit(QObject *parent)
   : QObject(parent)
@@ -108,60 +109,5 @@ void QgsQuickPositionKit::onUpdateTimeout()
   {
     mHasPosition = false;
     emit hasPositionChanged();
-  }
-}
-
-//////////////////////////
-
-QgsQuickSimulatedPositionSource::QgsQuickSimulatedPositionSource(QObject *parent, double longitude, double latitude, double flightRadius)
-  : QGeoPositionInfoSource(parent)
-  , mTimer(new QTimer(this))
-  , mAngle(0)
-  , mFlightRadius(flightRadius)
-  , mLongitude(longitude)
-  , mLatitude(latitude)
-{
-  connect(mTimer, SIGNAL(timeout()), this, SLOT(readNextPosition()));
-}
-
-void QgsQuickSimulatedPositionSource::startUpdates()
-{
-  int interval = updateInterval();
-  if (interval < minimumUpdateInterval())
-    interval = minimumUpdateInterval();
-
-  mTimer->start(interval);
-}
-
-void QgsQuickSimulatedPositionSource::stopUpdates()
-{
-  mTimer->stop();
-}
-
-void QgsQuickSimulatedPositionSource::requestUpdate(int /*timeout*/)
-{
-  readNextPosition();
-  //emit updateTimeout(); // if the position would not be available
-}
-
-void QgsQuickSimulatedPositionSource::readNextPosition()
-{
-  double latitude = mLatitude, longitude = mLongitude;
-  latitude += sin(mAngle*M_PI/180) * mFlightRadius;
-  longitude += cos(mAngle*M_PI/180) * mFlightRadius;
-  mAngle += 1;
-
-  QDateTime timestamp = QDateTime::currentDateTime();
-  QGeoCoordinate coordinate(latitude, longitude);
-  QGeoPositionInfo info(coordinate, timestamp);
-  if (info.isValid()) {
-      mLastPosition = info;
-      info.setAttribute(QGeoPositionInfo::Direction, 360 - int(mAngle)%360);
-      int accuracy = std::rand() % 40 + 20; // rand accuracy <20,55>m and lost (-1)
-      if (accuracy > 55) {
-          accuracy = -1;
-      }
-      info.setAttribute(QGeoPositionInfo::HorizontalAccuracy, accuracy);
-      emit positionUpdated(info);
   }
 }

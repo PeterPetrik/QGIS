@@ -18,6 +18,7 @@ SET(QGIS_QUICK_GUI_MOC_HDRS
   qgsquickutils.h
   qgsquickstyle.h
   qgsquickpositionkit.h
+  qgsquicksimulatedpositionsource.h
   qgsquickcoordinatetransformer.h
   qgsquickmessagelogmodel.h
 )
@@ -45,6 +46,7 @@ SET(QGIS_QUICK_GUI_SRC
   qgsquicksubmodel.cpp
   qgsquickutils.cpp
   qgsquickpositionkit.cpp
+  qgsquicksimulatedpositionsource.cpp
   qgsquickstyle.cpp
   qgsquickcoordinatetransformer.cpp
   qgsquickmessagelogmodel.cpp

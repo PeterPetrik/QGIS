@@ -18,6 +18,8 @@
 #include <qgsvectorlayer.h>
 #include <qgseditorwidgetsetup.h>
 
+/// @cond PRIVATE
+
 QgsQuickAttributeFormModelBase::QgsQuickAttributeFormModelBase( QObject* parent )
   : QStandardItemModel( 0, 1, parent )
   , mFeatureModel( nullptr )
@@ -388,3 +390,5 @@ void QgsQuickAttributeFormModelBase::create()
 {
   mFeatureModel->create();
 }
+
+/// @endcond

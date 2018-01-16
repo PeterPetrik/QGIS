@@ -35,6 +35,10 @@ class MapSettings;
  * according to the current map settings. Client code is expected to use
  * MapCanvas item rather than using this class directly.
  *
+ * \note QML Type: MapCanvasMap
+ *
+ * \sa QgsQuickMapCanvas
+ *
  * \since QGIS 3.2
  */
 class QUICK_EXPORT QgsQuickMapCanvasMap : public QQuickItem

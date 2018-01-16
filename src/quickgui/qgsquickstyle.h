@@ -22,6 +22,15 @@
 #include <QString>
 #include <QUrl>
 
+/**
+ * \ingroup quick
+ *
+ * Singleton encapsulating the visual (color, icons, ...) properties for Items in the QgsQuick library.
+ *
+ * \note QML Type: Style (singleton)
+ *
+ * \since QGIS 3.2
+ */
 class QUICK_EXPORT QgsQuickStyle: public QObject
 {
   Q_OBJECT

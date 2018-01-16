@@ -19,6 +19,15 @@
 #include <QAbstractItemModel>
 #include "qgsquickattributeformmodel.h"
 
+/**
+ * \ingroup quick
+ *
+ * Helper class for submodels (e.g. tabs within feature model)
+ *
+ * \note QML Type: SubModel
+ *
+ * \since QGIS 3.2
+ */
 class QUICK_EXPORT QgsQuickSubModel : public QAbstractItemModel
 {
     Q_OBJECT

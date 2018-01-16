@@ -31,6 +31,8 @@ class QgsProject;
  * The QgsQuickMapSettings class encapsulates QgsMapSettings class to offer
  * settings of configuration of map rendering via QML properties.
  *
+ * \note QML Type: MapSettings
+ *
  * \since QGIS 3.2
  */
 class QUICK_EXPORT QgsQuickMapSettings : public QObject

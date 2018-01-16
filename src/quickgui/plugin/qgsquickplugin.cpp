@@ -60,57 +60,39 @@ static QObject *_styleProvider(QQmlEngine *engine, QJSEngine *scriptEngine)
   return QgsQuickUtils::instance()->style();  // the object will be owned by QML engine and destroyed by the engine on exit
 }
 
-
 void QgisQuickPlugin::registerTypes(const char *uri)
 {
   qDebug("REGISTERING QQmlExtensionInterface: QgisQuick");
 
-  qmlRegisterType<QgsQuickMapSettings>(uri, 1, 0, "MapSettings");
-  qmlRegisterType<QgsQuickMapCanvasMap>(uri, 1, 0, "MapCanvasMap");
-  qmlRegisterType<QgsQuickScaleBarKit>(uri, 1, 0, "ScaleBarKit");
-  qmlRegisterType<QgsQuickIdentifyKit>(uri, 1, 0, "IdentifyKit");
-  qmlRegisterType<QgsQuickPositionKit>(uri, 1, 0, "PositionKit");
-  qmlRegisterType<QgsQuickMessageLogModel>(uri, 1, 0, "MessageLogModel");
-
-  qmlRegisterType<QgsQuickFeatureModel>(uri, 1, 0, "FeatureModel");
-  //qmlRegisterType<QgsQuickGeometry>(uri, 1, 0, "Geometry");
-  qmlRegisterType<QgsQuickRubberband>(uri, 1, 0, "Rubberband");
-  qmlRegisterType<QgsQuickRubberbandModel>(uri, 1, 0, "RubberbandModel");
-  qmlRegisterType<QgsQuickFeatureModelHighlight>(uri, 1, 0, "FeatureModelHighlight");
-  qmlRegisterType<QgsQuickMapTransform>(uri, 1, 0, "MapTransform");
-
-  //qmlRegisterType<QgsQuickIdentifyResult>(uri, 1, 0, "IdentifyResult");
-  qmlRegisterType<QgsQuickCoordinateTransformer>(uri, 1, 0, "CoordinateTransformer");
-
-  //qmlRegisterType< QgsFeature >(uri, 1, 0, "Feature" );
-  qmlRegisterType<QgsRelationManager>(uri, 1, 0, "RelationManager"); //TODO create separate quick class????
-  qmlRegisterType<QgsVectorLayer>(uri, 1, 0, "VectorLayer"); //TODO create separate quick class????
-  qmlRegisterType<QgsProject>(uri, 1, 0, "Project");
-
-
-  qRegisterMetaType<QgsQuickIdentifyResult>("QgsQuickIdentifyResult");
-  qRegisterMetaType<QgsPoint>("QgsPoint");
-  qRegisterMetaType<QgsPointXY>("QgsPointXY");
   qRegisterMetaType< QList<QgsMapLayer*> >( "QList<QgsMapLayer*>" );
-
-  //qRegisterMetaType< QList<QgsQuickIdentifyKit::IdentifyResult> >( "QList<IdentifyResult>" );
-  //qRegisterMetaType< QgsFeatureList > ( "FeatureList" );
-  qRegisterMetaType< QgsFeature > ( "QgsFeature ");
-  qRegisterMetaType< QgsFeatureId > ( "QgsFeatureId ");
   qRegisterMetaType< QgsAttributes > ( "QgsAttributes ");
   qRegisterMetaType< QgsCoordinateReferenceSystem >("QgsCoordinateReferenceSystem ");
+  qRegisterMetaType< QgsFeature > ( "QgsFeature ");
+  qRegisterMetaType< QgsFeatureId > ( "QgsFeatureId ");
+  qRegisterMetaType< QgsPoint >("QgsPoint");
+  qRegisterMetaType< QgsPointXY >("QgsPointXY");
+  qRegisterMetaType< QgsQuickIdentifyResult >("QgsQuickIdentifyResult");
 
-  qmlRegisterType<QgsQuickSubModel>(uri, 1, 0, "SubModel");
-  qmlRegisterType<QgsQuickAttributeFormModel>(uri, 1, 0, "AttributeFormModel");
+  qmlRegisterType< QgsProject >(uri, 0, 1, "Project");
+  qmlRegisterType< QgsQuickAttributeFormModel >(uri, 0, 1, "AttributeFormModel");
+  qmlRegisterType< QgsQuickCoordinateTransformer >(uri, 0, 1, "CoordinateTransformer");
+  qmlRegisterType< QgsQuickFeatureModel >(uri, 0, 1, "FeatureModel");
+  qmlRegisterType< QgsQuickFeatureModelHighlight >(uri, 0, 1, "FeatureModelHighlight");
+  qmlRegisterType< QgsQuickIdentifyKit >(uri, 0, 1, "IdentifyKit");
+  qmlRegisterType< QgsQuickMapCanvasMap >(uri, 0, 1, "MapCanvasMap");
+  qmlRegisterType< QgsQuickMapSettings >(uri, 0, 1, "MapSettings");
+  qmlRegisterType< QgsQuickMapTransform >(uri, 0, 1, "MapTransform");
+  qmlRegisterType< QgsQuickMessageLogModel >(uri, 0, 1, "MessageLogModel");
+  qmlRegisterType< QgsQuickPositionKit >(uri, 0, 1, "PositionKit");
+  qmlRegisterType< QgsQuickRubberband >(uri, 0, 1, "Rubberband");
+  qmlRegisterType< QgsQuickRubberbandModel >(uri, 0, 1, "RubberbandModel");
+  qmlRegisterType< QgsQuickScaleBarKit >(uri, 0, 1, "ScaleBarKit");
+  qmlRegisterType< QgsQuickSubModel >(uri, 0, 1, "SubModel");
+  qmlRegisterType< QgsRelationManager >(uri, 0, 1, "RelationManager"); //TODO create separate quick class????
+  qmlRegisterType< QgsVectorLayer >(uri, 0, 1, "VectorLayer"); //TODO create separate quick class????
 
-  //qmlRegisterType<QgsQuickAttributeFormModelBase>(uri, 1, 0, "AttributeFormModelBase");
-  //qRegisterMetaType<QgsQuickAttributeFormModel>( "AttributeFormModel");
-  //qRegisterMetaType<QgsQuickAttributeFormModelBase>( "AttributeFormModelBase");
-
-  qmlRegisterSingletonType<QgsQuickUtils>(uri, 1, 0, "Utils", _utilsProvider);
-  qmlRegisterSingletonType<QgsQuickStyle>(uri, 1, 0, "Style", _styleProvider);
-
-
+  qmlRegisterSingletonType< QgsQuickUtils >(uri, 0, 1, "Utils", _utilsProvider);
+  qmlRegisterSingletonType< QgsQuickStyle >(uri, 0, 1, "Style", _styleProvider);
 
   qDebug("REGISTERING FINISHED");
 }

@@ -38,12 +38,7 @@
 
 /**
  * \ingroup quick
- * This is an internal class used as the source model for QgsQuickAttributeFormModel.
- *
- * The model is based on vector layer's edit form config (QgsEditFormConfig). It supports
- * auto-generated editor layouts and "tab" layout (layout defined with groups and tabs).
- * The form layout gets flattened into a list, each row has a bunch of roles with values
- * extracted from the edit form config.
+ * This is an internal (implementation) class used as the source model for QgsQuickAttributeFormModel.
  *
  * \sa QgsQuickAttributeFormModel
  *

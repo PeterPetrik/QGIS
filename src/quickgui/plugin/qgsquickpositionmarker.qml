@@ -17,7 +17,7 @@ import QtQuick 2.3
 import QtQuick.Controls 2.2
 import QtQml 2.2
 import QtGraphicalEffects 1.0
-import QgisQuick 1.0 as QgsQuick
+import QgisQuick 0.1 as QgsQuick
 
 Item {
     id: positionMarker

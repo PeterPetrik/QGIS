@@ -22,6 +22,14 @@
 #include <qgsfeature.h>
 class QgsVectorLayer;
 
+/**
+ * \ingroup quick
+ * Helper class for QgsFeature and QgsVectorLayer where it belongs.
+ *
+ * \note QML Type: IdentifyResult
+ *
+ * \since QGIS 3.2
+ */
 class QUICK_EXPORT QgsQuickIdentifyResult
 {
     Q_GADGET
@@ -34,9 +42,6 @@ class QUICK_EXPORT QgsQuickIdentifyResult
     QgsQuickIdentifyResult();
     QgsQuickIdentifyResult( const QgsFeature& feature,
                             QgsVectorLayer* layer);
-
-    //QgsQuickIdentifyResult(const QgsQuickIdentifyResult& other);
-    //QgsQuickIdentifyResult &operator=( const QgsQuickIdentifyResult &rhs );
 
     QgsVectorLayer* layer() const;
     QgsFeature feature() const;

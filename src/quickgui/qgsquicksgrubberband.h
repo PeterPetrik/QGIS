@@ -28,11 +28,14 @@
 class QgsQuickRubberbandModel;
 
 /**
- * This is used to render a rubberband on the scene graph.
+ * \ingroup quick
  *
- * This cannot be considered stable API.
+ * This is used to transform (render) QgsGeometry to node for QtQuick scene graph.
+ *
+ * \note QML Type: not exported
+ *
+ * \since QGIS 3.2
  */
-
 class QUICK_NO_EXPORT QgsQuickSGRubberband : public QSGNode
 {
   public:

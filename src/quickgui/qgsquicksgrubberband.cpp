@@ -100,8 +100,10 @@ QSGGeometryNode *QgsQuickSGRubberband::createPointGeometry( const QgsPoint &poin
 
 QSGGeometryNode* QgsQuickSGRubberband::createPolygonGeometry( const QVector<QgsPoint>& points )
 {
+    Q_UNUSED(points);
     return 0;
 
+// TODO
 #if 0
   double* coordinates_out;
   int* tris_out;

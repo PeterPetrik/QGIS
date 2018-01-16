@@ -1,6 +1,6 @@
-import QtQuick.Controls 1.4
+import QtQuick.Controls 2.0
 import QtQuick 2.5
-import QgisQuick 1.0 as QgsQuick
+import QgisQuick 0.1 as QgsQuick
 
 Item {
   property alias model: table.model

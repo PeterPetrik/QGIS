@@ -21,6 +21,18 @@
 #include <QtPositioning>
 #include <qgspoint.h>
 
+/**
+ * \ingroup quick
+ * Convinient set of tools to read GPS position and accuracy.
+ *
+ * Also, if one can use use_simulated_location to specify simulated position.
+ * Simulated position source generates random points in circles around the selected
+ * point and radius. Real GPS position is not used in this mode.
+ *
+ * \note QML Type: PositionKit
+ *
+ * \since QGIS 3.2
+ */
 class QUICK_EXPORT QgsQuickPositionKit : public QObject
 {
   Q_OBJECT
@@ -79,37 +91,6 @@ private:
   QGeoPositionInfoSource* gpsSource();
   QGeoPositionInfoSource* simulatedSource(double longitude, double latitude, double radius);
 
-};
-
-/** simulated GPS - makes circles around a fixed position */
-class QUICK_NO_EXPORT QgsQuickSimulatedPositionSource : public QGeoPositionInfoSource
-{
-    Q_OBJECT
-public:
-    QgsQuickSimulatedPositionSource(QObject *parent, double longitude, double latitude, double flightRadius);
-
-    QGeoPositionInfo lastKnownPosition(bool /*fromSatellitePositioningMethodsOnly = false*/) const { return mLastPosition; }
-    PositioningMethods supportedPositioningMethods() const { return AllPositioningMethods; }
-    int minimumUpdateInterval() const { return 1000; }
-    Error error() const { return QGeoPositionInfoSource::NoError; }
-
-public slots:
-    virtual void startUpdates();
-    virtual void stopUpdates();
-
-    virtual void requestUpdate(int timeout = 5000);
-
-private slots:
-    void readNextPosition();
-
-private:
-    QTimer *mTimer;
-    QGeoPositionInfo mLastPosition;
-    double mAngle;
-
-    double mFlightRadius;
-    double mLongitude;
-    double mLatitude;
 };
 
 #endif // QGSQUICKPOSITIONKIT_H

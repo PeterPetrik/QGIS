@@ -36,6 +36,8 @@ class QgsQuickMapSettings;
  * distance in meters or kilometers (int) rounded to "nice" number (e.g. 72.4 to 100)
  * and units text (e.g. km)
  *
+ * \note QML Type: ScaleBarKit
+ *
  * \since QGIS 3.2
  */
 class QUICK_EXPORT QgsQuickScaleBarKit : public QObject
@@ -44,7 +46,6 @@ class QUICK_EXPORT QgsQuickScaleBarKit : public QObject
 
   Q_PROPERTY( int preferredWidth MEMBER mPreferredWidth NOTIFY preferredWidthChanged)
   Q_PROPERTY( QgsQuickMapSettings* mapSettings MEMBER mMapSettings WRITE setMapSettings NOTIFY mapSettingsChanged)
-
   Q_PROPERTY( QString units READ units NOTIFY scaleBarChanged )
   Q_PROPERTY( int distance READ distance NOTIFY scaleBarChanged )
   Q_PROPERTY( int width READ width NOTIFY scaleBarChanged )

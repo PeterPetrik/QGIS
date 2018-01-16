@@ -1,6 +1,6 @@
 import QtQuick 2.0
 
-import QgisQuick 1.0 as QgsQuick
+import QgisQuick 0.1 as QgsQuick
 
 QtObject {
 

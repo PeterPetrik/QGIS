@@ -25,7 +25,7 @@ import QtQml 2.2
 // yet implemented in Controls 2.2
 import QtQuick.Controls 1.4 as Controls1
 
-import QgisQuick 1.0 as QgsQuick
+import QgisQuick 0.1 as QgsQuick
 
 Item {
   signal saved
