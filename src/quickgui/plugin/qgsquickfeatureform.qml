@@ -364,7 +364,7 @@ Item {
           width: parent.width * 0.8
           horizontalAlignment: Image.AlignHCenter
           verticalAlignment: Image.AlignVCenter
-          source: QgsQuick.Utils.getThemeIcon( "ic_save_white_24dp" )
+          source: QgsQuick.Utils.getThemeIcon( "ic_save_white" )
         }
         background: Rectangle {
           color: model.constraintsValid ? form.style.toolbutton.backgroundColor : form.style.toolbutton.backgroundColorInvalid
@@ -390,7 +390,7 @@ Item {
               width: parent.width * 0.8
               horizontalAlignment: Image.AlignHCenter
               verticalAlignment: Image.AlignVCenter
-              source: QgsQuick.Utils.getThemeIcon( "ic_delete_forever_white_24dp" )
+              source: QgsQuick.Utils.getThemeIcon( "ic_delete_forever_white" )
           }
 
           background: Rectangle {
@@ -437,7 +437,7 @@ Item {
           width: parent.width * 0.8
           horizontalAlignment: Image.AlignHCenter
           verticalAlignment: Image.AlignVCenter
-          source: QgsQuick.Utils.getThemeIcon( "ic_close_white_24dp" )
+          source: QgsQuick.Utils.getThemeIcon( "ic_clear_white" )
         }
 
         background: Rectangle {

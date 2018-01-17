@@ -119,7 +119,7 @@ Drawer {
                     anchors.centerIn: parent
                     sourceSize.height: captureBtn.height/2
                     height: captureBtn.height/2
-                    source: QgsQuick.Utils.getThemeIcon("ic_camera_alt_border_24dp")
+                    source: QgsQuick.Utils.getThemeIcon("ic_camera_alt_border")
                 }
 
             }
@@ -162,7 +162,7 @@ Drawer {
                         anchors.centerIn: parent
                         sourceSize.height: captureBtn.height/2
                         height: captureBtn.height/2
-                        source: QgsQuick.Utils.getThemeIcon("ic_clear_black_24px")
+                        source: QgsQuick.Utils.getThemeIcon("ic_clear_black")
                     }
                 }
 
@@ -200,7 +200,7 @@ Drawer {
                         anchors.centerIn: parent
                         sourceSize.height: captureBtn.height/2
                         height: captureBtn.height/2
-                        source: QgsQuick.Utils.getThemeIcon("ic_check_black_24px")
+                        source: QgsQuick.Utils.getThemeIcon("ic_check_black")
                     }
                 }
             }

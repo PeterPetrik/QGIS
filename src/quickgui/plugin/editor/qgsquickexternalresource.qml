@@ -1,6 +1,6 @@
 import QtQuick 2.5
 import QtQuick.Controls 2.0
-import QgisQuick 1.0 as QgsQuick
+import QgisQuick 0.1 as QgsQuick
 
 
 Item {
@@ -26,12 +26,12 @@ Item {
 
     function getSource() {
         if (image.status === Image.Error)
-            return QgsQuick.Utils.getThemeIcon("ic_broken_image_black_24dp")
+            return QgsQuick.Utils.getThemeIcon("ic_broken_image_black")
         else if (image.currentValue && QgsQuick.Utils.fileExists(homePath + "/" + image.currentValue)) {
             return homePath + "/" + image.currentValue
         }
         else       {
-            return QgsQuick.Utils.getThemeIcon("ic_photo_notavailable_white_48dp")
+            return QgsQuick.Utils.getThemeIcon("ic_photo_notavailable_white")
         }
     }
   }
@@ -51,7 +51,7 @@ Item {
     }
 
     background: Image {
-        source: QgsQuick.Utils.getThemeIcon("ic_camera_alt_border_24dp")
+        source: QgsQuick.Utils.getThemeIcon("ic_camera_alt_border")
         width: button.width
         height: button.height
     }

@@ -40,7 +40,6 @@ class QUICK_EXPORT QgsQuickPositionKit : public QObject
   Q_PROPERTY(bool hasPosition READ hasPosition NOTIFY hasPositionChanged)
   Q_PROPERTY(qreal accuracy READ accuracy NOTIFY positionChanged) // in meters
   Q_PROPERTY(qreal direction READ direction NOTIFY positionChanged)
-  //TODO add timestamp?
   Q_PROPERTY(bool isSimulated READ simulated NOTIFY isSimulatedChanged)
 
 public:

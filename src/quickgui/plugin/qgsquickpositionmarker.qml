@@ -120,7 +120,7 @@ Item {
 
     Image {
         id: navigation
-        source: QgsQuick.Utils.getThemeIcon("ic_navigation_black_48px")
+        source: QgsQuick.Utils.getThemeIcon("ic_navigation_black")
         fillMode: Image.PreserveAspectFit
         rotation: positionKit.direction
         x: positionMarker.screenPosition.x - width/2

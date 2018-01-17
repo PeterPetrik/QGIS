@@ -1,8 +1,8 @@
 import QtQuick 2.0
 import QtQuick.Controls 2.2
 import QtQuick.Layouts 1.1
-import QgisQuick 1.0 as QgsQuick
 import QtQuick.Controls 1.4 as Controls1
+import QgisQuick 0.1 as QgsQuick
 /*
   * field_format
   * display_format
@@ -52,7 +52,7 @@ Item {
         }
 
         Image {
-          source: QgsQuick.Utils.getThemeIcon("ic_clear_black_18dp")
+          source: QgsQuick.Utils.getThemeIcon("ic_clear_black")
           anchors.left: parent.right
           visible: main.currentValue !== undefined && config['allow_null']
 

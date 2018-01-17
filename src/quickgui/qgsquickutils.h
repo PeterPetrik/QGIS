@@ -49,7 +49,7 @@ class QUICK_EXPORT QgsQuickUtils: public QObject
     static QgsQuickUtils* instance();
 
     // CRS and geometry
-    Q_INVOKABLE QgsCoordinateReferenceSystem coordinateReferenceSystemFromEpsgId(long epsg) const; //if you want to create CRS from QML
+    Q_INVOKABLE QgsCoordinateReferenceSystem coordinateReferenceSystemFromEpsgId(long epsg) const; //!< if you want to create CRS from QML
     Q_INVOKABLE QgsPointXY pointXYFactory(double x, double y) const;
     Q_INVOKABLE QgsPoint pointFactory(double x, double y) const;
     Q_INVOKABLE QgsPointXY transformPoint(QgsCoordinateReferenceSystem srcCrs, QgsCoordinateReferenceSystem destCrs, QgsPointXY srcPoint) const;
@@ -62,11 +62,11 @@ class QUICK_EXPORT QgsQuickUtils: public QObject
     Q_INVOKABLE QString getFileName(QString path);
 
     // Themes
-    Q_INVOKABLE QUrl getThemeIcon(const QString& name); //from custom theme dir or default if not found in the theme dir
+    Q_INVOKABLE QUrl getThemeIcon(const QString& name); //!< Get icon from custom theme dir or default if not found in the theme dir
 
     // Formatting
-    Q_INVOKABLE QString qgsPointToString(const QgsPoint& point, int decimals = 3); // point to string, e.g. -2.234521, 34.4444421 -> -2.234, 34.444
-    Q_INVOKABLE QString distanceToString(qreal dist, int decimals = 1); // distance in meters to human readable length e.g. 1222.234 m -> 1.2 km
+    Q_INVOKABLE QString qgsPointToString(const QgsPoint& point, int decimals = 3); //!< point to string, e.g. -2.234521, 34.4444421 -> -2.234, 34.444
+    Q_INVOKABLE QString distanceToString(qreal dist, int decimals = 1); //!< distance in meters to human readable length e.g. 1222.234 m -> 1.2 km
 
 
     // Singletons
