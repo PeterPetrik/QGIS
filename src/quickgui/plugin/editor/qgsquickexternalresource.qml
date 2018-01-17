@@ -38,6 +38,7 @@ Item {
 
   Button {
     id: button
+    visible: fieldItem.enabled
     width: 45 * QgsQuick.Style.dp
     height: 45 * QgsQuick.Style.dp
 
