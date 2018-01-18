@@ -62,7 +62,15 @@ class QUICK_EXPORT QgsQuickUtils: public QObject
     Q_INVOKABLE QString getFileName(QString path);
 
     // Themes
-    Q_INVOKABLE QUrl getThemeIcon(const QString& name); //!< Get icon from custom theme dir or default if not found in the theme dir
+    /**
+      * Get icon from custom theme dir or default if not found in the theme dir
+      *
+      * Android 4.4 (API level 20) and lower doesn't support vector drawables (svg)
+      * https://developer.android.com/studio/write/vector-asset-studio.html
+      * Set useVectorIcons in Style to use SVGs instead of PNGs.
+      *
+      */
+    Q_INVOKABLE QUrl getThemeIcon(const QString& name);
 
     // Formatting
     Q_INVOKABLE QString qgsPointToString(const QgsPoint& point, int decimals = 3); //!< point to string, e.g. -2.234521, 34.4444421 -> -2.234, 34.444

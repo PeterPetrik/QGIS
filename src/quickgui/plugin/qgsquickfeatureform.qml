@@ -365,6 +365,7 @@ Item {
           horizontalAlignment: Image.AlignHCenter
           verticalAlignment: Image.AlignVCenter
           source: QgsQuick.Utils.getThemeIcon( "ic_save_white" )
+          antialiasing: true
         }
         background: Rectangle {
           color: model.constraintsValid ? form.style.toolbutton.backgroundColor : form.style.toolbutton.backgroundColorInvalid
@@ -391,6 +392,7 @@ Item {
               horizontalAlignment: Image.AlignHCenter
               verticalAlignment: Image.AlignVCenter
               source: QgsQuick.Utils.getThemeIcon( "ic_delete_forever_white" )
+              antialiasing: true
           }
 
           background: Rectangle {
@@ -423,6 +425,7 @@ Item {
         horizontalAlignment: Qt.AlignHCenter
         verticalAlignment: Qt.AlignVCenter
         Layout.fillWidth: true
+        color: "white"
       }
 
       ToolButton {
@@ -438,6 +441,7 @@ Item {
           horizontalAlignment: Image.AlignHCenter
           verticalAlignment: Image.AlignVCenter
           source: QgsQuick.Utils.getThemeIcon( "ic_clear_white" )
+          antialiasing: true
         }
 
         background: Rectangle {

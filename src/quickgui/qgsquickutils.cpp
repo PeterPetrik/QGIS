@@ -169,26 +169,34 @@ QString QgsQuickUtils::getFileName(QString path)
 QUrl QgsQuickUtils::getThemeIcon(const QString& name) {
     Q_ASSERT(mStyle);
 
-    float ppi = mStyle->devicePixels() / 0.00768443;
     QString ppitype;
+    QString extension;
 
-    if ( ppi >= 360 )
-        ppitype = "xxxhdpi";
-    else if ( ppi >= 270 )
-        ppitype = "xxhdpi";
-    else if ( ppi >= 180 )
-        ppitype = "xhdpi";
-    else if ( ppi >= 135 )
-        ppitype = "hdpi";
-    else
-        ppitype = "mdpi";
+    if (mStyle->useVectorIcons()) {
+        ppitype = "nodpi";
+        extension = ".svg";
+    } else {
+        float ppi = mStyle->devicePixels() / 0.00768443;
+        if ( ppi >= 360 )
+            ppitype = "xxxhdpi";
+        else if ( ppi >= 270 )
+            ppitype = "xxhdpi";
+        else if ( ppi >= 180 )
+            ppitype = "xhdpi";
+        else if ( ppi >= 135 )
+            ppitype = "hdpi";
+        else
+            ppitype = "mdpi";
+        extension = ".png";
+    }
 
     // Check in custom dir
-    QString path(mStyle->themeDir() + "/" + ppitype + "/" + name + ".png");
+    QString path(mStyle->themeDir() + "/" + ppitype + "/" + name + extension);
     qDebug() << "Custom icon from " << path;
     if (!fileExists(path)) {
-        path = "qrc:/" + ppitype + "/" + name + ".png";
+        path = "qrc:/" + ppitype + "/" + name + extension;
     }
+
     qDebug() << "Using icon " << name << " from " << path;
     return QUrl(path);
 }
