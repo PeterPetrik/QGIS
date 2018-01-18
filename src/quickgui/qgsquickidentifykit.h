@@ -56,11 +56,24 @@ class QUICK_EXPORT QgsQuickIdentifyKit : public QObject
     double searchRadiusMm() const;
     void setSearchRadiusMm( double searchRadiusMm );
 
+    /**
+      * Get the closest feature to the point from the layer in case it is identifiable layer
+      */
     Q_INVOKABLE QgsFeature identifyOne( QgsVectorLayer* layer, const QPointF& point );
+    /**
+      * Get the closest feature to the point from any identifiable layer
+      */
     Q_INVOKABLE QgsQuickIdentifyResult identifyOne( const QPointF& point );
 
-    Q_INVOKABLE QList<QgsQuickIdentifyResult> identify( const QPointF& point );
+    /**
+      * Get all features interseting the point from the layer in case it is identifiable layer
+      */
     Q_INVOKABLE QgsFeatureList identify( QgsVectorLayer* layer, const QPointF& point );
+    /**
+      * Get all features interseting the point from any identifiable layer
+      */
+    Q_INVOKABLE QList<QgsQuickIdentifyResult> identify( const QPointF& point );
+
 
    signals:
     void mapSettingsChanged();
