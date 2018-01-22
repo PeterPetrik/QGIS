@@ -45,7 +45,14 @@ class QUICK_EXPORT QgsQuickIdentifyKit : public QObject
 {
     Q_OBJECT
     Q_PROPERTY( QgsQuickMapSettings* mapSettings READ mapSettings WRITE setMapSettings NOTIFY mapSettingsChanged )
+    /**
+      * Search radius for the identify functions from the point. Default is 8
+      */
     Q_PROPERTY( double searchRadiusMm READ searchRadiusMm WRITE setSearchRadiusMm NOTIFY searchRadiusMmChanged )
+    /**
+      * Maximum number of feature returned from by the identify functions in QgsFeatureList. Default is 100
+      */
+    Q_PROPERTY( long featuresLimit MEMBER mFeaturesLimit NOTIFY featuresLimitChanged )
 
   public:   
     explicit QgsQuickIdentifyKit( QObject *parent = 0 );
@@ -78,6 +85,7 @@ class QUICK_EXPORT QgsQuickIdentifyKit : public QObject
    signals:
     void mapSettingsChanged();
     void searchRadiusMmChanged();
+    void featuresLimitChanged();
 
   private:
     QgsQuickProject* mProject;
@@ -90,6 +98,7 @@ class QUICK_EXPORT QgsQuickIdentifyKit : public QObject
     QgsFeatureList identifyVectorLayer( QgsVectorLayer* layer, const QgsPointXY& point ) const;
 
     double mSearchRadiusMm;
+    int mFeaturesLimit;
 };
 
 #endif // QGSQUICKIDENTIFYKIT_H

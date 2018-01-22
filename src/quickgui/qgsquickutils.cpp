@@ -21,6 +21,7 @@
 #include "qgsquickmapsettings.h"
 #include "qgsdistancearea.h"
 #include "qgenericatomic.h"
+#include "qgsmessagelog.h"
 
 #include <QMap>
 #include <QString>
@@ -133,8 +134,7 @@ void QgsQuickUtils::copyFile(QString sourcePath, QString targetPath)
 
     if ( !QDir::root().mkpath( targetPath ) )
     {
-      //QgsApplication::messageLog()->logMessage( tr( "Could not create folder %1" ).arg( targetPath ), "QField", QgsMessageLog::CRITICAL );
-      qDebug() << "Could not create folder " << targetPath;
+      QgsApplication::messageLog()->logMessage( tr( "Could not create folder %1" ).arg( targetPath ), "QgsQuick", QgsMessageLog::CRITICAL );
       return;
     }
 
@@ -146,8 +146,7 @@ void QgsQuickUtils::copyFile(QString sourcePath, QString targetPath)
       qDebug() << "Couldn't rename file! Trying to copy instead";
       if ( !QFile( sourcePath ).copy( dir.absoluteFilePath( filename ) ) )
       {
-        //QgsApplication::messageLog()->logMessage( tr( "Image %1 could not be copied to project folder %2.", "QField", QgsMessageLog::CRITICAL ).arg( sourcePath.toString(), targetPath ) );
-        qDebug() << "Image " << sourcePath << " could not be copied to project folder " << targetPath;
+        QgsApplication::messageLog()->logMessage( tr( "File %1 could not be copied to folder %2.", "QgsQuick", QgsMessageLog::CRITICAL ).arg( sourcePath, targetPath ) );
         return;
       }
     }

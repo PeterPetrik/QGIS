@@ -26,6 +26,7 @@ QgsQuickIdentifyKit::QgsQuickIdentifyKit( QObject *parent )
   : QObject( parent )
   , mMapSettings( nullptr )
   , mSearchRadiusMm( 8 )
+  , mFeaturesLimit( 100 )
 {
 }
 
@@ -203,7 +204,7 @@ QgsFeatureList QgsQuickIdentifyKit::identifyVectorLayer ( QgsVectorLayer* layer,
 
     QgsFeatureRequest req;
     req.setFilterRect( r );
-    req.setLimit( QSettings().value( "/QField/identify/limit" , 100 ).toInt() );
+    req.setLimit( mFeaturesLimit );
     req.setFlags( QgsFeatureRequest::ExactIntersect );
 
     QgsFeatureIterator fit = layer->getFeatures( req );

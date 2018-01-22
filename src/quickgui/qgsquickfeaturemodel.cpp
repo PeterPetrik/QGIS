@@ -159,7 +159,7 @@ bool QgsQuickFeatureModel::save()
 
   QgsFeature feat = mFeature;
   if ( !mLayer->updateFeature( feat ) )
-    QgsMessageLog::logMessage( tr( "Cannot update feature" ), "QField", QgsMessageLog::WARNING );
+    QgsMessageLog::logMessage( tr( "Cannot update feature" ), "QgsQuick", QgsMessageLog::WARNING );
   rv = commit();
 
   if ( rv )
@@ -168,7 +168,7 @@ bool QgsQuickFeatureModel::save()
     if ( mLayer->getFeatures( QgsFeatureRequest().setFilterFid( mFeature.id() ) ).nextFeature( feat ) )
       setFeature( feat );
     else
-      QgsMessageLog::logMessage( tr( "Feature %1 could not be fetched after commit" ).arg( mFeature.id() ), "QField", QgsMessageLog::WARNING );
+      QgsMessageLog::logMessage( tr( "Feature %1 could not be fetched after commit" ).arg( mFeature.id() ), "QgsQuick", QgsMessageLog::WARNING );
   }
   return rv;
 }
@@ -186,7 +186,7 @@ bool QgsQuickFeatureModel::deleteFeature()
   }
 
   if ( !mLayer->deleteFeature( mFeature.id() ) )
-    QgsMessageLog::logMessage( tr( "Cannot delete feature" ), "QField", QgsMessageLog::WARNING );
+    QgsMessageLog::logMessage( tr( "Cannot delete feature" ), "QgsQuick", QgsMessageLog::WARNING );
   rv = commit();
 
   return rv;
@@ -253,7 +253,7 @@ void QgsQuickFeatureModel::create()
   startEditing();
   if ( !mLayer->addFeature( mFeature ) )
   {
-    QgsMessageLog::logMessage( tr( "Feature could not be added" ), "QField", QgsMessageLog::CRITICAL );
+    QgsMessageLog::logMessage( tr( "Feature could not be added" ), "QgsQuick", QgsMessageLog::CRITICAL );
   }
   commit();
 }
@@ -262,7 +262,7 @@ bool QgsQuickFeatureModel::commit()
 {
   if ( !mLayer->commitChanges() )
   {
-    QgsMessageLog::logMessage( tr( "Could not save changes. Rolling back." ), "QField", QgsMessageLog::CRITICAL );
+    QgsMessageLog::logMessage( tr( "Could not save changes. Rolling back." ), "QgsQuick", QgsMessageLog::CRITICAL );
     mLayer->rollBack();
     return false;
   }
@@ -280,7 +280,7 @@ bool QgsQuickFeatureModel::startEditing()
 
   if ( !mLayer->startEditing() )
   {
-    QgsMessageLog::logMessage( tr( "Cannot start editing" ), "QField", QgsMessageLog::WARNING );
+    QgsMessageLog::logMessage( tr( "Cannot start editing" ), "QgsQuick", QgsMessageLog::WARNING );
     return false;
   }
   else
