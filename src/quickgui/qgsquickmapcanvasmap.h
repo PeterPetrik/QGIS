@@ -16,18 +16,19 @@
 #ifndef QGSQUICKMAPCANVASMAP_H
 #define QGSQUICKMAPCANVASMAP_H
 
-#include "qgis_quick.h"
 #include <QtQuick/QQuickItem>
 #include <QFutureSynchronizer>
 #include <QTimer>
-#include <qgspoint.h>
-#include <qgsmapsettings.h>
-#include <qgsquickmapsettings.h>
+
+#include "qgsmapsettings.h"
+#include "qgspoint.h"
+
+#include "qgis_quick.h"
+#include "qgsquickmapsettings.h"
 
 class QgsMapRendererParallelJob;
 class QgsMapRendererCache;
 class QgsLabelingResults;
-class MapSettings;
 
 /**
  * \ingroup quick

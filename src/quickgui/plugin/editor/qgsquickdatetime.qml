@@ -1,15 +1,27 @@
+/***************************************************************************
+ qgsquickdatetime.qml
+  --------------------------------------
+  Date                 : 2017
+  Copyright            : (C) 2017 by Matthias Kuhn
+  Email                : matthias@opengis.ch
+ ***************************************************************************
+ *                                                                         *
+ *   This program is free software; you can redistribute it and/or modify  *
+ *   it under the terms of the GNU General Public License as published by  *
+ *   the Free Software Foundation; either version 2 of the License, or     *
+ *   (at your option) any later version.                                   *
+ *                                                                         *
+ ***************************************************************************/
+
 import QtQuick 2.0
 import QtQuick.Controls 2.2
 import QtQuick.Layouts 1.1
 import QtQuick.Controls 1.4 as Controls1
 import QgisQuick 0.1 as QgsQuick
-/*
-  * field_format
-  * display_format
-  * calendar_popup
-  * allow_null
- */
 
+// Calendar for QGIS Attribute Form
+// Requires various global properties set to function, see qgsquickfeatureform Loader section
+// Do not use directly from Application QML
 
 Item {
   signal valueChanged(var value, bool isNull)
@@ -30,9 +42,7 @@ Item {
       Rectangle {
         anchors.fill: parent
         id: backgroundRect
-        // border.color: comboBox.pressed ? "#17a81a" : "#21be2b"
         border.color: "#17a81a"
-        //border.width: comboBox.visualFocus ? 2 : 1
         border.width: 2
         color: "#dddddd"
         radius: 2

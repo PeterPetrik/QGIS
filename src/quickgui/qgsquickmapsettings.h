@@ -18,11 +18,12 @@
 
 #include <QObject>
 
+#include "qgsmapsettings.h"
+#include "qgsmapthemecollection.h"
+#include "qgspoint.h"
+#include "qgsrectangle.h"
+
 #include "qgis_quick.h"
-#include <qgsrectangle.h>
-#include <qgsmapthemecollection.h>
-#include <qgsmapsettings.h>
-#include <qgspoint.h>
 
 class QgsProject;
 

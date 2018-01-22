@@ -16,11 +16,11 @@
 #ifndef QGSQUICKSTYLE_H
 #define QGSQUICKSTYLE_H
 
-#include "qgis_quick.h"
-
 #include <QObject>
 #include <QString>
 #include <QUrl>
+
+#include "qgis_quick.h"
 
 /**
  * \ingroup quick
@@ -35,11 +35,24 @@ class QUICK_EXPORT QgsQuickStyle: public QObject
 {
   Q_OBJECT
 
+  /**
+    * Device pixels. Used to scale all pixel sizes for GUI elements.
+    * Defaults to 1. Use QApplication::desktop()->physicalDpiX() to initialize.
+    */
   Q_PROPERTY( qreal dp READ devicePixels WRITE setDevicePixels NOTIFY devicePixelsChanged )
+
+  /**
+    * Directory with the icons. If icon is not found in the theme directory, it is taken from
+    * QgsQuick library resources. Use this to replace default images with the customized.
+    *
+    * /sa QgsQuickUtils::getThemeIcon()
+    */
   Q_PROPERTY( QString theme READ themeDir WRITE setThemeDir NOTIFY themeDirChanged )
 
   /**
-   * Use SVG instead of PNGs (needs Android API level 21 or above)
+   * Use SVG instead of PNGs (needs Android API level 21 or above) for icons
+   *
+   * /sa QgsQuickUtils::getThemeIcon()
    */
   Q_PROPERTY( bool useVectorIcons READ useVectorIcons WRITE setUseVectorIcons NOTIFY useVectorIconsChanged )
 

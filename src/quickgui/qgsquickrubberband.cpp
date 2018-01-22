@@ -14,7 +14,6 @@
  ***************************************************************************/
 
 #include "qgsquickrubberband.h"
-
 #include "qgsquickrubberbandmodel.h"
 #include "qgsquicksgrubberband.h"
 
@@ -39,16 +38,21 @@ void QgsQuickRubberband::setModel( QgsQuickRubberbandModel* model )
   if ( mModel == model )
     return;
 
+  if ( mModel ) {
+    disconnect( mModel, &QgsQuickRubberbandModel::vertexChanged, this, &QgsQuickRubberband::markDirty );
+    disconnect( mModel, &QgsQuickRubberbandModel::verticesRemoved, this, &QgsQuickRubberband::markDirty );
+    disconnect( mModel, &QgsQuickRubberbandModel::verticesInserted, this, &QgsQuickRubberband::markDirty );
+  }
+
   mModel = model;
 
-  // TODO connect to changes
-
-  connect( mModel, &QgsQuickRubberbandModel::vertexChanged, this, &QgsQuickRubberband::markDirty );
-  connect( mModel, &QgsQuickRubberbandModel::verticesRemoved, this, &QgsQuickRubberband::markDirty );
-  connect( mModel, &QgsQuickRubberbandModel::verticesInserted, this, &QgsQuickRubberband::markDirty );
+  if ( mModel ) {
+      connect( mModel, &QgsQuickRubberbandModel::vertexChanged, this, &QgsQuickRubberband::markDirty );
+      connect( mModel, &QgsQuickRubberbandModel::verticesRemoved, this, &QgsQuickRubberband::markDirty );
+      connect( mModel, &QgsQuickRubberbandModel::verticesInserted, this, &QgsQuickRubberband::markDirty );
+  }
 
   markDirty();
-
   emit modelChanged();
 }
 

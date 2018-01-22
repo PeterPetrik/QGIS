@@ -17,7 +17,9 @@
 #define QGSQUICKMESSAGELOGMODEL_H
 
 #include <QAbstractListModel>
-#include <qgsmessagelog.h>
+
+#include "qgsmessagelog.h"
+
 #include "qgis_quick.h"
 
 /**

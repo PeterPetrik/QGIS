@@ -13,38 +13,37 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "qgsquickplugin.h"
-#include "qgsquickmapsettings.h"
-#include "qgsquickmapcanvasmap.h"
-#include "qgsquickidentifykit.h"
+#include <qqml.h>
+
+#include "qgsfeature.h"
+#include "qgsmaplayer.h"
+#include "qgspointxy.h"
+#include "qgsproject.h"
+#include "qgsrelationmanager.h"
+#include "qgsvectorlayer.h"
+
 #include "qgsquickattributeformmodel.h"
 #include "qgsquickattributeformmodelbase.h"
+#include "qgsquickcoordinatetransformer.h"
 #include "qgsquickfeaturemodel.h"
 #include "qgsquickfeaturemodelhighlight.h"
 #include "qgsquickgeometry.h"
+#include "qgsquickidentifykit.h"
+#include "qgsquickidentifyresult.h"
+#include "qgsquickmapcanvasmap.h"
+#include "qgsquickmapsettings.h"
 #include "qgsquickmaptransform.h"
+#include "qgsquickmessagelogmodel.h"
+#include "qgsquickpicturesource.h"
+#include "qgsquickplugin.h"
+#include "qgsquickpositionkit.h"
 #include "qgsquickrubberband.h"
 #include "qgsquickrubberbandmodel.h"
+#include "qgsquickscalebarkit.h"
 #include "qgsquicksgrubberband.h"
-#include "qgsquicksubmodel.h"
-#include "qgsquickpicturesource.h"
-
-#include <qgsmaplayer.h>
-#include <qgsquickscalebarkit.h>
-#include <qgsquickutils.h>
-#include <qgsrelationmanager.h>
-#include "qgsfeature.h"
-#include <qgsproject.h>
-
-#include <qgsvectorlayer.h>
-#include "qgsquickidentifyresult.h"
 #include "qgsquickstyle.h"
-#include "qgsquickcoordinatetransformer.h"
-#include "qgsquickpositionkit.h"
-#include "qgspointxy.h"
-#include "qgsquickmessagelogmodel.h"
-
-#include <qqml.h>
+#include "qgsquicksubmodel.h"
+#include "qgsquickutils.h"
 
 static QObject *_utilsProvider(QQmlEngine *engine, QJSEngine *scriptEngine)
 {

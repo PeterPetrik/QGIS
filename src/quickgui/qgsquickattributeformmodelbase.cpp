@@ -13,10 +13,11 @@
  *                                                                         *
  ***************************************************************************/
 
+#include "qgseditorwidgetsetup.h"
+#include "qgsvectorlayer.h"
+
 #include "qgsquickattributeformmodelbase.h"
 #include "qgsquickattributeformmodel.h"
-#include <qgsvectorlayer.h>
-#include <qgseditorwidgetsetup.h>
 
 /// @cond PRIVATE
 

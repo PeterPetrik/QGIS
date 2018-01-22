@@ -16,16 +16,18 @@
 #ifndef QGSQUICKUTILS_H
 #define QGSQUICKUTILS_H
 
-#include "qgis_quick.h"
-
-#include "qgsfeature.h"
-#include "qgspointxy.h"
-#include "qgspoint.h"
-#include "qgsquickmapsettings.h"
 
 #include <QObject>
 #include <QString>
 #include <QUrl>
+
+#include "qgsfeature.h"
+#include "qgspoint.h"
+#include "qgspointxy.h"
+
+#include "qgsquickmapsettings.h"
+#include "qgis_quick.h"
+
 
 class QgsFeature;
 class QgsVectorLayer;
@@ -49,10 +51,30 @@ class QUICK_EXPORT QgsQuickUtils: public QObject
     static QgsQuickUtils* instance();
 
     // CRS and geometry
-    Q_INVOKABLE QgsCoordinateReferenceSystem coordinateReferenceSystemFromEpsgId(long epsg) const; //!< if you want to create CRS from QML
+
+    /**
+      * Create crs from epsg code in QML
+      */
+    Q_INVOKABLE QgsCoordinateReferenceSystem coordinateReferenceSystemFromEpsgId(long epsg) const;
+
+    /**
+      * Create QgsPointXY in QML
+      */
     Q_INVOKABLE QgsPointXY pointXYFactory(double x, double y) const;
+
+    /**
+      * Create QgsPoint in QML
+      */
     Q_INVOKABLE QgsPoint pointFactory(double x, double y) const;
+
+    /**
+      * Transform point between different crs from QML
+      */
     Q_INVOKABLE QgsPointXY transformPoint(QgsCoordinateReferenceSystem srcCrs, QgsCoordinateReferenceSystem destCrs, QgsPointXY srcPoint) const;
+
+    /**
+      * Calculate the distance in meter representing baseLengthPixels pixels on the screen based on the current map settings.
+      */
     Q_INVOKABLE double screenUnitsToMeters(QgsQuickMapSettings* mapSettings, int baseLengthPixels) const;
 
     // Common
@@ -73,8 +95,14 @@ class QUICK_EXPORT QgsQuickUtils: public QObject
     Q_INVOKABLE QUrl getThemeIcon(const QString& name);
 
     // Formatting
-    Q_INVOKABLE QString qgsPointToString(const QgsPoint& point, int decimals = 3); //!< point to string, e.g. -2.234521, 34.4444421 -> -2.234, 34.444
-    Q_INVOKABLE QString distanceToString(qreal dist, int decimals = 1); //!< distance in meters to human readable length e.g. 1222.234 m -> 1.2 km
+    /**
+      * point to string, e.g. -2.234521, 34.4444421 -> -2.234, 34.444
+      */
+    Q_INVOKABLE QString qgsPointToString(const QgsPoint& point, int decimals = 3);
+    /**
+      * distance in meters to human readable length e.g. 1222.234 m -> 1.2 km
+      */
+    Q_INVOKABLE QString distanceToString(qreal dist, int decimals = 1);
 
 
     // Singletons

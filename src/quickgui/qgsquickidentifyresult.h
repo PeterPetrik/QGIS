@@ -18,8 +18,10 @@
 
 #include <QObject>
 
+#include "qgsfeature.h"
+
 #include "qgis_quick.h"
-#include <qgsfeature.h>
+
 class QgsVectorLayer;
 
 /**

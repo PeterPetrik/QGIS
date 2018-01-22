@@ -1,9 +1,9 @@
 /***************************************************************************
-              qgsquickfeaturemodelhighlight.h
-               ----------------------------------------------------
-              date                 : 9.12.2014
-              copyright            : (C) 2014 by Matthias Kuhn
-              email                : matthias.kuhn (at) opengis.ch
+  qgsqguickfeaturemodelhighlight.h
+  --------------------------------------
+  Date                 : 9.12.2014
+  Copyright            : (C) 2014 by Matthias Kuhn
+  Email                : matthias@opengis.ch
  ***************************************************************************
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -17,6 +17,7 @@
 #define QGSQUICKFEATUREMODELHIGHLIGHT_H
 
 #include <QQuickItem>
+
 #include "qgis_quick.h"
 
 class QgsQuickMapSettings;

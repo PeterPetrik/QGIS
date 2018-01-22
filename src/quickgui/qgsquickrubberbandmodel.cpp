@@ -13,8 +13,10 @@
  *                                                                         *
  ***************************************************************************/
 
+#include "qgsvectorlayer.h"
+
 #include "qgsquickrubberbandmodel.h"
-#include <qgsvectorlayer.h>
+
 
 QgsQuickRubberbandModel::QgsQuickRubberbandModel( QObject* parent )
   : QObject( parent )

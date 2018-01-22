@@ -13,18 +13,20 @@
  *                                                                         *
  ***************************************************************************/
 
+#include <QQuickWindow>
+#include <QScreen>
+#include <QSGSimpleTextureNode>
+#include <QtConcurrent>
+
+#include <qgsmaprendererparalleljob.h>
+#include <qgsmessagelog.h>
+#include <qgspallabeling.h>
+#include <qgsproject.h>
+#include <qgsvectorlayer.h>
+
 #include "qgsquickmapcanvasmap.h"
 #include "qgsquickmapsettings.h"
 
-#include <qgsmaprendererparalleljob.h>
-#include <qgsvectorlayer.h>
-#include <qgsmessagelog.h>
-#include <QQuickWindow>
-#include <QScreen>
-#include <qgspallabeling.h>
-#include <QSGSimpleTextureNode>
-#include <QtConcurrent>
-#include <qgsproject.h>
 
 QgsQuickMapCanvasMap::QgsQuickMapCanvasMap(  QQuickItem* parent )
   : QQuickItem( parent )

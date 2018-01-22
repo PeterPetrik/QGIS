@@ -17,9 +17,9 @@
 #define QGSQUICKFEATUREMODEL_H
 
 #include <QAbstractListModel>
-#include "qgsquickgeometry.h"
-#include "qgis_quick.h"
 
+#include "qgis_quick.h"
+#include "qgsquickgeometry.h"
 
 /**
  * \ingroup quick

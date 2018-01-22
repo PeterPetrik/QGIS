@@ -16,11 +16,11 @@
 #ifndef QGSQUICKCOORDINATETRANSFORMER_H
 #define QGSQUICKCOORDINATETRANSFORMER_H
 
-#include "qgis_quick.h"
-
 #include <QObject>
 
-#include <qgspoint.h>
+#include "qgspoint.h"
+
+#include "qgis_quick.h"
 
 /**
  * \ingroup quick

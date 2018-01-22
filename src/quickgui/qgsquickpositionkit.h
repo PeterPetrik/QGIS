@@ -16,10 +16,12 @@
 #ifndef QGSQUICKPOSITIONKIT_H
 #define QGSQUICKPOSITIONKIT_H
 
-#include "qgis_quick.h"
 #include <QObject>
 #include <QtPositioning>
-#include <qgspoint.h>
+
+#include "qgspoint.h"
+
+#include "qgis_quick.h"
 
 /**
  * \ingroup quick
@@ -36,10 +38,30 @@
 class QUICK_EXPORT QgsQuickPositionKit : public QObject
 {
   Q_OBJECT
-  Q_PROPERTY(QgsPoint position READ position NOTIFY positionChanged) // in WGS84 coords
+
+  /**
+   * GPS position in WGS84 coords
+   */
+  Q_PROPERTY(QgsPoint position READ position NOTIFY positionChanged)
+
+  /**
+   * GPS position is available (position property is a valid number)
+   */
   Q_PROPERTY(bool hasPosition READ hasPosition NOTIFY hasPositionChanged)
-  Q_PROPERTY(qreal accuracy READ accuracy NOTIFY positionChanged) // in meters
+
+  /**
+   * GPS horizontal accuracy in meters, -1 if not available
+   */
+  Q_PROPERTY(qreal accuracy READ accuracy NOTIFY positionChanged)
+
+  /**
+   * GPS direction, bearing in degrees clockwise from north to direction of travel. -1 if not available
+   */
   Q_PROPERTY(qreal direction READ direction NOTIFY positionChanged)
+
+  /**
+   * GPS position and accuracy is simulated (not real from GPS sensor). Default false (use real GPS)
+   */
   Q_PROPERTY(bool isSimulated READ simulated NOTIFY isSimulatedChanged)
 
 public:
@@ -49,13 +71,21 @@ public:
   QgsPoint position() const { return mPosition; }
   qreal accuracy() const { return mAccuracy; }
   qreal direction() const { return mDirection; }
-
-  // We do not want to have the origin point as property
-  // We basically want to set it once based on project/map cente and keep
-  // it that way regardless of mapsettings change (e.g. zoom etc)
-  Q_INVOKABLE void use_simulated_location(double longitude, double latitude, double radius);
-  Q_INVOKABLE void use_gps_location();
   bool simulated() const { return mIsSimulated; }
+
+  /**
+   * Use simulated GPS source.
+   *
+   * We do not want to have the origin point as property
+   * We basically want to set it once based on project/map cente and keep
+   * it that way regardless of mapsettings change (e.g. zoom etc)
+   */
+  Q_INVOKABLE void use_simulated_location(double longitude, double latitude, double radius);
+
+  /**
+   * Use real GPS source (not simulated)
+   */
+  Q_INVOKABLE void use_gps_location();
 
 signals:
   void positionChanged();
@@ -71,11 +101,10 @@ private slots:
 
 protected:
 
-
 protected:
-  QgsPoint mPosition; // in WGS84 coords
-  qreal mAccuracy; // horizontal accuracy in meters (-1 if not available)
-  qreal mDirection; // bearing in degrees clockwise from north to direction of travel (-1 if not available)
+  QgsPoint mPosition;
+  qreal mAccuracy;
+  qreal mDirection;
   bool mHasPosition;
 
   // Simulated source

@@ -16,11 +16,12 @@
 #ifndef QGSQUICKGEOMETRY_H
 #define QGSQUICKGEOMETRY_H
 
-#include "qgis_quick.h"
-#include <qgsgeometry.h>
-#include <qgsquickrubberbandmodel.h>
-
 #include <QtPositioning/QGeoCoordinate>
+
+#include "qgsgeometry.h"
+
+#include "qgis_quick.h"
+#include "qgsquickrubberbandmodel.h"
 
 /**
  * \ingroup quick

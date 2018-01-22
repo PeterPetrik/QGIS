@@ -1,9 +1,9 @@
 /***************************************************************************
-
-               ----------------------------------------------------
-              date                 : 20.12.2014
-              copyright            : (C) 2014 by Matthias Kuhn
-              email                : matthias (at) opengis.ch
+  qgsquickmaptransform.cpp
+  --------------------------------------
+  Date                 : 27.12.2014
+  Copyright            : (C) 2014 by Matthias Kuhn
+  Email                : matthias (at) opengis.ch
  ***************************************************************************
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -14,9 +14,7 @@
  ***************************************************************************/
 
 #include "qgsquickmaptransform.h"
-
 #include "qgsquickmapsettings.h"
-
 
 QgsQuickMapTransform::QgsQuickMapTransform()
 {

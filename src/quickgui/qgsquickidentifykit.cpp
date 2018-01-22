@@ -13,14 +13,13 @@
  *                                                                         *
  ***************************************************************************/
 
+
+#include "qgsproject.h"
+#include "qgsrenderer.h"
+#include "qgsvectorlayer.h"
+
 #include "qgsquickidentifykit.h"
-
 #include "qgsquickmapsettings.h"
-//#include "multifeaturelistmodel.h"
-
-#include <qgsvectorlayer.h>
-#include <qgsproject.h>
-#include <qgsrenderer.h>
 
 QgsQuickIdentifyKit::QgsQuickIdentifyKit( QObject *parent )
   : QObject( parent )

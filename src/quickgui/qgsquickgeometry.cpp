@@ -13,17 +13,16 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "qgsquickgeometry.h"
+#include "qgslinestring.h"
+#include "qgspoint.h"
+#include "qgspolygon.h"
+#include "qgsvectorlayer.h"
 
-#include <qgspoint.h>
-#include <qgslinestring.h>
-#include <qgspolygon.h>
-#include <qgsvectorlayer.h>
+#include "qgsquickgeometry.h"
 
 QgsQuickGeometry::QgsQuickGeometry( QObject* parent )
   : QObject( parent )
 {
-
 }
 
 QgsGeometry QgsQuickGeometry::asQgsGeometry() const
@@ -62,11 +61,8 @@ QgsGeometry QgsQuickGeometry::asQgsGeometry() const
       break;
     case QgsWkbTypes::NullGeometry:
       break;
-
   }
 
-  // QgsCoordinateTransform ct( mRubberbandModel->crs(), mVectorLayer->crs() );
-  // return ct.transform( QgsGeometry( geom ) );
   return QgsGeometry( geom );
 }
 

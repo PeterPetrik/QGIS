@@ -13,16 +13,16 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "qgsquickscalebarkit.h"
-#include <qgsquickmapsettings.h>
-#include "qgsquickutils.h"
-
 #include <QSize>
 #include <QPoint>
 #include <QDebug>
 
-#include <qgspointxy.h>
-#include <qgsdistancearea.h>
+#include "qgspointxy.h"
+#include "qgsdistancearea.h"
+
+#include "qgsquickmapsettings.h"
+#include "qgsquickscalebarkit.h"
+#include "qgsquickutils.h"
 
 QgsQuickScaleBarKit::QgsQuickScaleBarKit(QObject *parent)
     :QObject(parent)

@@ -17,6 +17,7 @@
 #define QGSQUICKRUBBERBAND_H
 
 #include <QQuickItem>
+
 #include "qgis_quick.h"
 
 class QgsQuickRubberbandModel;
@@ -40,7 +41,13 @@ class QUICK_EXPORT QgsQuickRubberband : public QQuickItem
 
     Q_PROPERTY( QgsQuickRubberbandModel* model READ model WRITE setModel NOTIFY modelChanged )
     Q_PROPERTY( QgsQuickMapSettings* mapSettings READ mapSettings WRITE setMapSettings NOTIFY mapSettingsChanged )
+    /**
+      * Rubberband color. Defaults to dark red.
+      */
     Q_PROPERTY( QColor color READ color WRITE setColor NOTIFY colorChanged )
+    /**
+      * Rubberband pen width. Defaults to 1.5
+      */
     Q_PROPERTY( qreal width READ width WRITE setWidth NOTIFY widthChanged )
 
   public:

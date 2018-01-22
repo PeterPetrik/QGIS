@@ -13,10 +13,11 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "qgsquickmessagelogmodel.h"
-
-#include <qgsapplication.h>
 #include <QDebug>
+
+#include "qgsapplication.h"
+
+#include "qgsquickmessagelogmodel.h"
 
 QgsQuickMessageLogModel::QgsQuickMessageLogModel( QObject* parent )
   : QAbstractListModel( parent )

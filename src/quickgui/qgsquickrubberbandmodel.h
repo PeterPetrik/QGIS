@@ -19,9 +19,11 @@
 #include <QVector>
 #include <QObject>
 #include <QPointF>
-#include <qgis.h>
-#include <qgspoint.h>
-#include <qgsabstractgeometry.h>
+
+#include "qgis.h"
+#include "qgspoint.h"
+#include "qgsabstractgeometry.h"
+
 #include "qgis_quick.h"
 
 class QgsVectorLayer;
@@ -85,7 +87,6 @@ class QUICK_EXPORT QgsQuickRubberbandModel : public QObject
 
     Q_INVOKABLE void addVertex();
     Q_INVOKABLE void removeVertex();
-
     Q_INVOKABLE void reset();
 
     QgsWkbTypes::GeometryType geometryType() const;

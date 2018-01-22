@@ -1,5 +1,5 @@
 /***************************************************************************
- qgsquickpositionkit.cpp
+  qgsquickpositionkit.cpp
   --------------------------------------
   Date                 : Dec. 2017
   Copyright            : (C) 2017 Peter Petrik
@@ -80,7 +80,6 @@ void QgsQuickPositionKit::replacePositionSource(QGeoPositionInfoSource* source) 
 
 void QgsQuickPositionKit::positionUpdated(const QGeoPositionInfo &info)
 {
-  // qDebug() << "Position updated:" << info;
   mPosition = QgsPoint(info.coordinate().longitude(),
                        info.coordinate().latitude(),
                        info.coordinate().altitude());
@@ -93,7 +92,7 @@ void QgsQuickPositionKit::positionUpdated(const QGeoPositionInfo &info)
     mDirection = info.attribute(QGeoPositionInfo::Direction);
   else
     mDirection = -1;
-  //qDebug("acc %f dir %f", mAccuracy, mDirection);
+
   emit positionChanged();
 
   if (!mHasPosition)

@@ -16,13 +16,13 @@
 #ifndef QGSQUICKQGSSGRUBBERBAND_H
 #define QGSQUICKQGSSGRUBBERBAND_H
 
-#include "qgis_quick.h"
-
 #include <QtQuick/QSGNode>
 #include <QtQuick/QSGFlatColorMaterial>
 
-#include <qgspoint.h>
-#include <qgswkbtypes.h>
+#include "qgspoint.h"
+#include "qgswkbtypes.h"
+
+#include "qgis_quick.h"
 
 
 class QgsQuickRubberbandModel;

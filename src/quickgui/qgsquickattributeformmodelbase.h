@@ -30,10 +30,10 @@
 #include <QStandardItemModel>
 #include <QStack>
 
-#include <qgseditformconfig.h>
-#include <qgsexpressioncontext.h>
-#include "qgis_quick.h"
+#include "qgseditformconfig.h"
+#include "qgsexpressioncontext.h"
 
+#include "qgis_quick.h"
 #include "qgsquickfeaturemodel.h"
 
 /**

@@ -1,9 +1,9 @@
 /***************************************************************************
-              qgsqguickfeaturemodelhighlight.cpp
-               ----------------------------------------------------
-              date                 : 9.12.2014
-              copyright            : (C) 2014 by Matthias Kuhn
-              email                : matthias.kuhn (at) opengis.ch
+  qgsqguickfeaturemodelhighlight.cpp
+  --------------------------------------
+  Date                 : 9.12.2014
+  Copyright            : (C) 2014 by Matthias Kuhn
+  Email                : matthias@opengis.ch
  ***************************************************************************
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -13,11 +13,10 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "qgsquickfeaturemodelhighlight.h"
-
-#include <qgsvectorlayer.h>
+#include "qgsvectorlayer.h"
 
 #include "qgsquickfeaturemodel.h"
+#include "qgsquickfeaturemodelhighlight.h"
 #include "qgsquickmapsettings.h"
 #include "qgsquicksgrubberband.h"
 

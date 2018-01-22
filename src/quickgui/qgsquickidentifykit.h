@@ -19,12 +19,13 @@
 #include <QObject>
 #include <QPair>
 
+#include "qgsfeature.h"
+#include "qgsmapsettings.h"
+#include "qgspoint.h"
+#include "qgsrendercontext.h"
+
 #include "qgis_quick.h"
-#include <qgsfeature.h>
-#include <qgspoint.h>
-#include <qgsmapsettings.h>
-#include <qgsrendercontext.h>
-#include <qgsquickidentifyresult.h>
+#include "qgsquickidentifyresult.h"
 
 class QgsQuickProject;
 class QgsMapLayer;

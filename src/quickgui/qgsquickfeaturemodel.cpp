@@ -13,11 +13,12 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "qgsquickfeaturemodel.h"
-
-#include <qgsmessagelog.h>
-#include <qgsvectorlayer.h>
 #include <QDebug>
+
+#include "qgsmessagelog.h"
+#include "qgsvectorlayer.h"
+
+#include "qgsquickfeaturemodel.h"
 
 QgsQuickFeatureModel::QgsQuickFeatureModel( QObject *parent )
   : QAbstractListModel( parent )
@@ -237,13 +238,6 @@ void QgsQuickFeatureModel::resetAttributes()
   }
   endResetModel();
 }
-
-#if 0
-void QgsQuickFeatureModel::applyGeometry()
-{
-  mFeature.setGeometry( mGeometry->asQgsGeometry() );
-}
-#endif
 
 void QgsQuickFeatureModel::create()
 {

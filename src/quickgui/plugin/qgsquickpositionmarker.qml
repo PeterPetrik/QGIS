@@ -1,5 +1,5 @@
 /***************************************************************************
- qgsquickpositionmarker.qml
+  qgsquickpositionmarker.qml
   --------------------------------------
   Date                 : Dec 2017
   Copyright            : (C) 2017 by Peter Petrik

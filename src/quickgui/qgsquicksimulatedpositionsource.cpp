@@ -17,8 +17,6 @@
 
 /// @cond PRIVATE
 
-
-
 QgsQuickSimulatedPositionSource::QgsQuickSimulatedPositionSource(QObject *parent, double longitude, double latitude, double flightRadius)
   : QGeoPositionInfoSource(parent)
   , mTimer(new QTimer(this))

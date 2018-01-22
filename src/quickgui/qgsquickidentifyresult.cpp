@@ -13,10 +13,10 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "qgsquickidentifyresult.h"
+#include "qgsvectorlayer.h"
+#include "qgsfeature.h"
 
-#include <qgsvectorlayer.h>
-#include <qgsfeature.h>
+#include "qgsquickidentifyresult.h"
 
 QgsQuickIdentifyResult::QgsQuickIdentifyResult( const QgsFeature& feature, QgsVectorLayer* layer)
   : mLayer( layer )
@@ -31,20 +31,6 @@ QgsQuickIdentifyResult::QgsQuickIdentifyResult(): mLayer(0)
 {
     mFeature.setValid(false);
 }
-
-/*
-QgsQuickIdentifyResult::QgsQuickIdentifyResult(const QgsQuickIdentifyResult& other)
-    : mLayer (other.layer())
-    , mFeature (other.feature())
-{
-}
-
-QgsQuickIdentifyResult &QgsQuickIdentifyResult::operator=( const QgsQuickIdentifyResult &rhs ) {
-    mLayer = rhs.mLayer;
-    mFeature = rhs.mFeature;
-    return *this;
-}
-*/
 
 QgsVectorLayer* QgsQuickIdentifyResult::layer() const {
     return mLayer;

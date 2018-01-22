@@ -16,10 +16,10 @@
 #ifndef QGSQUICKSCALEBARKIT_H
 #define QGSQUICKSCALEBARKIT_H
 
-#include "qgis_quick.h"
-
 #include <QObject>
 #include <QString>
+
+#include "qgis_quick.h"
 
 class QgsQuickMapSettings;
 
@@ -44,10 +44,26 @@ class QUICK_EXPORT QgsQuickScaleBarKit : public QObject
 {
   Q_OBJECT
 
-  Q_PROPERTY( int preferredWidth MEMBER mPreferredWidth NOTIFY preferredWidthChanged)
   Q_PROPERTY( QgsQuickMapSettings* mapSettings MEMBER mMapSettings WRITE setMapSettings NOTIFY mapSettingsChanged)
+  /**
+    * Preferred width of scalebar in pixels. Defaults to 300
+    */
+  Q_PROPERTY( int preferredWidth MEMBER mPreferredWidth NOTIFY preferredWidthChanged)
+
+  /**
+    * Units of distance (e.g. km or m) Read-only (result)
+    */
   Q_PROPERTY( QString units READ units NOTIFY scaleBarChanged )
+
+  /**
+    * Distance rounded to "nice" number (e.g. 100, 20). To be used with units property for labels. Read-only (result)
+    */
   Q_PROPERTY( int distance READ distance NOTIFY scaleBarChanged )
+
+  /**
+    * Calculated width of scalebar in pixels representing distance + units. Differs minimum possible from prefferedWidth to
+    * get "nice" distance number.
+    */
   Q_PROPERTY( int width READ width NOTIFY scaleBarChanged )
 
 public:
