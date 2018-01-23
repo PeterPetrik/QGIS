@@ -30,6 +30,8 @@ Item {
                                             // e.g. simulatePositionLongLatRad = [60, 10, 0.02]
 
     property point screenPosition  // in pixels
+    property color baseColor: "darkblue"
+    property color unavailableColor: "gray"
     property alias mapPosition: wgs84toMapCrs.projectedPosition // in map coordinates
     property alias gpsPosition: positionKit.position // in WGS84 coordinates
     property alias gpsAccuracy: positionKit.accuracy // in meters
@@ -111,7 +113,7 @@ Item {
             else 2
         }
         height: accuracyIndicator.width
-        color: "blue"
+        color: baseColor
         border.color: "black"
         border.width: 3
         radius: width*0.5
@@ -129,12 +131,12 @@ Item {
         height: width
     }
 
-    // Makes positionMarker (navigation) grey if gps signal is lost
+    // Makes positionMarker (navigation) grey if gps signal is lost.
     ColorOverlay {
-            anchors.fill: navigation
-            source: navigation
-            color: "grey"
-            rotation: positionKit.direction
-            visible: !positionKit.hasPosition
-        }
+        anchors.fill: navigation
+        source: navigation
+        color: positionKit.hasPosition ? baseColor : unavailableColor
+        rotation: positionKit.direction
+        visible: !(positionKit.hasPosition && baseColor == "black")
+    }
 }
