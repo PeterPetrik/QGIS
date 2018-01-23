@@ -17,6 +17,7 @@
 
 #include "qgsfeature.h"
 #include "qgsmaplayer.h"
+#include "qgsmessagelog.h"
 #include "qgspointxy.h"
 #include "qgsproject.h"
 #include "qgsrelationmanager.h"
@@ -87,11 +88,13 @@ void QgisQuickPlugin::registerTypes(const char *uri)
   qmlRegisterType< QgsQuickRubberbandModel >(uri, 0, 1, "RubberbandModel");
   qmlRegisterType< QgsQuickScaleBarKit >(uri, 0, 1, "ScaleBarKit");
   qmlRegisterType< QgsQuickSubModel >(uri, 0, 1, "SubModel");
-  qmlRegisterType< QgsRelationManager >(uri, 0, 1, "RelationManager"); //TODO create separate quick class????
-  qmlRegisterType< QgsVectorLayer >(uri, 0, 1, "VectorLayer"); //TODO create separate quick class????
+  qmlRegisterType< QgsRelationManager >(uri, 0, 1, "RelationManager");
+  qmlRegisterType< QgsVectorLayer >(uri, 0, 1, "VectorLayer");
 
   qmlRegisterSingletonType< QgsQuickUtils >(uri, 0, 1, "Utils", _utilsProvider);
   qmlRegisterSingletonType< QgsQuickStyle >(uri, 0, 1, "Style", _styleProvider);
+
+  qmlRegisterUncreatableType< QgsMessageLog >(uri, 0, 1, "QgsMessageLog", "Expose MessageLevel");
 
   qDebug("REGISTERING FINISHED");
 }

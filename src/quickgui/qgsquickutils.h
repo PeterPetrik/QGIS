@@ -22,6 +22,7 @@
 #include <QUrl>
 
 #include "qgsfeature.h"
+#include "qgsmessagelog.h"
 #include "qgspoint.h"
 #include "qgspointxy.h"
 
@@ -77,11 +78,19 @@ class QUICK_EXPORT QgsQuickUtils: public QObject
       */
     Q_INVOKABLE double screenUnitsToMeters(QgsQuickMapSettings* mapSettings, int baseLengthPixels) const;
 
+    /**
+      * Has QgsFeature valid geometry?
+      */
+    Q_INVOKABLE bool hasValidGeometry(QgsVectorLayer* layer, const QgsFeature& feat);
+
     // Common
     Q_INVOKABLE bool fileExists(QString path);
     Q_INVOKABLE void copyFile(QString sourcePath, QString targetPath);
     Q_INVOKABLE void remove(QString path);
     Q_INVOKABLE QString getFileName(QString path);
+    Q_INVOKABLE void logMessage( const QString &message,
+                                 const QString &tag = QString("QgsQuick"),
+                                 QgsMessageLog::MessageLevel level = QgsMessageLog::WARNING );
 
     // Themes
     /**

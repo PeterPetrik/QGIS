@@ -99,6 +99,19 @@ QgsPointXY QgsQuickUtils::transformPoint(QgsCoordinateReferenceSystem srcCrs, Qg
     return pt;
 }
 
+bool QgsQuickUtils::hasValidGeometry(QgsVectorLayer* layer, const QgsFeature& feat) {
+    if (!layer)
+        return false;
+
+    if (!feat.hasGeometry())
+        return false;
+
+    if (feat.geometry().type() != layer->geometryType())
+        return false;
+
+    return true;
+}
+
 double QgsQuickUtils::screenUnitsToMeters(QgsQuickMapSettings* mapSettings, int baseLengthPixels) const {
     if (mapSettings == 0) return 0;
 
@@ -164,6 +177,9 @@ QString QgsQuickUtils::getFileName(QString path)
     return filename;
 }
 
+void QgsQuickUtils::logMessage( const QString &message, const QString &tag, QgsMessageLog::MessageLevel level ) {
+    QgsMessageLog::logMessage(message, tag, level);
+}
 
 QUrl QgsQuickUtils::getThemeIcon(const QString& name) {
     Q_ASSERT(mStyle);
