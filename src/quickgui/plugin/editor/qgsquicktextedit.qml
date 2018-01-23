@@ -41,6 +41,9 @@ Item {
 
     inputMethodHints: field.isNumeric || widget == 'Range' ? Qt.ImhFormattedNumbersOnly : Qt.ImhNone
 
+    // Make sure we do not input more characters than allowed for strings
+    maximumLength: field.isNumeric ? {} : field.length
+
     background: Rectangle {
       y: textField.height - height - textField.bottomPadding / 2
       implicitWidth: 120 * QgsQuick.Style.dp
