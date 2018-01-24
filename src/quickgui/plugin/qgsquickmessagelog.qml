@@ -39,6 +39,7 @@ Item {
 
       Text {
         text: Message
+        width: table.width
         wrapMode: Text.WordWrap
       }
 
