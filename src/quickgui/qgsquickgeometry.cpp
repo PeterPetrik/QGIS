@@ -48,7 +48,7 @@ QgsGeometry QgsQuickGeometry::asQgsGeometry() const
     }
     case QgsWkbTypes::PolygonGeometry:
     {
-      QgsPolygonV2 *polygon = new QgsPolygonV2();
+      QgsPolygon *polygon = new QgsPolygon();
       QgsLineString *ring = new QgsLineString();
       ring->setPoints( mRubberbandModel->pointSequence( mVectorLayer->crs() ) );
       polygon->setExteriorRing( ring );

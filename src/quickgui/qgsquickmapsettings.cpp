@@ -71,6 +71,14 @@ QgsProject *QgsQuickMapSettings::project() const
   return mProject;
 }
 
+QgsCoordinateTransformContext QgsQuickMapSettings::transformContext() const
+{
+  if ( mProject )
+    return mProject->transformContext();
+  else
+    return QgsCoordinateTransformContext();
+}
+
 QgsRectangle QgsQuickMapSettings::extent() const
 {
   return mMapSettings.extent();

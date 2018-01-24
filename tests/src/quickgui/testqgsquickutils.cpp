@@ -12,19 +12,20 @@
  *   (at your option) any later version.                                   *
  *                                                                         *
  ***************************************************************************/
-#include "qgstest.h"
 #include <QFile>
 #include <QTextStream>
 #include <QObject>
 #include <QString>
 #include <QStringList>
-#include <qgsapplication.h>
+
+#include "qgsapplication.h"
+#include "qgscoordinatereferencesystem.h"
+#include "qgscoordinatetransformcontext.h"
 #include "qgspoint.h"
 #include "qgspointxy.h"
-#include "qgscoordinatereferencesystem.h"
+#include "qgstest.h"
 
-//header for class being tested
-#include <qgsquickutils.h>
+#include "qgsquickutils.h"
 
 class TestQgsQuickUtils: public QObject
 {
@@ -53,7 +54,10 @@ void TestQgsQuickUtils::crs_and_geometry()
   QVERIFY( point.x() == 1.0 );
   QVERIFY( point.y() == -1.0 );
 
-  QgsPointXY transformedPoint = QgsQuickUtils::instance()->transformPoint( crsGPS, crs3857, pointXY );
+  QgsPointXY transformedPoint = QgsQuickUtils::instance()->transformPoint( crsGPS,
+                                crs3857,
+                                QgsCoordinateTransformContext(),
+                                pointXY );
   QVERIFY( fabs( transformedPoint.x() - 5554843 ) < 1.0 );
   QVERIFY( fabs( transformedPoint.y() - 1839491 ) < 1.0 );
 

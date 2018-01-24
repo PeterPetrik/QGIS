@@ -96,12 +96,12 @@ QgsPoint QgsQuickUtils::pointFactory( double x, double y ) const
 }
 
 
-QgsPointXY QgsQuickUtils::transformPoint( QgsCoordinateReferenceSystem srcCrs, QgsCoordinateReferenceSystem destCrs, QgsPointXY srcPoint ) const
+QgsPointXY QgsQuickUtils::transformPoint( const QgsCoordinateReferenceSystem &srcCrs,
+    const QgsCoordinateReferenceSystem &destCrs,
+    const QgsCoordinateTransformContext &context,
+    const QgsPointXY &srcPoint ) const
 {
-  QgsCoordinateTransform mTransform;
-  mTransform.setSourceCrs( srcCrs );
-  mTransform.setDestinationCrs( destCrs );
-  mTransform.initialize();
+  QgsCoordinateTransform mTransform( srcCrs, destCrs, context );
   QgsPointXY pt = mTransform.transform( srcPoint );
   return pt;
 }
@@ -129,7 +129,7 @@ double QgsQuickUtils::screenUnitsToMeters( QgsQuickMapSettings *mapSettings, int
 
   QgsDistanceArea mDistanceArea;
   mDistanceArea.setEllipsoid( "WGS84" );
-  mDistanceArea.setSourceCrs( mapSettings->destinationCrs() );
+  mDistanceArea.setSourceCrs( mapSettings->destinationCrs(), mapSettings->transformContext() );
 
   // calculate the geographic distance from the central point of extent
   // to the specified number of points on the right side

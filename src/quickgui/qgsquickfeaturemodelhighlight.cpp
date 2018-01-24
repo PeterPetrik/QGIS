@@ -64,7 +64,7 @@ QSGNode *QgsQuickFeatureModelHighlight::updatePaintNode( QSGNode *n, QQuickItem:
   QgsVectorLayer *layer = mModel->layer();
   if ( layer )
   {
-    QgsCoordinateTransform transf( layer->crs(), mMapSettings->destinationCrs() );
+    QgsCoordinateTransform transf( layer->crs(), mMapSettings->destinationCrs(), mMapSettings->transformContext() );
 
     QgsFeature feature = mModel->feature();
     QgsGeometry geom( feature.geometry() );

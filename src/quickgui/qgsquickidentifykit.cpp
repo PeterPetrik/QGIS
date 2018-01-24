@@ -86,7 +86,7 @@ QList<QgsQuickIdentifyResult> QgsQuickIdentifyKit::identify( const QPointF &poin
 static QgsFeature _closestFeature( const QgsFeatureList &results, const QgsMapSettings &mapSettings, QgsVectorLayer *layer, const QPointF &point )
 {
   QgsPointXY mapPoint = mapSettings.mapToPixel().toMapCoordinates( point.toPoint() );
-  QgsGeometry mapPointGeom( QgsGeometry::fromPoint( mapPoint ) );
+  QgsGeometry mapPointGeom( QgsGeometry::fromPointXY( mapPoint ) );
   QgsCoordinateTransform ctLayerToMap = mapSettings.layerTransform( layer );
 
   Q_ASSERT( results.count() != 0 );
@@ -111,7 +111,7 @@ static QgsFeature _closestFeature( const QgsFeatureList &results, const QgsMapSe
 static QgsQuickIdentifyResult _closestFeature( const QList<QgsQuickIdentifyResult> &results, const QgsMapSettings &mapSettings, const QPointF &point )
 {
   QgsPointXY mapPoint = mapSettings.mapToPixel().toMapCoordinates( point.toPoint() );
-  QgsGeometry mapPointGeom( QgsGeometry::fromPoint( mapPoint ) );
+  QgsGeometry mapPointGeom( QgsGeometry::fromPointXY( mapPoint ) );
 
   Q_ASSERT( results.count() != 0 );
   double distMin = 1e10;

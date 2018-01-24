@@ -18,6 +18,7 @@
 
 #include <QObject>
 
+#include "qgscoordinatetransformcontext.h"
 #include "qgsmapsettings.h"
 #include "qgsmapthemecollection.h"
 #include "qgspoint.h"
@@ -67,6 +68,13 @@ class QUICK_EXPORT QgsQuickMapSettings : public QObject
     QgsRectangle visibleExtent() const;
 
     /**
+     * Returns the coordinate transform context, which stores various
+     * information regarding which datum transforms should be used when transforming points
+     * from a source to destination coordinate reference system.
+     */
+    Q_INVOKABLE QgsCoordinateTransformContext transformContext() const;
+
+    /**
      * Convert a map coordinate to screen pixel coordinates
      *
      * @param p A coordinate in map coordinates
@@ -84,6 +92,16 @@ class QUICK_EXPORT QgsQuickMapSettings : public QObject
      * @return A coordinate in map coordinates
      */
     Q_INVOKABLE QgsPoint screenToCoordinate( const QPointF &p ) const;
+
+    /**
+     * Sets the coordinate transform \a context, which stores various
+     * information regarding which datum transforms should be used when transforming points
+     * from a source to destination coordinate reference system.
+     *
+     * \since QGIS 3.0
+     * \see transformContext()
+     */
+    void setTransformContext( const QgsCoordinateTransformContext &context );
 
     double rotation() const;
     void setRotation( double rotation );

@@ -71,7 +71,10 @@ class QUICK_EXPORT QgsQuickUtils: public QObject
     /**
       * Transform point between different crs from QML
       */
-    Q_INVOKABLE QgsPointXY transformPoint( QgsCoordinateReferenceSystem srcCrs, QgsCoordinateReferenceSystem destCrs, QgsPointXY srcPoint ) const;
+    Q_INVOKABLE QgsPointXY transformPoint( const QgsCoordinateReferenceSystem &srcCrs,
+                                           const QgsCoordinateReferenceSystem &destCrs,
+                                           const QgsCoordinateTransformContext &context,
+                                           const QgsPointXY &srcPoint ) const;
 
     /**
       * Calculate the distance in meter representing baseLengthPixels pixels on the screen based on the current map settings.

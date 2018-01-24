@@ -21,6 +21,7 @@
 #include "qgspointxy.h"
 #include "qgsproject.h"
 #include "qgsrelationmanager.h"
+#include "qgscoordinatetransformcontext.h"
 #include "qgsvectorlayer.h"
 
 #include "qgsquickattributeformmodel.h"
@@ -65,10 +66,11 @@ void QgisQuickPlugin::registerTypes( const char *uri )
   qDebug( "REGISTERING QQmlExtensionInterface: QgisQuick" );
 
   qRegisterMetaType< QList<QgsMapLayer *> >( "QList<QgsMapLayer*>" );
-  qRegisterMetaType< QgsAttributes > ( "QgsAttributes " );
-  qRegisterMetaType< QgsCoordinateReferenceSystem >( "QgsCoordinateReferenceSystem " );
+  qRegisterMetaType< QgsAttributes > ( "QgsAttributes" );
+  qRegisterMetaType< QgsCoordinateReferenceSystem >( "QgsCoordinateReferenceSystem" );
+  qRegisterMetaType< QgsCoordinateTransformContext >( "QgsCoordinateTransformContext" );
   qRegisterMetaType< QgsFeature > ( "QgsFeature " );
-  qRegisterMetaType< QgsFeatureId > ( "QgsFeatureId " );
+  qRegisterMetaType< QgsFeatureId > ( "QgsFeatureId" );
   qRegisterMetaType< QgsPoint >( "QgsPoint" );
   qRegisterMetaType< QgsPointXY >( "QgsPointXY" );
   qRegisterMetaType< QgsQuickIdentifyResult >( "QgsQuickIdentifyResult" );

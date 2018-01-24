@@ -385,7 +385,7 @@ void QgsQuickMapCanvasMap::zoomToFullExtent()
   {
     if ( mMapSettings->destinationCrs() != layer->crs() )
     {
-      QgsCoordinateTransform transform( layer->crs(), mMapSettings->destinationCrs() );
+      QgsCoordinateTransform transform( layer->crs(), mMapSettings->destinationCrs(), mMapSettings->transformContext() );
       extent.combineExtentWith( transform.transformBoundingBox( layer->extent() ) );
     }
     else
