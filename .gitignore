@@ -24,6 +24,7 @@
 /CMakeLists.txt.user.*
 api_doc
 /build*
+/tests/src/quickgui/build*
 debian/*.debhelper
 debian/*.substvars
 desktop.ini
