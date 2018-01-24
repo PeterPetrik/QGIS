@@ -5,46 +5,45 @@ TEMPLATE = app
 }
 
 include(config.pri)
-OSGEO4A_STAGE_DIR = $${OSGEO4A_DIR}/stage 
-OSGEO4A_QML_DIR = $${OSGEO4A_STAGE_DIR}/$$ANDROID_TARGET_ARCH/qml
-OSGEO4A_LIB_DIR = $${OSGEO4A_STAGE_DIR}/$$ANDROID_TARGET_ARCH$$/lib/
+OSGEO4A_STAGE_DIR = $${OSGEO4A_DIR}/stage
+QGIS_INSTALL_PATH = $${OSGEO4A_STAGE_DIR}/$$ANDROID_TARGET_ARCH
 QT_LIBS_DIR = $$dirname(QMAKE_QMAKE)/../lib
-exists($${OSGEO4A_LIB_DIR}/libqgis_core.so) {
-  message("Building ANDROID APK with $${OSGEO4A_STAGE_DIR}")
+QGIS_QML_DIR = $${QGIS_INSTALL_PATH}/qml
+QGIS_LIB_DIR = $${QGIS_INSTALL_PATH}/lib
+QGIS_INCLUDE_DIR = $${QGIS_INSTALL_PATH}/include
+
+exists($${QGIS_LIB_DIR}/libqgis_core.so) {
+  message("Building from QGIS: $${QGIS_INSTALL_PATH}")
 } else {
-  error("Missing QGIS Core library in $${OSGEO4A_LIB_DIR}")
+  error("Missing QGIS Core library in $${QGIS_LIB_DIR}/libqgis_core.so")
 }
 
 INCLUDEPATH += \
-  $${OSGEO4A_STAGE_DIR}/$$ANDROID_TARGET_ARCH$$/include/qgis \
-  $${OSGEO4A_STAGE_DIR}/$$ANDROID_TARGET_ARCH$$/include
+  $${QGIS_INCLUDE_DIR}/qgis \
+  $${QGIS_INCLUDE_DIR}
 
-LIBS += -L$${OSGEO4A_STAGE_DIR}/$$ANDROID_TARGET_ARCH$$/lib
-INCLUDEPATH += $${OSGEO4A_STAGE_DIR}/$$ANDROID_TARGET_ARCH$$/include
+LIBS += -L$${QGIS_LIB_DIR}
 LIBS += -lqgis_core -lqgis_quick
 
 DEFINES += "CORE_EXPORT="
+DEFINES += "QUICK_EXPORT="
 
 QT += qml quick widgets xml concurrent positioning quickcontrols2
 QT += network svg printsupport sql
-QT += script opengl
+QT += opengl
   
 
-SOURCES += main.cpp \
-           qgsquicklayertreemodel.cpp
-           
-HEADERS += qgsquicklayertreemodel.h
+SOURCES += main.cpp
+HEADERS += 
 
 RESOURCES += qml.qrc
-
-# TRANSLATIONS +=
 
 lupdate_only {
     SOURCES += *.qml
 }
 
 # Additional import path used to resolve QML modules in Qt Creator's code model
-QML_IMPORT_PATH += $${OSGEO4A_QML_DIR}
+QML_IMPORT_PATH = $${QGIS_QML_DIR}
 
 QMAKE_CXXFLAGS += -std=c++11
 
@@ -57,39 +56,39 @@ DISTFILES += android/AndroidManifest.xml
 
 # packaging
 ANDROID_EXTRA_LIBS += \
-    $${OSGEO4A_STAGE_DIR}/$$ANDROID_TARGET_ARCH$$/lib/libcrystax.so \
-    $${OSGEO4A_STAGE_DIR}/$$ANDROID_TARGET_ARCH$$/lib/libexpat.so \
-    $${OSGEO4A_STAGE_DIR}/$$ANDROID_TARGET_ARCH$$/lib/libgeos.so \
-    $${OSGEO4A_STAGE_DIR}/$$ANDROID_TARGET_ARCH$$/lib/libgeos_c.so \
-    $${OSGEO4A_STAGE_DIR}/$$ANDROID_TARGET_ARCH$$/lib/libgslcblas.so \
-    $${OSGEO4A_STAGE_DIR}/$$ANDROID_TARGET_ARCH$$/lib/libsqlite3.so \
-    $${OSGEO4A_STAGE_DIR}/$$ANDROID_TARGET_ARCH$$/lib/libcharset.so \
-    $${OSGEO4A_STAGE_DIR}/$$ANDROID_TARGET_ARCH$$/lib/libiconv.so \
-    $${OSGEO4A_STAGE_DIR}/$$ANDROID_TARGET_ARCH$$/lib/libfreexl.so \
-    $${OSGEO4A_STAGE_DIR}/$$ANDROID_TARGET_ARCH$$/lib/libtiff.so \
-    $${OSGEO4A_STAGE_DIR}/$$ANDROID_TARGET_ARCH$$/lib/libgdal.so \
-    $${OSGEO4A_STAGE_DIR}/$$ANDROID_TARGET_ARCH$$/lib/libproj.so \
-    $${OSGEO4A_STAGE_DIR}/$$ANDROID_TARGET_ARCH$$/lib/libspatialindex.so \
-    $${OSGEO4A_STAGE_DIR}/$$ANDROID_TARGET_ARCH$$/lib/libpq.so \
-    $${OSGEO4A_STAGE_DIR}/$$ANDROID_TARGET_ARCH$$/lib/libspatialite.so \
-    $${OSGEO4A_STAGE_DIR}/$$ANDROID_TARGET_ARCH$$/lib/libqca-qt5.so \
-    $${OSGEO4A_STAGE_DIR}/$$ANDROID_TARGET_ARCH$$/lib/libqgis_core.so \
-    $${OSGEO4A_STAGE_DIR}/$$ANDROID_TARGET_ARCH$$/lib/libqgis_quick.so \
-    $${OSGEO4A_STAGE_DIR}/$$ANDROID_TARGET_ARCH$$/lib/libqgis_native.so \
-    $${OSGEO4A_STAGE_DIR}/$$ANDROID_TARGET_ARCH$$/lib/libqt5keychain.so \
-    $${OSGEO4A_STAGE_DIR}/$$ANDROID_TARGET_ARCH$$/lib/libzip.so \
-    $${OSGEO4A_STAGE_DIR}/$$ANDROID_TARGET_ARCH$$/lib/libspatialiteprovider.so \
-    $${OSGEO4A_STAGE_DIR}/$$ANDROID_TARGET_ARCH$$/lib/libdelimitedtextprovider.so \
-    $${OSGEO4A_STAGE_DIR}/$$ANDROID_TARGET_ARCH$$/lib/libgdalprovider.so \
-    $${OSGEO4A_STAGE_DIR}/$$ANDROID_TARGET_ARCH$$/lib/libgpxprovider.so \
-    $${OSGEO4A_STAGE_DIR}/$$ANDROID_TARGET_ARCH$$/lib/libmssqlprovider.so \
-    $${OSGEO4A_STAGE_DIR}/$$ANDROID_TARGET_ARCH$$/lib/libogrprovider.so \
-    $${OSGEO4A_STAGE_DIR}/$$ANDROID_TARGET_ARCH$$/lib/libowsprovider.so \
-    $${OSGEO4A_STAGE_DIR}/$$ANDROID_TARGET_ARCH$$/lib/libpostgresprovider.so \
-    $${OSGEO4A_STAGE_DIR}/$$ANDROID_TARGET_ARCH$$/lib/libspatialiteprovider.so \
-    $${OSGEO4A_STAGE_DIR}/$$ANDROID_TARGET_ARCH$$/lib/libwcsprovider.so \
-    $${OSGEO4A_STAGE_DIR}/$$ANDROID_TARGET_ARCH$$/lib/libwfsprovider.so \
-    $${OSGEO4A_STAGE_DIR}/$$ANDROID_TARGET_ARCH$$/lib/libwmsprovider.so \
+    $${QGIS_LIB_DIR}/libcrystax.so \
+    $${QGIS_LIB_DIR}/libexpat.so \
+    $${QGIS_LIB_DIR}/libgeos.so \
+    $${QGIS_LIB_DIR}/libgeos_c.so \
+    $${QGIS_LIB_DIR}/libgslcblas.so \
+    $${QGIS_LIB_DIR}/libsqlite3.so \
+    $${QGIS_LIB_DIR}/libcharset.so \
+    $${QGIS_LIB_DIR}/libiconv.so \
+    $${QGIS_LIB_DIR}/libfreexl.so \
+    $${QGIS_LIB_DIR}/libtiff.so \
+    $${QGIS_LIB_DIR}/libgdal.so \
+    $${QGIS_LIB_DIR}/libproj.so \
+    $${QGIS_LIB_DIR}/libspatialindex.so \
+    $${QGIS_LIB_DIR}/libpq.so \
+    $${QGIS_LIB_DIR}/libspatialite.so \
+    $${QGIS_LIB_DIR}/libqca-qt5.so \
+    $${QGIS_LIB_DIR}/libqgis_core.so \
+    $${QGIS_LIB_DIR}/libqgis_quick.so \
+    $${QGIS_LIB_DIR}/libqgis_native.so \
+    $${QGIS_LIB_DIR}/libqt5keychain.so \
+    $${QGIS_LIB_DIR}/libzip.so \
+    $${QGIS_LIB_DIR}/libspatialiteprovider.so \
+    $${QGIS_LIB_DIR}/libdelimitedtextprovider.so \
+    $${QGIS_LIB_DIR}/libgdalprovider.so \
+    $${QGIS_LIB_DIR}/libgpxprovider.so \
+    $${QGIS_LIB_DIR}/libmssqlprovider.so \
+    $${QGIS_LIB_DIR}/libogrprovider.so \
+    $${QGIS_LIB_DIR}/libowsprovider.so \
+    $${QGIS_LIB_DIR}/libpostgresprovider.so \
+    $${QGIS_LIB_DIR}/libspatialiteprovider.so \
+    $${QGIS_LIB_DIR}/libwcsprovider.so \
+    $${QGIS_LIB_DIR}/libwfsprovider.so \
+    $${QGIS_LIB_DIR}/libwmsprovider.so \
     $$QT_LIBS_DIR/libQt5OpenGL.so \
     $$QT_LIBS_DIR/libQt5PrintSupport.so \
     $$QT_LIBS_DIR/libQt5Sensors.so \
@@ -98,4 +97,4 @@ ANDROID_EXTRA_LIBS += \
     $$QT_LIBS_DIR/libQt5Svg.so \
     $$QT_LIBS_DIR/libQt5AndroidExtras.so
 
-ANDROID_EXTRA_PLUGINS += $${OSGEO4A_QML_DIR}
+ANDROID_EXTRA_PLUGINS += $${QGIS_QML_DIR}
