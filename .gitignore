@@ -74,3 +74,4 @@ python/plugins/processing/tests/testdata/custom/*.aux.xml
 python/plugins/processing/tests/testdata/*.aux.xml
 Thumb.db
 Testing/*
+tests/src/quickgui/app/config.pri

@@ -2247,7 +2247,8 @@ To run specific test(s) (see 'man ctest'):
   ========================
   To build the application,
      cd QGIS/tests/src/quickgui/app/
-     modify config.pri and edit the path to your OSGeo4A repository
+     cp config.pri.default config.pri
+     modify config.pri (add path to your OSGeo4A repository)
      open QGIS/tests/src/quickgui/app/qgis_quickapp.pro in QtCreator and configure the project with your armeabi-v7a kit
      compile the application
 
