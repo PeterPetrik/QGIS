@@ -42,7 +42,16 @@ Item {
     inputMethodHints: field.isNumeric || widget == 'Range' ? Qt.ImhFormattedNumbersOnly : Qt.ImhNone
 
     // Make sure we do not input more characters than allowed for strings
-    maximumLength: field.isNumeric ? {} : field.length
+    states: [
+        State {
+            name: "limitedTextLengthState"
+            when: (!field.isNumeric) && (field.length > 0)
+            PropertyChanges {
+              target: textField
+              maximumLength: field.length
+            }
+        }
+    ]
 
     background: Rectangle {
       y: textField.height - height - textField.bottomPadding / 2
