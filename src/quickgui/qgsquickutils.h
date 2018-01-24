@@ -79,7 +79,7 @@ class QUICK_EXPORT QgsQuickUtils: public QObject
     Q_INVOKABLE double screenUnitsToMeters(QgsQuickMapSettings* mapSettings, int baseLengthPixels) const;
 
     /**
-      * Has QgsFeature valid geometry?
+      * Has QgsFeature a geometry that can be added to the layer (non-emptry, same geometry type)?
       */
     Q_INVOKABLE bool hasValidGeometry(QgsVectorLayer* layer, const QgsFeature& feat);
 

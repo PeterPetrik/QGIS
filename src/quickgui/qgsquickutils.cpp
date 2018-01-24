@@ -109,6 +109,9 @@ bool QgsQuickUtils::hasValidGeometry(QgsVectorLayer* layer, const QgsFeature& fe
     if (feat.geometry().type() != layer->geometryType())
         return false;
 
+    if (QgsWkbTypes::hasZ(layer->wkbType()) != QgsWkbTypes::hasZ(feat.geometry().wkbType()))
+        return false;
+
     return true;
 }
 

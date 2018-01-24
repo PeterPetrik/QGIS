@@ -13,6 +13,8 @@
  *                                                                         *
  ***************************************************************************/
 
+#include "qgsmessagelog.h"
+
 #include "qgsquickpositionkit.h"
 #include "qgsquicksimulatedpositionsource.h"
 
@@ -32,7 +34,10 @@ QGeoPositionInfoSource*  QgsQuickPositionKit::gpsSource() {
     // on Linux it comes from Geoclue library
     QGeoPositionInfoSource* source = QGeoPositionInfoSource::createDefaultSource(this);
     if (source->error() != QGeoPositionInfoSource::NoError) {
-        qDebug() << "Unable to create default QGeoPositionInfoSource: " << source->error();
+        QgsMessageLog::logMessage( tr( "Unable to create default GPS Position Source" )
+                                   + "(" + QString::number((long)source->error()) + ")"
+                                   , "QgsQuick"
+                                   , QgsMessageLog::WARNING );
         delete source;
         return 0;
     } else {

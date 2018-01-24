@@ -54,8 +54,13 @@ void QgsQuickSimulatedPositionSource::readNextPosition()
   longitude += cos(mAngle*M_PI/180) * mFlightRadius;
   mAngle += 1;
 
+  double altitude = std::rand() % 40 + 20; // rand altitude <20,55>m and lost (0)
+  if (altitude > 55) {
+      altitude = 0;
+  }
+
   QDateTime timestamp = QDateTime::currentDateTime();
-  QGeoCoordinate coordinate(latitude, longitude);
+  QGeoCoordinate coordinate(latitude, longitude, altitude);
   QGeoPositionInfo info(coordinate, timestamp);
   if (info.isValid()) {
       mLastPosition = info;
