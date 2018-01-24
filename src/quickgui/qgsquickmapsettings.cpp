@@ -62,7 +62,15 @@ void QgsQuickMapSettings::setProject( QgsProject *project )
     // fortunately setProject is used only once at the very beginning of the run,
     // so it should work ....
     setDestinationCrs( mProject->crs() );
+
+    // Set Context too
+    mMapSettings.setTransformContext( mProject->transformContext() );
   }
+  else
+  {
+    mMapSettings.setTransformContext( QgsCoordinateTransformContext() );
+  }
+
   emit projectChanged();
 }
 
@@ -73,10 +81,7 @@ QgsProject *QgsQuickMapSettings::project() const
 
 QgsCoordinateTransformContext QgsQuickMapSettings::transformContext() const
 {
-  if ( mProject )
-    return mProject->transformContext();
-  else
-    return QgsCoordinateTransformContext();
+  return mMapSettings.transformContext();
 }
 
 QgsRectangle QgsQuickMapSettings::extent() const

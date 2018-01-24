@@ -85,7 +85,7 @@ Item {
     sourceCrs: QgsQuick.Utils.coordinateReferenceSystemFromEpsgId(4326)
     destinationCrs: mapSettings.destinationCrs
     sourcePosition: positionKit.position
-
+    mapSettings: positionMarker.mapSettings
     onProjectedPositionChanged: update_location()
   }
 

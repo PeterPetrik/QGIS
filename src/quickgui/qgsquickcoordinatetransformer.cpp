@@ -19,8 +19,10 @@
 
 QgsQuickCoordinateTransformer::QgsQuickCoordinateTransformer( QObject *parent )
   : QObject( parent )
+  , mMapSettings( nullptr )
 {
   mCoordinateTransform.setSourceCrs( QgsCoordinateReferenceSystem::fromEpsgId( 4326 ) );
+  mCoordinateTransform.setContext( QgsCoordinateTransformContext() );
 }
 
 QgsPoint QgsQuickCoordinateTransformer::projectedPosition() const
@@ -88,6 +90,9 @@ void QgsQuickCoordinateTransformer::updatePosition()
   {
     z = 0;
   }
+
+  if ( mMapSettings )
+    mCoordinateTransform.setContext( mMapSettings->transformContext() );
 
   mCoordinateTransform.transformInPlace( x, y, z );
 
