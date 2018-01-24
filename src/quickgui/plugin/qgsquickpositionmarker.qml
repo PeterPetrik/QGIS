@@ -57,7 +57,6 @@ Item {
     property var withAccuracy: true
 
     onMapSettingsChanged: update_location()
-    onGpsPositionChanged: update_location()
 
     Connections {
         target: mapSettings
@@ -86,6 +85,8 @@ Item {
         sourceCrs: QgsQuick.Utils.coordinateReferenceSystemFromEpsgId(4326)
         destinationCrs: mapSettings.destinationCrs
         sourcePosition: positionKit.position
+
+        onProjectedPositionChanged: update_location()
     }
 
     QgsQuick.PositionKit {

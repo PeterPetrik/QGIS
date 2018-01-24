@@ -85,9 +85,20 @@ void QgsQuickPositionKit::replacePositionSource(QGeoPositionInfoSource* source) 
 
 void QgsQuickPositionKit::positionUpdated(const QGeoPositionInfo &info)
 {
+  if (!info.coordinate().isValid()){
+      // keep last valid position
+      mHasPosition = false;
+      emit hasPositionChanged();
+  }
+
+
   mPosition = QgsPoint(info.coordinate().longitude(),
                        info.coordinate().latitude(),
                        info.coordinate().altitude());
+  if ( !qIsNaN( z ) )
+  {
+    mPosition.setZ(z);
+  }
 
   if (info.hasAttribute(QGeoPositionInfo::HorizontalAccuracy))
     mAccuracy = info.attribute(QGeoPositionInfo::HorizontalAccuracy);
