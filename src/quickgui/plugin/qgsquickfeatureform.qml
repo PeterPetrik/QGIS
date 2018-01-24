@@ -126,9 +126,8 @@ Item {
               // than the parent item and the Flickable is useful
               width: paintedWidth
               text: tabButton.text
-              // color: tabButton.down ? "#17a81a" : "#21be2b"
               color: !tabButton.enabled ? form.style.tabs.disabledColor : tabButton.down ||
-                                        tabButton.checked ? form.style.tabs.activeColor : form.style.tabs.normalColor
+                                          tabButton.checked ? form.style.tabs.activeColor : form.style.tabs.normalColor
               font.weight: tabButton.checked ? Font.DemiBold : Font.Normal
 
               horizontalAlignment: Text.AlignHCenter
@@ -161,10 +160,10 @@ Item {
            * The main form content area
            */
           Rectangle {
-             width: parent.width
-             height: parent.height
-             color: form.style.backgroundColor
-             opacity: form.style.backgroundOpacity
+            width: parent.width
+            height: parent.height
+            color: form.style.backgroundColor
+            opacity: form.style.backgroundOpacity
           }
 
           ListView {
@@ -268,26 +267,26 @@ Item {
           property var photoCapturePanel: photoPanel
 
           active: widget !== 'Hidden'
-          source: 'qgsquick' + widget.toLowerCase() + '.qml' // todo move to C++
+          source: 'qgsquick' + widget.toLowerCase() + '.qml'
 
           onStatusChanged: {
             if ( attributeEditorLoader.status === Loader.Error )
             {
               console.warn( "Editor widget type '" + EditorWidget + "' is not supported" );
-              source = 'qgsquicktextedit.qml'; // todo move to C++
+              source = 'qgsquicktextedit.qml';
             }
           }
         }
 
         Connections {
-            target: form
-            onAboutToSave: {
-                try {
-                    attributeEditorLoader.item.pushChanges()
-                }
-                catch ( err )
-                {}
+          target: form
+          onAboutToSave: {
+            try {
+              attributeEditorLoader.item.pushChanges()
             }
+            catch ( err )
+            {}
+          }
         }
 
         Connections {
@@ -379,27 +378,27 @@ Item {
       }
 
       ToolButton {
-          id: deleteButton
+        id: deleteButton
 
-          Layout.preferredWidth: form.style.toolbutton.size
-          Layout.preferredHeight: form.style.toolbutton.size
+        Layout.preferredWidth: form.style.toolbutton.size
+        Layout.preferredHeight: form.style.toolbutton.size
 
-          visible: form.state === "Edit"
+        visible: form.state === "Edit"
 
-          contentItem: Image {
-              fillMode: Image.PreserveAspectFit
-              width: parent.width * 0.8
-              horizontalAlignment: Image.AlignHCenter
-              verticalAlignment: Image.AlignVCenter
-              source: QgsQuick.Utils.getThemeIcon( "ic_delete_forever_white" )
-              antialiasing: true
-          }
+        contentItem: Image {
+          fillMode: Image.PreserveAspectFit
+          width: parent.width * 0.8
+          horizontalAlignment: Image.AlignHCenter
+          verticalAlignment: Image.AlignVCenter
+          source: QgsQuick.Utils.getThemeIcon( "ic_delete_forever_white" )
+          antialiasing: true
+        }
 
-          background: Rectangle {
-            color: form.style.toolbutton.backgroundColor
-          }
+        background: Rectangle {
+          color: form.style.toolbutton.backgroundColor
+        }
 
-          onClicked: deleteDialog.visible = true
+        onClicked: deleteDialog.visible = true
       }
 
       Label {
@@ -478,10 +477,10 @@ Item {
   }
 
   QgsQuick.PhotoCapture {
-      id: photoPanel
-      height: window.height
-      width: window.width
-      edge: Qt.RightEdge
+    id: photoPanel
+    height: window.height
+    width: window.width
+    edge: Qt.RightEdge
   }
 
 }

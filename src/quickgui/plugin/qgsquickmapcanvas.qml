@@ -87,7 +87,6 @@ Item {
       onDoubleClicked: {
         var center = Qt.point( mouse.x, mouse.y )
         mapCanvasWrapper.zoom( center, 0.8 )
-        // mapCanvasWrapper.pan( pinch.center, pinch.previousCenter )
       }
 
       onClicked: {

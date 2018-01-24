@@ -19,11 +19,14 @@ import QgisQuick 0.1 as QgsQuick
 
 Item {
   property alias model: table.model
+  property color bgColor: "white"
+  property color separatorColor: "gray"
+  property int separatorSize: 1 * QgsQuick.Style.dp
 
   id: item
 
   Rectangle {
-    color: "white"
+    color: item.bgColor
     anchors.fill: parent
   }
 
@@ -44,8 +47,9 @@ Item {
       }
 
       Rectangle {
-        color: "gray"
-        height: 1*QgsQuick.Style.dp
+        color: item.separatorColor
+        height: item.separatorSize
+        width: table.width
       }
     }
   }

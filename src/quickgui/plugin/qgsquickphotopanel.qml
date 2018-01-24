@@ -22,189 +22,192 @@ import QtGraphicalEffects 1.0
 import QgisQuick 0.1 as QgsQuick
 
 Drawer {
-    property var targetDir
-    property var lastPhotoName
-    property int iconSize: photoPanel.width/20
-    property var fieldItem
+  property var targetDir
+  property var lastPhotoName
+  property int iconSize: photoPanel.width/20
+  property var fieldItem
 
-    id: photoPanel
-    visible: false
-    modal: true
-    interactive: true
-    dragMargin: 0 // prevents opening the drawer by dragging.
+  property color bgColor: "white"
+  property color borderColor: "black"
 
-    background: Rectangle {
-        color: "white"
-        opacity: 0.8
+  id: photoPanel
+  visible: false
+  modal: true
+  interactive: true
+  dragMargin: 0 // prevents opening the drawer by dragging.
+
+  background: Rectangle {
+    color: photoPanel.bgColor
+    opacity: 0.8
+  }
+
+  onVisibleChanged: {
+    if (visible) {
+      camera.setCameraState(Camera.ActiveState)
+      camera.start()
+    } else {
+      camera.stop()
+      photoPreview.visible = false
+    }
+  }
+
+  // PhotoCapture item
+  Item {
+
+    property bool saveImage: false
+
+    id: captureItem
+    width: window.width
+    height: window.height
+
+    Component.onDestruction: {
+      if (!captureItem && camera.imageCapture.capturedImagePath != ""){
+        captureItem.saveImage = false
+        QgsQuick.Utils.remove(camera.imageCapture.capturedImagePath)
+      }
+      captureItem.saveImage = false
     }
 
-    onVisibleChanged: {
-        if (visible) {
-            camera.setCameraState(Camera.ActiveState)
-            camera.start()
-        } else {
-            camera.stop()
-            photoPreview.visible = false
+    Camera {
+      id: camera
+      cameraState: Camera.UnloadedState
+
+      imageCapture {
+        onImageCaptured: {
+          // Show the preview in an Image
+          photoPreview.source = preview
         }
+      }
     }
 
-    // PhotoCapture item
-    Item {
+    // Flipped VideoOutput on android - known ButtonGroup
+    // https://bugreports.qt.io/browse/QTBUG-64764
+    VideoOutput {
+      id: videoOutput
+      source: camera
+      focus : visible // to receive focus and capture key events when visible
+      anchors.fill: parent
+      autoOrientation: true
 
-        property bool saveImage: false
+      Rectangle {
+        id: captureBtn
+        property int borderWidth: 10 * QgsQuick.Style.dp
+        width: parent.width/20
+        height: parent.width/20
+        color: photoPanel.bgColor
+        border.color: photoPanel.borderColor
+        anchors.right: parent.right
+        anchors.verticalCenter: parent.verticalCenter
+        border.width: borderWidth
+        radius: width*0.5
+        antialiasing: true
 
-        id: captureItem
-        width: window.width
-        height: window.height
-
-        Component.onDestruction: {
-            if (!captureItem && camera.imageCapture.capturedImagePath != ""){
-                captureItem.saveImage = false
-                QgsQuick.Utils.remove(camera.imageCapture.capturedImagePath)
+        MouseArea {
+          id: mouseArea
+          anchors.fill: parent
+          onClicked: {
+            if (targetDir !== "") {
+              camera.imageCapture.captureToLocation(photoPanel.targetDir);
+            } else {
+              // saved to default location - TODO handle this case
+              camera.imageCapture.capture();
             }
-            captureItem.saveImage = false
+            photoPreview.visible = true;
+          }
         }
 
-        Camera {
-            id: camera
-            cameraState: Camera.UnloadedState
-
-            imageCapture {
-                onImageCaptured: {
-                    // Show the preview in an Image
-                    photoPreview.source = preview
-                }
-            }
+        Image {
+          id: captureBtnImage
+          fillMode: Image.PreserveAspectFit
+          anchors.centerIn: parent
+          sourceSize.height: captureBtn.height/2
+          height: captureBtn.height/2
+          source: QgsQuick.Utils.getThemeIcon("ic_camera_alt_border")
         }
 
-        // Flipped VideoOutput on android - known ButtonGroup
-        // https://bugreports.qt.io/browse/QTBUG-64764
-        VideoOutput {
-            id: videoOutput
-            source: camera
-            focus : visible // to receive focus and capture key events when visible
+      }
+
+      Image {
+        id: photoPreview
+        width: parent.width
+        height: parent.height
+        fillMode: Image.PreserveAspectFit
+
+        // Cancel button
+        Rectangle {
+          id: cancelBtn
+          visible: camera.imageCapture.capturedImagePath != ""
+
+          property int borderWidth: 10 * QgsQuick.Style.dp
+          width: parent.width/20
+          height: parent.width/20
+          color: photoPanel.bgColor
+          border.color: photoPanel.borderColor
+          anchors.right: parent.right
+          anchors.top: confirmBtn.bottom
+          border.width: borderWidth
+          radius: width*0.5
+          antialiasing: true
+
+          MouseArea {
             anchors.fill: parent
-            autoOrientation: true
-
-            Rectangle {
-                id: captureBtn
-                property int borderWidth: 10 * QgsQuick.Style.dp
-                width: parent.width/20
-                height: parent.width/20
-                color: "white"
-                border.color: "black"
-                anchors.right: parent.right
-                anchors.verticalCenter: parent.verticalCenter
-                border.width: borderWidth
-                radius: width*0.5
-                antialiasing: true
-
-                MouseArea {
-                    id: mouseArea
-                    anchors.fill: parent
-                    onClicked: {
-                        if (targetDir !== "") {
-                            camera.imageCapture.captureToLocation(photoPanel.targetDir);
-                        } else {
-                            // saved to default location - TODO handle this case
-                            camera.imageCapture.capture();
-                        }
-                        photoPreview.visible = true;
-                    }
-                }
-
-                Image {
-                    id: captureBtnImage
-                    fillMode: Image.PreserveAspectFit
-                    anchors.centerIn: parent
-                    sourceSize.height: captureBtn.height/2
-                    height: captureBtn.height/2
-                    source: QgsQuick.Utils.getThemeIcon("ic_camera_alt_border")
-                }
-
+            onClicked: {
+              captureItem.saveImage = false
+              photoPreview.visible = false
+              if (camera.imageCapture.capturedImagePath != "") {
+                QgsQuick.Utils.remove(camera.imageCapture.capturedImagePath)
+              }
             }
+          }
 
-            Image {
-                id: photoPreview
-                width: parent.width
-                height: parent.height
-                fillMode: Image.PreserveAspectFit
-
-                // Cancel button
-                Rectangle {
-                    id: cancelBtn
-                    visible: camera.imageCapture.capturedImagePath != ""
-
-                    property int borderWidth: 10 * QgsQuick.Style.dp
-                    width: parent.width/20
-                    height: parent.width/20
-                    color: "white"
-                    border.color: "black"
-                    anchors.right: parent.right
-                    anchors.top: confirmBtn.bottom
-                    border.width: borderWidth
-                    radius: width*0.5
-                    antialiasing: true
-
-                    MouseArea {
-                        anchors.fill: parent
-                        onClicked: {
-                            captureItem.saveImage = false
-                            photoPreview.visible = false
-                            if (camera.imageCapture.capturedImagePath != "") {
-                                QgsQuick.Utils.remove(camera.imageCapture.capturedImagePath)
-                            }
-                        }
-                    }
-
-                    Image {
-                        fillMode: Image.PreserveAspectFit
-                        anchors.centerIn: parent
-                        sourceSize.height: captureBtn.height/2
-                        height: captureBtn.height/2
-                        source: QgsQuick.Utils.getThemeIcon("ic_clear_black")
-                    }
-                }
-
-                // OK button
-                Rectangle {
-                    id: confirmBtn
-                    visible: camera.imageCapture.capturedImagePath != ""
-
-                    property int borderWidth: 10 * QgsQuick.Style.dp
-                    width: parent.width/20
-                    height: parent.width/20
-                    color: "white"
-                    border.color: "black"
-                    anchors.right: parent.right
-                    anchors.verticalCenter: parent.verticalCenter
-                    border.width: borderWidth
-                    radius: width*0.5
-                    antialiasing: true
-
-                    MouseArea {
-                        anchors.fill: parent
-                        onClicked: {
-                            captureItem.saveImage = true
-                            photoPanel.visible = false
-                            photoPanel.lastPhotoName = QgsQuick.Utils.getFileName(camera.imageCapture.capturedImagePath)
-                            if (photoPanel.lastPhotoName !== "") {
-                                fieldItem.image.source = photoPanel.targetDir + "/" + photoPanel.lastPhotoName
-                                fieldItem.valueChanged(photoPanel.lastPhotoName, photoPanel.lastPhotoName === "" || photoPanel.lastPhotoName === null)
-                            }
-                        }
-                    }
-
-                    Image {
-                        fillMode: Image.PreserveAspectFit
-                        anchors.centerIn: parent
-                        sourceSize.height: captureBtn.height/2
-                        height: captureBtn.height/2
-                        source: QgsQuick.Utils.getThemeIcon("ic_check_black")
-                    }
-                }
-            }
+          Image {
+            fillMode: Image.PreserveAspectFit
+            anchors.centerIn: parent
+            sourceSize.height: captureBtn.height/2
+            height: captureBtn.height/2
+            source: QgsQuick.Utils.getThemeIcon("ic_clear_black")
+          }
         }
+
+        // OK button
+        Rectangle {
+          id: confirmBtn
+          visible: camera.imageCapture.capturedImagePath != ""
+
+          property int borderWidth: 10 * QgsQuick.Style.dp
+          width: parent.width/20
+          height: parent.width/20
+          color: photoPanel.bgColor
+          border.color: photoPanel.borderColor
+          anchors.right: parent.right
+          anchors.verticalCenter: parent.verticalCenter
+          border.width: borderWidth
+          radius: width*0.5
+          antialiasing: true
+
+          MouseArea {
+            anchors.fill: parent
+            onClicked: {
+              captureItem.saveImage = true
+              photoPanel.visible = false
+              photoPanel.lastPhotoName = QgsQuick.Utils.getFileName(camera.imageCapture.capturedImagePath)
+              if (photoPanel.lastPhotoName !== "") {
+                fieldItem.image.source = photoPanel.targetDir + "/" + photoPanel.lastPhotoName
+                fieldItem.valueChanged(photoPanel.lastPhotoName, photoPanel.lastPhotoName === "" || photoPanel.lastPhotoName === null)
+              }
+            }
+          }
+
+          Image {
+            fillMode: Image.PreserveAspectFit
+            anchors.centerIn: parent
+            sourceSize.height: captureBtn.height/2
+            height: captureBtn.height/2
+            source: QgsQuick.Utils.getThemeIcon("ic_check_black")
+          }
+        }
+      }
     }
+  }
 }
 

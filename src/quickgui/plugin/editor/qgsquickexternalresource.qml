@@ -43,14 +43,14 @@ Item {
     Component.onCompleted: image.source = getSource()
 
     function getSource() {
-        if (image.status === Image.Error)
-            return QgsQuick.Utils.getThemeIcon("ic_broken_image_black")
-        else if (image.currentValue && QgsQuick.Utils.fileExists(homePath + "/" + image.currentValue)) {
-            return homePath + "/" + image.currentValue
-        }
-        else       {
-            return QgsQuick.Utils.getThemeIcon("ic_photo_notavailable_white")
-        }
+      if (image.status === Image.Error)
+        return QgsQuick.Utils.getThemeIcon("ic_broken_image_black")
+      else if (image.currentValue && QgsQuick.Utils.fileExists(homePath + "/" + image.currentValue)) {
+        return homePath + "/" + image.currentValue
+      }
+      else       {
+        return QgsQuick.Utils.getThemeIcon("ic_photo_notavailable_white")
+      }
     }
   }
 
@@ -64,15 +64,15 @@ Item {
     anchors.bottom: parent.bottom
 
     onClicked: {
-        photoCapturePanel.visible = true
-        photoCapturePanel.targetDir = homePath
-        photoCapturePanel.fieldItem = fieldItem
+      photoCapturePanel.visible = true
+      photoCapturePanel.targetDir = homePath
+      photoCapturePanel.fieldItem = fieldItem
     }
 
     background: Image {
-        source: QgsQuick.Utils.getThemeIcon("ic_camera_alt_border")
-        width: button.width
-        height: button.height
+      source: QgsQuick.Utils.getThemeIcon("ic_camera_alt_border")
+      width: button.width
+      height: button.height
     }
   }
 }
