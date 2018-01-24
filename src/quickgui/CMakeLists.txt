@@ -1,26 +1,26 @@
 ############################################################
 # sources
 SET(QGIS_QUICK_GUI_MOC_HDRS
-  qgsquickmapcanvasmap.h
-  qgsquickmapsettings.h
-  qgsquickscalebarkit.h
-  qgsquickidentifykit.h
-  qgsquickidentifyresult.h
   qgsquickattributeformmodel.h
   qgsquickattributeformmodelbase.h
+  qgsquickcoordinatetransformer.h
   qgsquickfeaturemodel.h
   qgsquickfeaturemodelhighlight.h
   qgsquickgeometry.h
+  qgsquickidentifykit.h
+  qgsquickidentifyresult.h
+  qgsquickmapcanvasmap.h
+  qgsquickmapsettings.h
   qgsquickmaptransform.h
+  qgsquickmessagelogmodel.h
+  qgsquickpositionkit.h
   qgsquickrubberband.h
   qgsquickrubberbandmodel.h
+  qgsquickscalebarkit.h
+  qgsquicksimulatedpositionsource.h
+  qgsquickstyle.h
   qgsquicksubmodel.h
   qgsquickutils.h
-  qgsquickstyle.h
-  qgsquickpositionkit.h
-  qgsquicksimulatedpositionsource.h
-  qgsquickcoordinatetransformer.h
-  qgsquickmessagelogmodel.h
 )
 
 SET(QGIS_QUICK_GUI_HDRS
@@ -29,27 +29,27 @@ SET(QGIS_QUICK_GUI_HDRS
 )
 
 SET(QGIS_QUICK_GUI_SRC
-  qgsquickmapcanvasmap.cpp
-  qgsquickmapsettings.cpp
-  qgsquickscalebarkit.cpp
-  qgsquickidentifykit.cpp
-  qgsquickidentifyresult.cpp
   qgsquickattributeformmodel.cpp
   qgsquickattributeformmodelbase.cpp
+  qgsquickcoordinatetransformer.cpp
   qgsquickfeaturemodel.cpp
   qgsquickfeaturemodelhighlight.cpp
   qgsquickgeometry.cpp
+  qgsquickidentifykit.cpp
+  qgsquickidentifyresult.cpp
+  qgsquickmapcanvasmap.cpp
+  qgsquickmapsettings.cpp
   qgsquickmaptransform.cpp
+  qgsquickmessagelogmodel.cpp
+  qgsquickpositionkit.cpp
   qgsquickrubberband.cpp
   qgsquickrubberbandmodel.cpp
+  qgsquickscalebarkit.cpp
   qgsquicksgrubberband.cpp
-  qgsquicksubmodel.cpp
-  qgsquickutils.cpp
-  qgsquickpositionkit.cpp
   qgsquicksimulatedpositionsource.cpp
   qgsquickstyle.cpp
-  qgsquickcoordinatetransformer.cpp
-  qgsquickmessagelogmodel.cpp
+  qgsquicksubmodel.cpp
+  qgsquickutils.cpp
 )
 
 INCLUDE_DIRECTORIES(
