@@ -46,28 +46,28 @@
  * \since QGIS 3.2
  */
 
-/**  */
+//! 
 class QUICK_NO_EXPORT QgsQuickSimulatedPositionSource : public QGeoPositionInfoSource
 {
     Q_OBJECT
-public:
-    QgsQuickSimulatedPositionSource(QObject *parent, double longitude, double latitude, double flightRadius);
+  public:
+    QgsQuickSimulatedPositionSource( QObject *parent, double longitude, double latitude, double flightRadius );
 
-    QGeoPositionInfo lastKnownPosition(bool /*fromSatellitePositioningMethodsOnly = false*/) const { return mLastPosition; }
+    QGeoPositionInfo lastKnownPosition( bool /*fromSatellitePositioningMethodsOnly = false*/ ) const { return mLastPosition; }
     PositioningMethods supportedPositioningMethods() const { return AllPositioningMethods; }
     int minimumUpdateInterval() const { return 1000; }
     Error error() const { return QGeoPositionInfoSource::NoError; }
 
-public slots:
+  public slots:
     virtual void startUpdates();
     virtual void stopUpdates();
 
-    virtual void requestUpdate(int timeout = 5000);
+    virtual void requestUpdate( int timeout = 5000 );
 
-private slots:
+  private slots:
     void readNextPosition();
 
-private:
+  private:
     QTimer *mTimer;
     QGeoPositionInfo mLastPosition;
     double mAngle;

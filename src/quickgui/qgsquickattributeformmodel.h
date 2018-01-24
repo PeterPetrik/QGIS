@@ -42,7 +42,7 @@ class QUICK_EXPORT QgsQuickAttributeFormModel : public QSortFilterProxyModel
 {
     Q_OBJECT
 
-    Q_PROPERTY( QgsQuickFeatureModel* featureModel READ featureModel WRITE setFeatureModel NOTIFY featureModelChanged )
+    Q_PROPERTY( QgsQuickFeatureModel *featureModel READ featureModel WRITE setFeatureModel NOTIFY featureModelChanged )
     Q_PROPERTY( bool hasTabs READ hasTabs WRITE setHasTabs NOTIFY hasTabsChanged )
     Q_PROPERTY( bool constraintsValid READ constraintsValid NOTIFY constraintsValidChanged )
 
@@ -67,19 +67,19 @@ class QUICK_EXPORT QgsQuickAttributeFormModel : public QSortFilterProxyModel
 
     Q_ENUM( FeatureRoles )
 
-    QgsQuickAttributeFormModel( QObject* parent = nullptr );
+    QgsQuickAttributeFormModel( QObject *parent = nullptr );
 
     bool hasTabs() const;
     void setHasTabs( bool hasTabs );
 
-    QgsQuickFeatureModel* featureModel() const;
-    void setFeatureModel( QgsQuickFeatureModel* featureModel );
+    QgsQuickFeatureModel *featureModel() const;
+    void setFeatureModel( QgsQuickFeatureModel *featureModel );
 
     bool constraintsValid() const;
 
     Q_INVOKABLE void save();
     Q_INVOKABLE void create();
-    Q_INVOKABLE QVariant attribute( const QString& name );
+    Q_INVOKABLE QVariant attribute( const QString &name );
 
   signals:
     void featureModelChanged();
@@ -88,10 +88,10 @@ class QUICK_EXPORT QgsQuickAttributeFormModel : public QSortFilterProxyModel
     void constraintsValidChanged();
 
   protected:
-    virtual bool filterAcceptsRow( int source_row, const QModelIndex& source_parent ) const override;
+    virtual bool filterAcceptsRow( int source_row, const QModelIndex &source_parent ) const override;
 
   private:
-    QgsQuickAttributeFormModelBase* mSourceModel;
+    QgsQuickAttributeFormModelBase *mSourceModel;
 };
 
 #endif // QGSQUICKATTRIBUTEFORMMODEL_H

@@ -37,16 +37,16 @@ class QgsQuickMapSettings;
 class QUICK_EXPORT QgsQuickMapTransform : public QQuickTransform
 {
     Q_OBJECT
-    Q_PROPERTY( QgsQuickMapSettings* mapSettings READ mapSettings WRITE setMapSettings NOTIFY mapSettingsChanged )
+    Q_PROPERTY( QgsQuickMapSettings *mapSettings READ mapSettings WRITE setMapSettings NOTIFY mapSettingsChanged )
 
   public:
     QgsQuickMapTransform();
     ~QgsQuickMapTransform();
 
-    void applyTo( QMatrix4x4* matrix ) const;
+    void applyTo( QMatrix4x4 *matrix ) const;
 
-    QgsQuickMapSettings* mapSettings() const;
-    void setMapSettings( QgsQuickMapSettings* mapSettings );
+    QgsQuickMapSettings *mapSettings() const;
+    void setMapSettings( QgsQuickMapSettings *mapSettings );
 
   signals:
     void mapSettingsChanged();
@@ -55,7 +55,7 @@ class QUICK_EXPORT QgsQuickMapTransform : public QQuickTransform
     void updateMatrix();
 
   private:
-    QgsQuickMapSettings* mMapSettings = nullptr;
+    QgsQuickMapSettings *mMapSettings = nullptr;
     QMatrix4x4 mMatrix;
 };
 

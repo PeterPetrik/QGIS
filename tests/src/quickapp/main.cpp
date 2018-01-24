@@ -22,9 +22,6 @@
 #include <QQmlContext>
 #include <qqml.h>
 
-#ifndef NDEBUG
-#include <QQmlDebuggingEnabler>
-#endif
 
 #ifdef ANDROID
 #include <QFile>
@@ -34,17 +31,22 @@
 #ifndef ANDROID
 #include <QCommandLineParser>
 #include <qgis.h>
-#endif 
+#endif
 
 #include "qgsapplication.h"
-#include "qgsquicklayertreemodel.h"
+#include "qgsproject.h"
+#include "qgsmaplayer.h"
+#include "qgslayertreegroup.h"
+#include "qgslayertree.h"
+#include <qgsmessagelog.h>
+#include "qgsquickutils.h"
 
 static void init_qgis()
 {
 #ifndef ANDROID
-  if (::getenv("QGIS_PREFIX_PATH") == 0)
+  if ( ::getenv( "QGIS_PREFIX_PATH" ) == 0 )
   {
-    qDebug("== Must set QGIS_PREFIX_PATH in order to get QGIS Quick module running! ==");
+    qDebug( "== Must set QGIS_PREFIX_PATH in order to get QGIS Quick module running! ==" );
     //return;
   }
 #endif
@@ -56,7 +58,7 @@ static void init_qgis()
   QDir myDir( QDir::homePath() );
   myDir.cdUp();
   QString prefixPath = myDir.absolutePath();  // something like: /data/data/org.qgis.quick
-  ::setenv("QGIS_PREFIX_PATH", prefixPath.toUtf8().constData(), true);
+  ::setenv( "QGIS_PREFIX_PATH", prefixPath.toUtf8().constData(), true );
 #endif
 
   // if not on Android, QGIS_PREFIX_PATH env variable should have been set already
@@ -70,138 +72,166 @@ static void init_qgis()
   QString qgisDataSubdir = "qgis-data";
   QDir homeDir = QDir::home();
   QString qgisDataPath = QDir::homePath() + "/" + qgisDataSubdir;
-  ::setenv("QGIS_QUICK_DATA_PATH", qgisDataPath.toUtf8().constData(), true);
+  ::setenv( "QGIS_QUICK_DATA_PATH", qgisDataPath.toUtf8().constData(), true );
 
   QString assetsBasePath( "assets:" );
-  qDebug("assets base path:  %s", assetsBasePath.toLatin1().data());
+  qDebug( "assets base path:  %s", assetsBasePath.toLatin1().data() );
 
   // make sure all necessary QGIS data are available - unpacked from assets
   //if (!homeDir.exists(qgisDataSubdir)) // do it always on startup - for now
   {
-    bool res = homeDir.mkpath(qgisDataSubdir);
-    qDebug("mkpath [%d] %s", res, qgisDataPath.toLatin1().data());
-    QDir qgisDataDir(qgisDataPath);
+    bool res = homeDir.mkpath( qgisDataSubdir );
+    qDebug( "mkpath [%d] %s", res, qgisDataPath.toLatin1().data() );
+    QDir qgisDataDir( qgisDataPath );
 
     QStringList qgisDataFiles;
     qgisDataFiles << "resources/qgis.db" << "resources/srs.db";
     qgisDataFiles << "bg.tif";
-    qgisDataFiles << "lines.shp" <<"lines.dbf" << "lines.prj" << "lines.shx";
-    qgisDataFiles << "points.shp" <<"points.dbf" << "points.prj" << "points.shx";
-    qgisDataFiles << "polys.shp" <<"polys.dbf" << "polys.prj" << "polys.shx";
+    qgisDataFiles << "lines.shp" << "lines.dbf" << "lines.prj" << "lines.shx";
+    qgisDataFiles << "points.shp" << "points.dbf" << "points.prj" << "points.shx";
+    qgisDataFiles << "polys.shp" << "polys.dbf" << "polys.prj" << "polys.shx";
     qgisDataFiles << "test_project.qgs" << "photo.png";
 
-    foreach (const QString& dataFile, qgisDataFiles)
+    foreach ( const QString &dataFile, qgisDataFiles )
     {
-      QFile f(assetsBasePath + "/" + qgisDataSubdir + "/" + dataFile);
+      QFile f( assetsBasePath + "/" + qgisDataSubdir + "/" + dataFile );
       QString destFilePath = qgisDataPath + "/" + dataFile;
-      QDir destFileDir = QFileInfo(destFilePath).absoluteDir();
-      if (!destFileDir.exists())
+      QDir destFileDir = QFileInfo( destFilePath ).absoluteDir();
+      if ( !destFileDir.exists() )
       {
-        bool mkres = qgisDataDir.mkpath(QFileInfo(dataFile).dir().path());
-        qDebug("mkpath [%d] %s", mkres, destFileDir.absolutePath().toLatin1().data());
+        bool mkres = qgisDataDir.mkpath( QFileInfo( dataFile ).dir().path() );
+        qDebug( "mkpath [%d] %s", mkres, destFileDir.absolutePath().toLatin1().data() );
       }
-      if (!QFile(destFilePath).exists())
+      if ( !QFile( destFilePath ).exists() )
       {
-        bool res = f.copy(destFilePath);
-        qDebug("copying [%d] %s", res, destFilePath.toLatin1().data());
+        bool res = f.copy( destFilePath );
+        qDebug( "copying [%d] %s", res, destFilePath.toLatin1().data() );
         // by default the permissions are set as readable for everyone - and not writable!
-        res = QFile::setPermissions(destFilePath, QFile::ReadUser|QFile::WriteUser|QFile::ReadOwner|QFile::WriteOwner);
-        qDebug("chmod [%d]", res);
+        res = QFile::setPermissions( destFilePath, QFile::ReadUser | QFile::WriteUser | QFile::ReadOwner | QFile::WriteOwner );
+        qDebug( "chmod [%d]", res );
       }
     }
   }
 
-  QgsApplication::setPkgDataPath(qgisDataPath);
+  QgsApplication::setPkgDataPath( qgisDataPath );
 #endif
 
   // make sure the DB exists - otherwise custom projections will be failing
-  if (!QgsApplication::createDatabase())
-    qDebug("Can't create qgis user DB!!!");
+  if ( !QgsApplication::createDatabase() )
+    qDebug( "Can't create qgis user DB!!!" );
 
-  qDebug("qgis_init %f [s]", t.elapsed()/1000.0);
+  qDebug( "qgis_init %f [s]", t.elapsed() / 1000.0 );
 }
 
-float calculateDevicePixels() {
-    int dpiX = QApplication::desktop()->physicalDpiX();
-    int dpiY = QApplication::desktop()->physicalDpiY();
-    int dpi = dpiX < dpiY ? dpiX : dpiY; // In case of asymetrical DPI. Improbable
-    float dp = dpi * 0.00768443;
-    return dp;
-}
-
-void initDeclarative() {
-      qmlRegisterType< QgsQuickLayerTreeModel >("QgisQuickApp", 1, 0, "LayerTreeModel");
-}
-
-int main(int argc, char *argv[])
+float calculateDevicePixels()
 {
-  QgsApplication app(argc, argv, true);
-#ifndef NDEBUG
-  //QQmlDebuggingEnabler enabler;
-#endif
+  int dpiX = QApplication::desktop()->physicalDpiX();
+  int dpiY = QApplication::desktop()->physicalDpiY();
+  int dpi = dpiX < dpiY ? dpiX : dpiY; // In case of asymetrical DPI. Improbable
+  float dp = dpi * 0.00768443;
+  return dp;
+}
+
+int main( int argc, char *argv[] )
+{
+  // 1) Initialize QGIS
+  QgsApplication app( argc, argv, true );
 
 #ifdef QGIS_PREFIX_PATH
-  ::setenv("QGIS_PREFIX_PATH", QGIS_PREFIX_PATH, true);
+  ::setenv( "QGIS_PREFIX_PATH", QGIS_PREFIX_PATH, true );
 #endif
   init_qgis();
-  qDebug("QGIS_PREFIX_PATH: %s", ::getenv("QGIS_PREFIX_PATH"));
+  qDebug( "QGIS_PREFIX_PATH: %s", ::getenv( "QGIS_PREFIX_PATH" ) );
 
   QQmlEngine engine;
-  initDeclarative();
 
-  // Set Project File
+  // 2) Load QGIS Project
 #ifdef QGIS_QUICK_DATA_PATH
-  QString dataDir(QGIS_QUICK_DATA_PATH);
+  QString dataDir( QGIS_QUICK_DATA_PATH );
 #else
-  QString dataDir(::getenv("QGIS_QUICK_DATA_PATH"));
+  QString dataDir( ::getenv( "QGIS_QUICK_DATA_PATH" ) );
 #endif
   QString projectFile = dataDir + "/test_project.qgs";
   qDebug() << "project file: " << projectFile;
-  engine.rootContext()->setContextProperty( "qgisProject", projectFile );
+  QgsProject project;
+  bool res = project.read( projectFile );
+  Q_ASSERT( res );
+
+  engine.rootContext()->setContextProperty( "__project", &project );
+
+  // 3) Load project's layers
+  QgsLayerTreeGroup *root = project.layerTreeRoot();
+  QList<QgsMapLayer *> layers;
+  foreach ( QgsLayerTreeLayer *nodeLayer, root->findLayers() )
+  {
+    if ( nodeLayer->isVisible() )
+    {
+      QgsMapLayer *layer = nodeLayer->layer();
+      if ( layer->isValid() )
+      {
+        layers << layer;
+        qDebug() << "Found layer: " << layer->name();
+      }
+    }
+  }
+  engine.rootContext()->setContextProperty( "__layers", QVariant::fromValue( layers ) );
 
   // Set Device Pixels
   float dp = calculateDevicePixels();
-  qDebug() << "device pixels: " << dp;
-  engine.rootContext()->setContextProperty( "dp", dp );
+  QgsQuickUtils::instance()->setProperty( "dp", dp );
 
-  // Some settings for About dialog
-  engine.rootContext()->setContextProperty( "qgisVersion", Qgis::QGIS_VERSION );
+  // Set simulated position for desktop builds
+#ifndef ANDROID
+  bool use_simulated_position = true;
+#else
+  bool use_simulated_position = false;
+#endif
+  engine.rootContext()->setContextProperty( "__use_simulated_position", use_simulated_position );
 
-  QQmlComponent component(&engine, QUrl("qrc:/main.qml"));
+  QQmlComponent component( &engine, QUrl( "qrc:/main.qml" ) );
   QObject *object = component.create();
   \
-  if (!component.errors().isEmpty()) {
-      qDebug("%s", QgsApplication::showSettings().toLocal8Bit().data());
-
-      qDebug() << "****************************************";
-      qDebug() << "*****        QML errors:           *****";
-      qDebug() << "****************************************";
-      for(const QQmlError& error: component.errors()) {
-        qDebug() << "  " << error;
-      }
-      qDebug() << "****************************************";
-      qDebug() << "****************************************";
-  }
-
-  if( object == 0 )
+  if ( !component.errors().isEmpty() )
   {
-      qDebug() << "FATAL ERROR: unable to create main.qml";
-      return EXIT_FAILURE;
+    qDebug( "%s", QgsApplication::showSettings().toLocal8Bit().data() );
+
+    qDebug() << "****************************************";
+    qDebug() << "*****        QML errors:           *****";
+    qDebug() << "****************************************";
+    for ( const QQmlError &error : component.errors() )
+    {
+      qDebug() << "  " << error;
+    }
+    qDebug() << "****************************************";
+    qDebug() << "****************************************";
   }
 
-
+  if ( object == 0 )
+  {
+    qDebug() << "FATAL ERROR: unable to create main.qml";
+    return EXIT_FAILURE;
+  }
 
   // Set up the QSettings environment must be done after qapp is created
   QCoreApplication::setOrganizationName( "QGIS" );
   QCoreApplication::setOrganizationDomain( "qgis.org" );
-  QCoreApplication::setApplicationName( "QGIS Quick" );
-  QCoreApplication::setApplicationVersion(Qgis::QGIS_VERSION);
+  QCoreApplication::setApplicationName( "QgsQuick Test App" );
+  QCoreApplication::setApplicationVersion( Qgis::QGIS_VERSION );
 
-  #ifndef ANDROID
+#ifndef ANDROID
   QCommandLineParser parser;
   parser.addVersionOption();
-  parser.process(app);
-  #endif
+  parser.process( app );
+#endif
+
+  // Add some data for debugging if needed (visible in the final customer app)
+  QRect rec = QApplication::desktop()->screenGeometry();
+  int height = rec.height();
+  int width = rec.width();
+  QgsApplication::messageLog()->logMessage( "screen: " + QString::number( width ) + "x" + QString::number( height ) );
+  QgsApplication::messageLog()->logMessage( "device pixels: " + QString::number( dp ) );
+  QgsApplication::messageLog()->logMessage( "data directory: " + dataDir );
+  QgsApplication::messageLog()->logMessage( "All up and running" );
 
   return app.exec();
 }

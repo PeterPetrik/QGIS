@@ -39,12 +39,12 @@ class QgsQuickRubberbandModel;
 class QUICK_NO_EXPORT QgsQuickSGRubberband : public QSGNode
 {
   public:
-    QgsQuickSGRubberband( const QVector<QgsPoint>& points, QgsWkbTypes::GeometryType type, const QColor& color, qreal width );
+    QgsQuickSGRubberband( const QVector<QgsPoint> &points, QgsWkbTypes::GeometryType type, const QColor &color, qreal width );
 
   private:
-    QSGGeometryNode* createLineGeometry( const QVector<QgsPoint>& points, qreal width );
-    QSGGeometryNode* createPointGeometry( const QgsPoint& point, qreal width );
-    QSGGeometryNode* createPolygonGeometry( const QVector<QgsPoint>& points );
+    QSGGeometryNode *createLineGeometry( const QVector<QgsPoint> &points, qreal width );
+    QSGGeometryNode *createPointGeometry( const QgsPoint &point, qreal width );
+    QSGGeometryNode *createPolygonGeometry( const QVector<QgsPoint> &points );
 
     QSGFlatColorMaterial mMaterial;
 };

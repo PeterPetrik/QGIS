@@ -24,18 +24,18 @@ QgsQuickMapTransform::~QgsQuickMapTransform()
 {
 }
 
-void QgsQuickMapTransform::applyTo( QMatrix4x4* matrix ) const
+void QgsQuickMapTransform::applyTo( QMatrix4x4 *matrix ) const
 {
   *matrix *= mMatrix;
   matrix->optimize();
 }
 
-QgsQuickMapSettings* QgsQuickMapTransform::mapSettings() const
+QgsQuickMapSettings *QgsQuickMapTransform::mapSettings() const
 {
   return mMapSettings;
 }
 
-void QgsQuickMapTransform::setMapSettings( QgsQuickMapSettings* mapSettings )
+void QgsQuickMapTransform::setMapSettings( QgsQuickMapSettings *mapSettings )
 {
   if ( mapSettings == mMapSettings )
     return;

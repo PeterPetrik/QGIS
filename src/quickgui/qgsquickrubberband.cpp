@@ -17,28 +17,29 @@
 #include "qgsquickrubberbandmodel.h"
 #include "qgsquicksgrubberband.h"
 
-QgsQuickRubberband::QgsQuickRubberband( QQuickItem* parent )
+QgsQuickRubberband::QgsQuickRubberband( QQuickItem *parent )
   : QQuickItem( parent )
-  , mModel ( nullptr )
-  , mDirty ( false )
-  , mColor ( 192, 57, 43, 200 )
-  , mWidth ( 1.5 )
+  , mModel( nullptr )
+  , mDirty( false )
+  , mColor( 192, 57, 43, 200 )
+  , mWidth( 1.5 )
 {
   setFlags( QQuickItem::ItemHasContents );
   setAntialiasing( true );
 }
 
-QgsQuickRubberbandModel* QgsQuickRubberband::model() const
+QgsQuickRubberbandModel *QgsQuickRubberband::model() const
 {
   return mModel;
 }
 
-void QgsQuickRubberband::setModel( QgsQuickRubberbandModel* model )
+void QgsQuickRubberband::setModel( QgsQuickRubberbandModel *model )
 {
   if ( mModel == model )
     return;
 
-  if ( mModel ) {
+  if ( mModel )
+  {
     disconnect( mModel, &QgsQuickRubberbandModel::vertexChanged, this, &QgsQuickRubberband::markDirty );
     disconnect( mModel, &QgsQuickRubberbandModel::verticesRemoved, this, &QgsQuickRubberband::markDirty );
     disconnect( mModel, &QgsQuickRubberbandModel::verticesInserted, this, &QgsQuickRubberband::markDirty );
@@ -46,22 +47,23 @@ void QgsQuickRubberband::setModel( QgsQuickRubberbandModel* model )
 
   mModel = model;
 
-  if ( mModel ) {
-      connect( mModel, &QgsQuickRubberbandModel::vertexChanged, this, &QgsQuickRubberband::markDirty );
-      connect( mModel, &QgsQuickRubberbandModel::verticesRemoved, this, &QgsQuickRubberband::markDirty );
-      connect( mModel, &QgsQuickRubberbandModel::verticesInserted, this, &QgsQuickRubberband::markDirty );
+  if ( mModel )
+  {
+    connect( mModel, &QgsQuickRubberbandModel::vertexChanged, this, &QgsQuickRubberband::markDirty );
+    connect( mModel, &QgsQuickRubberbandModel::verticesRemoved, this, &QgsQuickRubberband::markDirty );
+    connect( mModel, &QgsQuickRubberbandModel::verticesInserted, this, &QgsQuickRubberband::markDirty );
   }
 
   markDirty();
   emit modelChanged();
 }
 
-QgsQuickMapSettings* QgsQuickRubberband::mapSettings() const
+QgsQuickMapSettings *QgsQuickRubberband::mapSettings() const
 {
   return mMapSettings;
 }
 
-void QgsQuickRubberband::setMapSettings( QgsQuickMapSettings* mapSettings )
+void QgsQuickRubberband::setMapSettings( QgsQuickMapSettings *mapSettings )
 {
   if ( mMapSettings == mapSettings )
     return;
@@ -78,7 +80,7 @@ void QgsQuickRubberband::markDirty()
   update();
 }
 
-QSGNode* QgsQuickRubberband::updatePaintNode( QSGNode* n, QQuickItem::UpdatePaintNodeData* )
+QSGNode *QgsQuickRubberband::updatePaintNode( QSGNode *n, QQuickItem::UpdatePaintNodeData * )
 {
   if ( mDirty && mModel )
   {
@@ -87,7 +89,7 @@ QSGNode* QgsQuickRubberband::updatePaintNode( QSGNode* n, QQuickItem::UpdatePain
 
     if ( !mModel->isEmpty() )
     {
-      QgsQuickSGRubberband* rb = new QgsQuickSGRubberband( mModel->flatVertices(), mModel->geometryType(), mColor, mWidth );
+      QgsQuickSGRubberband *rb = new QgsQuickSGRubberband( mModel->flatVertices(), mModel->geometryType(), mColor, mWidth );
       rb->setFlag( QSGNode::OwnedByParent );
 
       n->appendChildNode( rb );
@@ -112,7 +114,7 @@ QColor QgsQuickRubberband::color() const
   return mColor;
 }
 
-void QgsQuickRubberband::setColor( const QColor& color )
+void QgsQuickRubberband::setColor( const QColor &color )
 {
   mColor = color;
 }

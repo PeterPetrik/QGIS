@@ -19,11 +19,11 @@
 
 #include "qgsquickmessagelogmodel.h"
 
-QgsQuickMessageLogModel::QgsQuickMessageLogModel( QObject* parent )
+QgsQuickMessageLogModel::QgsQuickMessageLogModel( QObject *parent )
   : QAbstractListModel( parent )
   , mMessageLog( QgsApplication::messageLog() )
 {
-  connect( mMessageLog, static_cast<void ( QgsMessageLog::* ) ( const QString& message, const QString& tag, QgsMessageLog::MessageLevel level )>( &QgsMessageLog::messageReceived ), this, &QgsQuickMessageLogModel::onMessageReceived );
+  connect( mMessageLog, static_cast<void ( QgsMessageLog::* )( const QString &message, const QString &tag, QgsMessageLog::MessageLevel level )>( &QgsMessageLog::messageReceived ), this, &QgsQuickMessageLogModel::onMessageReceived );
 }
 
 QHash<int, QByteArray> QgsQuickMessageLogModel::roleNames() const
@@ -36,13 +36,13 @@ QHash<int, QByteArray> QgsQuickMessageLogModel::roleNames() const
   return roles;
 }
 
-int QgsQuickMessageLogModel::rowCount( const QModelIndex& parent ) const
+int QgsQuickMessageLogModel::rowCount( const QModelIndex &parent ) const
 {
   Q_UNUSED( parent )
   return mMessages.size();
 }
 
-QVariant QgsQuickMessageLogModel::data( const QModelIndex& index, int role ) const
+QVariant QgsQuickMessageLogModel::data( const QModelIndex &index, int role ) const
 {
   if ( index.row() >= mMessages.size() )
     return QVariant();
@@ -57,7 +57,7 @@ QVariant QgsQuickMessageLogModel::data( const QModelIndex& index, int role ) con
   return QVariant();
 }
 
-void QgsQuickMessageLogModel::onMessageReceived( const QString& message, const QString& tag, QgsMessageLog::MessageLevel level )
+void QgsQuickMessageLogModel::onMessageReceived( const QString &message, const QString &tag, QgsMessageLog::MessageLevel level )
 {
   beginInsertRows( QModelIndex(), 0, 0 );
   mMessages.prepend( LogMessage( tag, message, level ) );

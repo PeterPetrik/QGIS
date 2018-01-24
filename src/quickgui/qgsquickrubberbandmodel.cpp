@@ -18,7 +18,7 @@
 #include "qgsquickrubberbandmodel.h"
 
 
-QgsQuickRubberbandModel::QgsQuickRubberbandModel( QObject* parent )
+QgsQuickRubberbandModel::QgsQuickRubberbandModel( QObject *parent )
   : QObject( parent )
   , mCurrentCoordinateIndex( 0 )
   , mGeometryType( QgsWkbTypes::LineGeometry )
@@ -45,7 +45,7 @@ QVector<QgsPoint> QgsQuickRubberbandModel::vertices() const
 QVector<QgsPoint> QgsQuickRubberbandModel::flatVertices() const
 {
   QVector<QgsPoint> points;
-  Q_FOREACH( const QgsPoint& pt, mPointList )
+  Q_FOREACH ( const QgsPoint &pt, mPointList )
   {
     points << QgsPoint( pt );
   }
@@ -53,13 +53,13 @@ QVector<QgsPoint> QgsQuickRubberbandModel::flatVertices() const
   return points;
 }
 
-QgsPointSequence QgsQuickRubberbandModel::pointSequence( const QgsCoordinateReferenceSystem& crs ) const
+QgsPointSequence QgsQuickRubberbandModel::pointSequence( const QgsCoordinateReferenceSystem &crs ) const
 {
   QgsPointSequence sequence;
 
   QgsCoordinateTransform ct( mCrs, crs );
 
-  Q_FOREACH( const QgsPoint& pt, mPointList )
+  Q_FOREACH ( const QgsPoint &pt, mPointList )
   {
     QgsPoint p2( ct.transform( pt.x(), pt.y() ) );
     p2.setZ( pt.z() );
@@ -69,13 +69,13 @@ QgsPointSequence QgsQuickRubberbandModel::pointSequence( const QgsCoordinateRefe
   return sequence;
 }
 
-QList<QgsPointXY> QgsQuickRubberbandModel::flatPointSequence( const QgsCoordinateReferenceSystem& crs ) const
+QList<QgsPointXY> QgsQuickRubberbandModel::flatPointSequence( const QgsCoordinateReferenceSystem &crs ) const
 {
   QList<QgsPointXY> sequence;
 
   QgsCoordinateTransform ct( mCrs, crs );
 
-  Q_FOREACH( const QgsPoint& pt, mPointList )
+  Q_FOREACH ( const QgsPoint &pt, mPointList )
   {
     sequence.append( ct.transform( pt.x(), pt.y() ) );
   }
@@ -134,7 +134,7 @@ void QgsQuickRubberbandModel::setCurrentCoordinateIndex( int currentCoordinateIn
   emit currentCoordinateChanged();
 }
 
-QgsPoint QgsQuickRubberbandModel::currentPoint( const QgsCoordinateReferenceSystem& crs ) const
+QgsPoint QgsQuickRubberbandModel::currentPoint( const QgsCoordinateReferenceSystem &crs ) const
 {
   QgsCoordinateTransform ct( mCrs, crs );
 
@@ -157,7 +157,7 @@ QgsPoint QgsQuickRubberbandModel::currentCoordinate() const
   return mPointList.at( mCurrentCoordinateIndex );
 }
 
-void QgsQuickRubberbandModel::setCurrentCoordinate( const QgsPoint& currentCoordinate )
+void QgsQuickRubberbandModel::setCurrentCoordinate( const QgsPoint &currentCoordinate )
 {
   if ( mPointList.at( mCurrentCoordinateIndex ) == currentCoordinate )
     return;
@@ -193,7 +193,7 @@ QgsWkbTypes::GeometryType QgsQuickRubberbandModel::geometryType() const
   return mGeometryType;
 }
 
-void QgsQuickRubberbandModel::setGeometryType( const QgsWkbTypes::GeometryType& geometryType )
+void QgsQuickRubberbandModel::setGeometryType( const QgsWkbTypes::GeometryType &geometryType )
 {
   if ( mGeometryType == geometryType )
     return;
@@ -207,7 +207,7 @@ QgsCoordinateReferenceSystem QgsQuickRubberbandModel::crs() const
   return mCrs;
 }
 
-void QgsQuickRubberbandModel::setCrs( const QgsCoordinateReferenceSystem& crs )
+void QgsQuickRubberbandModel::setCrs( const QgsCoordinateReferenceSystem &crs )
 {
   if ( crs == mCrs )
     return;
@@ -216,12 +216,12 @@ void QgsQuickRubberbandModel::setCrs( const QgsCoordinateReferenceSystem& crs )
   emit crsChanged();
 }
 
-QgsVectorLayer* QgsQuickRubberbandModel::vectorLayer() const
+QgsVectorLayer *QgsQuickRubberbandModel::vectorLayer() const
 {
   return mLayer;
 }
 
-void QgsQuickRubberbandModel::setVectorLayer( QgsVectorLayer* layer )
+void QgsQuickRubberbandModel::setVectorLayer( QgsVectorLayer *layer )
 {
   if ( layer == mLayer )
     return;

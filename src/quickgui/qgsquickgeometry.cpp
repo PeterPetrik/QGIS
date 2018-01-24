@@ -20,14 +20,14 @@
 
 #include "qgsquickgeometry.h"
 
-QgsQuickGeometry::QgsQuickGeometry( QObject* parent )
+QgsQuickGeometry::QgsQuickGeometry( QObject *parent )
   : QObject( parent )
 {
 }
 
 QgsGeometry QgsQuickGeometry::asQgsGeometry() const
 {
-  QgsAbstractGeometry* geom = nullptr;
+  QgsAbstractGeometry *geom = nullptr;
 
   if ( !mVectorLayer )
     return QgsGeometry();
@@ -36,20 +36,20 @@ QgsGeometry QgsQuickGeometry::asQgsGeometry() const
   {
     case QgsWkbTypes::PointGeometry:
     {
-      geom = new QgsPoint( mRubberbandModel->currentPoint(  mVectorLayer->crs() ) );
+      geom = new QgsPoint( mRubberbandModel->currentPoint( mVectorLayer->crs() ) );
       break;
     }
     case QgsWkbTypes::LineGeometry:
     {
-      QgsLineString* line = new QgsLineString();
+      QgsLineString *line = new QgsLineString();
       line->setPoints( mRubberbandModel->pointSequence( mVectorLayer->crs() ) );
       geom = line;
       break;
     }
     case QgsWkbTypes::PolygonGeometry:
     {
-      QgsPolygonV2* polygon = new QgsPolygonV2();
-      QgsLineString* ring = new QgsLineString();
+      QgsPolygonV2 *polygon = new QgsPolygonV2();
+      QgsLineString *ring = new QgsLineString();
       ring->setPoints( mRubberbandModel->pointSequence( mVectorLayer->crs() ) );
       polygon->setExteriorRing( ring );
       geom = polygon;
@@ -66,12 +66,12 @@ QgsGeometry QgsQuickGeometry::asQgsGeometry() const
   return QgsGeometry( geom );
 }
 
-QgsQuickRubberbandModel* QgsQuickGeometry::rubberbandModel() const
+QgsQuickRubberbandModel *QgsQuickGeometry::rubberbandModel() const
 {
   return mRubberbandModel;
 }
 
-void QgsQuickGeometry::setRubberbandModel(QgsQuickRubberbandModel *rubberbandModel )
+void QgsQuickGeometry::setRubberbandModel( QgsQuickRubberbandModel *rubberbandModel )
 {
   if ( mRubberbandModel == rubberbandModel )
     return;
@@ -86,12 +86,12 @@ void QgsQuickGeometry::applyRubberband()
   // TODO: Will need to be implemented for multipart features or polygons with holes.
 }
 
-QgsVectorLayer* QgsQuickGeometry::vectorLayer() const
+QgsVectorLayer *QgsQuickGeometry::vectorLayer() const
 {
   return mVectorLayer;
 }
 
-void QgsQuickGeometry::setVectorLayer( QgsVectorLayer* vectorLayer )
+void QgsQuickGeometry::setVectorLayer( QgsVectorLayer *vectorLayer )
 {
   if ( mVectorLayer == vectorLayer )
     return;

@@ -47,10 +47,10 @@ class QUICK_EXPORT QgsQuickCoordinateTransformer : public QObject
     void setSourcePosition( QgsPoint sourcePosition );
 
     QgsCoordinateReferenceSystem destinationCrs() const;
-    void setDestinationCrs( const QgsCoordinateReferenceSystem& destinationCrs );
+    void setDestinationCrs( const QgsCoordinateReferenceSystem &destinationCrs );
 
     QgsCoordinateReferenceSystem sourceCrs() const;
-    void setSourceCrs( const QgsCoordinateReferenceSystem& sourceCrs );
+    void setSourceCrs( const QgsCoordinateReferenceSystem &sourceCrs );
 
   private:
     void updatePosition();

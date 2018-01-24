@@ -42,7 +42,7 @@ class QUICK_EXPORT QgsQuickMessageLogModel : public QAbstractListModel
       LogMessage()
       {}
 
-      LogMessage( const QString& tag, const QString& message, QgsMessageLog::MessageLevel level )
+      LogMessage( const QString &tag, const QString &message, QgsMessageLog::MessageLevel level )
       {
         this->tag = tag;
         this->message = message;
@@ -62,18 +62,18 @@ class QUICK_EXPORT QgsQuickMessageLogModel : public QAbstractListModel
     };
 
   public:
-    QgsQuickMessageLogModel( QObject* parent = nullptr );
+    QgsQuickMessageLogModel( QObject *parent = nullptr );
 
     QHash<int, QByteArray> roleNames() const override;
 
-    int rowCount( const QModelIndex& parent ) const override;
-    QVariant data( const QModelIndex& index, int role ) const override;
+    int rowCount( const QModelIndex &parent ) const override;
+    QVariant data( const QModelIndex &index, int role ) const override;
 
   private slots:
-    void onMessageReceived( const QString& message, const QString& tag, QgsMessageLog::MessageLevel level );
+    void onMessageReceived( const QString &message, const QString &tag, QgsMessageLog::MessageLevel level );
 
   private:
-    QgsMessageLog* mMessageLog;
+    QgsMessageLog *mMessageLog;
     QVector<LogMessage> mMessages;
 };
 

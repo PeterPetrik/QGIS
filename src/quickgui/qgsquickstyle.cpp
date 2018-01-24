@@ -15,42 +15,51 @@
 
 #include "qgsquickstyle.h"
 
-QgsQuickStyle::QgsQuickStyle(QObject *parent):
-    QObject(parent)
-  , mDevicePixels(1.0f)
-  , mUseVectorIcons(false)
+QgsQuickStyle::QgsQuickStyle( QObject *parent ):
+  QObject( parent )
+  , mDevicePixels( 1.0f )
+  , mUseVectorIcons( false )
 {
 }
 
-qreal QgsQuickStyle::devicePixels() const {
-    return mDevicePixels;
+qreal QgsQuickStyle::devicePixels() const
+{
+  return mDevicePixels;
 }
 
-QString QgsQuickStyle::themeDir() const {
-    return mThemeDir;
+QString QgsQuickStyle::themeDir() const
+{
+  return mThemeDir;
 }
 
-void QgsQuickStyle::setDevicePixels(qreal dp) {
-    if (dp != mDevicePixels) {
-        mDevicePixels = dp;
-        emit devicePixelsChanged();
-    }
+void QgsQuickStyle::setDevicePixels( qreal dp )
+{
+  if ( dp != mDevicePixels )
+  {
+    mDevicePixels = dp;
+    emit devicePixelsChanged();
+  }
 }
 
-void QgsQuickStyle::setThemeDir(QString dir) {
-    if (dir != mThemeDir) {
-        mThemeDir = dir;
-        emit themeDirChanged();
-    }
+void QgsQuickStyle::setThemeDir( QString dir )
+{
+  if ( dir != mThemeDir )
+  {
+    mThemeDir = dir;
+    emit themeDirChanged();
+  }
 }
 
-bool QgsQuickStyle::useVectorIcons() const {
-    return mUseVectorIcons;
+bool QgsQuickStyle::useVectorIcons() const
+{
+  return mUseVectorIcons;
 }
 
-void QgsQuickStyle::setUseVectorIcons(bool use) {
-    if (use != mUseVectorIcons) {
-        mUseVectorIcons = use;
-        emit useVectorIconsChanged();
-    }
+void QgsQuickStyle::setUseVectorIcons( bool use )
+{
+  if ( use != mUseVectorIcons )
+  {
+    mUseVectorIcons = use;
+    emit useVectorIconsChanged();
+  }
 }

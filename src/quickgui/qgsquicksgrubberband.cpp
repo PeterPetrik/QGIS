@@ -16,7 +16,7 @@
 #include "qgsquicksgrubberband.h"
 
 
-QgsQuickSGRubberband::QgsQuickSGRubberband( const QVector<QgsPoint>& points, QgsWkbTypes::GeometryType type, const QColor& color, qreal width )
+QgsQuickSGRubberband::QgsQuickSGRubberband( const QVector<QgsPoint> &points, QgsWkbTypes::GeometryType type, const QColor &color, qreal width )
   : QSGNode()
 {
   mMaterial.setColor( color );
@@ -49,14 +49,14 @@ QgsQuickSGRubberband::QgsQuickSGRubberband( const QVector<QgsPoint>& points, Qgs
   }
 }
 
-QSGGeometryNode* QgsQuickSGRubberband::createLineGeometry( const QVector<QgsPoint>& points, qreal width )
+QSGGeometryNode *QgsQuickSGRubberband::createLineGeometry( const QVector<QgsPoint> &points, qreal width )
 {
-  QSGGeometryNode* node = new QSGGeometryNode;
-  QSGGeometry* sgGeom = new QSGGeometry( QSGGeometry::defaultAttributes_Point2D(), points.count() );
-  QSGGeometry::Point2D* vertices = sgGeom->vertexDataAsPoint2D();
+  QSGGeometryNode *node = new QSGGeometryNode;
+  QSGGeometry *sgGeom = new QSGGeometry( QSGGeometry::defaultAttributes_Point2D(), points.count() );
+  QSGGeometry::Point2D *vertices = sgGeom->vertexDataAsPoint2D();
 
   int i = 0;
-  Q_FOREACH( const QgsPoint& pt, points )
+  Q_FOREACH ( const QgsPoint &pt, points )
   {
     vertices[i++].set( pt.x(), pt.y() );
   }
@@ -72,11 +72,11 @@ QSGGeometryNode* QgsQuickSGRubberband::createLineGeometry( const QVector<QgsPoin
 
 QSGGeometryNode *QgsQuickSGRubberband::createPointGeometry( const QgsPoint &point, qreal width )
 {
-  QSGGeometryNode* node = new QSGGeometryNode;
+  QSGGeometryNode *node = new QSGGeometryNode;
 
-  QSGGeometry* sgGeom = new QSGGeometry( QSGGeometry::defaultAttributes_Point2D(), 1 );
+  QSGGeometry *sgGeom = new QSGGeometry( QSGGeometry::defaultAttributes_Point2D(), 1 );
 
-  QSGGeometry::Point2D* vertices = sgGeom->vertexDataAsPoint2D();
+  QSGGeometry::Point2D *vertices = sgGeom->vertexDataAsPoint2D();
   vertices[0].set( point.x(), point.y() );
   sgGeom->setDrawingMode( GL_POINTS );
   sgGeom->setLineWidth( width );
@@ -88,8 +88,8 @@ QSGGeometryNode *QgsQuickSGRubberband::createPointGeometry( const QgsPoint &poin
   return node;
 }
 
-QSGGeometryNode* QgsQuickSGRubberband::createPolygonGeometry( const QVector<QgsPoint>& points )
+QSGGeometryNode *QgsQuickSGRubberband::createPolygonGeometry( const QVector<QgsPoint> &points )
 {
-    Q_UNUSED(points);
-    return 0;
+  Q_UNUSED( points );
+  return 0;
 }

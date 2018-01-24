@@ -21,7 +21,7 @@
 #include "qgsquicksgrubberband.h"
 
 
-QgsQuickFeatureModelHighlight::QgsQuickFeatureModelHighlight( QQuickItem* parent )
+QgsQuickFeatureModelHighlight::QgsQuickFeatureModelHighlight( QQuickItem *parent )
   : QQuickItem( parent )
   , mModel( nullptr )
   , mDirty( false )
@@ -50,7 +50,7 @@ void QgsQuickFeatureModelHighlight::onModelDataChanged()
   update();
 }
 
-QSGNode* QgsQuickFeatureModelHighlight::updatePaintNode( QSGNode* n, QQuickItem::UpdatePaintNodeData* )
+QSGNode *QgsQuickFeatureModelHighlight::updatePaintNode( QSGNode *n, QQuickItem::UpdatePaintNodeData * )
 {
   if ( !mDirty || !mMapSettings )
     return n;
@@ -61,7 +61,7 @@ QSGNode* QgsQuickFeatureModelHighlight::updatePaintNode( QSGNode* n, QQuickItem:
   if ( !mModel )
     return n;
 
-  QgsVectorLayer* layer = mModel->layer();
+  QgsVectorLayer *layer = mModel->layer();
   if ( layer )
   {
     QgsCoordinateTransform transf( layer->crs(), mMapSettings->destinationCrs() );
@@ -75,7 +75,7 @@ QSGNode* QgsQuickFeatureModelHighlight::updatePaintNode( QSGNode* n, QQuickItem:
     for ( auto it = geom.vertices_begin(); it != geom.vertices_end(); ++it )
       points.append( *it );
 
-    QgsQuickSGRubberband* rb = new QgsQuickSGRubberband( points, geom.type(), mColor, mWidth );
+    QgsQuickSGRubberband *rb = new QgsQuickSGRubberband( points, geom.type(), mColor, mWidth );
     rb->setFlag( QSGNode::OwnedByParent );
     n->appendChildNode( rb );
   }

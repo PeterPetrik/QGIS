@@ -40,7 +40,7 @@ class QUICK_EXPORT QgsQuickMapSettings : public QObject
 {
     Q_OBJECT
 
-    Q_PROPERTY( QgsProject* project READ project WRITE setProject NOTIFY projectChanged )
+    Q_PROPERTY( QgsProject *project READ project WRITE setProject NOTIFY projectChanged )
     Q_PROPERTY( QgsRectangle extent READ extent WRITE setExtent NOTIFY extentChanged )
     Q_PROPERTY( QgsRectangle visibleExtent READ visibleExtent NOTIFY visibleExtentChanged )
     Q_PROPERTY( double mapUnitsPerPixel READ mapUnitsPerPixel NOTIFY mapUnitsPerPixelChanged )
@@ -48,19 +48,19 @@ class QUICK_EXPORT QgsQuickMapSettings : public QObject
     Q_PROPERTY( QSize outputSize READ outputSize WRITE setOutputSize NOTIFY outputSizeChanged )
     Q_PROPERTY( double outputDpi READ outputDpi WRITE setOutputDpi NOTIFY outputDpiChanged )
     Q_PROPERTY( QgsCoordinateReferenceSystem destinationCrs READ destinationCrs WRITE setDestinationCrs NOTIFY destinationCrsChanged )
-    Q_PROPERTY( QList<QgsMapLayer*> layers READ layers WRITE setLayers NOTIFY layersChanged )
+    Q_PROPERTY( QList<QgsMapLayer *> layers READ layers WRITE setLayers NOTIFY layersChanged )
 
   public:
-    QgsQuickMapSettings( QObject* parent = 0 );
+    QgsQuickMapSettings( QObject *parent = 0 );
     ~QgsQuickMapSettings();
 
     QgsRectangle extent() const;
-    void setExtent( const QgsRectangle& extent );
+    void setExtent( const QgsRectangle &extent );
 
-    void setProject(QgsProject* project);
-    QgsProject* project() const;
+    void setProject( QgsProject *project );
+    QgsProject *project() const;
 
-    Q_INVOKABLE void setCenter( const QgsPoint& center );
+    Q_INVOKABLE void setCenter( const QgsPoint &center );
 
     double mapUnitsPerPixel() const;
 
@@ -73,7 +73,7 @@ class QUICK_EXPORT QgsQuickMapSettings : public QObject
      *
      * @return A coordinate in pixel / screen space
      */
-    Q_INVOKABLE QPointF coordinateToScreen( const QgsPoint& p ) const;
+    Q_INVOKABLE QPointF coordinateToScreen( const QgsPoint &p ) const;
 
 
     /**
@@ -83,7 +83,7 @@ class QUICK_EXPORT QgsQuickMapSettings : public QObject
      *
      * @return A coordinate in map coordinates
      */
-    Q_INVOKABLE QgsPoint screenToCoordinate( const QPointF& p ) const;
+    Q_INVOKABLE QgsPoint screenToCoordinate( const QPointF &p ) const;
 
     double rotation() const;
     void setRotation( double rotation );
@@ -91,16 +91,16 @@ class QUICK_EXPORT QgsQuickMapSettings : public QObject
     QgsMapSettings mapSettings() const;
 
     QSize outputSize() const;
-    void setOutputSize( const QSize& outputSize );
+    void setOutputSize( const QSize &outputSize );
 
     double outputDpi() const;
     void setOutputDpi( double outputDpi );
 
     QgsCoordinateReferenceSystem destinationCrs() const;
-    void setDestinationCrs( const QgsCoordinateReferenceSystem& destinationCrs );
+    void setDestinationCrs( const QgsCoordinateReferenceSystem &destinationCrs );
 
-    QList<QgsMapLayer*> layers() const;
-    void setLayers( const QList<QgsMapLayer*>& layers );
+    QList<QgsMapLayer *> layers() const;
+    void setLayers( const QList<QgsMapLayer *> &layers );
 
   signals:
     void projectChanged();
@@ -114,10 +114,10 @@ class QUICK_EXPORT QgsQuickMapSettings : public QObject
     void layersChanged();
 
   private slots:
-    void onReadProject( const QDomDocument& doc );
+    void onReadProject( const QDomDocument &doc );
 
   private:
-    QgsProject* mProject;
+    QgsProject *mProject;
     QgsMapSettings mMapSettings;
 
 };

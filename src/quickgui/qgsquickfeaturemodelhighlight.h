@@ -38,10 +38,10 @@ class QUICK_EXPORT QgsQuickFeatureModelHighlight : public QQuickItem
 {
     Q_OBJECT
 
-    Q_PROPERTY( QgsQuickFeatureModel* model MEMBER mModel NOTIFY modelChanged )
+    Q_PROPERTY( QgsQuickFeatureModel *model MEMBER mModel NOTIFY modelChanged )
     Q_PROPERTY( QColor color MEMBER mColor NOTIFY colorChanged )
     Q_PROPERTY( unsigned int width MEMBER mWidth NOTIFY widthChanged )
-    Q_PROPERTY( QgsQuickMapSettings* mapSettings MEMBER mMapSettings NOTIFY mapSettingsChanged )
+    Q_PROPERTY( QgsQuickMapSettings *mapSettings MEMBER mMapSettings NOTIFY mapSettingsChanged )
 
   public:
     explicit QgsQuickFeatureModelHighlight( QQuickItem *parent = 0 );
@@ -58,13 +58,13 @@ class QUICK_EXPORT QgsQuickFeatureModelHighlight : public QQuickItem
     void onModelDataChanged();
 
   private:
-    virtual QSGNode* updatePaintNode( QSGNode *n, UpdatePaintNodeData * ) override;
+    virtual QSGNode *updatePaintNode( QSGNode *n, UpdatePaintNodeData * ) override;
 
     QColor mColor;
-    QgsQuickFeatureModel* mModel;
+    QgsQuickFeatureModel *mModel;
     bool mDirty;
     unsigned int mWidth;
-    QgsQuickMapSettings* mMapSettings;
+    QgsQuickMapSettings *mMapSettings;
 };
 
 #endif // QGSQUICKFEATUREMODELHIGHLIGHT_H

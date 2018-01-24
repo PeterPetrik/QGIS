@@ -49,7 +49,7 @@ QgsCoordinateReferenceSystem QgsQuickCoordinateTransformer::destinationCrs() con
   return mCoordinateTransform.destinationCrs();
 }
 
-void QgsQuickCoordinateTransformer::setDestinationCrs( const QgsCoordinateReferenceSystem& destinationCrs )
+void QgsQuickCoordinateTransformer::setDestinationCrs( const QgsCoordinateReferenceSystem &destinationCrs )
 {
   if ( destinationCrs == mCoordinateTransform.destinationCrs() )
     return;
@@ -64,7 +64,7 @@ QgsCoordinateReferenceSystem QgsQuickCoordinateTransformer::sourceCrs() const
   return mCoordinateTransform.sourceCrs();
 }
 
-void QgsQuickCoordinateTransformer::setSourceCrs( const QgsCoordinateReferenceSystem& sourceCrs )
+void QgsQuickCoordinateTransformer::setSourceCrs( const QgsCoordinateReferenceSystem &sourceCrs )
 {
   if ( sourceCrs == mCoordinateTransform.sourceCrs() )
     return;

@@ -39,28 +39,30 @@ class QUICK_EXPORT QgsQuickRubberband : public QQuickItem
 {
     Q_OBJECT
 
-    Q_PROPERTY( QgsQuickRubberbandModel* model READ model WRITE setModel NOTIFY modelChanged )
-    Q_PROPERTY( QgsQuickMapSettings* mapSettings READ mapSettings WRITE setMapSettings NOTIFY mapSettingsChanged )
+    Q_PROPERTY( QgsQuickRubberbandModel *model READ model WRITE setModel NOTIFY modelChanged )
+    Q_PROPERTY( QgsQuickMapSettings *mapSettings READ mapSettings WRITE setMapSettings NOTIFY mapSettingsChanged )
+
     /**
       * Rubberband color. Defaults to dark red.
       */
     Q_PROPERTY( QColor color READ color WRITE setColor NOTIFY colorChanged )
+
     /**
       * Rubberband pen width. Defaults to 1.5
       */
     Q_PROPERTY( qreal width READ width WRITE setWidth NOTIFY widthChanged )
 
   public:
-    QgsQuickRubberband( QQuickItem* parent = nullptr );
+    QgsQuickRubberband( QQuickItem *parent = nullptr );
 
-    QgsQuickRubberbandModel* model() const;
-    void setModel( QgsQuickRubberbandModel* model );
+    QgsQuickRubberbandModel *model() const;
+    void setModel( QgsQuickRubberbandModel *model );
 
-    QgsQuickMapSettings* mapSettings() const;
-    void setMapSettings( QgsQuickMapSettings* mapSettings );
+    QgsQuickMapSettings *mapSettings() const;
+    void setMapSettings( QgsQuickMapSettings *mapSettings );
 
     QColor color() const;
-    void setColor( const QColor& color );
+    void setColor( const QColor &color );
 
     qreal width() const;
     void setWidth( qreal width );
@@ -75,10 +77,10 @@ class QUICK_EXPORT QgsQuickRubberband : public QQuickItem
     void markDirty();
 
   private:
-    QSGNode* updatePaintNode( QSGNode* n, QQuickItem::UpdatePaintNodeData* );
+    QSGNode *updatePaintNode( QSGNode *n, QQuickItem::UpdatePaintNodeData * );
 
-    QgsQuickRubberbandModel* mModel;
-    QgsQuickMapSettings* mMapSettings;
+    QgsQuickRubberbandModel *mModel;
+    QgsQuickMapSettings *mMapSettings;
     bool mDirty;
     QColor mColor;
     qreal mWidth;

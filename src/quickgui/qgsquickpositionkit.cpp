@@ -18,96 +18,106 @@
 #include "qgsquickpositionkit.h"
 #include "qgsquicksimulatedpositionsource.h"
 
-QgsQuickPositionKit::QgsQuickPositionKit(QObject *parent)
-  : QObject(parent)
-  , mAccuracy(-1)
-  , mDirection(-1)
-  , mHasPosition(false)
-  , mIsSimulated(false)
-  , mSource(nullptr)
+QgsQuickPositionKit::QgsQuickPositionKit( QObject *parent )
+  : QObject( parent )
+  , mAccuracy( -1 )
+  , mDirection( -1 )
+  , mHasPosition( false )
+  , mIsSimulated( false )
+  , mSource( nullptr )
 {
   use_gps_location();
 }
 
-QGeoPositionInfoSource*  QgsQuickPositionKit::gpsSource() {
-    // this should give us "true" position source
-    // on Linux it comes from Geoclue library
-    QGeoPositionInfoSource* source = QGeoPositionInfoSource::createDefaultSource(this);
-    if (source->error() != QGeoPositionInfoSource::NoError) {
-        QgsMessageLog::logMessage( tr( "Unable to create default GPS Position Source" )
-                                   + "(" + QString::number((long)source->error()) + ")"
-                                   , "QgsQuick"
-                                   , QgsMessageLog::WARNING );
-        delete source;
-        return 0;
-    } else {
-        return source;
-    }
-}
-
-QGeoPositionInfoSource*  QgsQuickPositionKit::simulatedSource(double longitude, double latitude, double radius) {
-    return new QgsQuickSimulatedPositionSource(this, longitude, latitude, radius);
-}
-
-void QgsQuickPositionKit::use_simulated_location(double longitude, double latitude, double radius) {
-    QGeoPositionInfoSource* source = simulatedSource(longitude, latitude, radius);
-    mIsSimulated = true;
-    replacePositionSource(source);
-}
-
-void QgsQuickPositionKit::use_gps_location() {
-    QGeoPositionInfoSource* source = gpsSource();
-    mIsSimulated = false;
-    replacePositionSource(source);
-}
-
-void QgsQuickPositionKit::replacePositionSource(QGeoPositionInfoSource* source) {
-    if (mSource == source)
-        return;
-
-    if (mSource) {
-        disconnect(mSource, 0, this, 0);
-        delete mSource;
-        mSource = 0;
-    }
-
-    mSource = source;
-
-    if (mSource)
-    {
-      connect(mSource, SIGNAL(positionUpdated(QGeoPositionInfo)),
-              this, SLOT(positionUpdated(QGeoPositionInfo)));
-      connect(mSource, SIGNAL(updateTimeout()), this, SLOT(onUpdateTimeout()));
-      mSource->startUpdates();
-      qDebug() << "Position source changed: " << mSource->sourceName();
-    }
-}
-
-void QgsQuickPositionKit::positionUpdated(const QGeoPositionInfo &info)
+QGeoPositionInfoSource  *QgsQuickPositionKit::gpsSource()
 {
-  if (!info.coordinate().isValid()){
-      // keep last valid position
-      mHasPosition = false;
-      emit hasPositionChanged();
+  // this should give us "true" position source
+  // on Linux it comes from Geoclue library
+  QGeoPositionInfoSource *source = QGeoPositionInfoSource::createDefaultSource( this );
+  if ( source->error() != QGeoPositionInfoSource::NoError )
+  {
+    QgsMessageLog::logMessage( tr( "Unable to create default GPS Position Source" )
+                               + "(" + QString::number( ( long )source->error() ) + ")"
+                               , "QgsQuick"
+                               , QgsMessageLog::WARNING );
+    delete source;
+    return 0;
+  }
+  else
+  {
+    return source;
+  }
+}
+
+QGeoPositionInfoSource  *QgsQuickPositionKit::simulatedSource( double longitude, double latitude, double radius )
+{
+  return new QgsQuickSimulatedPositionSource( this, longitude, latitude, radius );
+}
+
+void QgsQuickPositionKit::use_simulated_location( double longitude, double latitude, double radius )
+{
+  QGeoPositionInfoSource *source = simulatedSource( longitude, latitude, radius );
+  mIsSimulated = true;
+  replacePositionSource( source );
+}
+
+void QgsQuickPositionKit::use_gps_location()
+{
+  QGeoPositionInfoSource *source = gpsSource();
+  mIsSimulated = false;
+  replacePositionSource( source );
+}
+
+void QgsQuickPositionKit::replacePositionSource( QGeoPositionInfoSource *source )
+{
+  if ( mSource == source )
+    return;
+
+  if ( mSource )
+  {
+    disconnect( mSource, 0, this, 0 );
+    delete mSource;
+    mSource = 0;
+  }
+
+  mSource = source;
+
+  if ( mSource )
+  {
+    connect( mSource, SIGNAL( positionUpdated( QGeoPositionInfo ) ),
+             this, SLOT( positionUpdated( QGeoPositionInfo ) ) );
+    connect( mSource, SIGNAL( updateTimeout() ), this, SLOT( onUpdateTimeout() ) );
+    mSource->startUpdates();
+    qDebug() << "Position source changed: " << mSource->sourceName();
+  }
+}
+
+void QgsQuickPositionKit::positionUpdated( const QGeoPositionInfo &info )
+{
+  if ( !info.coordinate().isValid() )
+  {
+    // keep last valid position
+    mHasPosition = false;
+    emit hasPositionChanged();
   }
 
 
-  mPosition = QgsPoint(info.coordinate().longitude(),
-                       info.coordinate().latitude(),
-                       info.coordinate().altitude()); // can be NaN
+  mPosition = QgsPoint( info.coordinate().longitude(),
+                        info.coordinate().latitude(),
+                        info.coordinate().altitude() ); // can be NaN
 
-  if (info.hasAttribute(QGeoPositionInfo::HorizontalAccuracy))
-    mAccuracy = info.attribute(QGeoPositionInfo::HorizontalAccuracy);
+  if ( info.hasAttribute( QGeoPositionInfo::HorizontalAccuracy ) )
+    mAccuracy = info.attribute( QGeoPositionInfo::HorizontalAccuracy );
   else
     mAccuracy = -1;
-  if (info.hasAttribute(QGeoPositionInfo::Direction))
-    mDirection = info.attribute(QGeoPositionInfo::Direction);
+  if ( info.hasAttribute( QGeoPositionInfo::Direction ) )
+    mDirection = info.attribute( QGeoPositionInfo::Direction );
   else
     mDirection = -1;
 
   emit positionChanged();
 
-  if (!mHasPosition)
+  if ( !mHasPosition )
   {
     mHasPosition = true;
     emit hasPositionChanged();
@@ -116,7 +126,7 @@ void QgsQuickPositionKit::positionUpdated(const QGeoPositionInfo &info)
 
 void QgsQuickPositionKit::onUpdateTimeout()
 {
-  if (mHasPosition)
+  if ( mHasPosition )
   {
     mHasPosition = false;
     emit hasPositionChanged();

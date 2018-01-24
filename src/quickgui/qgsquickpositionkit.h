@@ -37,87 +37,87 @@
  */
 class QUICK_EXPORT QgsQuickPositionKit : public QObject
 {
-  Q_OBJECT
+    Q_OBJECT
 
-  /**
-   * GPS position in WGS84 coords
-   */
-  Q_PROPERTY(QgsPoint position READ position NOTIFY positionChanged)
+    /**
+     * GPS position in WGS84 coords
+     */
+    Q_PROPERTY( QgsPoint position READ position NOTIFY positionChanged )
 
-  /**
-   * GPS position is available (position property is a valid number)
-   */
-  Q_PROPERTY(bool hasPosition READ hasPosition NOTIFY hasPositionChanged)
+    /**
+     * GPS position is available (position property is a valid number)
+     */
+    Q_PROPERTY( bool hasPosition READ hasPosition NOTIFY hasPositionChanged )
 
-  /**
-   * GPS horizontal accuracy in meters, -1 if not available
-   */
-  Q_PROPERTY(qreal accuracy READ accuracy NOTIFY positionChanged)
+    /**
+     * GPS horizontal accuracy in meters, -1 if not available
+     */
+    Q_PROPERTY( qreal accuracy READ accuracy NOTIFY positionChanged )
 
-  /**
-   * GPS direction, bearing in degrees clockwise from north to direction of travel. -1 if not available
-   */
-  Q_PROPERTY(qreal direction READ direction NOTIFY positionChanged)
+    /**
+     * GPS direction, bearing in degrees clockwise from north to direction of travel. -1 if not available
+     */
+    Q_PROPERTY( qreal direction READ direction NOTIFY positionChanged )
 
-  /**
-   * GPS position and accuracy is simulated (not real from GPS sensor). Default false (use real GPS)
-   */
-  Q_PROPERTY(bool isSimulated READ simulated NOTIFY isSimulatedChanged)
+    /**
+     * GPS position and accuracy is simulated (not real from GPS sensor). Default false (use real GPS)
+     */
+    Q_PROPERTY( bool isSimulated READ simulated NOTIFY isSimulatedChanged )
 
-public:
-  explicit QgsQuickPositionKit(QObject *parent = 0);
+  public:
+    explicit QgsQuickPositionKit( QObject *parent = 0 );
 
-  bool hasPosition() const { return mHasPosition; }
-  QgsPoint position() const { return mPosition; }
-  qreal accuracy() const { return mAccuracy; }
-  qreal direction() const { return mDirection; }
-  bool simulated() const { return mIsSimulated; }
+    bool hasPosition() const { return mHasPosition; }
+    QgsPoint position() const { return mPosition; }
+    qreal accuracy() const { return mAccuracy; }
+    qreal direction() const { return mDirection; }
+    bool simulated() const { return mIsSimulated; }
 
-  /**
-   * Use simulated GPS source.
-   *
-   * We do not want to have the origin point as property
-   * We basically want to set it once based on project/map cente and keep
-   * it that way regardless of mapsettings change (e.g. zoom etc)
-   */
-  Q_INVOKABLE void use_simulated_location(double longitude, double latitude, double radius);
+    /**
+     * Use simulated GPS source.
+     *
+     * We do not want to have the origin point as property
+     * We basically want to set it once based on project/map cente and keep
+     * it that way regardless of mapsettings change (e.g. zoom etc)
+     */
+    Q_INVOKABLE void use_simulated_location( double longitude, double latitude, double radius );
 
-  /**
-   * Use real GPS source (not simulated)
-   */
-  Q_INVOKABLE void use_gps_location();
+    /**
+     * Use real GPS source (not simulated)
+     */
+    Q_INVOKABLE void use_gps_location();
 
-signals:
-  void positionChanged();
-  void hasPositionChanged();
-  void isSimulatedChanged();
-  void statusChanged();
+  signals:
+    void positionChanged();
+    void hasPositionChanged();
+    void isSimulatedChanged();
+    void statusChanged();
 
-public slots:
+  public slots:
 
-private slots:
-    void positionUpdated(const QGeoPositionInfo &info);
+  private slots:
+    void positionUpdated( const QGeoPositionInfo &info );
     void onUpdateTimeout();
 
-protected:
+  protected:
 
-protected:
-  QgsPoint mPosition;
-  qreal mAccuracy;
-  qreal mDirection;
-  bool mHasPosition;
+  protected:
+    QgsPoint mPosition;
+    qreal mAccuracy;
+    qreal mDirection;
+    bool mHasPosition;
 
-  // Simulated source
-  bool mIsSimulated;
+    // Simulated source
+    bool mIsSimulated;
 
-  QGeoPositionInfoSource* mSource;
+    QGeoPositionInfoSource *mSource;
 
-private:
-  void replacePositionSource(QGeoPositionInfoSource* source);
-  QString calculateStatusLabel();
+  private:
+    void replacePositionSource( QGeoPositionInfoSource *source );
+    QString calculateStatusLabel();
 
-  QGeoPositionInfoSource* gpsSource();
-  QGeoPositionInfoSource* simulatedSource(double longitude, double latitude, double radius);
+    QGeoPositionInfoSource *gpsSource();
+    QGeoPositionInfoSource *simulatedSource( double longitude, double latitude, double radius );
 
 };
 

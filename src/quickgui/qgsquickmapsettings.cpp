@@ -21,9 +21,9 @@
 
 #include "qgsquickmapsettings.h"
 
-QgsQuickMapSettings::QgsQuickMapSettings( QObject* parent )
+QgsQuickMapSettings::QgsQuickMapSettings( QObject *parent )
   : QObject( parent )
-  , mProject(0)
+  , mProject( 0 )
 {
   // Connect signals for derived values
   connect( this, &QgsQuickMapSettings::destinationCrsChanged, this, &QgsQuickMapSettings::mapUnitsPerPixelChanged );
@@ -39,32 +39,36 @@ QgsQuickMapSettings::~QgsQuickMapSettings()
 
 }
 
-void QgsQuickMapSettings::setProject(QgsProject* project) {
-    if (project == mProject)
-        return;
+void QgsQuickMapSettings::setProject( QgsProject *project )
+{
+  if ( project == mProject )
+    return;
 
-    // If we have already something connected, disconnect it!
-    if (mProject) {
-        disconnect(mProject, 0, this, 0);
-    }
+  // If we have already something connected, disconnect it!
+  if ( mProject )
+  {
+    disconnect( mProject, 0, this, 0 );
+  }
 
-    mProject = project;
+  mProject = project;
 
-    // Connect all signals
-    if (mProject) {
-        connect( mProject, &QgsProject::readProject, this, &QgsQuickMapSettings::onReadProject );
+  // Connect all signals
+  if ( mProject )
+  {
+    connect( mProject, &QgsProject::readProject, this, &QgsQuickMapSettings::onReadProject );
 
-        // TODO: we have a problem here, since project can have alread .qgs loaded, so
-        // we are unable to get DOM to reload project settings for the canvas
-        // fortunately setProject is used only once at the very beginning of the run,
-        // so it should work ....
-        setDestinationCrs(mProject->crs());
-    }
-    emit projectChanged();
+    // TODO: we have a problem here, since project can have alread .qgs loaded, so
+    // we are unable to get DOM to reload project settings for the canvas
+    // fortunately setProject is used only once at the very beginning of the run,
+    // so it should work ....
+    setDestinationCrs( mProject->crs() );
+  }
+  emit projectChanged();
 }
 
-QgsProject* QgsQuickMapSettings::project() const {
-    return mProject;
+QgsProject *QgsQuickMapSettings::project() const
+{
+  return mProject;
 }
 
 QgsRectangle QgsQuickMapSettings::extent() const
@@ -72,7 +76,7 @@ QgsRectangle QgsQuickMapSettings::extent() const
   return mMapSettings.extent();
 }
 
-void QgsQuickMapSettings::setExtent( const QgsRectangle& extent )
+void QgsQuickMapSettings::setExtent( const QgsRectangle &extent )
 {
   if ( mMapSettings.extent() == extent )
     return;
@@ -81,7 +85,7 @@ void QgsQuickMapSettings::setExtent( const QgsRectangle& extent )
   emit extentChanged();
 }
 
-void QgsQuickMapSettings::setCenter( const QgsPoint& center )
+void QgsQuickMapSettings::setCenter( const QgsPoint &center )
 {
   QgsVector delta = QgsPointXY( center ) - mMapSettings.extent().center();
 
@@ -104,14 +108,14 @@ QgsRectangle QgsQuickMapSettings::visibleExtent() const
   return mMapSettings.visibleExtent();
 }
 
-QPointF QgsQuickMapSettings::coordinateToScreen( const QgsPoint& p ) const
+QPointF QgsQuickMapSettings::coordinateToScreen( const QgsPoint &p ) const
 {
   QgsPointXY pt( p.x(), p.y() );
   QgsPointXY pp = mMapSettings.mapToPixel().transform( pt );
   return pp.toQPointF();
 }
 
-QgsPoint QgsQuickMapSettings::screenToCoordinate( const QPointF& p ) const
+QgsPoint QgsQuickMapSettings::screenToCoordinate( const QPointF &p ) const
 {
   const QgsPointXY pp = mMapSettings.mapToPixel().toMapCoordinates( p.toPoint() );
   return QgsPoint( pp );
@@ -127,7 +131,7 @@ QSize QgsQuickMapSettings::outputSize() const
   return mMapSettings.outputSize();
 }
 
-void QgsQuickMapSettings::setOutputSize( const QSize& outputSize )
+void QgsQuickMapSettings::setOutputSize( const QSize &outputSize )
 {
   if ( mMapSettings.outputSize() == outputSize )
     return;
@@ -155,7 +159,7 @@ QgsCoordinateReferenceSystem QgsQuickMapSettings::destinationCrs() const
   return mMapSettings.destinationCrs();
 }
 
-void QgsQuickMapSettings::setDestinationCrs( const QgsCoordinateReferenceSystem& destinationCrs )
+void QgsQuickMapSettings::setDestinationCrs( const QgsCoordinateReferenceSystem &destinationCrs )
 {
   if ( mMapSettings.destinationCrs() == destinationCrs )
     return;
@@ -164,18 +168,18 @@ void QgsQuickMapSettings::setDestinationCrs( const QgsCoordinateReferenceSystem&
   emit destinationCrsChanged();
 }
 
-QList<QgsMapLayer*> QgsQuickMapSettings::layers() const
+QList<QgsMapLayer *> QgsQuickMapSettings::layers() const
 {
   return mMapSettings.layers();
 }
 
-void QgsQuickMapSettings::setLayers( const QList<QgsMapLayer*>& layers )
+void QgsQuickMapSettings::setLayers( const QList<QgsMapLayer *> &layers )
 {
   mMapSettings.setLayers( layers );
   emit layersChanged();
 }
 
-void QgsQuickMapSettings::onReadProject( const QDomDocument& doc )
+void QgsQuickMapSettings::onReadProject( const QDomDocument &doc )
 {
   QDomNodeList nodes = doc.elementsByTagName( "mapcanvas" );
   if ( nodes.count() )

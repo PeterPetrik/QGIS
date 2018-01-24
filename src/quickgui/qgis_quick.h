@@ -18,10 +18,10 @@
 
 #ifndef QUICK_EXPORT
 #  ifdef qgis_quick_EXPORTS
-      /* We are building this library */
+/* We are building this library */
 #     define QUICK_EXPORT __attribute__((visibility("default")))
 #  else
-      /* We are using this library */
+/* We are using this library */
 #     define QUICK_EXPORT __attribute__((visibility("default")))
 #  endif
 #endif //QUICK_EXPORT

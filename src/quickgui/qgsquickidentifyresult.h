@@ -36,24 +36,24 @@ class QUICK_EXPORT QgsQuickIdentifyResult
 {
     Q_GADGET
 
-    Q_PROPERTY( QgsVectorLayer* layer READ layer )
+    Q_PROPERTY( QgsVectorLayer *layer READ layer )
     Q_PROPERTY( QgsFeature feature READ feature )
-    Q_PROPERTY( bool valid READ valid)
+    Q_PROPERTY( bool valid READ valid )
 
   public:
     QgsQuickIdentifyResult();
-    QgsQuickIdentifyResult( const QgsFeature& feature,
-                            QgsVectorLayer* layer);
+    QgsQuickIdentifyResult( const QgsFeature &feature,
+                            QgsVectorLayer *layer );
 
-    QgsVectorLayer* layer() const;
+    QgsVectorLayer *layer() const;
     QgsFeature feature() const;
     bool valid() const;
 
   private:
-    QgsVectorLayer* mLayer;
+    QgsVectorLayer *mLayer;
     QgsFeature mFeature;
 };
 
-Q_DECLARE_METATYPE(QgsQuickIdentifyResult)
+Q_DECLARE_METATYPE( QgsQuickIdentifyResult )
 
 #endif // QGSQUICKIDENTIFYRESULT_H

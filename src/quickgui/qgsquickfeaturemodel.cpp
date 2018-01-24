@@ -26,7 +26,7 @@ QgsQuickFeatureModel::QgsQuickFeatureModel( QObject *parent )
   connect( this, &QgsQuickFeatureModel::modelReset, this, &QgsQuickFeatureModel::featureChanged );
 }
 
-void QgsQuickFeatureModel::setFeature( const QgsFeature& feature )
+void QgsQuickFeatureModel::setFeature( const QgsFeature &feature )
 {
   if ( mFeature == feature )
     return;
@@ -37,7 +37,7 @@ void QgsQuickFeatureModel::setFeature( const QgsFeature& feature )
   emit featureChanged();
 }
 
-void QgsQuickFeatureModel::setLayer( QgsVectorLayer* layer )
+void QgsQuickFeatureModel::setLayer( QgsVectorLayer *layer )
 {
   if ( layer == mLayer )
     return;
@@ -54,7 +54,7 @@ void QgsQuickFeatureModel::setLayer( QgsVectorLayer* layer )
   emit layerChanged();
 }
 
-QgsVectorLayer* QgsQuickFeatureModel::layer() const
+QgsVectorLayer *QgsQuickFeatureModel::layer() const
 {
   return mLayer;
 }
@@ -76,7 +76,7 @@ QHash<int, QByteArray> QgsQuickFeatureModel::roleNames() const
 }
 
 
-int QgsQuickFeatureModel::rowCount( const QModelIndex& parent ) const
+int QgsQuickFeatureModel::rowCount( const QModelIndex &parent ) const
 {
   if ( parent.isValid() )
     return 0;
@@ -84,7 +84,7 @@ int QgsQuickFeatureModel::rowCount( const QModelIndex& parent ) const
     return mFeature.attributes().count();
 }
 
-QVariant QgsQuickFeatureModel::data( const QModelIndex& index, int role ) const
+QVariant QgsQuickFeatureModel::data( const QModelIndex &index, int role ) const
 {
   if ( mLayer )
     qWarning() << "Get data " << mLayer->name();
@@ -111,12 +111,12 @@ QVariant QgsQuickFeatureModel::data( const QModelIndex& index, int role ) const
   return QVariant();
 }
 
-bool QgsQuickFeatureModel::setData( const QModelIndex& index, const QVariant& value, int role )
+bool QgsQuickFeatureModel::setData( const QModelIndex &index, const QVariant &value, int role )
 {
   if ( data( index, role ) == value )
     return true;
 
-  switch( role )
+  switch ( role )
   {
     case AttributeValue:
     {
@@ -228,7 +228,7 @@ void QgsQuickFeatureModel::resetAttributes()
       {
         QgsExpression exp( fields.at( i ).defaultValueDefinition().expression() );
         QVariant value = exp.evaluate( &expressionContext );
-        mFeature.setAttribute( i , value );
+        mFeature.setAttribute( i, value );
       }
       else
       {

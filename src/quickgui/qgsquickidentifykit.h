@@ -45,21 +45,23 @@ class QgsVectorLayer;
 class QUICK_EXPORT QgsQuickIdentifyKit : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY( QgsQuickMapSettings* mapSettings READ mapSettings WRITE setMapSettings NOTIFY mapSettingsChanged )
+    Q_PROPERTY( QgsQuickMapSettings *mapSettings READ mapSettings WRITE setMapSettings NOTIFY mapSettingsChanged )
+
     /**
       * Search radius for the identify functions from the point. Default is 8
       */
     Q_PROPERTY( double searchRadiusMm READ searchRadiusMm WRITE setSearchRadiusMm NOTIFY searchRadiusMmChanged )
+
     /**
       * Maximum number of feature returned from by the identify functions in QgsFeatureList. Default is 100
       */
     Q_PROPERTY( long featuresLimit MEMBER mFeaturesLimit NOTIFY featuresLimitChanged )
 
-  public:   
+  public:
     explicit QgsQuickIdentifyKit( QObject *parent = 0 );
 
-    QgsQuickMapSettings* mapSettings() const;
-    void setMapSettings( QgsQuickMapSettings* mapSettings );
+    QgsQuickMapSettings *mapSettings() const;
+    void setMapSettings( QgsQuickMapSettings *mapSettings );
 
     double searchRadiusMm() const;
     void setSearchRadiusMm( double searchRadiusMm );
@@ -67,36 +69,38 @@ class QUICK_EXPORT QgsQuickIdentifyKit : public QObject
     /**
       * Get the closest feature to the point from the layer in case it is identifiable layer
       */
-    Q_INVOKABLE QgsFeature identifyOne( QgsVectorLayer* layer, const QPointF& point );
+    Q_INVOKABLE QgsFeature identifyOne( QgsVectorLayer *layer, const QPointF &point );
+
     /**
       * Get the closest feature to the point from any identifiable layer
       */
-    Q_INVOKABLE QgsQuickIdentifyResult identifyOne( const QPointF& point );
+    Q_INVOKABLE QgsQuickIdentifyResult identifyOne( const QPointF &point );
 
     /**
       * Get all features interseting the point from the layer in case it is identifiable layer
       */
-    Q_INVOKABLE QgsFeatureList identify( QgsVectorLayer* layer, const QPointF& point );
+    Q_INVOKABLE QgsFeatureList identify( QgsVectorLayer *layer, const QPointF &point );
+
     /**
       * Get all features interseting the point from any identifiable layer
       */
-    Q_INVOKABLE QList<QgsQuickIdentifyResult> identify( const QPointF& point );
+    Q_INVOKABLE QList<QgsQuickIdentifyResult> identify( const QPointF &point );
 
 
-   signals:
+  signals:
     void mapSettingsChanged();
     void searchRadiusMmChanged();
     void featuresLimitChanged();
 
   private:
-    QgsQuickProject* mProject;
-    QgsQuickMapSettings* mMapSettings;
+    QgsQuickProject *mProject;
+    QgsQuickMapSettings *mMapSettings;
 
-    double searchRadiusMU( const QgsRenderContext& context ) const;
+    double searchRadiusMU( const QgsRenderContext &context ) const;
     double searchRadiusMU() const;
 
-    QgsRectangle toLayerCoordinates( QgsMapLayer* layer, const QgsRectangle& rect ) const;
-    QgsFeatureList identifyVectorLayer( QgsVectorLayer* layer, const QgsPointXY& point ) const;
+    QgsRectangle toLayerCoordinates( QgsMapLayer *layer, const QgsRectangle &rect ) const;
+    QgsFeatureList identifyVectorLayer( QgsVectorLayer *layer, const QgsPointXY &point ) const;
 
     double mSearchRadiusMm;
     int mFeaturesLimit;
