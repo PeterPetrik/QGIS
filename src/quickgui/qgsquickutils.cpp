@@ -13,30 +13,23 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "qgsquickutils.h"
-#include "qgsquickstyle.h"
-#include "qgscoordinatereferencesystem.h"
-#include "qgscoordinatetransform.h"
-#include "qgsvectorlayer.h"
-#include "qgsquickmapsettings.h"
-#include "qgsdistancearea.h"
-#include "qgenericatomic.h"
-#include "qgsmessagelog.h"
-
-#include <QMap>
-#include <QString>
 #include <QDebug>
-#include <QThread>
-#include <QFileInfo>
-#include <QLibraryInfo>
 #include <QDir>
 #include <QFile>
+#include <QFileInfo>
+#include <QString>
+#include <QThread>
 
-#ifdef ANDROID
-#include <QAndroidJniEnvironment>
-#include <QAndroidJniObject>
-#include <QtAndroid>
-#endif
+#include "qgscoordinatereferencesystem.h"
+#include "qgscoordinatetransform.h"
+#include "qgsdistancearea.h"
+#include "qgsmessagelog.h"
+#include "qgsvectorlayer.h"
+
+#include "qgsquickmapsettings.h"
+#include "qgsquickutils.h"
+#include "qgsquickstyle.h"
+
 
 QgsQuickUtils *QgsQuickUtils::sInstance = 0;
 
@@ -203,36 +196,14 @@ QUrl QgsQuickUtils::getThemeIcon( const QString &name )
 {
   Q_ASSERT( mStyle );
 
-  QString ppitype;
-  QString extension;
-
-  if ( mStyle->useVectorIcons() )
-  {
-    ppitype = "nodpi";
-    extension = ".svg";
-  }
-  else
-  {
-    float ppi = mStyle->devicePixels() / 0.00768443;
-    if ( ppi >= 360 )
-      ppitype = "xxxhdpi";
-    else if ( ppi >= 270 )
-      ppitype = "xxhdpi";
-    else if ( ppi >= 180 )
-      ppitype = "xhdpi";
-    else if ( ppi >= 135 )
-      ppitype = "hdpi";
-    else
-      ppitype = "mdpi";
-    extension = ".png";
-  }
+  QString extension( ".svg" );
 
   // Check in custom dir
-  QString path( mStyle->themeDir() + "/" + ppitype + "/" + name + extension );
+  QString path( mStyle->themeDir() + "/" + name + extension );
   qDebug() << "Custom icon from " << path;
   if ( !fileExists( path ) )
   {
-    path = "qrc:/" + ppitype + "/" + name + extension;
+    path = "qrc:/" + name + extension;
   }
 
   qDebug() << "Using icon " << name << " from " << path;

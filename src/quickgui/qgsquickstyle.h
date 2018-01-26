@@ -49,13 +49,6 @@ class QUICK_EXPORT QgsQuickStyle: public QObject
       */
     Q_PROPERTY( QString theme READ themeDir WRITE setThemeDir NOTIFY themeDirChanged )
 
-    /**
-     * Use SVG instead of PNGs (needs Android API level 21 or above) for icons
-     *
-     * /sa QgsQuickUtils::getThemeIcon()
-     */
-    Q_PROPERTY( bool useVectorIcons READ useVectorIcons WRITE setUseVectorIcons NOTIFY useVectorIconsChanged )
-
   public:
     explicit QgsQuickStyle( QObject *parent = 0 );
 
@@ -70,12 +63,10 @@ class QUICK_EXPORT QgsQuickStyle: public QObject
   signals:
     void devicePixelsChanged();
     void themeDirChanged();
-    void useVectorIconsChanged();
 
   private:
     QString mThemeDir;
     qreal mDevicePixels;
-    bool mUseVectorIcons;
 };
 
 #endif // QGSQUICKSTYLE_H

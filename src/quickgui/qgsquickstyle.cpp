@@ -18,7 +18,6 @@
 QgsQuickStyle::QgsQuickStyle( QObject *parent ):
   QObject( parent )
   , mDevicePixels( 1.0f )
-  , mUseVectorIcons( false )
 {
 }
 
@@ -50,16 +49,3 @@ void QgsQuickStyle::setThemeDir( QString dir )
   }
 }
 
-bool QgsQuickStyle::useVectorIcons() const
-{
-  return mUseVectorIcons;
-}
-
-void QgsQuickStyle::setUseVectorIcons( bool use )
-{
-  if ( use != mUseVectorIcons )
-  {
-    mUseVectorIcons = use;
-    emit useVectorIconsChanged();
-  }
-}
