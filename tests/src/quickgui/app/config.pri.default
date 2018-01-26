@@ -1,4 +1,0 @@
-# set the following paths according to your system
-# To build for android you need OSGEO4A
-# e.g /home/bob/OSGeo4A
-OSGEO4A_DIR = [insert path here]/OSGeo4A 
