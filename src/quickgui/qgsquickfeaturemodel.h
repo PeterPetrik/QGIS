@@ -17,9 +17,12 @@
 #define QGSQUICKFEATUREMODEL_H
 
 #include <QAbstractListModel>
+#include <QVector>
+
+#include "qgsfeature.h"
+#include "qgsvectorlayer.h"
 
 #include "qgis_quick.h"
-#include "qgsquickgeometry.h"
 
 /**
  * \ingroup quick

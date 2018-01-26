@@ -6,7 +6,6 @@ SET(QGIS_QUICK_GUI_MOC_HDRS
   qgsquickcoordinatetransformer.h
   qgsquickfeaturemodel.h
   qgsquickfeaturemodelhighlight.h
-  qgsquickgeometry.h
   qgsquickidentifykit.h
   qgsquickidentifyresult.h
   qgsquickmapcanvasmap.h
@@ -14,8 +13,6 @@ SET(QGIS_QUICK_GUI_MOC_HDRS
   qgsquickmaptransform.h
   qgsquickmessagelogmodel.h
   qgsquickpositionkit.h
-  qgsquickrubberband.h
-  qgsquickrubberbandmodel.h
   qgsquickscalebarkit.h
   qgsquicksimulatedpositionsource.h
   qgsquickstyle.h
@@ -34,7 +31,6 @@ SET(QGIS_QUICK_GUI_SRC
   qgsquickcoordinatetransformer.cpp
   qgsquickfeaturemodel.cpp
   qgsquickfeaturemodelhighlight.cpp
-  qgsquickgeometry.cpp
   qgsquickidentifykit.cpp
   qgsquickidentifyresult.cpp
   qgsquickmapcanvasmap.cpp
@@ -42,8 +38,6 @@ SET(QGIS_QUICK_GUI_SRC
   qgsquickmaptransform.cpp
   qgsquickmessagelogmodel.cpp
   qgsquickpositionkit.cpp
-  qgsquickrubberband.cpp
-  qgsquickrubberbandmodel.cpp
   qgsquickscalebarkit.cpp
   qgsquicksgrubberband.cpp
   qgsquicksimulatedpositionsource.cpp

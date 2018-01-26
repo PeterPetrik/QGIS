@@ -29,7 +29,6 @@
 #include "qgsquickcoordinatetransformer.h"
 #include "qgsquickfeaturemodel.h"
 #include "qgsquickfeaturemodelhighlight.h"
-#include "qgsquickgeometry.h"
 #include "qgsquickidentifykit.h"
 #include "qgsquickidentifyresult.h"
 #include "qgsquickmapcanvasmap.h"
@@ -39,8 +38,6 @@
 #include "qgsquickpicturesource.h"
 #include "qgsquickplugin.h"
 #include "qgsquickpositionkit.h"
-#include "qgsquickrubberband.h"
-#include "qgsquickrubberbandmodel.h"
 #include "qgsquickscalebarkit.h"
 #include "qgsquicksgrubberband.h"
 #include "qgsquickstyle.h"
@@ -86,8 +83,6 @@ void QgisQuickPlugin::registerTypes( const char *uri )
   qmlRegisterType< QgsQuickMapTransform >( uri, 0, 1, "MapTransform" );
   qmlRegisterType< QgsQuickMessageLogModel >( uri, 0, 1, "MessageLogModel" );
   qmlRegisterType< QgsQuickPositionKit >( uri, 0, 1, "PositionKit" );
-  qmlRegisterType< QgsQuickRubberband >( uri, 0, 1, "Rubberband" );
-  qmlRegisterType< QgsQuickRubberbandModel >( uri, 0, 1, "RubberbandModel" );
   qmlRegisterType< QgsQuickScaleBarKit >( uri, 0, 1, "ScaleBarKit" );
   qmlRegisterType< QgsQuickSubModel >( uri, 0, 1, "SubModel" );
   qmlRegisterType< QgsRelationManager >( uri, 0, 1, "RelationManager" );
