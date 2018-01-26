@@ -41,30 +41,24 @@ Last Change : Thursday November 02, 2017
     6.5. Debugging
   7. Setting up a Jenkins Build Server
   8. Debug output and running tests
-  9. Cross-compilation for Android
-    9.1. Build Linux application
-    9.2. Install Android build dependencies
-    9.3. Build OSGeo4A
-    9.4. Build qgis_quickapp
-    9.5. Deploy APK
-  10. Authors and Acknowledgments
+  9. Authors and Acknowledgments
 
 
   1. Introduction
   ===============
 
-This document is the original installation guide of the described software
-QGIS. The software and hardware descriptions named in this
-document are in most cases registered trademarks and are therefore subject
-to the legal requirements. QGIS is subject to the GNU General Public
+This document is the original installation guide of the described software 
+QGIS. The software and hardware descriptions named in this 
+document are in most cases registered trademarks and are therefore subject 
+to the legal requirements. QGIS is subject to the GNU General Public 
 License. Find more information on the QGIS Homepage:
 http://qgis.org
 
-The details, that are given in this document have been written and verified
-to the best of knowledge and responsibility of the editors. Nevertheless,
-mistakes concerning the content are possible. Therefore, all data are not
-liable to any duties or guarantees. The editors and publishers do not take
-any responsibility or liability for failures and their consequences. You are
+The details, that are given in this document have been written and verified 
+to the best of knowledge and responsibility of the editors. Nevertheless, 
+mistakes concerning the content are possible. Therefore, all data are not 
+liable to any duties or guarantees. The editors and publishers do not take 
+any responsibility or liability for failures and their consequences. You are 
 always welcome for indicating possible mistakes.
 
 Because the code of QGIS evolves from release to release, These instructions are
@@ -74,15 +68,15 @@ http://htmlpreview.github.io/?https://raw.github.com/qgis/QGIS/master/doc/INSTAL
 If you wish to build another version of QGIS, ensure to checkout the appropriate
 release branch. The QGIS source code can be found in the repository (https://github.com/qgis/QGIS).
 
-Please visit http://qgis.org for information on joining our mailing lists
+Please visit http://qgis.org for information on joining our mailing lists 
 and getting involved in the project further.
 
 /!\ Note to document writers: Please use this document as the central
-place for describing build procedures. Please do not remove this notice.
+place for describing build procedures. Please do not remove this notice. 
 
-/!\ Note to document writers: This document is generated from
-doc/INSTALL.t2t - if you need to edit this document, be sure to edit that
-file rather than the generated INSTALL document found in the root of the
+/!\ Note to document writers: This document is generated from 
+doc/INSTALL.t2t - if you need to edit this document, be sure to edit that 
+file rather than the generated INSTALL document found in the root of the 
 source directory.
 
 
@@ -428,7 +422,7 @@ is currently also how the binary QGIS packages are made (earlier versions used
 MinGW).
 
 This section describes the setup required to allow Visual Studio to be used to
-build QGIS.
+build QGIS. 
 
 
     4.1.1. Visual C++ Community Edition
@@ -521,22 +515,22 @@ installed in the default locations):
   call "%OSGEO4W_ROOT%\bin\o4w_env.bat"
   call "%OSGEO4W_ROOT%\bin\py3_env.bat"
   call "%OSGEO4W_ROOT%\bin\qt5_env.bat"
-
+  
   set O4W_ROOT=%OSGEO4W_ROOT:\=/%
   set LIB_DIR=%O4W_ROOT%
-
+  
   call "C:\Program Files\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" amd64
   path %path%;C:\Program Files\Microsoft Visual Studio 14.0\VC\bin
-
+  
   path %PATH%;C:\Program Files\CMake\bin;c:\cygwin\bin
-
+  
   @set GRASS_PREFIX=c:/OSGeo4W/apps/grass/grass-7.2.1
   @set INCLUDE=%INCLUDE%;%OSGEO4W_ROOT%\include
   @set LIB=%LIB%;%OSGEO4W_ROOT%\lib;%OSGEO4W_ROOT%\lib
-
+  
   set LIB=%LIB%;%OSGEO4W_ROOT%\apps\Qt5\lib;%OSGEO4W_ROOT%\lib
   set INCLUDE=%INCLUDE%;%OSGEO4W_ROOT%\apps\Qt5\include;%OSGEO4W_ROOT%\include
-
+  
   @cmd
 
 Start the batch file and on the command prompt checkout the QGIS source from
@@ -578,7 +572,7 @@ After the build completed you should install QGIS using the INSTALL target.
 
 Install QGIS by building the INSTALL project. By default this will install to
 c:\Program Files\qgis<version> (this can be changed by changing the
-CMAKE_INSTALL_PREFIX variable in cmake-gui).
+CMAKE_INSTALL_PREFIX variable in cmake-gui). 
 
 You will also either need to add all the dependency DLLs to the QGIS install
 directory or add their respective directories to your PATH.
@@ -621,7 +615,7 @@ Now create a package.
 
   ./quickpackage.sh
 
-After this you should now have a nsis installer containing your own build
+After this you should now have a nsis installer containing your own build 
 of QGIS and all dependencies needed to run it on a windows machine.
 
 
@@ -654,13 +648,13 @@ Read on to use the simplified approach with pre-built libraries...
 MSYS provides a unix style build environment under windows. We have created a
 zip archive that contains just about all dependencies.
 
-Get this:
+Get this: 
 
 http://download.osgeo.org/qgis/win32/msys.zip
 
 and unpack to c:\msys
 
-If you wish to prepare your msys environment yourself rather than using
+If you wish to prepare your msys environment yourself rather than using 
 our pre-made one, detailed instructions are provided elsewhere in this
 document.
 
@@ -680,8 +674,8 @@ When Qt installation is complete:
 
 Edit C:\Qt\5.9.1\bin\qtvars.bat and add the following lines:
 
-  set PATH=%PATH%;C:\msys\local\bin;c:\msys\local\lib
-  set PATH=%PATH%;"C:\Program Files\Subversion\bin"
+  set PATH=%PATH%;C:\msys\local\bin;c:\msys\local\lib 
+  set PATH=%PATH%;"C:\Program Files\Subversion\bin" 
 
 I suggest you also add C:\Qt\5.9.1\bin\ to your Environment Variables Path in
 the windows system preferences.
@@ -690,7 +684,7 @@ If you plan to do some debugging, you'll need to compile debug version of Qt:
 C:\Qt\5.9.1\bin\qtvars.bat compile_debug
 
 Note: there is a problem when compiling debug version of Qt 4.7, the script ends with
-this message  "mingw32-make: *** No rule to make target `debug'.  Stop.". To
+this message  "mingw32-make: *** No rule to make target `debug'.  Stop.". To 
 compile the debug version you have to go out of src directory and execute the
 following command:
 
@@ -738,18 +732,18 @@ to get versions that match your current Qt installed version.
       ====================
 
   c:\Qt\5.9.1\bin\qtvars.bat 
-  python configure.py -p win32-g++
-  make
-  make install
+  python configure.py -p win32-g++ 
+  make 
+  make install 
 
 
       4.2.4.4. Compile PyQt
       =====================
 
   c:\Qt\5.9.1\bin\qtvars.bat 
-  python configure.py
-  make
-  make install
+  python configure.py 
+  make 
+  make install 
 
 
       4.2.4.5. Final python notes
@@ -779,11 +773,11 @@ https://cmake.org/files/v3.9/cmake-3.9.3-win64-x64.msi
     4.2.7. QGIS
     ===========
 
-Start a cmd.exe window ( Start -> Run -> cmd.exe ) Create development
+Start a cmd.exe window ( Start -> Run -> cmd.exe ) Create development 
 directory and move into it
 
-  md c:\dev\cpp
-  cd c:\dev\cpp
+  md c:\dev\cpp 
+  cd c:\dev\cpp 
 
 Check out sources from GIT:
 
@@ -793,7 +787,7 @@ Check out sources from GIT:
     4.2.8. Compiling
     ================
 
-As a background read the generic building with CMake notes at the end of
+As a background read the generic building with CMake notes at the end of 
 this document.
 
 Start a cmd.exe window ( Start -> Run -> cmd.exe ) if you don't have one
@@ -805,15 +799,15 @@ For ease of use add c:\Qt\5.9.1\bin\ to your system path in system
 properties so you can just type qtvars.bat when you open the cmd console.
 Create build directory and set it as current directory:
 
-  cd c:\dev\cpp\qgis
-  md build
-  cd build
+  cd c:\dev\cpp\qgis 
+  md build 
+  cd build 
 
 
     4.2.9. Configuration
     ====================
 
-  cmakesetup ..
+  cmakesetup ..  
 
 Note: You must include the '..' above.
 
@@ -836,7 +830,7 @@ When configuration is done, click 'OK' to exit the setup utility.
     4.2.10. Compilation and installation
     ====================================
 
-   make make install
+   make make install 
 
 
     4.2.11. Run qgis.exe from the directory where it's installed (CMAKE_INSTALL_PREFIX)
@@ -857,7 +851,7 @@ Download and install NSIS from (http://nsis.sourceforge.net/Main_Page)
 
 Now using windows explorer, enter the win_build directory in your QGIS source
 tree. Read the READMEfile there and follow the instructions. Next right click
-on qgis.nsi and choose the option 'Compile NSIS Script'.
+on qgis.nsi and choose the option 'Compile NSIS Script'. 
 
 
   4.3. Creation of MSYS environment for compilation of QGIS
@@ -1443,7 +1437,7 @@ is needed to install outside the system path, in /usr/local/:
 Edit QScintilla-gpl-2.x.x/Qt4Qt5/qscintilla.pro in the following manner:
 
   current line --> new line
-
+  
   target.path = $$[QT_INSTALL_LIBS]  -->  target.path = /usr/local/lib
   header.path = $$[QT_INSTALL_HEADERS]  -->  header.path = /usr/local/include
 
@@ -1581,7 +1575,7 @@ for other version as needed):
   qmake -spec macx-g++
   make -j [#cpus]
   sudo make install
-
+  
   sudo install_name_tool -id /usr/local/qwt-6.0.2/lib/libqwt.6.dylib \
     /usr/local/qwt-6.0.2/lib/libqwt.6.dylib
 
@@ -1794,7 +1788,7 @@ into it. The following will read-only clone the master branch to the directory:
   git init
   git remote add -f -t master -m master qgisupstream git://github.com/qgis/QGIS.git
   git merge qgisupstream
-
+  
 
 
   5.7. Configure the build
@@ -1856,9 +1850,9 @@ script and add arch flags to the configuration:
   #!/bin/sh
   exec arch -i386 /usr/bin/python2.6 \${1+"\$@"}
   EOF
-
+  
   sudo chmod +x /usr/local/bin/python32
-
+  
   cmake -D CMAKE_INSTALL_PREFIX=~/Applications \
   -D CMAKE_BUILD_TYPE=MINSIZEREL -D ENABLE_TESTS=FALSE \
   -D WITH_INTERNAL_SPATIALITE=FALSE \
@@ -1994,14 +1988,14 @@ Then create /var/www/wcs/7-wcs.qgis.org.conf setting the contents to this:
     <VirtualHost *:80>
     ServerName wcs.qgis.org
     ServerAdmin tim@linfiniti.com
-
+  
     LogLevel warn
     LogFormat "%h %l %u %t \"%r\" %>s %b \"%{Referer}i\" \"%{User-Agent}i\" \"%{forensic-id}n\"" combined
     CustomLog /var/log/apache2/wcs_qgis.org/access.log combined
     ErrorLog /var/log/apache2/wcs_qgis.org/error.log
-
+  
     DocumentRoot /var/www/wcs/html
-
+  
     ScriptAlias /cgi-bin/ /var/www/wcs/cgi-bin/
     <Directory "/var/www/wcs/cgi-bin">
           AllowOverride None
@@ -2009,10 +2003,10 @@ Then create /var/www/wcs/7-wcs.qgis.org.conf setting the contents to this:
           Order allow,deny
           Allow from all
     </Directory>
-
+  
     RewriteEngine on
     RewriteRule /1.9.0/wcs /cgi-bin/wcstest-1.9.0 [PT]
-
+  
     </VirtualHost>
 
 
@@ -2053,7 +2047,7 @@ Set the contents to:
 Assumption: You know how to make a working build environment and want to
 deploy it under Jenkins for continuous integration testing now.
 
-These notes are terse, I will expand on them later as the need arises. The
+These notes are terse, I will expand on them later as the need arises. The 
 procedure is:
 
 - Install Jenkins and get it configured according to your own preferences
@@ -2094,7 +2088,7 @@ procedure is:
  - Set the github project to https://github.com/qgis/QGIS/
  - Set source code management to Git
  - Set repository url to git://github.com/qgis/QGIS.git
- - In advanced repository url settings set refspec to :
+ - In advanced repository url settings set refspec to : 
 
   +refs/heads/master:refs/remotes/origin/master
 
@@ -2172,97 +2166,13 @@ To run specific test(s) (see 'man ctest'):
   cd build
   # show listing of tests, without running them
   ctest --show-only
-
+  
   # run specific C++ or Python test(s) matching a regular expression
   ctest --verbose --tests-regex SomeTestName
 
-  9. Cross-compilation for Android
-  ================================
 
-  9.1. Build Linux application
-  ============================
-  Follow section "3. Building on GNU/Linux" with CMake flags:
-   - BUILD_TESTING=ON
-   - WITH_QTQUICK=ON
-  Optionally, to speed up build, you do may disable:
-   - WITH_SERVER=OFF
-   - WITH_GUI=OFF
-   - WITH_DESKTOP=OFF
-   - WITH_BINDINGS=OFF
-
-  In the generated project, you should see target "qgis_quickapp". Build and run it to
-  see QgsQuick library demo on the PC. This build can be used for development purposes
-  and debugging of the library and/or an application.
-
-  9.2. Install Android build dependencies
-  =======================================
-  Install:
-    - JDK v6 or later (OpenJDK is also good)
-    - [Apache ant] (http://ant.apache.org/bindownload.cgi) v1.8 or later
-    - [Qt5 for android >= 5.9] with ARMv7 arch support
-    - Android SDK (https://developer.android.com/studio/index.html#downloads just command line tools, API 16+)
-    - Android NDK (Crystax NDK 10.3.2)
-
-  For my Kubuntu 16.04, I have used this:
-
-  sudo apt-get install openjdk-8-jre
-  sudo apt-get install ant 1.8+
-  # download Qt Online Installer and install Qt5.9.2 gcc_x64, android ARMv7 build tools.
-  # install Android studio and with it install SDK version 16
-  # install 32bit libraries
-  sudo dpkg --add-architecture i386
-  sudo apt -get update
-  sudo apt-get install libc6:i386 libncurses5:i386 libstdc++6:i386 lib32z1 libbz2-1.0:i386
-  # Install Crystax NDK (https://www.crystax.net/en required by CMake)
-
-  So at the end, I have this strucure
-    /opt/android-studio (GUI can be used to update/install other SDKs)
-    /opt/android/sdk (folder selected by android-studio for SDKs)
-    /opt/android/crystax-ndk-10.3.2 (NDK for building C++)
-    /opt/Qt (Qt 5.9.2 for android arm and 64b desktop, QtCreator)
-
-  Now try to open QtCreator, setup Kit for Android developent (GCC compiler for NDK, select SDK in "devices", select Qt for android).
-  Once done, try to compile any QML example from QtCreator ("New project-> select QtQuick template), deploy on your device and try
-
-  See (OSGeo4A)[https://github.com/opengisch/OSGeo4A/blob/master/README.md] and (Qt5)[http://doc.qt.io/qt-5/androidgs.html]
-  for details.
-
-  9.3. Build OSGeo4A
-  ==================
-  Clone OSGeo4A repo from https://github.com/opengisch/OSGeo4A
-  Create a file config.conf in the root folder by copying the config.conf.default and modify based on your folders. For example
-
-  ### Currently suggested versions ####
-  export ANDROIDNDKVER=r12b
-  export ANDROIDAPI=16
-  export ANDROIDSDK="/opt/android/sdk"
-  export ANDROIDNDK="/opt/android/crystax-ndk-10.3.2"
-  export QTSDK="/opt/Qt/5.9.2"
-  export O4A_qgis_DIR="/home/peter/qmobile/repo/QGIS"
-  export ARCHES=("armeabi-v7a" "x86")
-
-  Now run command ./distribute -mqgis -dqgis to build the libraries
-
-  9.4. Build qgis_quickapp
-  ========================
-  To build the application,
-     cd QGIS/tests/src/quickgui/app/
-     cp config.pri.default config.pri
-     modify config.pri (add path to your OSGeo4A repository)
-     open QGIS/tests/src/quickgui/app/qgis_quickapp.pro in QtCreator and configure the project with your armeabi-v7a kit
-     compile the application
-
-  9.5. Deploy APK
-  ===============
-  If you have connected tablet/mobile with USB cable and enabled developer tools and USB debugging, you should be able to also
-  "Run" qgsquick_app from QtCreator. When launched, it asks which device to use and the application will be directly launched
-  on the device.
-
-  Otherwise, your APK is located in the build directory in subfolder android-build/build/outputs/apk/. APK should contain
-  all dependencies of the application, so when copied it can installed on the device.
-
-  10. Authors and Acknowledgments
-  ===============================
+  9. Authors and Acknowledgments
+  ==============================
 
 The following people have contributed to this document:
 
@@ -2303,5 +2213,3 @@ The following people have contributed to this document:
 - Debug Output/Tests Section
  - Larry Shaffer 2012, by way of 'Test Friday' Tim Sutton
 
-- Android Section
- - Peter Petrik 2018
