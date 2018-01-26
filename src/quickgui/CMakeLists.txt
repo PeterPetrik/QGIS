@@ -105,7 +105,7 @@ ADD_LIBRARY(qgis_quick SHARED
     ${QGIS_QUICK_GUI_MOC_HDRS}
     ${QGIS_QUICK_GUI_MOC_SRCS}
     ${QGIS_QUICK_GUI_HDRS})
-TARGET_LINK_LIBRARIES(qgis_quick Qt5::Quick Qt5::Qml Qt5::Xml Qt5::Widgets Qt5::Concurrent Qt5::Positioning qgis_core)
+TARGET_LINK_LIBRARIES(qgis_quick Qt5::Quick Qt5::Qml Qt5::Xml Qt5::Concurrent Qt5::Positioning qgis_core)
 IF(CMAKE_SYSTEM_NAME STREQUAL "Android")
   TARGET_LINK_LIBRARIES(qgis_quick Qt5::AndroidExtras)
 ENDIF(CMAKE_SYSTEM_NAME STREQUAL "Android")
