@@ -13,8 +13,8 @@ Item {
 
     property int textWidth: 50 * QgsQuick.Style.dp
     property color barColor: "white"
-    property color barBackgroundColor: "grey"
-    property alias opacity: 0.8
+    //property color barBackgroundColor: "grey"
+    //property double barOpacity: 0.8
     property string barText: scaleBarKit.distance + " " + scaleBarKit.units
     property int barWidth: scaleBarKit.width
     property int lineWidth: 5 * QgsQuick.Style.dp
@@ -38,8 +38,8 @@ Item {
 
     Rectangle {
         id: background
-        color: scaleBar.barBackgroundColor
-        opacity: scaleBar.opacity
+        color: "red" //scaleBar.barBackgroundColor
+        opacity: 0.8 //scaleBar.barOpacity
         width: parent.width
         height: parent.height
     }
