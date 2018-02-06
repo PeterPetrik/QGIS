@@ -19,6 +19,11 @@
 
 ///@cond PRIVATE
 
+QgsProcessingAlgorithm::Flags QgsDropMZValuesAlgorithm::flags() const
+{
+  return QgsProcessingFeatureBasedAlgorithm::flags() | QgsProcessingAlgorithm::FlagCanRunInBackground;
+}
+
 QString QgsDropMZValuesAlgorithm::name() const
 {
   return QStringLiteral( "dropmzvalues" );
@@ -37,6 +42,11 @@ QStringList QgsDropMZValuesAlgorithm::tags() const
 QString QgsDropMZValuesAlgorithm::group() const
 {
   return QObject::tr( "Vector geometry" );
+}
+
+QString QgsDropMZValuesAlgorithm::groupId() const
+{
+  return QStringLiteral( "vectorgeometry" );
 }
 
 QString QgsDropMZValuesAlgorithm::outputName() const
@@ -77,12 +87,12 @@ bool QgsDropMZValuesAlgorithm::prepareAlgorithm( const QVariantMap &parameters, 
   return true;
 }
 
-QgsFeature QgsDropMZValuesAlgorithm::processFeature( const QgsFeature &feature, QgsProcessingFeedback * )
+QgsFeature QgsDropMZValuesAlgorithm::processFeature( const QgsFeature &feature, QgsProcessingContext &, QgsProcessingFeedback * )
 {
   QgsFeature f = feature;
   if ( f.hasGeometry() )
   {
-    std::unique_ptr< QgsAbstractGeometry > newGeom( f.geometry().geometry()->clone() );
+    std::unique_ptr< QgsAbstractGeometry > newGeom( f.geometry().constGet()->clone() );
     if ( mDropM )
       newGeom->dropMValue();
     if ( mDropZ )

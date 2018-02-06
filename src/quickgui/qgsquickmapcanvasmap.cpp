@@ -13,20 +13,22 @@
  *                                                                         *
  ***************************************************************************/
 
+#include <QQuickWindow>
+#include <QScreen>
+#include <QSGSimpleTextureNode>
+#include <QtConcurrent>
+
+#include <qgsmaprendererparalleljob.h>
+#include <qgsmessagelog.h>
+#include <qgspallabeling.h>
+#include <qgsproject.h>
+#include <qgsvectorlayer.h>
+
 #include "qgsquickmapcanvasmap.h"
 #include "qgsquickmapsettings.h"
 
-#include <qgsmaprendererparalleljob.h>
-#include <qgsvectorlayer.h>
-#include <qgsmessagelog.h>
-#include <QQuickWindow>
-#include <QScreen>
-#include <qgspallabeling.h>
-#include <QSGSimpleTextureNode>
-#include <QtConcurrent>
-#include <qgsproject.h>
 
-QgsQuickMapCanvasMap::QgsQuickMapCanvasMap(  QQuickItem* parent )
+QgsQuickMapCanvasMap::QgsQuickMapCanvasMap( QQuickItem *parent )
   : QQuickItem( parent )
   , mMapSettings( new QgsQuickMapSettings() )
   , mPinching( false )
@@ -58,7 +60,7 @@ QgsQuickMapCanvasMap::~QgsQuickMapCanvasMap()
 {
 }
 
-QgsQuickMapSettings* QgsQuickMapCanvasMap::mapSettings() const
+QgsQuickMapSettings *QgsQuickMapCanvasMap::mapSettings() const
 {
   return mMapSettings;
 }
@@ -106,8 +108,9 @@ void QgsQuickMapCanvasMap::refreshMap()
   expressionContext << QgsExpressionContextUtils::globalScope()
                     << QgsExpressionContextUtils::mapSettingsScope( mapSettings );
 
-  QgsProject* project = mMapSettings->project();
-  if (project) {
+  QgsProject *project = mMapSettings->project();
+  if ( project )
+  {
     expressionContext << QgsExpressionContextUtils::projectScope( project );
   }
 
@@ -146,7 +149,7 @@ void QgsQuickMapCanvasMap::renderJobUpdated()
 
 void QgsQuickMapCanvasMap::renderJobFinished()
 {
-  Q_FOREACH ( const QgsMapRendererJob::Error& error, mJob->errors() )
+  Q_FOREACH ( const QgsMapRendererJob::Error &error, mJob->errors() )
   {
     QgsMessageLog::logMessage( error.layerID + " :: " + error.message, tr( "Rendering" ) );
   }
@@ -176,9 +179,9 @@ void QgsQuickMapCanvasMap::renderJobFinished()
   emit mapCanvasRefreshed();
 }
 
-void QgsQuickMapCanvasMap::onWindowChanged( QQuickWindow* window )
+void QgsQuickMapCanvasMap::onWindowChanged( QQuickWindow *window )
 {
-  disconnect( this, SLOT( onScreenChanged( QScreen* ) ) );
+  disconnect( this, SLOT( onScreenChanged( QScreen * ) ) );
   if ( window )
   {
     connect( window, &QQuickWindow::screenChanged, this, &QgsQuickMapCanvasMap::onScreenChanged );
@@ -186,7 +189,7 @@ void QgsQuickMapCanvasMap::onWindowChanged( QQuickWindow* window )
   }
 }
 
-void QgsQuickMapCanvasMap::onScreenChanged( QScreen* screen )
+void QgsQuickMapCanvasMap::onScreenChanged( QScreen *screen )
 {
   if ( screen )
     mMapSettings->setOutputDpi( screen->physicalDotsPerInch() );
@@ -269,12 +272,12 @@ QgsRectangle QgsQuickMapCanvasMap::extent() const
   return mMapSettings->extent();
 }
 
-void QgsQuickMapCanvasMap::setExtent( const QgsRectangle& extent )
+void QgsQuickMapCanvasMap::setExtent( const QgsRectangle &extent )
 {
   mMapSettings->setExtent( extent );
 }
 
-QSGNode* QgsQuickMapCanvasMap::updatePaintNode( QSGNode* oldNode, QQuickItem::UpdatePaintNodeData* )
+QSGNode *QgsQuickMapCanvasMap::updatePaintNode( QSGNode *oldNode, QQuickItem::UpdatePaintNodeData * )
 {
   if ( mDirty )
   {
@@ -283,11 +286,11 @@ QSGNode* QgsQuickMapCanvasMap::updatePaintNode( QSGNode* oldNode, QQuickItem::Up
     mDirty = false;
   }
 
-  QSGSimpleTextureNode* node = static_cast<QSGSimpleTextureNode*>( oldNode );
+  QSGSimpleTextureNode *node = static_cast<QSGSimpleTextureNode *>( oldNode );
   if ( !node )
   {
     node = new QSGSimpleTextureNode();
-    QSGTexture* texture = window()->createTextureFromImage( mImage );
+    QSGTexture *texture = window()->createTextureFromImage( mImage );
     node->setTexture( texture );
     node->setOwnsTexture( true );
   }
@@ -317,12 +320,12 @@ QgsCoordinateReferenceSystem QgsQuickMapCanvasMap::destinationCrs() const
   return mMapSettings->destinationCrs();
 }
 
-void QgsQuickMapCanvasMap::setDestinationCrs( const QgsCoordinateReferenceSystem& destinationCrs )
+void QgsQuickMapCanvasMap::setDestinationCrs( const QgsCoordinateReferenceSystem &destinationCrs )
 {
   mMapSettings->setDestinationCrs( destinationCrs );
 }
 
-void QgsQuickMapCanvasMap::geometryChanged( const QRectF& newGeometry, const QRectF& oldGeometry )
+void QgsQuickMapCanvasMap::geometryChanged( const QRectF &newGeometry, const QRectF &oldGeometry )
 {
   Q_UNUSED( oldGeometry )
   // The Qt documentation advices to call the base method here.
@@ -340,13 +343,13 @@ void QgsQuickMapCanvasMap::onLayersChanged()
   if ( mMapSettings->extent().isEmpty() )
     zoomToFullExtent();
 
-  Q_FOREACH( const QMetaObject::Connection& conn, mLayerConnections )
+  Q_FOREACH ( const QMetaObject::Connection &conn, mLayerConnections )
   {
     disconnect( conn );
   }
   mLayerConnections.clear();
 
-  Q_FOREACH( QgsMapLayer* layer, mMapSettings->layers() )
+  Q_FOREACH ( QgsMapLayer *layer, mMapSettings->layers() )
   {
     // QgsVectorLayer* vl = qobject_cast<QgsVectorLayer*>( layer );
     mLayerConnections << connect( layer, &QgsMapLayer::repaintRequested, this, &QgsQuickMapCanvasMap::refresh );
@@ -355,7 +358,7 @@ void QgsQuickMapCanvasMap::onLayersChanged()
   refresh();
 }
 
-void QgsQuickMapCanvasMap::destroyJob( QgsMapRendererJob* job )
+void QgsQuickMapCanvasMap::destroyJob( QgsMapRendererJob *job )
 {
   job->cancel();
   job->deleteLater();
@@ -378,9 +381,17 @@ void QgsQuickMapCanvasMap::stopRendering()
 void QgsQuickMapCanvasMap::zoomToFullExtent()
 {
   QgsRectangle extent;
-  Q_FOREACH( QgsMapLayer* layer, mMapSettings->layers() )
+  Q_FOREACH ( QgsMapLayer *layer, mMapSettings->layers() )
   {
-    extent.combineExtentWith( layer->extent() );
+    if ( mMapSettings->destinationCrs() != layer->crs() )
+    {
+      QgsCoordinateTransform transform( layer->crs(), mMapSettings->destinationCrs(), mMapSettings->transformContext() );
+      extent.combineExtentWith( transform.transformBoundingBox( layer->extent() ) );
+    }
+    else
+    {
+      extent.combineExtentWith( layer->extent() );
+    }
   }
   mMapSettings->setExtent( extent );
 

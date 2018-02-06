@@ -151,7 +151,7 @@ void QgsPoint3DSymbolInstancedEntityFactory::addEntityForSelectedPoints( const Q
 
   // build the feature request to select features
   QgsFeatureRequest req;
-  req.setDestinationCrs( map.crs() );
+  req.setDestinationCrs( map.crs(), map.transformContext() );
   req.setFilterFids( layer->selectedFeatureIds() );
   req.setSubsetOfAttributes( QgsAttributeList() );
 
@@ -168,7 +168,7 @@ void QgsPoint3DSymbolInstancedEntityFactory::addEntityForNotSelectedPoints( cons
 
   // build the feature request to select features
   QgsFeatureRequest req;
-  req.setDestinationCrs( map.crs() );
+  req.setDestinationCrs( map.crs(), map.transformContext() );
   req.setSubsetOfAttributes( QgsAttributeList() );
 
   QgsFeatureIds notSelected = layer->allFeatureIds();
@@ -184,7 +184,7 @@ void QgsPoint3DSymbolInstancedEntityFactory::addEntityForNotSelectedPoints( cons
 QgsPoint3DSymbolInstancedEntityNode::QgsPoint3DSymbolInstancedEntityNode( const Qgs3DMapSettings &map, QgsVectorLayer *layer, const QgsPoint3DSymbol &symbol, const QgsFeatureRequest &req, Qt3DCore::QNode *parent )
   : Qt3DCore::QEntity( parent )
 {
-  QList<QVector3D> pos = Qgs3DUtils::positions( map, layer, req );
+  QList<QVector3D> pos = Qgs3DUtils::positions( map, layer, req, symbol.altitudeClamping() );
   addComponent( renderer( symbol, pos ) );
 }
 
@@ -327,7 +327,7 @@ static Qt3DExtras::QPhongMaterial *phongMaterial( const QgsPoint3DSymbol &symbol
 void QgsPoint3DSymbolModelEntityFactory::addEntitiesForSelectedPoints( const Qgs3DMapSettings &map, QgsVectorLayer *layer, const QgsPoint3DSymbol &symbol, QgsPoint3DSymbolEntity *parent )
 {
   QgsFeatureRequest req;
-  req.setDestinationCrs( map.crs() );
+  req.setDestinationCrs( map.crs(), map.transformContext() );
   req.setSubsetOfAttributes( QgsAttributeList() );
   req.setFilterFids( layer->selectedFeatureIds() );
 
@@ -340,7 +340,7 @@ void QgsPoint3DSymbolModelEntityFactory::addEntitiesForNotSelectedPoints( const 
 {
   // build the feature request to select features
   QgsFeatureRequest req;
-  req.setDestinationCrs( map.crs() );
+  req.setDestinationCrs( map.crs(), map.transformContext() );
   req.setSubsetOfAttributes( QgsAttributeList() );
   QgsFeatureIds notSelected = layer->allFeatureIds();
   notSelected.subtract( layer->selectedFeatureIds() );
@@ -358,7 +358,7 @@ void QgsPoint3DSymbolModelEntityFactory::addEntitiesForNotSelectedPoints( const 
 
 void QgsPoint3DSymbolModelEntityFactory::addSceneEntities( const Qgs3DMapSettings &map, QgsVectorLayer *layer, const QgsFeatureRequest &req, const QgsPoint3DSymbol &symbol, QgsPoint3DSymbolEntity *parent )
 {
-  QList<QVector3D> positions = Qgs3DUtils::positions( map, layer, req );
+  QList<QVector3D> positions = Qgs3DUtils::positions( map, layer, req, symbol.altitudeClamping() );
   Q_FOREACH ( const QVector3D &position, positions )
   {
     // build the entity
@@ -386,7 +386,7 @@ void QgsPoint3DSymbolModelEntityFactory::addMeshEntities( const Qgs3DMapSettings
   }
 
   // get nodes
-  QList<QVector3D> positions = Qgs3DUtils::positions( map, layer, req );
+  QList<QVector3D> positions = Qgs3DUtils::positions( map, layer, req, symbol.altitudeClamping() );
   Q_FOREACH ( const QVector3D &position, positions )
   {
     // build the entity

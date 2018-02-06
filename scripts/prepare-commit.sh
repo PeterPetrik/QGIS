@@ -16,7 +16,7 @@
 
 TOPLEVEL=$(git rev-parse --show-toplevel)
 
-PATH=$TOPLEVEL/scripts:$PATH
+PATH=$TOPLEVEL/scripts:$PATH:$PWD/scripts
 
 if ! tty -s && [[ "$0" =~ /pre-commit ]]; then
     exec </dev/tty
@@ -57,7 +57,8 @@ if [ -z "$MODIFIED" ]; then
   exit 0
 fi
 
-[ -x ${TOPLEVEL}/scripts/spell_check/check_spelling.sh ] && ${TOPLEVEL}/scripts/spell_check/check_spelling.sh $MODIFIED
+if [[ -n "$QGIS_CHECK_SPELLING" && -x ${TOPLEVEL}/scripts/spell_check/check_spelling.sh ]]; then ${TOPLEVEL}/scripts/spell_check/check_spelling.sh $MODIFIED; fi
+
 
 # save original changes
 REV=$(git log -n1 --pretty=%H)
@@ -119,7 +120,7 @@ for f in $MODIFIED; do
     sip_file=$(${GP}sed -r 's/^src\/(core|gui|analysis|server)\///; s/\.h$/.sip/' <<<$f )
     module=$(${GP}sed -r 's/^src\/(core|gui|analysis|server)\/.*$/\1/' <<<$f )
     if grep -Fq "$sip_file" ${TOPLEVEL}/python/${module}/${module}_auto.sip; then
-      sip_file=$(${GP}sed -r 's/^src\///; s/\.h$/.sip/' <<<$f )
+      sip_file=$(${GP}sed -r 's/^src\///; s/\.h$/.sip.in/' <<<$f )
       m=python/$sip_file.$REV.prepare
       touch python/$sip_file
       cp python/$sip_file $m

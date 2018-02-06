@@ -27,13 +27,13 @@ email                : marco.hugentobler at sourcepole dot com
 #include <QVector>
 #include <QRegularExpression>
 
-QList<QgsLineString *> QgsGeometryUtils::extractLineStrings( const QgsAbstractGeometry *geom )
+QVector<QgsLineString *> QgsGeometryUtils::extractLineStrings( const QgsAbstractGeometry *geom )
 {
-  QList< QgsLineString * > linestrings;
+  QVector< QgsLineString * > linestrings;
   if ( !geom )
     return linestrings;
 
-  QList< const QgsAbstractGeometry * > geometries;
+  QVector< const QgsAbstractGeometry * > geometries;
   geometries << geom;
   while ( ! geometries.isEmpty() )
   {
@@ -98,8 +98,7 @@ QgsPoint QgsGeometryUtils::closestPoint( const QgsAbstractGeometry &geometry, co
 {
   QgsPoint closestPoint;
   QgsVertexId vertexAfter;
-  bool leftOf;
-  geometry.closestSegment( point, closestPoint, vertexAfter, &leftOf, DEFAULT_SEGMENT_EPSILON );
+  geometry.closestSegment( point, closestPoint, vertexAfter, nullptr, DEFAULT_SEGMENT_EPSILON );
   if ( vertexAfter.isValid() )
   {
     QgsPoint pointAfter = geometry.vertexAt( vertexAfter );
@@ -133,24 +132,14 @@ double QgsGeometryUtils::distanceToVertex( const QgsAbstractGeometry &geom, QgsV
   double currentDist = 0;
   QgsVertexId vertexId;
   QgsPoint vertex;
-  QgsPoint previousVertex;
-
-  bool first = true;
   while ( geom.nextVertex( vertexId, vertex ) )
   {
-    if ( !first )
-    {
-      currentDist += std::sqrt( QgsGeometryUtils::sqrDistance2D( previousVertex, vertex ) );
-    }
-
-    previousVertex = vertex;
-    first = false;
-
     if ( vertexId == id )
     {
       //found target vertex
       return currentDist;
     }
+    currentDist += geom.segmentLength( vertexId );
   }
 
   //could not find target vertex
@@ -202,82 +191,6 @@ bool QgsGeometryUtils::verticesAtDistance( const QgsAbstractGeometry &geometry, 
   return false;
 }
 
-void QgsGeometryUtils::adjacentVertices( const QgsAbstractGeometry &geom, QgsVertexId atVertex, QgsVertexId &beforeVertex, QgsVertexId &afterVertex )
-{
-  bool polygonType = ( geom.dimension()  == 2 );
-
-  QgsCoordinateSequence coords = geom.coordinateSequence();
-
-  //get feature
-  if ( coords.size() <= atVertex.part )
-  {
-    return; //error, no such feature
-  }
-
-  const QgsRingSequence &part = coords.at( atVertex.part );
-
-  //get ring
-  if ( part.size() <= atVertex.ring )
-  {
-    return; //error, no such ring
-  }
-  const QgsPointSequence &ring = part.at( atVertex.ring );
-  if ( ring.size() <= atVertex.vertex )
-  {
-    return;
-  }
-
-  //vertex in the middle
-  if ( atVertex.vertex > 0 && atVertex.vertex < ring.size() - 1 )
-  {
-    beforeVertex.part = atVertex.part;
-    beforeVertex.ring = atVertex.ring;
-    beforeVertex.vertex = atVertex.vertex - 1;
-    afterVertex.part = atVertex.part;
-    afterVertex.ring = atVertex.ring;
-    afterVertex.vertex = atVertex.vertex + 1;
-  }
-  else if ( atVertex.vertex == 0 )
-  {
-    if ( ring.size() > 1 )
-    {
-      afterVertex.part = atVertex.part;
-      afterVertex.ring = atVertex.ring;
-      afterVertex.vertex = atVertex.vertex + 1;
-    }
-    else
-    {
-      afterVertex = QgsVertexId(); //after vertex invalid
-    }
-    if ( polygonType && ring.size() > 3 )
-    {
-      beforeVertex.part = atVertex.part;
-      beforeVertex.ring = atVertex.ring;
-      beforeVertex.vertex = ring.size() - 2;
-    }
-    else
-    {
-      beforeVertex = QgsVertexId(); //before vertex invalid
-    }
-  }
-  else if ( atVertex.vertex == ring.size() - 1 )
-  {
-    beforeVertex.part = atVertex.part;
-    beforeVertex.ring = atVertex.ring;
-    beforeVertex.vertex = atVertex.vertex - 1;
-    if ( polygonType )
-    {
-      afterVertex.part = atVertex.part;
-      afterVertex.ring = atVertex.ring;
-      afterVertex.vertex = 1;
-    }
-    else
-    {
-      afterVertex = QgsVertexId(); //after vertex invalid
-    }
-  }
-}
-
 double QgsGeometryUtils::sqrDistance2D( const QgsPoint &pt1, const QgsPoint &pt2 )
 {
   return ( pt1.x() - pt2.x() ) * ( pt1.x() - pt2.x() ) + ( pt1.y() - pt2.y() ) * ( pt1.y() - pt2.y() );
@@ -322,50 +235,134 @@ double QgsGeometryUtils::sqrDistToLine( double ptX, double ptY, double x1, doubl
   return dist;
 }
 
-bool QgsGeometryUtils::lineIntersection( const QgsPoint &p1, QgsVector v, const QgsPoint &q1, QgsVector w, QgsPoint &inter )
+bool QgsGeometryUtils::lineIntersection( const QgsPoint &p1, QgsVector v1, const QgsPoint &p2, QgsVector v2, QgsPoint &intersection )
 {
-  double d = v.y() * w.x() - v.x() * w.y();
+  double d = v1.y() * v2.x() - v1.x() * v2.y();
 
   if ( qgsDoubleNear( d, 0 ) )
     return false;
 
-  double dx = q1.x() - p1.x();
-  double dy = q1.y() - p1.y();
-  double k = ( dy * w.x() - dx * w.y() ) / d;
+  double dx = p2.x() - p1.x();
+  double dy = p2.y() - p1.y();
+  double k = ( dy * v2.x() - dx * v2.y() ) / d;
 
-  inter = QgsPoint( p1.x() + v.x() * k, p1.y() + v.y() * k );
+  intersection = QgsPoint( p1.x() + v1.x() * k, p1.y() + v1.y() * k );
 
   return true;
 }
 
-bool QgsGeometryUtils::segmentIntersection( const QgsPoint &p1, const QgsPoint &p2, const QgsPoint &q1, const QgsPoint &q2, QgsPoint &inter, double tolerance )
+bool QgsGeometryUtils::segmentIntersection( const QgsPoint &p1, const QgsPoint &p2, const QgsPoint &q1, const QgsPoint &q2, QgsPoint &intersectionPoint, bool &isIntersection, const double tolerance, bool acceptImproperIntersection )
 {
+  isIntersection = false;
+
   QgsVector v( p2.x() - p1.x(), p2.y() - p1.y() );
   QgsVector w( q2.x() - q1.x(), q2.y() - q1.y() );
   double vl = v.length();
   double wl = w.length();
 
-  if ( qgsDoubleNear( vl, 0, 0.000000000001 ) || qgsDoubleNear( wl, 0, 0.000000000001 ) )
+  if ( qgsDoubleNear( vl, 0.0, tolerance ) || qgsDoubleNear( wl, 0.0, tolerance ) )
   {
     return false;
   }
   v = v / vl;
   w = w / wl;
 
-  if ( !QgsGeometryUtils::lineIntersection( p1, v, q1, w, inter ) )
+  if ( !QgsGeometryUtils::lineIntersection( p1, v, q1, w, intersectionPoint ) )
+  {
     return false;
+  }
 
-  double lambdav = QgsVector( inter.x() - p1.x(), inter.y() - p1.y() ) *  v;
+  isIntersection = true;
+  if ( acceptImproperIntersection )
+  {
+    if ( ( p1 == q1 ) || ( p1 == q2 ) )
+    {
+      intersectionPoint = p1;
+      return true;
+    }
+    else if ( ( p2 == q1 ) || ( p2 == q2 ) )
+    {
+      intersectionPoint = p2;
+      return true;
+    }
+
+    double x, y;
+    if (
+      // intersectionPoint = p1
+      qgsDoubleNear( QgsGeometryUtils::sqrDistToLine( p1.x(), p1.y(), q1.x(), q1.y(), q2.x(), q2.y(), x, y, tolerance ), 0.0, tolerance ) ||
+      // intersectionPoint = p2
+      qgsDoubleNear( QgsGeometryUtils::sqrDistToLine( p2.x(), p2.y(), q1.x(), q1.y(), q2.x(), q2.y(), x, y, tolerance ), 0.0, tolerance ) ||
+      // intersectionPoint = q1
+      qgsDoubleNear( QgsGeometryUtils::sqrDistToLine( q1.x(), q1.y(), p1.x(), p1.y(), p2.x(), p2.y(), x, y, tolerance ), 0.0, tolerance ) ||
+      // intersectionPoint = q2
+      qgsDoubleNear( QgsGeometryUtils::sqrDistToLine( q2.x(), q2.y(), p1.x(), p1.y(), p2.x(), p2.y(), x, y, tolerance ), 0.0, tolerance )
+    )
+    {
+      return true;
+    }
+  }
+
+  double lambdav = QgsVector( intersectionPoint.x() - p1.x(), intersectionPoint.y() - p1.y() ) *  v;
   if ( lambdav < 0. + tolerance || lambdav > vl - tolerance )
     return false;
 
-  double lambdaw = QgsVector( inter.x() - q1.x(), inter.y() - q1.y() ) * w;
+  double lambdaw = QgsVector( intersectionPoint.x() - q1.x(), intersectionPoint.y() - q1.y() ) * w;
   return !( lambdaw < 0. + tolerance || lambdaw >= wl - tolerance );
 }
 
-QList<QgsGeometryUtils::SelfIntersection> QgsGeometryUtils::getSelfIntersections( const QgsAbstractGeometry *geom, int part, int ring, double tolerance )
+bool QgsGeometryUtils::lineCircleIntersection( const QgsPointXY &center, const double radius,
+    const QgsPointXY &linePoint1, const QgsPointXY &linePoint2,
+    QgsPointXY &intersection )
 {
-  QList<SelfIntersection> intersections;
+  // formula taken from http://mathworld.wolfram.com/Circle-LineIntersection.html
+
+  const double x1 = linePoint1.x() - center.x();
+  const double y1 = linePoint1.y() - center.y();
+  const double x2 = linePoint2.x() - center.x();
+  const double y2 = linePoint2.y() - center.y();
+  const double dx = x2 - x1;
+  const double dy = y2 - y1;
+
+  const double dr = std::sqrt( std::pow( dx, 2 ) + std::pow( dy, 2 ) );
+  const double d = x1 * y2 - x2 * y1;
+
+  const double disc = std::pow( radius, 2 ) * std::pow( dr, 2 ) - std::pow( d, 2 );
+
+  if ( disc < 0 )
+  {
+    //no intersection or tangent
+    return false;
+  }
+  else
+  {
+    // two solutions
+    const int sgnDy = dy < 0 ? -1 : 1;
+
+    const double ax = center.x() + ( d * dy + sgnDy * dx * std::sqrt( std::pow( radius, 2 ) * std::pow( dr, 2 ) - std::pow( d, 2 ) ) ) / ( std::pow( dr, 2 ) );
+    const double ay = center.y() + ( -d * dx + std::fabs( dy ) * std::sqrt( std::pow( radius, 2 ) * std::pow( dr, 2 ) - std::pow( d, 2 ) ) ) / ( std::pow( dr, 2 ) );
+    const QgsPointXY p1( ax, ay );
+
+    const double bx = center.x() + ( d * dy - sgnDy * dx * std::sqrt( std::pow( radius, 2 ) * std::pow( dr, 2 ) - std::pow( d, 2 ) ) ) / ( std::pow( dr, 2 ) );
+    const double by = center.y() + ( -d * dx - std::fabs( dy ) * std::sqrt( std::pow( radius, 2 ) * std::pow( dr, 2 ) - std::pow( d, 2 ) ) ) / ( std::pow( dr, 2 ) );
+    const QgsPointXY p2( bx, by );
+
+    // snap to nearest intersection
+
+    if ( intersection.sqrDist( p1 ) < intersection.sqrDist( p2 ) )
+    {
+      intersection.set( p1.x(), p1.y() );
+    }
+    else
+    {
+      intersection.set( p2.x(), p2.y() );
+    }
+    return true;
+  }
+}
+
+QVector<QgsGeometryUtils::SelfIntersection> QgsGeometryUtils::selfIntersections( const QgsAbstractGeometry *geom, int part, int ring, double tolerance )
+{
+  QVector<SelfIntersection> intersections;
 
   int n = geom->vertexCount( part, ring );
   bool isClosed = geom->vertexAt( QgsVertexId( part, ring, 0 ) ) == geom->vertexAt( QgsVertexId( part, ring, n - 1 ) );
@@ -386,7 +383,8 @@ QList<QgsGeometryUtils::SelfIntersection> QgsGeometryUtils::getSelfIntersections
       QgsPoint pl = geom->vertexAt( QgsVertexId( part, ring, l ) );
 
       QgsPoint inter;
-      if ( !QgsGeometryUtils::segmentIntersection( pi, pj, pk, pl, inter, tolerance ) ) continue;
+      bool intersection = false;
+      if ( !QgsGeometryUtils::segmentIntersection( pi, pj, pk, pl, inter, intersection, tolerance ) ) continue;
 
       SelfIntersection s;
       s.segment1 = i;
@@ -402,13 +400,15 @@ QList<QgsGeometryUtils::SelfIntersection> QgsGeometryUtils::getSelfIntersections
   return intersections;
 }
 
-double QgsGeometryUtils::leftOfLine( double x, double y, double x1, double y1, double x2, double y2 )
+int QgsGeometryUtils::leftOfLine( double x, double y, double x1, double y1, double x2, double y2 )
 {
   double f1 = x - x1;
   double f2 = y2 - y1;
   double f3 = y - y1;
   double f4 = x2 - x1;
-  return f1 * f2 - f3 * f4;
+  double test = ( f1 * f2 - f3 * f4 );
+  // return -1, 0, or 1
+  return qgsDoubleNear( test, 0.0 ) ? 0 : ( test < 0 ? -1 : 1 );
 }
 
 QgsPoint QgsGeometryUtils::pointOnLineWithDistance( const QgsPoint &startPoint, const QgsPoint &directionPoint, double distance )
@@ -702,7 +702,7 @@ void QgsGeometryUtils::segmentizeArc( const QgsPoint &p1, const QgsPoint &p2, co
   double z = 0;
   double m = 0;
 
-  QList<QgsPoint> stringPoints;
+  QVector<QgsPoint> stringPoints;
   stringPoints.insert( 0, circlePoint1 );
   if ( circlePoint2 != circlePoint3 && circlePoint1 != circlePoint2 ) //draw straight line segment if two points have the same position
   {

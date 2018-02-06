@@ -382,7 +382,7 @@ void QgsPostgresConn::addColumnInfo( QgsPostgresLayerProperty &layerProperty, co
   }
   else
   {
-    QgsMessageLog::logMessage( tr( "SQL:%1\nresult:%2\nerror:%3\n" ).arg( sql ).arg( colRes.PQresultStatus() ).arg( colRes.PQresultErrorMessage() ), tr( "PostGIS" ) );
+    QgsMessageLog::logMessage( tr( "SQL: %1\nresult: %2\nerror: %3\n" ).arg( sql ).arg( colRes.PQresultStatus() ).arg( colRes.PQresultErrorMessage() ), tr( "PostGIS" ) );
   }
 
 }
@@ -536,12 +536,6 @@ bool QgsPostgresConn::getTableInfo( bool searchGeometryColumnsOnly, bool searchP
       layerProperty.relKind = relkind;
       layerProperty.isView = isView;
       layerProperty.tableComment = comment;
-      /*
-       * force2d may get a false negative value
-       * (dim == 2 but is not really constrained)
-       * http://trac.osgeo.org/postgis/ticket/3068
-       */
-      layerProperty.force2d = dim > 3;
       addColumnInfo( layerProperty, schemaName, tableName, isView );
 
       if ( isView && layerProperty.pkCols.empty() )
@@ -573,7 +567,7 @@ bool QgsPostgresConn::getTableInfo( bool searchGeometryColumnsOnly, bool searchP
                   " JOIN pg_namespace n ON n.oid=c.relnamespace"
                   " JOIN pg_type t ON t.oid=a.atttypid"
                   " LEFT JOIN pg_type b ON b.oid=t.typbasetype"
-                  " WHERE c.relkind IN ('v','r','m')"
+                  " WHERE c.relkind IN ('v','r','m','p')"
                   " AND has_schema_privilege( n.nspname, 'usage' )"
                   " AND has_table_privilege( '\"' || n.nspname || '\".\"' || c.relname || '\"', 'select' )"
                   " AND (t.typname IN ('geometry','geography','topogeometry') OR b.typname IN ('geometry','geography','topogeometry','pcpatch'))";
@@ -689,7 +683,7 @@ bool QgsPostgresConn::getTableInfo( bool searchGeometryColumnsOnly, bool searchP
                   " WHERE pg_namespace.oid=pg_class.relnamespace"
                   " AND has_schema_privilege(pg_namespace.nspname,'usage')"
                   " AND has_table_privilege('\"' || pg_namespace.nspname || '\".\"' || pg_class.relname || '\"','select')"
-                  " AND pg_class.relkind IN ('v','r','m')";
+                  " AND pg_class.relkind IN ('v','r','m','p')";
 
     // user has select privilege
     if ( searchPublicOnly )
@@ -1066,7 +1060,7 @@ bool QgsPostgresConn::openCursor( const QString &cursorName, const QString &sql 
 {
   if ( mOpenCursors++ == 0 && !mTransaction )
   {
-    QgsDebugMsg( QString( "Starting read-only transaction: %1" ).arg( mPostgresqlVersion ) );
+    QgsDebugMsgLevel( QString( "Starting read-only transaction: %1" ).arg( mPostgresqlVersion ), 4 );
     if ( mPostgresqlVersion >= 80000 )
       PQexecNR( QStringLiteral( "BEGIN READ ONLY" ) );
     else
@@ -1084,7 +1078,7 @@ bool QgsPostgresConn::closeCursor( const QString &cursorName )
 
   if ( --mOpenCursors == 0 && !mTransaction )
   {
-    QgsDebugMsg( "Committing read-only transaction" );
+    QgsDebugMsgLevel( "Committing read-only transaction", 4 );
     PQexecNR( QStringLiteral( "COMMIT" ) );
   }
 
@@ -1465,14 +1459,6 @@ void QgsPostgresConn::retrieveLayerTypes( QgsPostgresLayerProperty &layerPropert
       query += QString::number( srid );
     }
 
-    if ( !layerProperty.force2d )
-    {
-      query += QStringLiteral( ",%1(%2%3)" )
-               .arg( majorVersion() < 2 ? "ndims" : "st_ndims",
-                     quotedIdentifier( layerProperty.geometryColName ),
-                     castToGeometry ?  "::geometry" : "" );
-    }
-
     query += " FROM " + table;
 
     //QgsDebugMsg( "Retrieving geometry types,srids and dims: " + query );
@@ -1485,11 +1471,6 @@ void QgsPostgresConn::retrieveLayerTypes( QgsPostgresLayerProperty &layerPropert
       {
         QString type = gresult.PQgetvalue( i, 0 );
         QString srid = gresult.PQgetvalue( i, 1 );
-
-        if ( !layerProperty.force2d && gresult.PQgetvalue( i, 2 ).toInt() > 3 )
-        {
-          layerProperty.force2d = true;
-        }
 
         if ( type.isEmpty() )
           continue;
@@ -1868,7 +1849,7 @@ QString QgsPostgresConn::currentDatabase() const
   }
   else
   {
-    QgsMessageLog::logMessage( tr( "SQL:%1\nresult:%2\nerror:%3\n" ).arg( sql ).arg( res.PQresultStatus() ).arg( res.PQresultErrorMessage() ), tr( "PostGIS" ) );
+    QgsMessageLog::logMessage( tr( "SQL: %1\nresult: %2\nerror: %3\n" ).arg( sql ).arg( res.PQresultStatus() ).arg( res.PQresultErrorMessage() ), tr( "PostGIS" ) );
   }
 
   return database;

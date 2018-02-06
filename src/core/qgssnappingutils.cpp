@@ -39,7 +39,7 @@ QgsPointLocator *QgsSnappingUtils::locatorForLayer( QgsVectorLayer *vl )
 
   if ( !mLocators.contains( vl ) )
   {
-    QgsPointLocator *vlpl = new QgsPointLocator( vl, destinationCrs() );
+    QgsPointLocator *vlpl = new QgsPointLocator( vl, destinationCrs(), mMapSettings.transformContext() );
     mLocators.insert( vl, vlpl );
   }
   return mLocators.value( vl );
@@ -72,7 +72,7 @@ QgsPointLocator *QgsSnappingUtils::temporaryLocatorForLayer( QgsVectorLayer *vl,
 
   QgsRectangle rect( pointMap.x() - tolerance, pointMap.y() - tolerance,
                      pointMap.x() + tolerance, pointMap.y() + tolerance );
-  QgsPointLocator *vlpl = new QgsPointLocator( vl, destinationCrs(), &rect );
+  QgsPointLocator *vlpl = new QgsPointLocator( vl, destinationCrs(), mMapSettings.transformContext(), &rect );
   mTemporaryLocators.insert( vl, vlpl );
   return mTemporaryLocators.value( vl );
 }
@@ -101,14 +101,14 @@ static QgsPointLocator::Match _findClosestSegmentIntersection( const QgsPointXY 
   QSet<QgsPointXY> endpoints;
 
   // make a geometry
-  QList<QgsGeometry> geoms;
+  QVector<QgsGeometry> geoms;
   Q_FOREACH ( const QgsPointLocator::Match &m, segments )
   {
     if ( m.hasEdge() )
     {
-      QgsPolyline pl( 2 );
+      QgsPolylineXY pl( 2 );
       m.edgePoints( pl[0], pl[1] );
-      geoms << QgsGeometry::fromPolyline( pl );
+      geoms << QgsGeometry::fromPolylineXY( pl );
       endpoints << pl[0] << pl[1];
     }
   }
@@ -127,7 +127,7 @@ static QgsPointLocator::Match _findClosestSegmentIntersection( const QgsPointXY 
   }
   if ( g.wkbType() == QgsWkbTypes::MultiLineString )
   {
-    Q_FOREACH ( const QgsPolyline &pl, g.asMultiPolyline() )
+    Q_FOREACH ( const QgsPolylineXY &pl, g.asMultiPolyline() )
     {
       Q_FOREACH ( const QgsPointXY &p, pl )
       {
@@ -364,7 +364,7 @@ void QgsSnappingUtils::prepareIndex( const QList<LayerAndAreaOfInterest> &layers
         // first time the layer is used? - let's set an initial guess about indexing
         if ( !mHybridMaxAreaPerLayer.contains( vl->id() ) )
         {
-          int totalFeatureCount = vl->pendingFeatureCount();
+          int totalFeatureCount = vl->featureCount();
           if ( totalFeatureCount < mHybridPerLayerFeatureLimit )
           {
             // index the whole layer

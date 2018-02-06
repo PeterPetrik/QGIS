@@ -90,7 +90,6 @@ QgsPostgresProvider::pkType( const QgsField &f ) const
 QgsPostgresProvider::QgsPostgresProvider( QString const &uri )
   : QgsVectorDataProvider( uri )
   , mShared( new QgsPostgresSharedData )
-  , mEnabledCapabilities( 0 )
 {
 
   QgsDebugMsg( QString( "URI: %1 " ).arg( uri ) );
@@ -1304,7 +1303,7 @@ bool QgsPostgresProvider::determinePrimaryKey()
 
       QgsPostgresProvider::Relkind type = relkind();
 
-      if ( type == Relkind::OrdinaryTable )
+      if ( type == Relkind::OrdinaryTable || type == Relkind::PartitionedTable )
       {
         QgsDebugMsg( "Relation is a table. Checking to see if it has an oid column." );
 
@@ -1846,7 +1845,7 @@ bool QgsPostgresProvider::skipConstraintCheck( int fieldIndex, QgsFieldConstrain
 {
   if ( providerProperty( EvaluateDefaultValues, false ).toBool() )
   {
-    return mDefaultValues.contains( fieldIndex );
+    return !mDefaultValues.value( fieldIndex ).isEmpty();
   }
   else
   {
@@ -2050,7 +2049,7 @@ bool QgsPostgresProvider::addFeatures( QgsFeatureList &flist, Flags flags )
 
       if ( i == flist.size() )
       {
-        if ( v == defVal )
+        if ( v == defVal && defVal.isNull() == v.isNull() )
         {
           if ( defVal.isNull() )
           {
@@ -2681,7 +2680,7 @@ void QgsPostgresProvider::appendGeomParam( const QgsGeometry &geom, QStringList 
   QString param;
 
   QgsGeometry convertedGeom( convertToProviderType( geom ) );
-  QByteArray wkb( convertedGeom ? convertedGeom.exportToWkb() : geom.exportToWkb() );
+  QByteArray wkb( convertedGeom ? convertedGeom.asWkb() : geom.asWkb() );
   const unsigned char *buf = reinterpret_cast< const unsigned char * >( wkb.constData() );
   int wkbSize = wkb.length();
 
@@ -3097,6 +3096,12 @@ long QgsPostgresProvider::featureCount() const
   int featuresCounted = mShared->featuresCounted();
   if ( featuresCounted >= 0 )
     return featuresCounted;
+
+  // See: https://issues.qgis.org/issues/17388 - QGIS crashes on featureCount())
+  if ( ! connectionRO() )
+  {
+    return 0;
+  }
 
   // get total number of features
   QString sql;
@@ -3518,7 +3523,6 @@ bool QgsPostgresProvider::getGeometryDetails()
     }
     layerProperty.geometryColName = mGeometryColumn;
     layerProperty.geometryColType = mSpatialColType;
-    layerProperty.force2d         = false;
 
     QString delim;
 
@@ -3560,7 +3564,6 @@ bool QgsPostgresProvider::getGeometryDetails()
           // only what we requested is available
           mDetectedGeomType = layerProperty.types.at( 0 );
           mDetectedSrid     = QString::number( layerProperty.srids.at( 0 ) );
-          mForce2d          = layerProperty.force2d;
         }
       }
       else
@@ -3575,7 +3578,6 @@ bool QgsPostgresProvider::getGeometryDetails()
   QgsDebugMsg( QString( "Requested SRID is %1" ).arg( mRequestedSrid ) );
   QgsDebugMsg( QString( "Detected type is %1" ).arg( mDetectedGeomType ) );
   QgsDebugMsg( QString( "Requested type is %1" ).arg( mRequestedGeomType ) );
-  QgsDebugMsg( QString( "Force to 2D %1" ).arg( mForce2d ? "Yes" : "No" ) );
 
   mValid = ( mDetectedGeomType != QgsWkbTypes::Unknown || mRequestedGeomType != QgsWkbTypes::Unknown )
            && ( !mDetectedSrid.isEmpty() || !mRequestedSrid.isEmpty() );
@@ -3690,6 +3692,7 @@ QgsVectorLayerExporter::ExportError QgsPostgresProvider::createEmptyLayer( const
 {
   // populate members from the uri structure
   QgsDataSourceUri dsUri( uri );
+
   QString schemaName = dsUri.schema();
   QString tableName = dsUri.table();
 
@@ -3784,6 +3787,20 @@ QgsVectorLayerExporter::ExportError QgsPostgresProvider::createEmptyLayer( const
   try
   {
     conn->PQexecNR( QStringLiteral( "BEGIN" ) );
+
+    // We want a valid schema name ...
+    if ( schemaName.isEmpty() )
+    {
+      QString sql = QString( "SELECT current_schema" );
+      QgsPostgresResult result( conn->PQexec( sql ) );
+      if ( result.PQresultStatus() != PGRES_TUPLES_OK )
+        throw PGException( result );
+      schemaName = result.PQgetvalue( 0, 0 );
+      if ( schemaName.isEmpty() )
+      {
+        schemaName = QStringLiteral( "public" );
+      }
+    }
 
     QString sql = QString( "SELECT 1"
                            " FROM pg_class AS cls JOIN pg_namespace AS nsp"
@@ -4290,6 +4307,9 @@ QgsAttrPalIndexNameHash QgsPostgresProvider::palAttributeIndexNames() const
 
 QgsPostgresProvider::Relkind QgsPostgresProvider::relkind() const
 {
+  if ( mIsQuery )
+    return Relkind::Unknown;
+
   QString sql = QStringLiteral( "SELECT relkind FROM pg_class WHERE oid=regclass(%1)::oid" ).arg( quotedValue( mQuery ) );
   QgsPostgresResult res( connectionRO()->PQexec( sql ) );
   QString type = res.PQgetvalue( 0, 0 );
@@ -4327,6 +4347,10 @@ QgsPostgresProvider::Relkind QgsPostgresProvider::relkind() const
   else if ( type == QLatin1String( "f" ) )
   {
     kind = Relkind::ForeignTable;
+  }
+  else if ( type == QLatin1String( "p" ) )
+  {
+    kind = Relkind::PartitionedTable;
   }
 
   return kind;
@@ -4877,7 +4901,7 @@ class QgsPostgresSourceSelectProvider : public QgsSourceSelectProvider  //#spell
 
     QString providerKey() const override { return QStringLiteral( "postgres" ); }
     QString text() const override { return QObject::tr( "PostgreSQL" ); }
-    int ordering() const override { return QgsSourceSelectProvider::OrderDatabaseProvider + 10; }
+    int ordering() const override { return QgsSourceSelectProvider::OrderDatabaseProvider + 20; }
     QIcon icon() const override { return QgsApplication::getThemeIcon( QStringLiteral( "/mActionAddPostgisLayer.svg" ) ); }
     QgsAbstractDataSourceWidget *createDataSourceWidget( QWidget *parent = nullptr, Qt::WindowFlags fl = Qt::Widget, QgsProviderRegistry::WidgetMode widgetMode = QgsProviderRegistry::WidgetMode::Embedded ) const override
     {

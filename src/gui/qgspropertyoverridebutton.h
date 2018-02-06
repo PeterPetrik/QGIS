@@ -42,7 +42,7 @@ class QgsMapCanvas;
  * It allows users to specify field or expression based overrides
  * which should be applied to a property of an object. Eg, this widget
  * is used for controlling data defined overrides in symbology, labeling
- * and composer.
+ * and layouts.
  * \since QGIS 3.0
  */
 
@@ -74,6 +74,20 @@ class GUI_EXPORT QgsPropertyOverrideButton: public QToolButton
     void init( int propertyKey,
                const QgsProperty &property,
                const QgsPropertiesDefinition &definitions,
+               const QgsVectorLayer *layer = nullptr,
+               bool auxiliaryStorageEnabled = false );
+
+    /**
+     * Initialize a newly constructed property button (useful if button was included in a UI layout).
+     * \param propertyKey key for corresponding property
+     * \param property initial value of associated property to show in widget
+     * \param definition properties definition for button
+     * \param layer associated vector layer
+     * \param auxiliaryStorageEnabled If true, activate the button to store data defined in auxiliary storage
+     */
+    void init( int propertyKey,
+               const QgsProperty &property,
+               const QgsPropertyDefinition &definition,
                const QgsVectorLayer *layer = nullptr,
                bool auxiliaryStorageEnabled = false );
 
@@ -300,7 +314,7 @@ class GUI_EXPORT QgsPropertyOverrideButton: public QToolButton
   private slots:
     void aboutToShowMenu();
     void menuActionTriggered( QAction *action );
-
+    void showHelp();
     void updateSiblingWidgets( bool state );
 };
 

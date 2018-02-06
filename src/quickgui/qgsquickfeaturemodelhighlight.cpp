@@ -1,9 +1,9 @@
 /***************************************************************************
-              qgsqguickfeaturemodelhighlight.cpp
-               ----------------------------------------------------
-              date                 : 9.12.2014
-              copyright            : (C) 2014 by Matthias Kuhn
-              email                : matthias.kuhn (at) opengis.ch
+  qgsqguickfeaturemodelhighlight.cpp
+  --------------------------------------
+  Date                 : 9.12.2014
+  Copyright            : (C) 2014 by Matthias Kuhn
+  Email                : matthias@opengis.ch
  ***************************************************************************
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -13,16 +13,15 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "qgsquickfeaturemodelhighlight.h"
-
-#include <qgsvectorlayer.h>
+#include "qgsvectorlayer.h"
 
 #include "qgsquickfeaturemodel.h"
+#include "qgsquickfeaturemodelhighlight.h"
 #include "qgsquickmapsettings.h"
 #include "qgsquicksgrubberband.h"
 
 
-QgsQuickFeatureModelHighlight::QgsQuickFeatureModelHighlight( QQuickItem* parent )
+QgsQuickFeatureModelHighlight::QgsQuickFeatureModelHighlight( QQuickItem *parent )
   : QQuickItem( parent )
   , mModel( nullptr )
   , mDirty( false )
@@ -51,7 +50,7 @@ void QgsQuickFeatureModelHighlight::onModelDataChanged()
   update();
 }
 
-QSGNode* QgsQuickFeatureModelHighlight::updatePaintNode( QSGNode* n, QQuickItem::UpdatePaintNodeData* )
+QSGNode *QgsQuickFeatureModelHighlight::updatePaintNode( QSGNode *n, QQuickItem::UpdatePaintNodeData * )
 {
   if ( !mDirty || !mMapSettings )
     return n;
@@ -62,10 +61,10 @@ QSGNode* QgsQuickFeatureModelHighlight::updatePaintNode( QSGNode* n, QQuickItem:
   if ( !mModel )
     return n;
 
-  QgsVectorLayer* layer = mModel->layer();
+  QgsVectorLayer *layer = mModel->layer();
   if ( layer )
   {
-    QgsCoordinateTransform transf( layer->crs(), mMapSettings->destinationCrs() );
+    QgsCoordinateTransform transf( layer->crs(), mMapSettings->destinationCrs(), mMapSettings->transformContext() );
 
     QgsFeature feature = mModel->feature();
     QgsGeometry geom( feature.geometry() );
@@ -76,7 +75,7 @@ QSGNode* QgsQuickFeatureModelHighlight::updatePaintNode( QSGNode* n, QQuickItem:
     for ( auto it = geom.vertices_begin(); it != geom.vertices_end(); ++it )
       points.append( *it );
 
-    QgsQuickSGRubberband* rb = new QgsQuickSGRubberband( points, geom.type(), mColor, mWidth );
+    QgsQuickSGRubberband *rb = new QgsQuickSGRubberband( points, geom.type(), mColor, mWidth );
     rb->setFlag( QSGNode::OwnedByParent );
     n->appendChildNode( rb );
   }

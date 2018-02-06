@@ -19,6 +19,11 @@
 
 ///@cond PRIVATE
 
+QgsProcessingAlgorithm::Flags QgsBoundaryAlgorithm::flags() const
+{
+  return QgsProcessingFeatureBasedAlgorithm::flags() | QgsProcessingAlgorithm::FlagCanRunInBackground;
+}
+
 QString QgsBoundaryAlgorithm::name() const
 {
   return QStringLiteral( "boundary" );
@@ -37,6 +42,11 @@ QStringList QgsBoundaryAlgorithm::tags() const
 QString QgsBoundaryAlgorithm::group() const
 {
   return QObject::tr( "Vector geometry" );
+}
+
+QString QgsBoundaryAlgorithm::groupId() const
+{
+  return  QStringLiteral( "vectorgeometry" );
 }
 
 QString QgsBoundaryAlgorithm::outputName() const
@@ -90,14 +100,14 @@ QgsWkbTypes::Type QgsBoundaryAlgorithm::outputWkbType( QgsWkbTypes::Type inputWk
   return outputWkb;
 }
 
-QgsFeature QgsBoundaryAlgorithm::processFeature( const QgsFeature &feature, QgsProcessingFeedback *feedback )
+QgsFeature QgsBoundaryAlgorithm::processFeature( const QgsFeature &feature, QgsProcessingContext &, QgsProcessingFeedback *feedback )
 {
   QgsFeature outFeature = feature;
 
   if ( feature.hasGeometry() )
   {
     QgsGeometry inputGeometry = feature.geometry();
-    QgsGeometry outputGeometry = QgsGeometry( inputGeometry.geometry()->boundary() );
+    QgsGeometry outputGeometry = QgsGeometry( inputGeometry.constGet()->boundary() );
     if ( !outputGeometry )
     {
       feedback->reportError( QObject::tr( "No boundary for feature %1 (possibly a closed linestring?)'" ).arg( feature.id() ) );

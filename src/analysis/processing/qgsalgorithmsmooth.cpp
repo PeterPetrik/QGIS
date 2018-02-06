@@ -19,6 +19,11 @@
 
 ///@cond PRIVATE
 
+QgsProcessingAlgorithm::Flags QgsSmoothAlgorithm::flags() const
+{
+  return QgsProcessingFeatureBasedAlgorithm::flags() | QgsProcessingAlgorithm::FlagCanRunInBackground;
+}
+
 QString QgsSmoothAlgorithm::name() const
 {
   return QStringLiteral( "smoothgeometry" );
@@ -26,7 +31,7 @@ QString QgsSmoothAlgorithm::name() const
 
 QString QgsSmoothAlgorithm::displayName() const
 {
-  return QObject::tr( "Smooth geometries" );
+  return QObject::tr( "Smooth" );
 }
 
 QStringList QgsSmoothAlgorithm::tags() const
@@ -37,6 +42,11 @@ QStringList QgsSmoothAlgorithm::tags() const
 QString QgsSmoothAlgorithm::group() const
 {
   return QObject::tr( "Vector geometry" );
+}
+
+QString QgsSmoothAlgorithm::groupId() const
+{
+  return QStringLiteral( "vectorgeometry" );
 }
 
 QString QgsSmoothAlgorithm::outputName() const
@@ -96,7 +106,7 @@ bool QgsSmoothAlgorithm::prepareAlgorithm( const QVariantMap &parameters, QgsPro
   return true;
 }
 
-QgsFeature QgsSmoothAlgorithm::processFeature( const QgsFeature &feature, QgsProcessingFeedback *feedback )
+QgsFeature QgsSmoothAlgorithm::processFeature( const QgsFeature &feature, QgsProcessingContext &, QgsProcessingFeedback *feedback )
 {
   QgsFeature f = feature;
   if ( f.hasGeometry() )

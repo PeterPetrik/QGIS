@@ -19,6 +19,11 @@
 
 ///@cond PRIVATE
 
+QgsProcessingAlgorithm::Flags QgsConvexHullAlgorithm::flags() const
+{
+  return QgsProcessingFeatureBasedAlgorithm::flags() | QgsProcessingAlgorithm::FlagCanRunInBackground;
+}
+
 QString QgsConvexHullAlgorithm::name() const
 {
   return QStringLiteral( "convexhull" );
@@ -37,6 +42,11 @@ QStringList QgsConvexHullAlgorithm::tags() const
 QString QgsConvexHullAlgorithm::group() const
 {
   return QObject::tr( "Vector geometry" );
+}
+
+QString QgsConvexHullAlgorithm::groupId() const
+{
+  return QStringLiteral( "vectorgeometry" );
 }
 
 QString QgsConvexHullAlgorithm::outputName() const
@@ -64,7 +74,7 @@ QgsFields QgsConvexHullAlgorithm::outputFields( const QgsFields &inputFields ) c
   return fields;
 }
 
-QgsFeature QgsConvexHullAlgorithm::processFeature( const QgsFeature &feature, QgsProcessingFeedback *feedback )
+QgsFeature QgsConvexHullAlgorithm::processFeature( const QgsFeature &feature, QgsProcessingContext &, QgsProcessingFeedback *feedback )
 {
   QgsFeature f = feature;
   if ( f.hasGeometry() )
@@ -76,8 +86,8 @@ QgsFeature QgsConvexHullAlgorithm::processFeature( const QgsFeature &feature, Qg
     if ( outputGeometry )
     {
       QgsAttributes attrs = f.attributes();
-      attrs << outputGeometry.geometry()->area()
-            << outputGeometry.geometry()->perimeter();
+      attrs << outputGeometry.constGet()->area()
+            << outputGeometry.constGet()->perimeter();
       f.setAttributes( attrs );
     }
   }

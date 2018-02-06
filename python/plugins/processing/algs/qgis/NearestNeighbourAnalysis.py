@@ -16,8 +16,6 @@
 *                                                                         *
 ***************************************************************************
 """
-from builtins import next
-from builtins import str
 
 __author__ = 'Victor Olaya'
 __date__ = 'August 2012'
@@ -64,6 +62,9 @@ class NearestNeighbourAnalysis(QgisAlgorithm):
     def group(self):
         return self.tr('Vector analysis')
 
+    def groupId(self):
+        return 'vectoranalysis'
+
     def __init__(self):
         super().__init__()
 
@@ -97,7 +98,7 @@ class NearestNeighbourAnalysis(QgisAlgorithm):
         spatialIndex = QgsSpatialIndex(source, feedback)
 
         distance = QgsDistanceArea()
-        distance.setSourceCrs(source.sourceCrs())
+        distance.setSourceCrs(source.sourceCrs(), context.transformContext())
         distance.setEllipsoid(context.project().ellipsoid())
 
         sumDist = 0.00

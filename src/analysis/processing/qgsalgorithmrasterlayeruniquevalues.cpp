@@ -39,6 +39,15 @@ QString QgsRasterLayerUniqueValuesReportAlgorithm::group() const
   return QObject::tr( "Raster analysis" );
 }
 
+QString QgsRasterLayerUniqueValuesReportAlgorithm::groupId() const
+{
+  return QStringLiteral( "rasteranalysis" );
+}
+
+QgsProcessingAlgorithm::Flags QgsRasterLayerUniqueValuesReportAlgorithm::flags() const
+{
+  return QgsProcessingAlgorithm::flags() | QgsProcessingAlgorithm::FlagCanRunInBackground;
+}
 
 void QgsRasterLayerUniqueValuesReportAlgorithm::initAlgorithm( const QVariantMap & )
 {

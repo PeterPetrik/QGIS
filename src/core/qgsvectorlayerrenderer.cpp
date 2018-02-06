@@ -271,7 +271,7 @@ void QgsVectorLayerRenderer::drawRenderer( QgsFeatureIterator &fit )
         break;
       }
 
-      if ( !fet.hasGeometry() )
+      if ( !fet.hasGeometry() || fet.geometry().isEmpty() )
         continue; // skip features without geometry
 
       mContext.expressionContext().setFeature( fet );
@@ -480,7 +480,7 @@ void QgsVectorLayerRenderer::prepareLabeling( QgsVectorLayer *layer, QSet<QStrin
 {
   if ( QgsLabelingEngine *engine2 = mContext.labelingEngine() )
   {
-    if ( layer->labeling() )
+    if ( layer->labelsEnabled() )
     {
       mLabelProvider = layer->labeling()->provider( layer );
       if ( mLabelProvider )

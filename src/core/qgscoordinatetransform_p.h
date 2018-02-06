@@ -18,6 +18,7 @@
 #define QGSCOORDINATETRANSFORMPRIVATE_H
 
 #define SIP_NO_FILE
+#include "qgsconfig.h"
 
 /// @cond PRIVATE
 
@@ -31,7 +32,13 @@
 //
 
 #include <QSharedData>
+
+#ifndef USE_THREAD_LOCAL
+#include <QThreadStorage>
+#endif
+
 #include "qgscoordinatereferencesystem.h"
+#include "qgscoordinatetransformcontext.h"
 
 typedef void *projPJ;
 typedef void *projCtx;
@@ -62,13 +69,25 @@ class QgsCoordinateTransformPrivate : public QSharedData
     explicit QgsCoordinateTransformPrivate();
 
     QgsCoordinateTransformPrivate( const QgsCoordinateReferenceSystem &source,
-                                   const QgsCoordinateReferenceSystem &destination );
+                                   const QgsCoordinateReferenceSystem &destination,
+                                   const QgsCoordinateTransformContext &context );
+
+    QgsCoordinateTransformPrivate( const QgsCoordinateReferenceSystem &source,
+                                   const QgsCoordinateReferenceSystem &destination,
+                                   int sourceDatumTransform,
+                                   int destDatumTransform );
 
     QgsCoordinateTransformPrivate( const QgsCoordinateTransformPrivate &other );
 
     ~QgsCoordinateTransformPrivate();
 
+    bool checkValidity();
+
+    void invalidate();
+
     bool initialize();
+
+    void calculateTransforms( const QgsCoordinateTransformContext &context );
 
     QPair< projPJ, projPJ > threadLocalProjData();
 
@@ -100,12 +119,14 @@ class QgsCoordinateTransformPrivate : public QSharedData
      * Thread local proj context storage. A new proj context will be created
      * for every thread.
      */
+#ifdef USE_THREAD_LOCAL
     static thread_local QgsProjContextStore mProjContext;
+#else
+    static QThreadStorage< QgsProjContextStore * > mProjContext;
+#endif
 
     QReadWriteLock mProjLock;
     QMap < uintptr_t, QPair< projPJ, projPJ > > mProjProjections;
-
-    static QString datumTransformString( int datumTransform );
 
   private:
 
@@ -113,7 +134,7 @@ class QgsCoordinateTransformPrivate : public QSharedData
     QString stripDatumTransform( const QString &proj4 ) const;
 
     //! In certain situations, null grid shifts have to be added to src / dst proj string
-    void addNullGridShifts( QString &srcProjString, QString &destProjString ) const;
+    void addNullGridShifts( QString &srcProjString, QString &destProjString, int sourceDatumTransform, int destinationDatumTransform ) const;
 
     void setFinder();
 

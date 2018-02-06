@@ -51,7 +51,7 @@ The expressions try to follow both syntax and semantics of SQL expressions.
 
 Usage:
 \code{.cpp}
-  QgsExpression exp("gid*2 > 10 and type not in ('D','F'));
+  QgsExpression exp("gid*2 > 10 and type not in ('D','F')");
   if (exp.hasParserError())
   {
     // show error message with parserErrorString() and exit
@@ -136,6 +136,13 @@ class CORE_EXPORT QgsExpression
      * it does not need to be re-parsed.
      */
     QgsExpression &operator=( const QgsExpression &other );
+
+    /**
+     * Automatically convert this expression to a string where requested.
+     *
+     * \since QGIS 3.0
+     */
+    operator QString() const SIP_SKIP;
 
     /**
      * Create an empty expression.
@@ -564,7 +571,8 @@ class CORE_EXPORT QgsExpression
 
     struct Help SIP_SKIP
     {
-      Help() {}
+      //! Constructor for expression help
+      Help() = default;
 
       Help( const QString &name, const QString &type, const QString &description, const QList<QgsExpression::HelpVariant> &variants )
         : mName( name )

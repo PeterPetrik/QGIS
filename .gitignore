@@ -23,7 +23,8 @@
 /CMakeLists.txt.user
 /CMakeLists.txt.user.*
 api_doc
-*build*
+/build*
+/tests/src/quickgui/build*
 debian/*.debhelper
 debian/*.substvars
 desktop.ini
@@ -74,3 +75,4 @@ python/plugins/processing/tests/testdata/custom/*.aux.xml
 python/plugins/processing/tests/testdata/*.aux.xml
 Thumb.db
 Testing/*
+tests/src/quickgui/app/config.pri

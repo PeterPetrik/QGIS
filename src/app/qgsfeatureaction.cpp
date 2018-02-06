@@ -57,7 +57,7 @@ QgsAttributeDialog *QgsFeatureAction::newDialog( bool cloneFeature )
 
   QgsDistanceArea myDa;
 
-  myDa.setSourceCrs( mLayer->crs() );
+  myDa.setSourceCrs( mLayer->crs(), QgsProject::instance()->transformContext() );
   myDa.setEllipsoid( QgsProject::instance()->ellipsoid() );
 
   context.setDistanceArea( myDa );
@@ -217,9 +217,14 @@ bool QgsFeatureAction::addFeature( const QgsAttributeMap &defaultAttributes, boo
     mFeatureSaved = mLayer->addFeature( *mFeature );
 
     if ( mFeatureSaved )
+    {
       mLayer->endEditCommand();
+      mLayer->triggerRepaint();
+    }
     else
+    {
       mLayer->destroyEditCommand();
+    }
   }
   else
   {

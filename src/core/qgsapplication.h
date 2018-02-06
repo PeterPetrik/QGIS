@@ -34,7 +34,7 @@ class QgsRendererRegistry;
 class QgsSvgCache;
 class QgsSymbolLayerRegistry;
 class QgsRasterRendererRegistry;
-class QgsGPSConnectionRegistry;
+class QgsGpsConnectionRegistry;
 class QgsDataItemProviderRegistry;
 class QgsPluginLayerRegistry;
 class QgsMessageLog;
@@ -44,6 +44,7 @@ class QgsUserProfile;
 class QgsUserProfileManager;
 class QgsPageSizeRegistry;
 class QgsLayoutItemRegistry;
+class QgsAuthManager;
 
 /**
  * \ingroup core
@@ -144,7 +145,7 @@ class CORE_EXPORT QgsApplication : public QApplication
     % End
 #endif
 
-    virtual ~QgsApplication();
+    ~QgsApplication() override;
 
     /**
      * Returns the singleton instance of the QgsApplication.
@@ -163,10 +164,10 @@ class CORE_EXPORT QgsApplication : public QApplication
     static void init( QString profileFolder = QString() ) SIP_SKIP;
 
     //! Watch for QFileOpenEvent.
-    virtual bool event( QEvent *event ) override;
+    bool event( QEvent *event ) override;
 
     //! Catch exceptions when sending event to receiver.
-    virtual bool notify( QObject *receiver, QEvent *event ) override;
+    bool notify( QObject *receiver, QEvent *event ) override;
 
     //! Set the FileOpen event receiver
     static void setFileOpenEventReceiver( QObject *receiver );
@@ -204,8 +205,8 @@ class CORE_EXPORT QgsApplication : public QApplication
     /**
      * \brief All themes found in ~/.qgis3/themes folder.
      * The path is to the root folder for the theme
-     * \note Valid theme folders must contain a style.qss file.
      * \returns A hash of theme name and theme path. Valid theme folders contain style.qss
+     * \note Valid theme folders must contain a style.qss file.
      */
     static QHash<QString, QString> uiThemes();
 
@@ -277,8 +278,11 @@ class CORE_EXPORT QgsApplication : public QApplication
     //! Returns the paths to svg directories.
     static QStringList svgPaths();
 
-    //! Returns the paths to composer template directories
-    static QStringList composerTemplatePaths();
+    /**
+     * Returns the paths to layout template directories.
+     * \since QGIS 3.0
+     */
+    static QStringList layoutTemplatePaths();
 
     //! Returns the system environment variables passed to application.
     static QMap<QString, QString> systemEnvVars() { return ABISYM( mSystemEnvVars ); }
@@ -309,6 +313,29 @@ class CORE_EXPORT QgsApplication : public QApplication
      * default theme if the active theme does not have the required icon.
      */
     static QIcon getThemeIcon( const QString &name );
+
+    /**
+     * \brief The Cursor enum defines constants for QGIS custom
+     * cursors.
+     */
+    enum Cursor
+    {
+      ZoomIn, //!< Zoom in
+      ZoomOut, //!< Zoom out
+      Identify, //!< Identify: obtain information about the object
+      CrossHair, //!< Precisely identify a point on the canvas
+      CapturePoint, //!< Select and capture a point or a feature
+      Select, //!< Select a rectangle
+      Sampler, //!< Color/Value picker
+    };
+
+    /**
+     * Helper to get a theme cursor. It will fall back to the
+     * default theme if the active theme does not have the required icon.
+     * Cursors are automatically scaled to look like a 16px cursor on 96dpi
+     * screens.
+     */
+    static QCursor getThemeCursor( const Cursor &cursor );
 
     /**
      * Helper to get a theme icon as a pixmap. It will fall back to the
@@ -568,7 +595,7 @@ class CORE_EXPORT QgsApplication : public QApplication
      * Returns the application's GPS connection registry, used for managing GPS connections.
      * \since QGIS 3.0
      */
-    static QgsGPSConnectionRegistry *gpsConnectionRegistry();
+    static QgsGpsConnectionRegistry *gpsConnectionRegistry();
 
     /**
      * Returns the application's plugin layer registry, used for managing plugin layer types.
@@ -581,6 +608,14 @@ class CORE_EXPORT QgsApplication : public QApplication
      * \since QGIS 3.0
      */
     static QgsMessageLog *messageLog();
+
+    /**
+     * Returns the application's authentication manager instance
+     * \note this can be a null pointer if called before initQgis
+     * \see initQgis
+     * \since QGIS 3.0
+     */
+    static QgsAuthManager *authManager();
 
     /**
      * Returns the application's processing registry, used for managing processing providers,
@@ -738,8 +773,10 @@ class CORE_EXPORT QgsApplication : public QApplication
     static QString sPlatformName;
 
     QMap<QString, QIcon> mIconCache;
+    QMap<Cursor, QCursor> mCursorCache;
 
     QgsDataItemProviderRegistry *mDataItemProviderRegistry = nullptr;
+    QgsAuthManager *mAuthManager = nullptr;
 
     struct ApplicationMembers
     {
@@ -748,7 +785,7 @@ class CORE_EXPORT QgsApplication : public QApplication
       QgsAnnotationRegistry *mAnnotationRegistry = nullptr;
       QgsColorSchemeRegistry *mColorSchemeRegistry = nullptr;
       QgsFieldFormatterRegistry *mFieldFormatterRegistry = nullptr;
-      QgsGPSConnectionRegistry *mGpsConnectionRegistry = nullptr;
+      QgsGpsConnectionRegistry *mGpsConnectionRegistry = nullptr;
       QgsMessageLog *mMessageLog = nullptr;
       QgsPaintEffectRegistry *mPaintEffectRegistry = nullptr;
       QgsPluginLayerRegistry *mPluginLayerRegistry = nullptr;

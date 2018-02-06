@@ -39,9 +39,19 @@ QString QgsCentroidAlgorithm::group() const
   return QObject::tr( "Vector geometry" );
 }
 
+QString QgsCentroidAlgorithm::groupId() const
+{
+  return QStringLiteral( "vectorgeometry" );
+}
+
 QString QgsCentroidAlgorithm::outputName() const
 {
   return QObject::tr( "Centroids" );
+}
+
+QgsProcessingAlgorithm::Flags QgsCentroidAlgorithm::flags() const
+{
+  return QgsProcessingFeatureBasedAlgorithm::flags() | QgsProcessingAlgorithm::FlagCanRunInBackground;
 }
 
 void QgsCentroidAlgorithm::initAlgorithm( const QVariantMap & )
@@ -61,7 +71,7 @@ QgsCentroidAlgorithm *QgsCentroidAlgorithm::createInstance() const
   return new QgsCentroidAlgorithm();
 }
 
-QgsFeature QgsCentroidAlgorithm::processFeature( const QgsFeature &f, QgsProcessingFeedback *feedback )
+QgsFeature QgsCentroidAlgorithm::processFeature( const QgsFeature &f, QgsProcessingContext &, QgsProcessingFeedback *feedback )
 {
   QgsFeature feature = f;
   if ( feature.hasGeometry() )

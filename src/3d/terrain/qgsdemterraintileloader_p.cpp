@@ -31,14 +31,23 @@ static void _heightMapMinMax( const QByteArray &heightMap, float &zMin, float &z
 {
   const float *zBits = ( const float * ) heightMap.constData();
   int zCount = heightMap.count() / sizeof( float );
-  zMin = zBits[0];
-  zMax = zBits[0];
+  bool first = true;
   for ( int i = 0; i < zCount; ++i )
   {
     float z = zBits[i];
+    if ( std::isnan( z ) )
+      continue;
+    if ( first )
+    {
+      zMin = zMax = z;
+      first = false;
+    }
     zMin = qMin( zMin, z );
     zMax = qMax( zMax, z );
   }
+
+  if ( first )
+    zMin = zMax = std::numeric_limits<float>::quiet_NaN();
 }
 
 
@@ -54,20 +63,26 @@ QgsDemTerrainTileLoader::QgsDemTerrainTileLoader( QgsTerrainEntity *terrain, Qgs
   connect( generator->heightMapGenerator(), &QgsDemHeightMapGenerator::heightMapReady, this, &QgsDemTerrainTileLoader::onHeightMapReady );
   mHeightMapJobId = generator->heightMapGenerator()->render( node->tileX(), node->tileY(), node->tileZ() );
   mResolution = generator->heightMapGenerator()->resolution();
-}
-
-QgsDemTerrainTileLoader::~QgsDemTerrainTileLoader()
-{
+  mSkirtHeight = generator->skirtHeight();
 }
 
 Qt3DCore::QEntity *QgsDemTerrainTileLoader::createEntity( Qt3DCore::QEntity *parent )
 {
+  float zMin, zMax;
+  _heightMapMinMax( mHeightMap, zMin, zMax );
+
+  if ( std::isnan( zMin ) || std::isnan( zMax ) )
+  {
+    // no data available for this tile
+    return nullptr;
+  }
+
   QgsTerrainTileEntity *entity = new QgsTerrainTileEntity;
 
   // create geometry renderer
 
   Qt3DRender::QGeometryRenderer *mesh = new Qt3DRender::QGeometryRenderer;
-  mesh->setGeometry( new DemTerrainTileGeometry( mResolution, mHeightMap, mesh ) );
+  mesh->setGeometry( new DemTerrainTileGeometry( mResolution, mSkirtHeight, mHeightMap, mesh ) );
   entity->addComponent( mesh ); // takes ownership if the component has no parent
 
   // create material
@@ -80,13 +95,10 @@ Qt3DCore::QEntity *QgsDemTerrainTileLoader::createEntity( Qt3DCore::QEntity *par
   transform = new Qt3DCore::QTransform();
   entity->addComponent( transform );
 
-  float zMin, zMax;
-  _heightMapMinMax( mHeightMap, zMin, zMax );
-
   const Qgs3DMapSettings &map = terrain()->map3D();
   QgsRectangle extent = map.terrainGenerator()->tilingScheme().tileToExtent( mNode->tileX(), mNode->tileY(), mNode->tileZ() ); //node->extent;
-  double x0 = extent.xMinimum() - map.originX();
-  double y0 = extent.yMinimum() - map.originY();
+  double x0 = extent.xMinimum() - map.origin().x();
+  double y0 = extent.yMinimum() - map.origin().y();
   double side = extent.width();
   double half = side / 2;
 
@@ -116,6 +128,7 @@ void QgsDemTerrainTileLoader::onHeightMapReady( int jobId, const QByteArray &hei
 // ---------------------
 
 #include <qgsrasterlayer.h>
+#include <qgsrasterprojector.h>
 #include <QtConcurrent/QtConcurrentRun>
 #include <QFutureWatcher>
 
@@ -135,13 +148,22 @@ QgsDemHeightMapGenerator::~QgsDemHeightMapGenerator()
 
 #include <QElapsedTimer>
 
-static QByteArray _readDtmData( QgsRasterDataProvider *provider, const QgsRectangle &extent, int res )
+static QByteArray _readDtmData( QgsRasterDataProvider *provider, const QgsRectangle &extent, int res, const QgsCoordinateReferenceSystem &destCrs )
 {
   QElapsedTimer t;
   t.start();
 
   // TODO: use feedback object? (but GDAL currently does not support cancelation anyway)
-  QgsRasterBlock *block = provider->block( 1, extent, res, res );
+  QgsRasterInterface *input = provider;
+  std::unique_ptr<QgsRasterProjector> projector;
+  if ( provider->crs() != destCrs )
+  {
+    projector.reset( new QgsRasterProjector );
+    projector->setCrs( provider->crs(), destCrs );
+    projector->setInput( provider );
+    input = projector.get();
+  }
+  QgsRasterBlock *block = input->block( 1, extent, res, res );
 
   QByteArray data;
   if ( block )
@@ -149,6 +171,20 @@ static QByteArray _readDtmData( QgsRasterDataProvider *provider, const QgsRectan
     block->convert( Qgis::Float32 ); // currently we expect just floats
     data = block->data();
     data.detach();  // this should make a deep copy
+
+    if ( block->hasNoData() )
+    {
+      // turn all no-data values into NaN in the output array
+      float *floatData = reinterpret_cast<float *>( data.data() );
+      Q_ASSERT( data.count() % sizeof( float ) == 0 );
+      int count = data.count() / sizeof( float );
+      for ( int i = 0; i < count; ++i )
+      {
+        if ( block->isNoData( i ) )
+          floatData[i] = std::numeric_limits<float>::quiet_NaN();
+      }
+    }
+
     delete block;
   }
   return data;
@@ -171,9 +207,9 @@ int QgsDemHeightMapGenerator::render( int x, int y, int z )
   jd.extent = extent;
   jd.timer.start();
   // make a clone of the data provider so it is safe to use in worker thread
-  jd.future = QtConcurrent::run( _readDtmData, mClonedProvider, extent, mResolution );
+  jd.future = QtConcurrent::run( _readDtmData, mClonedProvider, extent, mResolution, mTilingScheme.crs() );
 
-  QFutureWatcher<QByteArray> *fw = new QFutureWatcher<QByteArray>;
+  QFutureWatcher<QByteArray> *fw = new QFutureWatcher<QByteArray>( nullptr );
   fw->setFuture( jd.future );
   connect( fw, &QFutureWatcher<QByteArray>::finished, this, &QgsDemHeightMapGenerator::onFutureFinished );
 

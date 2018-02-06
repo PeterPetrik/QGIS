@@ -71,6 +71,9 @@ class RandomPointsPolygons(QgisAlgorithm):
     def group(self):
         return self.tr('Vector creation')
 
+    def groupId(self):
+        return 'vectorcreation'
+
     def __init__(self):
         super().__init__()
 
@@ -124,7 +127,7 @@ class RandomPointsPolygons(QgisAlgorithm):
                                                fields, QgsWkbTypes.Point, source.sourceCrs())
 
         da = QgsDistanceArea()
-        da.setSourceCrs(source.sourceCrs())
+        da.setSourceCrs(source.sourceCrs(), context.transformContext())
         da.setEllipsoid(context.project().ellipsoid())
 
         total = 100.0 / source.featureCount() if source.featureCount() else 0
@@ -168,7 +171,7 @@ class RandomPointsPolygons(QgisAlgorithm):
                 ry = bbox.yMinimum() + bbox.height() * random.random()
 
                 p = QgsPointXY(rx, ry)
-                geom = QgsGeometry.fromPoint(p)
+                geom = QgsGeometry.fromPointXY(p)
                 if geom.within(fGeom) and \
                         vector.checkMinDistance(p, index, minDistance, points):
                     f = QgsFeature(nPoints)

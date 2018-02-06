@@ -16,32 +16,35 @@
 #ifndef QGSQUICKQGSSGRUBBERBAND_H
 #define QGSQUICKQGSSGRUBBERBAND_H
 
-#include "qgis_quick.h"
-
 #include <QtQuick/QSGNode>
 #include <QtQuick/QSGFlatColorMaterial>
 
-#include <qgspoint.h>
-#include <qgswkbtypes.h>
+#include "qgspoint.h"
+#include "qgswkbtypes.h"
+
+#include "qgis_quick.h"
 
 
 class QgsQuickRubberbandModel;
 
 /**
- * This is used to render a rubberband on the scene graph.
+ * \ingroup quick
  *
- * This cannot be considered stable API.
+ * This is used to transform (render) QgsGeometry to node for QtQuick scene graph.
+ *
+ * \note QML Type: not exported
+ *
+ * \since QGIS 3.2
  */
-
 class QUICK_NO_EXPORT QgsQuickSGRubberband : public QSGNode
 {
   public:
-    QgsQuickSGRubberband( const QVector<QgsPoint>& points, QgsWkbTypes::GeometryType type, const QColor& color, qreal width );
+    QgsQuickSGRubberband( const QVector<QgsPoint> &points, QgsWkbTypes::GeometryType type, const QColor &color, qreal width );
 
   private:
-    QSGGeometryNode* createLineGeometry( const QVector<QgsPoint>& points, qreal width );
-    QSGGeometryNode* createPointGeometry( const QgsPoint& point, qreal width );
-    QSGGeometryNode* createPolygonGeometry( const QVector<QgsPoint>& points );
+    QSGGeometryNode *createLineGeometry( const QVector<QgsPoint> &points, qreal width );
+    QSGGeometryNode *createPointGeometry( const QgsPoint &point, qreal width );
+    QSGGeometryNode *createPolygonGeometry( const QVector<QgsPoint> &points );
 
     QSGFlatColorMaterial mMaterial;
 };

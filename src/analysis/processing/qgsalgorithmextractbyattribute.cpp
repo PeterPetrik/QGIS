@@ -39,6 +39,16 @@ QString QgsExtractByAttributeAlgorithm::group() const
   return QObject::tr( "Vector selection" );
 }
 
+QgsProcessingAlgorithm::Flags QgsExtractByAttributeAlgorithm::flags() const
+{
+  return QgsProcessingAlgorithm::flags() | QgsProcessingAlgorithm::FlagCanRunInBackground;
+}
+
+QString QgsExtractByAttributeAlgorithm::groupId() const
+{
+  return QStringLiteral( "vectorselection" );
+}
+
 void QgsExtractByAttributeAlgorithm::initAlgorithm( const QVariantMap & )
 {
   addParameter( new QgsProcessingParameterFeatureSource( QStringLiteral( "INPUT" ), QObject::tr( "Input layer" ) ) );
@@ -66,7 +76,7 @@ void QgsExtractByAttributeAlgorithm::initAlgorithm( const QVariantMap & )
 
 QString QgsExtractByAttributeAlgorithm::shortHelpString() const
 {
-  return QObject::tr( "  This algorithm creates a new vector layer that only contains matching features from an input layer. "
+  return QObject::tr( "This algorithm creates a new vector layer that only contains matching features from an input layer. "
                       "The criteria for adding features to the resulting layer is defined based on the values "
                       "of an attribute from the input layer." );
 }
@@ -168,7 +178,7 @@ QVariantMap QgsExtractByAttributeAlgorithm::processAlgorithm( const QVariantMap 
     throw QgsProcessingException( expression.parserErrorString() );
   }
 
-  QgsExpressionContext expressionContext = createExpressionContext( parameters, context );
+  QgsExpressionContext expressionContext = createExpressionContext( parameters, context, dynamic_cast< QgsProcessingFeatureSource * >( source.get() ) );
 
   long count = source->featureCount();
 

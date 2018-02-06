@@ -58,6 +58,7 @@ from .nearblack import nearblack
 from .pct2rgb import pct2rgb
 from .polygonize import polygonize
 from .proximity import proximity
+from .rasterize import rasterize
 from .retile import retile
 from .rgb2pct import rgb2pct
 from .roughness import roughness
@@ -68,7 +69,6 @@ from .tpi import tpi
 from .tri import tri
 from .warp import warp
 
-# from .rasterize import rasterize
 # from .extractprojection import ExtractProjection
 # from .gdalcalc import gdalcalc
 # from .rasterize_over import rasterize_over
@@ -82,10 +82,10 @@ from .OffsetCurve import OffsetCurve
 from .ogr2ogr import ogr2ogr
 from .ogrinfo import ogrinfo
 from .OgrToPostGis import OgrToPostGis
+from .ogr2ogrtopostgislist import Ogr2OgrToPostGisList
 from .OneSideBuffer import OneSideBuffer
 from .PointsAlongLines import PointsAlongLines
 
-# from .ogr2ogrtopostgislist import Ogr2OgrToPostGisList
 # from .ogr2ogrtabletopostgislist import Ogr2OgrTableToPostGisList
 
 pluginPath = os.path.normpath(os.path.join(
@@ -122,6 +122,9 @@ class GdalAlgorithmProvider(QgsProcessingProvider):
         ProcessingConfig.setSettingValue('ACTIVATE_GDAL', active)
 
     def name(self):
+        return 'GDAL'
+
+    def longName(self):
         version = GdalUtils.readableVersion()
         return 'GDAL ({})'.format(version)
 
@@ -161,6 +164,7 @@ class GdalAlgorithmProvider(QgsProcessingProvider):
             pct2rgb(),
             polygonize(),
             proximity(),
+            rasterize(),
             retile(),
             rgb2pct(),
             roughness(),
@@ -184,9 +188,9 @@ class GdalAlgorithmProvider(QgsProcessingProvider):
             ogr2ogr(),
             ogrinfo(),
             OgrToPostGis(),
+            Ogr2OgrToPostGisList(),
             OneSideBuffer(),
             PointsAlongLines(),
-            # Ogr2OgrToPostGisList(),
             # Ogr2OgrTableToPostGisList(),
         ]
         for a in self.algs:

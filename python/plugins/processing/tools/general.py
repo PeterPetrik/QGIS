@@ -26,10 +26,7 @@ __copyright__ = '(C) 2013, Victor Olaya'
 __revision__ = '$Format:%H$'
 
 import os
-try:
-    import configparser
-except ImportError:
-    import configparser as configparser
+import configparser
 
 from qgis.core import (QgsApplication,
                        QgsProcessingAlgorithm,
@@ -40,8 +37,9 @@ from qgis.core import (QgsApplication,
                        QgsProcessingOutputLayerDefinition,
                        QgsProject)
 from processing.core.Processing import Processing
-from processing.core.parameters import ParameterSelection
 from processing.gui.Postprocessing import handleAlgorithmResults
+from processing.gui.AlgorithmDialog import AlgorithmDialog
+from qgis.utils import iface
 
 
 def algorithmHelp(id):
@@ -109,3 +107,51 @@ def runAndLoadResults(algOrName, parameters, feedback=None, context=None):
                 parameters[param.name()] = p
 
     return Processing.runAlgorithm(alg, parameters=parameters, onFinish=handleAlgorithmResults, feedback=feedback, context=context)
+
+
+def createAlgorithmDialog(algOrName, parameters={}):
+    """Creates and returns an algorithm dialog for the specified algorithm, prepopulated
+    with a given set of parameters. It is the caller's responsibility to execute
+    and delete this dialog.
+    """
+    if isinstance(algOrName, QgsProcessingAlgorithm):
+        alg = algOrName
+    else:
+        alg = QgsApplication.processingRegistry().createAlgorithmById(algOrName)
+
+    if alg is None:
+        return False
+
+    dlg = alg.createCustomParametersWidget(iface.mainWindow())
+
+    if not dlg:
+        dlg = AlgorithmDialog(alg)
+
+    dlg.setParameters(parameters)
+
+    return dlg
+
+
+def execAlgorithmDialog(algOrName, parameters={}):
+    """Executes an algorithm dialog for the specified algorithm, prepopulated
+    with a given set of parameters.
+
+    Returns the algorithm's results.
+    """
+    dlg = createAlgorithmDialog(algOrName, parameters)
+    if dlg is None:
+        return {}
+
+    canvas = iface.mapCanvas()
+    prevMapTool = canvas.mapTool()
+    dlg.show()
+    dlg.exec_()
+    if canvas.mapTool() != prevMapTool:
+        try:
+            canvas.mapTool().reset()
+        except:
+            pass
+        canvas.setMapTool(prevMapTool)
+
+    results = dlg.results()
+    return results

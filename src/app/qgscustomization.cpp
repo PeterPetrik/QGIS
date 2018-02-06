@@ -19,6 +19,7 @@
 #include "qgsapplication.h"
 #include "qgslogger.h"
 #include "qgsstatusbar.h"
+#include "qgsgui.h"
 
 #include <QAction>
 #include <QDir>
@@ -47,6 +48,8 @@ QgsCustomizationDialog::QgsCustomizationDialog( QWidget * parent, QSettings * se
 {
   mSettings = settings;
   setupUi( this );
+  QgsGui::enableAutoGeometryRestore( this );
+
   connect( actionSave, &QAction::triggered, this, &QgsCustomizationDialog::actionSave_triggered );
   connect( actionLoad, &QAction::triggered, this, &QgsCustomizationDialog::actionLoad_triggered );
   connect( actionExpandAll, &QAction::triggered, this, &QgsCustomizationDialog::actionExpandAll_triggered );
@@ -54,12 +57,9 @@ QgsCustomizationDialog::QgsCustomizationDialog( QWidget * parent, QSettings * se
   connect( actionSelectAll, &QAction::triggered, this, &QgsCustomizationDialog::actionSelectAll_triggered );
   connect( mCustomizationEnabledCheckBox, &QCheckBox::toggled, this, &QgsCustomizationDialog::mCustomizationEnabledCheckBox_toggled );
 
-  QSettings appSettings;
-  restoreGeometry( appSettings.value( QStringLiteral( "Windows/Customization/geometry" ) ).toByteArray() );
-
   init();
   QStringList myHeaders;
-  myHeaders << tr( "Object name" ) << tr( "Label" ) << tr( "Description" );
+  myHeaders << tr( "Object name" ) << tr( "Label" );
   treeWidget->setHeaderLabels( myHeaders );
 
   mLastDirSettingsName  = QStringLiteral( "/UI/lastCustomizationDir" );
@@ -74,8 +74,6 @@ QgsCustomizationDialog::QgsCustomizationDialog( QWidget * parent, QSettings * se
 
 QgsCustomizationDialog::~QgsCustomizationDialog()
 {
-  QSettings settings;
-  settings.setValue( QStringLiteral( "Windows/Customization/geometry" ), saveGeometry() );
 }
 
 QTreeWidgetItem *QgsCustomizationDialog::item( const QString &path, QTreeWidgetItem *widgetItem )
@@ -354,7 +352,6 @@ QTreeWidgetItem *QgsCustomizationDialog::readWidgetsXmlNode( const QDomNode &nod
   QStringList data( name );
 
   data << myElement.attribute( QStringLiteral( "label" ), name );
-  data << myElement.attribute( QStringLiteral( "description" ), QLatin1String( "" ) );
 
   QTreeWidgetItem *myItem = new QTreeWidgetItem( data );
 

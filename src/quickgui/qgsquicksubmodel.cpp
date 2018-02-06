@@ -16,24 +16,24 @@
 #include "qgsquicksubmodel.h"
 #include <QDebug>
 
-QgsQuickSubModel::QgsQuickSubModel( QObject* parent )
+QgsQuickSubModel::QgsQuickSubModel( QObject *parent )
   : QAbstractItemModel( parent )
-  , mModel(0)
+  , mModel( 0 )
 {
 }
 
-QModelIndex QgsQuickSubModel::index( int row, int column, const QModelIndex& parent ) const
+QModelIndex QgsQuickSubModel::index( int row, int column, const QModelIndex &parent ) const
 {
-  if (!mModel)
-      return mRootIndex;
+  if ( !mModel )
+    return mRootIndex;
 
   QModelIndex sourceIndex = mModel->index( row, column, parent.isValid() ? mapToSource( parent ) : static_cast<QModelIndex>( mRootIndex ) );
   return mapFromSource( sourceIndex );
 }
 
-QModelIndex QgsQuickSubModel::parent( const QModelIndex& child ) const
+QModelIndex QgsQuickSubModel::parent( const QModelIndex &child ) const
 {
-  if (!mModel)
+  if ( !mModel )
     return mRootIndex;
 
   QModelIndex idx = mModel->parent( child );
@@ -43,33 +43,33 @@ QModelIndex QgsQuickSubModel::parent( const QModelIndex& child ) const
     return mapFromSource( idx );
 }
 
-int QgsQuickSubModel::rowCount( const QModelIndex& parent ) const
+int QgsQuickSubModel::rowCount( const QModelIndex &parent ) const
 {
-  if (!mModel)
+  if ( !mModel )
     return 0;
 
   return mModel->rowCount( parent.isValid() ? mapToSource( parent ) : static_cast<QModelIndex>( mRootIndex ) );
 }
 
-int QgsQuickSubModel::columnCount( const QModelIndex& parent ) const
+int QgsQuickSubModel::columnCount( const QModelIndex &parent ) const
 {
-  if (!mModel)
+  if ( !mModel )
     return 0;
 
   return mModel->columnCount( parent.isValid() ? mapToSource( parent ) : static_cast<QModelIndex>( mRootIndex ) );
 }
 
-QVariant QgsQuickSubModel::data( const QModelIndex& index, int role ) const
+QVariant QgsQuickSubModel::data( const QModelIndex &index, int role ) const
 {
-  if (!mModel)
+  if ( !mModel )
     return QVariant();
 
   return mModel->data( mapToSource( index ), role );
 }
 
-bool QgsQuickSubModel::setData( const QModelIndex& index, const QVariant& value, int role )
+bool QgsQuickSubModel::setData( const QModelIndex &index, const QVariant &value, int role )
 {
-  if (!mModel)
+  if ( !mModel )
     return false;
 
   return mModel->setData( mapToSource( index ), value, role );
@@ -77,7 +77,7 @@ bool QgsQuickSubModel::setData( const QModelIndex& index, const QVariant& value,
 
 QHash<int, QByteArray> QgsQuickSubModel::roleNames() const
 {
-  if (!mModel)
+  if ( !mModel )
     return QHash<int, QByteArray>();
 
   return mModel->roleNames();
@@ -88,7 +88,7 @@ QModelIndex QgsQuickSubModel::rootIndex() const
   return mRootIndex;
 }
 
-void QgsQuickSubModel::setRootIndex( const QModelIndex& rootIndex )
+void QgsQuickSubModel::setRootIndex( const QModelIndex &rootIndex )
 {
   if ( rootIndex == mRootIndex )
     return;
@@ -99,36 +99,37 @@ void QgsQuickSubModel::setRootIndex( const QModelIndex& rootIndex )
   emit rootIndexChanged();
 }
 
-QAbstractItemModel* QgsQuickSubModel::model() const
+QAbstractItemModel *QgsQuickSubModel::model() const
 {
   return mModel;
 }
 
-void QgsQuickSubModel::setModel( QAbstractItemModel* model )
+void QgsQuickSubModel::setModel( QAbstractItemModel *model )
 {
   if ( model == mModel )
     return;
 
-  if (model) {
-      connect( model, &QAbstractItemModel::rowsAboutToBeInserted, this, &QgsQuickSubModel::onRowsAboutToBeInserted );
-      connect( model, &QAbstractItemModel::rowsInserted, this, &QgsQuickSubModel::onRowsInserted );
-      connect( model, &QAbstractItemModel::rowsAboutToBeRemoved, this, &QgsQuickSubModel::onRowsAboutToBeRemoved );
-      connect( model, &QAbstractItemModel::rowsRemoved, this, &QgsQuickSubModel::onRowsRemoved );
-      connect( model, &QAbstractItemModel::modelAboutToBeReset, this, &QgsQuickSubModel::onModelAboutToBeReset );
-      connect( model, &QAbstractItemModel::modelReset, this, &QAbstractItemModel::modelReset );
-      connect( model, &QAbstractItemModel::dataChanged, this, &QgsQuickSubModel::onDataChanged );
+  if ( model )
+  {
+    connect( model, &QAbstractItemModel::rowsAboutToBeInserted, this, &QgsQuickSubModel::onRowsAboutToBeInserted );
+    connect( model, &QAbstractItemModel::rowsInserted, this, &QgsQuickSubModel::onRowsInserted );
+    connect( model, &QAbstractItemModel::rowsAboutToBeRemoved, this, &QgsQuickSubModel::onRowsAboutToBeRemoved );
+    connect( model, &QAbstractItemModel::rowsRemoved, this, &QgsQuickSubModel::onRowsRemoved );
+    connect( model, &QAbstractItemModel::modelAboutToBeReset, this, &QgsQuickSubModel::onModelAboutToBeReset );
+    connect( model, &QAbstractItemModel::modelReset, this, &QAbstractItemModel::modelReset );
+    connect( model, &QAbstractItemModel::dataChanged, this, &QgsQuickSubModel::onDataChanged );
   }
 
   mModel = model;
   emit modelChanged();
 }
 
-void QgsQuickSubModel::onRowsAboutToBeInserted( const QModelIndex& parent, int first, int last )
+void QgsQuickSubModel::onRowsAboutToBeInserted( const QModelIndex &parent, int first, int last )
 {
   emit beginInsertRows( mapFromSource( parent ), first, last );
 }
 
-void QgsQuickSubModel::onRowsInserted( const QModelIndex& parent, int first, int last )
+void QgsQuickSubModel::onRowsInserted( const QModelIndex &parent, int first, int last )
 {
   Q_UNUSED( parent )
   Q_UNUSED( first )
@@ -136,12 +137,12 @@ void QgsQuickSubModel::onRowsInserted( const QModelIndex& parent, int first, int
   emit endInsertRows();
 }
 
-void QgsQuickSubModel::onRowsAboutToBeRemoved( const QModelIndex& parent, int first, int last )
+void QgsQuickSubModel::onRowsAboutToBeRemoved( const QModelIndex &parent, int first, int last )
 {
   emit beginRemoveRows( mapFromSource( parent ), first, last );
 }
 
-void QgsQuickSubModel::onRowsRemoved( const QModelIndex& parent, int first, int last )
+void QgsQuickSubModel::onRowsRemoved( const QModelIndex &parent, int first, int last )
 {
   Q_UNUSED( parent )
   Q_UNUSED( first )
@@ -154,12 +155,12 @@ void QgsQuickSubModel::onModelAboutToBeReset()
   mMappings.clear();
 }
 
-void QgsQuickSubModel::onDataChanged( const QModelIndex& topLeft, const QModelIndex& bottomRight, const QVector<int>& roles )
+void QgsQuickSubModel::onDataChanged( const QModelIndex &topLeft, const QModelIndex &bottomRight, const QVector<int> &roles )
 {
   emit dataChanged( mapFromSource( topLeft ), mapFromSource( bottomRight ), roles );
 }
 
-QModelIndex QgsQuickSubModel::mapFromSource( const QModelIndex& sourceIndex ) const
+QModelIndex QgsQuickSubModel::mapFromSource( const QModelIndex &sourceIndex ) const
 {
   if ( sourceIndex == mRootIndex || !sourceIndex.isValid() )
     return QModelIndex();
@@ -172,12 +173,12 @@ QModelIndex QgsQuickSubModel::mapFromSource( const QModelIndex& sourceIndex ) co
   return createIndex( sourceIndex.row(), sourceIndex.column(), sourceIndex.internalId() );
 }
 
-QModelIndex QgsQuickSubModel::mapToSource( const QModelIndex& index ) const
+QModelIndex QgsQuickSubModel::mapToSource( const QModelIndex &index ) const
 {
   if ( !index.isValid() )
     return mRootIndex;
 
-  if (!mModel)
+  if ( !mModel )
     return mRootIndex;
 
   return mModel->index( index.row(), index.column(), mMappings.find( index.internalId() ).value() );

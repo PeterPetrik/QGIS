@@ -49,7 +49,7 @@ class QgsLocationBasedAlgorithm : public QgsProcessingAlgorithm
     void addPredicateParameter();
     Predicate reversePredicate( Predicate predicate ) const;
     QStringList predicateOptionsList() const;
-    void process( QgsFeatureSource *targetSource, QgsFeatureSource *intersectSource, const QList<int> &selectedPredicates, const std::function< void( const QgsFeature & )> &handleFeatureFunction, bool onlyRequireTargetIds, QgsFeedback *feedback );
+    void process( const QgsProcessingContext &context, QgsFeatureSource *targetSource, QgsFeatureSource *intersectSource, const QList<int> &selectedPredicates, const std::function< void( const QgsFeature & )> &handleFeatureFunction, bool onlyRequireTargetIds, QgsFeedback *feedback );
 };
 
 
@@ -65,15 +65,16 @@ class QgsSelectByLocationAlgorithm : public QgsLocationBasedAlgorithm
     void initAlgorithm( const QVariantMap &configuration = QVariantMap() ) override;
     QString name() const override;
     QString displayName() const override;
-    virtual QStringList tags() const override;
+    QStringList tags() const override;
     QString group() const override;
+    QString groupId() const override;
     QString shortHelpString() const override;
     QgsSelectByLocationAlgorithm *createInstance() const override SIP_FACTORY;
 
   protected:
 
-    virtual QVariantMap processAlgorithm( const QVariantMap &parameters,
-                                          QgsProcessingContext &context, QgsProcessingFeedback *feedback ) override;
+    QVariantMap processAlgorithm( const QVariantMap &parameters,
+                                  QgsProcessingContext &context, QgsProcessingFeedback *feedback ) override;
 
 };
 
@@ -86,18 +87,20 @@ class QgsExtractByLocationAlgorithm : public QgsLocationBasedAlgorithm
   public:
 
     QgsExtractByLocationAlgorithm() = default;
+    Flags flags() const override;
     void initAlgorithm( const QVariantMap &configuration = QVariantMap() ) override;
     QString name() const override;
     QString displayName() const override;
-    virtual QStringList tags() const override;
+    QStringList tags() const override;
     QString group() const override;
+    QString groupId() const override;
     QString shortHelpString() const override;
     QgsExtractByLocationAlgorithm *createInstance() const override SIP_FACTORY;
 
   protected:
 
-    virtual QVariantMap processAlgorithm( const QVariantMap &parameters,
-                                          QgsProcessingContext &context, QgsProcessingFeedback *feedback ) override;
+    QVariantMap processAlgorithm( const QVariantMap &parameters,
+                                  QgsProcessingContext &context, QgsProcessingFeedback *feedback ) override;
 
 };
 

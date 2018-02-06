@@ -225,7 +225,7 @@ class CORE_EXPORT QgsFeatureRequest
         /**
          * Create a new empty order by
          */
-        CORE_EXPORT OrderBy() {}
+        CORE_EXPORT OrderBy();
 
         /**
          * Create a new order by from a list of clauses
@@ -428,7 +428,7 @@ class CORE_EXPORT QgsFeatureRequest
      *
      * \since QGIS 2.12
      */
-    QgsFeatureRequest &disableFilter() { mFilter = FilterNone; return *this; }
+    QgsFeatureRequest &disableFilter() { mFilter = FilterNone; mFilterExpression.reset(); return *this; }
 
     /**
      * Adds a new OrderByClause, appending it as the least important one.
@@ -522,9 +522,19 @@ class CORE_EXPORT QgsFeatureRequest
      * or an invalid QgsCoordinateReferenceSystem if no reprojection will be done
      * and all features will be left with their original geometry.
      * \see setDestinationCrs()
+     * \see transformContext()
      * \since QGIS 3.0
      */
     QgsCoordinateReferenceSystem destinationCrs() const;
+
+    /**
+     * Returns the transform context, for use when a destinationCrs() has been set
+     * and reprojection is required
+     * \see setDestinationCrs()
+     * \see destinationCrs()
+     * \since QGIS 3.0
+     */
+    QgsCoordinateTransformContext transformContext() const;
 
     /**
      * Sets the destination \a crs for feature's geometries. If set, all
@@ -549,7 +559,7 @@ class CORE_EXPORT QgsFeatureRequest
      * \see destinationCrs()
      * \since QGIS 3.0
      */
-    QgsFeatureRequest &setDestinationCrs( const QgsCoordinateReferenceSystem &crs );
+    QgsFeatureRequest &setDestinationCrs( const QgsCoordinateReferenceSystem &crs, const QgsCoordinateTransformContext &context );
 
     /**
      * Sets a callback function to use when encountering a transform error when iterating
@@ -601,6 +611,26 @@ class CORE_EXPORT QgsFeatureRequest
      */
     bool acceptFeature( const QgsFeature &feature );
 
+    /**
+     * The timeout for how long we should wait for a connection if none is available from the pool
+     * at this moment. A negative value (which is set by default) will wait forever.
+     *
+     * \note Only works if the provider supports this option.
+     *
+     * \since QGIS 3.0
+     */
+    int connectionTimeout() const;
+
+    /**
+     * The timeout for how long we should wait for a connection if none is available from the pool
+     * at this moment. A negative value (which is set by default) will wait forever.
+     *
+     * \note Only works if the provider supports this option.
+     *
+     * \since QGIS 3.0
+     */
+    void setConnectionTimeout( int connectionTimeout );
+
   protected:
     FilterType mFilter = FilterNone;
     QgsRectangle mFilterRect;
@@ -617,6 +647,8 @@ class CORE_EXPORT QgsFeatureRequest
     std::function< void( const QgsFeature & ) > mInvalidGeometryCallback;
     std::function< void( const QgsFeature & ) > mTransformErrorCallback;
     QgsCoordinateReferenceSystem mCrs;
+    QgsCoordinateTransformContext mTransformContext;
+    int mConnectionTimeout = -1;
 };
 
 Q_DECLARE_OPERATORS_FOR_FLAGS( QgsFeatureRequest::Flags )

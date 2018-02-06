@@ -41,22 +41,22 @@ from qgis.core import (QgsMessageLog,
                        QgsProcessingException,
                        QgsProcessingParameterDefinition,
                        QgsProcessingOutputVectorLayer,
-                       QgsProcessingOutputRasterLayer)
+                       QgsProcessingOutputRasterLayer,
+                       QgsProcessingOutputMapLayer)
 
 import processing
 from processing.script.ScriptUtils import ScriptUtils
 from processing.core.ProcessingConfig import ProcessingConfig
-from processing.core.GeoAlgorithm import GeoAlgorithm
 from processing.gui.MessageBarProgress import MessageBarProgress
 from processing.gui.RenderingStyles import RenderingStyles
 from processing.gui.Postprocessing import handleAlgorithmResults
 from processing.gui.AlgorithmExecutor import execute
 from processing.tools import dataobjects
 
-from processing.algs.qgis.QGISAlgorithmProvider import QGISAlgorithmProvider  # NOQA
-#from processing.algs.grass7.Grass7AlgorithmProvider import Grass7AlgorithmProvider  # NOQA
+from processing.algs.qgis.QgisAlgorithmProvider import QgisAlgorithmProvider  # NOQA
+from processing.algs.grass7.Grass7AlgorithmProvider import Grass7AlgorithmProvider
 from processing.algs.gdal.GdalAlgorithmProvider import GdalAlgorithmProvider  # NOQA
-#from processing.algs.saga.SagaAlgorithmProvider import SagaAlgorithmProvider  # NOQA
+from processing.algs.saga.SagaAlgorithmProvider import SagaAlgorithmProvider  # NOQA
 from processing.script.ScriptAlgorithmProvider import ScriptAlgorithmProvider  # NOQA
 #from processing.preconfigured.PreconfiguredAlgorithmProvider import PreconfiguredAlgorithmProvider  # NOQA
 
@@ -109,7 +109,7 @@ class Processing(object):
         print(scripts)
         for script in scripts:
             script.allowEdit = False
-            script._icon = provider._icon
+            script._icon = provider.icon()
         provider.externalAlgs.extend(scripts)
         provider.refreshAlgorithms()
 
@@ -176,7 +176,7 @@ class Processing(object):
             else:
                 # auto convert layer references in results to map layers
                 for out in alg.outputDefinitions():
-                    if isinstance(out, (QgsProcessingOutputVectorLayer, QgsProcessingOutputRasterLayer)):
+                    if isinstance(out, (QgsProcessingOutputVectorLayer, QgsProcessingOutputRasterLayer, QgsProcessingOutputMapLayer)):
                         result = results[out.name()]
                         if not isinstance(result, QgsMapLayer):
                             layer = context.takeResultLayer(result) # transfer layer ownership out of context

@@ -31,6 +31,7 @@ from qgis.PyQt.QtGui import QIcon
 
 from qgis.core import (QgsWkbTypes,
                        QgsProcessing,
+                       QgsProcessingAlgorithm,
                        QgsProcessingParameterFeatureSource,
                        QgsProcessingParameterField,
                        QgsProcessingParameterNumber,
@@ -61,8 +62,14 @@ class VariableDistanceBuffer(QgisAlgorithm):
     def group(self):
         return self.tr('Vector geometry')
 
+    def groupId(self):
+        return 'vectorgeometry'
+
     def __init__(self):
         super().__init__()
+
+    def flags(self):
+        return QgsProcessingAlgorithm.FlagSupportsBatch | QgsProcessingAlgorithm.FlagCanCancel | QgsProcessingAlgorithm.FlagHideFromToolbox
 
     def initAlgorithm(self, config=None):
         self.addParameter(QgsProcessingParameterFeatureSource(self.INPUT,
@@ -90,7 +97,8 @@ class VariableDistanceBuffer(QgisAlgorithm):
             self.tr('Join style'),
             options=self.join_styles, defaultValue=0))
         self.addParameter(QgsProcessingParameterNumber(self.MITER_LIMIT,
-                                                       self.tr('Miter limit'), minValue=0, defaultValue=2))
+                                                       self.tr('Miter limit'), type=QgsProcessingParameterNumber.Double,
+                                                       minValue=0, defaultValue=2))
 
         self.addParameter(
             QgsProcessingParameterFeatureSink(self.OUTPUT, self.tr('Buffer'), QgsProcessing.TypeVectorPolygon))

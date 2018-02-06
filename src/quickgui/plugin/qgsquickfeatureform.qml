@@ -25,7 +25,7 @@ import QtQml 2.2
 // yet implemented in Controls 2.2
 import QtQuick.Controls 1.4 as Controls1
 
-import QgisQuick 1.0 as QgsQuick
+import QgisQuick 0.1 as QgsQuick
 
 Item {
   signal saved
@@ -34,6 +34,7 @@ Item {
 
   property QgsQuick.AttributeFormModel model
   property alias toolbarVisible: toolbar.visible
+  property bool allowRememberAttribute: false // when adding new feature, add checkbox to be able to save the same value for the next feature as default
   property QgsQuick.Project project
 
   property FeatureFormStyling style: FeatureFormStyling {}
@@ -125,9 +126,8 @@ Item {
               // than the parent item and the Flickable is useful
               width: paintedWidth
               text: tabButton.text
-              // color: tabButton.down ? "#17a81a" : "#21be2b"
               color: !tabButton.enabled ? form.style.tabs.disabledColor : tabButton.down ||
-                                        tabButton.checked ? form.style.tabs.activeColor : form.style.tabs.normalColor
+                                          tabButton.checked ? form.style.tabs.activeColor : form.style.tabs.normalColor
               font.weight: tabButton.checked ? Font.DemiBold : Font.Normal
 
               horizontalAlignment: Text.AlignHCenter
@@ -160,10 +160,10 @@ Item {
            * The main form content area
            */
           Rectangle {
-             width: parent.width
-             height: parent.height
-             color: form.style.backgroundColor
-             opacity: form.style.backgroundOpacity
+            width: parent.width
+            height: parent.height
+            color: form.style.backgroundColor
+            opacity: form.style.backgroundOpacity
           }
 
           ListView {
@@ -267,26 +267,26 @@ Item {
           property var photoCapturePanel: photoPanel
 
           active: widget !== 'Hidden'
-          source: 'qgsquick' + widget.toLowerCase() + '.qml' // todo move to C++
+          source: 'qgsquick' + widget.toLowerCase() + '.qml'
 
           onStatusChanged: {
             if ( attributeEditorLoader.status === Loader.Error )
             {
               console.warn( "Editor widget type '" + EditorWidget + "' is not supported" );
-              source = 'qgsquicktextedit.qml'; // todo move to C++
+              source = 'qgsquicktextedit.qml';
             }
           }
         }
 
         Connections {
-            target: form
-            onAboutToSave: {
-                try {
-                    attributeEditorLoader.item.pushChanges()
-                }
-                catch ( err )
-                {}
+          target: form
+          onAboutToSave: {
+            try {
+              attributeEditorLoader.item.pushChanges()
             }
+            catch ( err )
+            {}
+          }
         }
 
         Connections {
@@ -301,7 +301,7 @@ Item {
         id: rememberCheckbox
         checked: RememberValue ? true : false
 
-        visible: form.state === "Add" && EditorWidget !== "Hidden"
+        visible: form.allowRememberAttribute && form.state === "Add" && EditorWidget !== "Hidden"
         width: visible ? undefined : 0
 
         anchors { right: parent.right; top: fieldLabel.bottom }
@@ -353,17 +353,21 @@ Item {
 
       ToolButton {
         id: saveButton
+        Layout.preferredWidth: form.style.toolbutton.size
+        Layout.preferredHeight: form.style.toolbutton.size
 
         visible: form.state !== "ReadOnly"
 
         contentItem: Image {
-          fillMode: Image.Pad
+          fillMode: Image.PreserveAspectFit
+          width: parent.width * 0.8
           horizontalAlignment: Image.AlignHCenter
           verticalAlignment: Image.AlignVCenter
-          source: QgsQuick.Utils.getThemeIcon( "ic_save_white_24dp" )
+          source: QgsQuick.Utils.getThemeIcon( "ic_save_white" )
+          antialiasing: true
         }
         background: Rectangle {
-          color: model.constraintsValid ? "#212121" : "#bdc3c7"
+          color: model.constraintsValid ? form.style.toolbutton.backgroundColor : form.style.toolbutton.backgroundColorInvalid
         }
 
         enabled: model.constraintsValid
@@ -374,22 +378,27 @@ Item {
       }
 
       ToolButton {
-          id: deleteButton
+        id: deleteButton
 
-          visible: form.state === "Edit"
+        Layout.preferredWidth: form.style.toolbutton.size
+        Layout.preferredHeight: form.style.toolbutton.size
 
-          contentItem: Image {
-              fillMode: Image.Pad
-              horizontalAlignment: Image.AlignHCenter
-              verticalAlignment: Image.AlignVCenter
-              source: QgsQuick.Utils.getThemeIcon( "ic_delete_forever_white_24dp" )
-          }
+        visible: form.state === "Edit"
 
-          background: Rectangle {
-            color: "#212121"
-          }
+        contentItem: Image {
+          fillMode: Image.PreserveAspectFit
+          width: parent.width * 0.8
+          horizontalAlignment: Image.AlignHCenter
+          verticalAlignment: Image.AlignVCenter
+          source: QgsQuick.Utils.getThemeIcon( "ic_delete_forever_white" )
+          antialiasing: true
+        }
 
-          onClicked: deleteDialog.visible = true
+        background: Rectangle {
+          color: form.style.toolbutton.backgroundColor
+        }
+
+        onClicked: deleteDialog.visible = true
       }
 
       Label {
@@ -415,21 +424,27 @@ Item {
         horizontalAlignment: Qt.AlignHCenter
         verticalAlignment: Qt.AlignVCenter
         Layout.fillWidth: true
+        color: "white"
       }
 
       ToolButton {
         id: closeButton
         anchors.right: parent.right
 
+        Layout.preferredWidth: form.style.toolbutton.size
+        Layout.preferredHeight: form.style.toolbutton.size
+
         contentItem: Image {
-          fillMode: Image.Pad
+          fillMode: Image.PreserveAspectFit
+          width: parent.width * 0.8
           horizontalAlignment: Image.AlignHCenter
           verticalAlignment: Image.AlignVCenter
-          source: QgsQuick.Utils.getThemeIcon( "ic_close_white_24dp" )
+          source: QgsQuick.Utils.getThemeIcon( "ic_clear_white" )
+          antialiasing: true
         }
 
         background: Rectangle {
-          color: "#212121"
+          color: form.style.toolbutton.backgroundColor
         }
 
         onClicked: {
@@ -462,10 +477,10 @@ Item {
   }
 
   QgsQuick.PhotoCapture {
-      id: photoPanel
-      height: window.height
-      width: window.width
-      edge: Qt.RightEdge
+    id: photoPanel
+    height: window.height
+    width: window.width
+    edge: Qt.RightEdge
   }
 
 }

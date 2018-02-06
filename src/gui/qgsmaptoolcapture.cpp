@@ -15,7 +15,6 @@
 
 #include "qgsmaptoolcapture.h"
 
-#include "qgscursors.h"
 #include "qgsexception.h"
 #include "qgsfeatureiterator.h"
 #include "qgsgeometryvalidator.h"
@@ -27,6 +26,7 @@
 #include "qgsmapmouseevent.h"
 #include "qgspolygon.h"
 #include "qgsrubberband.h"
+#include "qgssnapindicator.h"
 #include "qgsvectorlayer.h"
 #include "qgsvertexmarker.h"
 #include "qgssettings.h"
@@ -41,15 +41,13 @@
 QgsMapToolCapture::QgsMapToolCapture( QgsMapCanvas *canvas, QgsAdvancedDigitizingDockWidget *cadDockWidget, CaptureMode mode )
   : QgsMapToolAdvancedDigitizing( canvas, cadDockWidget )
   , mCaptureMode( mode )
-#ifdef Q_OS_WIN
-  , mSkipNextContextMenuEvent( 0 )
-#endif
 {
   mCaptureModeFromLayer = mode == CaptureNone;
   mCapturing = false;
 
-  QPixmap mySelectQPixmap = QPixmap( ( const char ** ) capture_point_cursor );
-  setCursor( QCursor( mySelectQPixmap, 8, 8 ) );
+  mSnapIndicator.reset( new QgsSnapIndicator( canvas ) );
+
+  setCursor( QgsApplication::getThemeCursor( QgsApplication::Cursor::CapturePoint ) );
 
   connect( canvas, &QgsMapCanvas::currentLayerChanged,
            this, &QgsMapToolCapture::currentLayerChanged );
@@ -57,8 +55,6 @@ QgsMapToolCapture::QgsMapToolCapture( QgsMapCanvas *canvas, QgsAdvancedDigitizin
 
 QgsMapToolCapture::~QgsMapToolCapture()
 {
-  delete mSnappingMarker;
-
   stopCapturing();
 
   if ( mValidator )
@@ -81,8 +77,7 @@ void QgsMapToolCapture::deactivate()
   if ( mTempRubberBand )
     mTempRubberBand->hide();
 
-  delete mSnappingMarker;
-  mSnappingMarker = nullptr;
+  mSnapIndicator->setMatch( QgsPointLocator::Match() );
 
   QgsMapToolAdvancedDigitizing::deactivate();
 }
@@ -131,7 +126,8 @@ void QgsMapToolCapture::currentLayerChanged( QgsMapLayer *layer )
 bool QgsMapToolCapture::tracingEnabled()
 {
   QgsMapCanvasTracer *tracer = QgsMapCanvasTracer::tracerForCanvas( mCanvas );
-  return tracer && tracer->actionEnableTracing() && tracer->actionEnableTracing()->isChecked();
+  return tracer && ( !tracer->actionEnableTracing() || tracer->actionEnableTracing()->isChecked() )
+         && ( !tracer->actionEnableSnapping() || tracer->actionEnableSnapping()->isChecked() );
 }
 
 
@@ -309,25 +305,9 @@ bool QgsMapToolCapture::tracingAddVertex( const QgsPointXY &point )
 void QgsMapToolCapture::cadCanvasMoveEvent( QgsMapMouseEvent *e )
 {
   QgsMapToolAdvancedDigitizing::cadCanvasMoveEvent( e );
-  bool snapped = e->isSnapped();
   QgsPointXY point = e->mapPoint();
 
-  if ( !snapped )
-  {
-    delete mSnappingMarker;
-    mSnappingMarker = nullptr;
-  }
-  else
-  {
-    if ( !mSnappingMarker )
-    {
-      mSnappingMarker = new QgsVertexMarker( mCanvas );
-      mSnappingMarker->setIconType( QgsVertexMarker::ICON_CROSS );
-      mSnappingMarker->setColor( Qt::magenta );
-      mSnappingMarker->setPenWidth( 3 );
-    }
-    mSnappingMarker->setCenter( point );
-  }
+  mSnapIndicator->setMatch( e->mapPointMatch() );
 
   if ( !mTempRubberBand && mCaptureCurve.numPoints() > 0 )
   {
@@ -419,7 +399,7 @@ int QgsMapToolCapture::fetchLayerPoint( const QgsPointLocator::Match &match, Qgs
       QgsVertexId vId;
       if ( !f.geometry().vertexIdFromVertexNr( match.vertexIndex(), vId ) )
         return 2;
-      layerPoint = f.geometry().geometry()->vertexAt( vId );
+      layerPoint = f.geometry().constGet()->vertexAt( vId );
       return 0;
     }
     else
@@ -554,6 +534,11 @@ int QgsMapToolCapture::addCurve( QgsCurve *c )
   return 0;
 }
 
+void QgsMapToolCapture::clearCurve()
+{
+  mCaptureCurve.clear();
+}
+
 QList<QgsPointLocator::Match> QgsMapToolCapture::snappingMatches() const
 {
   return mSnappingMatches;
@@ -652,18 +637,6 @@ void QgsMapToolCapture::stopCapturing()
 
   mTracingStartPoint = QgsPointXY();
 
-#ifdef Q_OS_WIN
-  Q_FOREACH ( QWidget *w, qApp->topLevelWidgets() )
-  {
-    if ( w->objectName() == "QgisApp" )
-    {
-      if ( mSkipNextContextMenuEvent++ == 0 )
-        w->installEventFilter( this );
-      break;
-    }
-  }
-#endif
-
   mCapturing = false;
   mCaptureCurve.clear();
   mSnappingMatches.clear();
@@ -678,6 +651,12 @@ void QgsMapToolCapture::deleteTempRubberBand()
     delete mTempRubberBand;
     mTempRubberBand = nullptr;
   }
+}
+
+void QgsMapToolCapture::clean()
+{
+  stopCapturing();
+  clearCurve();
 }
 
 void QgsMapToolCapture::closePolygon()
@@ -721,7 +700,7 @@ void QgsMapToolCapture::validateGeometry()
         return;
       QgsLineString *exteriorRing = mCaptureCurve.curveToLine();
       exteriorRing->close();
-      QgsPolygonV2 *polygon = new QgsPolygonV2();
+      QgsPolygon *polygon = new QgsPolygon();
       polygon->setExteriorRing( exteriorRing );
       geom = QgsGeometry( polygon );
       break;
@@ -737,7 +716,7 @@ void QgsMapToolCapture::validateGeometry()
   connect( mValidator, &QgsGeometryValidator::errorFound, this, &QgsMapToolCapture::addError );
   connect( mValidator, &QThread::finished, this, &QgsMapToolCapture::validationFinished );
   mValidator->start();
-  emit messageEmitted( tr( "Validation started" ) );
+  QgsDebugMsgLevel( "Validation started", 4 );
 }
 
 void QgsMapToolCapture::addError( QgsGeometry::Error e )
@@ -770,16 +749,16 @@ int QgsMapToolCapture::size()
   return mCaptureCurve.numPoints();
 }
 
-QList<QgsPointXY> QgsMapToolCapture::points()
+QVector<QgsPointXY> QgsMapToolCapture::points() const
 {
   QgsPointSequence pts;
-  QList<QgsPointXY> points;
+  QVector<QgsPointXY> points;
   mCaptureCurve.points( pts );
   QgsGeometry::convertPointList( pts, points );
   return points;
 }
 
-void QgsMapToolCapture::setPoints( const QList<QgsPointXY> &pointList )
+void QgsMapToolCapture::setPoints( const QVector<QgsPointXY> &pointList )
 {
   QgsLineString *line = new QgsLineString( pointList );
   mCaptureCurve.clear();
@@ -789,15 +768,3 @@ void QgsMapToolCapture::setPoints( const QList<QgsPointXY> &pointList )
     mSnappingMatches.append( QgsPointLocator::Match() );
 }
 
-#ifdef Q_OS_WIN
-bool QgsMapToolCapture::eventFilter( QObject *obj, QEvent *event )
-{
-  if ( event->type() != QEvent::ContextMenu )
-    return false;
-
-  if ( --mSkipNextContextMenuEvent == 0 )
-    obj->removeEventFilter( this );
-
-  return mSkipNextContextMenuEvent >= 0;
-}
-#endif

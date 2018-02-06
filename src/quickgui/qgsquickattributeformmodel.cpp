@@ -16,7 +16,7 @@
 #include "qgsquickattributeformmodel.h"
 #include "qgsquickattributeformmodelbase.h"
 
-QgsQuickAttributeFormModel::QgsQuickAttributeFormModel( QObject* parent )
+QgsQuickAttributeFormModel::QgsQuickAttributeFormModel( QObject *parent )
   : QSortFilterProxyModel( parent )
   , mSourceModel( new QgsQuickAttributeFormModelBase( this ) )
 {
@@ -37,12 +37,12 @@ void QgsQuickAttributeFormModel::setHasTabs( bool hasTabs )
   mSourceModel->setHasTabs( hasTabs );
 }
 
-QgsQuickFeatureModel* QgsQuickAttributeFormModel::featureModel() const
+QgsQuickFeatureModel *QgsQuickAttributeFormModel::featureModel() const
 {
   return mSourceModel->featureModel();
 }
 
-void QgsQuickAttributeFormModel::setFeatureModel( QgsQuickFeatureModel* featureModel )
+void QgsQuickAttributeFormModel::setFeatureModel( QgsQuickFeatureModel *featureModel )
 {
   mSourceModel->setFeatureModel( featureModel );
 }
@@ -62,12 +62,12 @@ void QgsQuickAttributeFormModel::create()
   mSourceModel->create();
 }
 
-QVariant QgsQuickAttributeFormModel::attribute( const QString& name )
+QVariant QgsQuickAttributeFormModel::attribute( const QString &name )
 {
   return mSourceModel->attribute( name );
 }
 
-bool QgsQuickAttributeFormModel::filterAcceptsRow( int source_row, const QModelIndex& source_parent ) const
+bool QgsQuickAttributeFormModel::filterAcceptsRow( int source_row, const QModelIndex &source_parent ) const
 {
   return mSourceModel->data( mSourceModel->index( source_row, 0, source_parent ), CurrentlyVisible ).toBool();
 }

@@ -26,7 +26,9 @@ from qgis.core import (
     QgsWkbTypes,
     NULL,
     QgsMemoryProviderUtils,
-    QgsCoordinateReferenceSystem
+    QgsCoordinateReferenceSystem,
+    QgsRectangle,
+    QgsTestUtils
 )
 
 from qgis.testing import (
@@ -191,7 +193,7 @@ class TestPyQgsMemoryProvider(unittest.TestCase, ProviderTestCase):
         assert len(provider.fields()) == 3, myMessage
 
         ft = QgsFeature()
-        ft.setGeometry(QgsGeometry.fromPoint(QgsPointXY(10, 10)))
+        ft.setGeometry(QgsGeometry.fromPointXY(QgsPointXY(10, 10)))
         ft.setAttributes(["Johny",
                           20,
                           0.3])
@@ -222,9 +224,9 @@ class TestPyQgsMemoryProvider(unittest.TestCase, ProviderTestCase):
             geom = f.geometry()
 
             myMessage = ('Expected: %s\nGot: %s\n' %
-                         ("Point (10 10)", str(geom.exportToWkt())))
+                         ("Point (10 10)", str(geom.asWkt())))
 
-            assert compareWkt(str(geom.exportToWkt()), "Point (10 10)"), myMessage
+            assert compareWkt(str(geom.asWkt()), "Point (10 10)"), myMessage
 
     def testGetFields(self):
         layer = QgsVectorLayer("Point", "test", "memory")
@@ -239,7 +241,7 @@ class TestPyQgsMemoryProvider(unittest.TestCase, ProviderTestCase):
         assert len(provider.fields()) == 3, myMessage
 
         ft = QgsFeature()
-        ft.setGeometry(QgsGeometry.fromPoint(QgsPointXY(10, 10)))
+        ft.setGeometry(QgsGeometry.fromPointXY(QgsPointXY(10, 10)))
         ft.setAttributes(["Johny",
                           20,
                           0.3])
@@ -262,6 +264,16 @@ class TestPyQgsMemoryProvider(unittest.TestCase, ProviderTestCase):
         assert myMemoryLayer is not None, 'Provider not initialized'
         myProvider = myMemoryLayer.dataProvider()
         assert myProvider is not None
+
+    def testLengthPrecisionFromUri(self):
+        """Test we can assign length and precision from a uri"""
+        myMemoryLayer = QgsVectorLayer(
+            ('Point?crs=epsg:4326&field=size:double(12,9)&index=yes'),
+            'test',
+            'memory')
+
+        self.assertEqual(myMemoryLayer.fields().field('size').length(), 12)
+        self.assertEqual(myMemoryLayer.fields().field('size').precision(), 9)
 
     def testSaveFields(self):
         # Create a new memory layer with no fields
@@ -310,7 +322,7 @@ class TestPyQgsMemoryProvider(unittest.TestCase, ProviderTestCase):
         layer.updateFields()
         assert res, "Failed to add attributes"
         ft = QgsFeature()
-        ft.setGeometry(QgsGeometry.fromPoint(QgsPointXY(10, 10)))
+        ft.setGeometry(QgsGeometry.fromPointXY(QgsPointXY(10, 10)))
         ft.setAttributes(["Johny",
                           20,
                           0.3])
@@ -402,6 +414,23 @@ class TestPyQgsMemoryProvider(unittest.TestCase, ProviderTestCase):
         self.assertFalse(layer.fields().isEmpty())
         self.assertEqual(layer.fields()[0].name(), 'rect')
         self.assertEqual(layer.fields()[0].type(), QVariant.String) # should be mapped to string
+
+    def testThreadSafetyWithIndex(self):
+        layer = QgsVectorLayer('Point?crs=epsg:4326&index=yes&field=pk:integer&field=cnt:int8&field=name:string(0)&field=name2:string(0)&field=num_char:string&key=pk',
+                               'test', 'memory')
+
+        provider = layer.dataProvider()
+        f = QgsFeature()
+        f.setAttributes([5, -200, NULL, 'NuLl', '5'])
+        f.setGeometry(QgsGeometry.fromWkt('Point (-71.123 78.23)'))
+
+        for i in range(100000):
+            provider.addFeatures([f])
+
+        # filter rect request
+        extent = QgsRectangle(-73, 70, -63, 80)
+        request = QgsFeatureRequest().setFilterRect(extent)
+        self.assertTrue(QgsTestUtils.testProviderIteratorThreadSafety(self.source, request))
 
 
 class TestPyQgsMemoryProviderIndexed(unittest.TestCase, ProviderTestCase):

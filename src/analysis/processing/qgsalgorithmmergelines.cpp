@@ -19,6 +19,11 @@
 
 ///@cond PRIVATE
 
+QgsProcessingAlgorithm::Flags QgsMergeLinesAlgorithm::flags() const
+{
+  return QgsProcessingFeatureBasedAlgorithm::flags() | QgsProcessingAlgorithm::FlagCanRunInBackground;
+}
+
 QString QgsMergeLinesAlgorithm::name() const
 {
   return QStringLiteral( "mergelines" );
@@ -37,6 +42,11 @@ QStringList QgsMergeLinesAlgorithm::tags() const
 QString QgsMergeLinesAlgorithm::group() const
 {
   return QObject::tr( "Vector geometry" );
+}
+
+QString QgsMergeLinesAlgorithm::groupId() const
+{
+  return QStringLiteral( "vectorgeometry" );
 }
 
 QString QgsMergeLinesAlgorithm::outputName() const
@@ -71,7 +81,7 @@ QgsMergeLinesAlgorithm *QgsMergeLinesAlgorithm::createInstance() const
   return new QgsMergeLinesAlgorithm();
 }
 
-QgsFeature QgsMergeLinesAlgorithm::processFeature( const QgsFeature &feature, QgsProcessingFeedback *feedback )
+QgsFeature QgsMergeLinesAlgorithm::processFeature( const QgsFeature &feature, QgsProcessingContext &, QgsProcessingFeedback *feedback )
 {
   if ( !feature.hasGeometry() )
     return feature;

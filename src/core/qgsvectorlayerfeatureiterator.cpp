@@ -115,7 +115,7 @@ QgsVectorLayerFeatureIterator::QgsVectorLayerFeatureIterator( QgsVectorLayerFeat
 {
   if ( mRequest.destinationCrs().isValid() && mRequest.destinationCrs() != mSource->mCrs )
   {
-    mTransform = QgsCoordinateTransform( mSource->mCrs, mRequest.destinationCrs() );
+    mTransform = QgsCoordinateTransform( mSource->mCrs, mRequest.destinationCrs(), mRequest.transformContext() );
   }
   try
   {
@@ -124,7 +124,7 @@ QgsVectorLayerFeatureIterator::QgsVectorLayerFeatureIterator( QgsVectorLayerFeat
   catch ( QgsCsException & )
   {
     // can't reproject mFilterRect
-    mClosed = true;
+    close();
     return;
   }
   if ( !mFilterRect.isNull() )
@@ -158,7 +158,7 @@ QgsVectorLayerFeatureIterator::QgsVectorLayerFeatureIterator( QgsVectorLayerFeat
   // values
   if ( mRequest.destinationCrs().isValid() )
   {
-    mProviderRequest.setDestinationCrs( QgsCoordinateReferenceSystem() );
+    mProviderRequest.setDestinationCrs( QgsCoordinateReferenceSystem(), mRequest.transformContext() );
   }
 
   if ( mProviderRequest.flags() & QgsFeatureRequest::SubsetOfAttributes )
@@ -408,6 +408,11 @@ void QgsVectorLayerFeatureIterator::setInterruptionChecker( QgsInterruptionCheck
   mInterruptionChecker = interruptionChecker;
 }
 
+bool QgsVectorLayerFeatureIterator::isValid() const
+{
+  return mProviderIterator.isValid();
+}
+
 bool QgsVectorLayerFeatureIterator::fetchNextAddedFeature( QgsFeature &f )
 {
   while ( mFetchAddedFeaturesIt-- != mSource->mAddedFeatures.constBegin() )
@@ -610,7 +615,7 @@ void QgsVectorLayerFeatureIterator::prepareExpression( int fieldIdx )
   QgsExpression *exp = new QgsExpression( exps[oi].cachedExpression );
 
   QgsDistanceArea da;
-  da.setSourceCrs( mSource->mCrs );
+  da.setSourceCrs( mSource->mCrs, QgsProject::instance()->transformContext() );
   da.setEllipsoid( QgsProject::instance()->ellipsoid() );
   exp->setGeomCalculator( &da );
   exp->setDistanceUnits( QgsProject::instance()->distanceUnits() );
@@ -717,12 +722,11 @@ void QgsVectorLayerFeatureIterator::createOrderedJoinList()
       int joinField = mOrderedJoinInfoList.at( i ).joinField;
 
       QgsAttributeList attributes = mOrderedJoinInfoList.at( i ).attributes;
-      QgsAttributeList::const_iterator attIt = attributes.constBegin();
-      for ( ; attIt != attributes.constEnd(); ++attIt )
+      for ( int n = 0; n < attributes.size(); n++ )
       {
-        if ( *attIt != joinField )
+        if ( n != joinField )
         {
-          resolvedFields.insert( joinField < *attIt ? *attIt + offset - 1 : *attIt + offset );
+          resolvedFields.insert( joinField < n ? n + offset - 1 : n + offset );
         }
       }
     }
@@ -870,7 +874,7 @@ void QgsVectorLayerFeatureIterator::addExpressionAttribute( QgsFeature &f, int a
   {
     mExpressionContext->setFeature( f );
     QVariant val = exp->evaluate( mExpressionContext.get() );
-    mSource->mFields.at( attrIndex ).convertCompatible( val );
+    ( void )mSource->mFields.at( attrIndex ).convertCompatible( val );
     f.setAttribute( attrIndex, val );
   }
   else

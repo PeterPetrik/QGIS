@@ -16,11 +16,12 @@
 #ifndef QGSQUICKCOORDINATETRANSFORMER_H
 #define QGSQUICKCOORDINATETRANSFORMER_H
 
-#include "qgis_quick.h"
-
 #include <QObject>
 
-#include <qgspoint.h>
+#include "qgspoint.h"
+
+#include "qgis_quick.h"
+#include "qgsquickmapsettings.h"
 
 /**
  * \ingroup quick
@@ -38,6 +39,7 @@ class QUICK_EXPORT QgsQuickCoordinateTransformer : public QObject
     Q_PROPERTY( QgsPoint sourcePosition READ sourcePosition WRITE setSourcePosition NOTIFY sourcePositionChanged )
     Q_PROPERTY( QgsCoordinateReferenceSystem destinationCrs READ destinationCrs WRITE setDestinationCrs NOTIFY destinationCrsChanged )
     Q_PROPERTY( QgsCoordinateReferenceSystem sourceCrs READ sourceCrs WRITE setSourceCrs NOTIFY sourceCrsChanged )
+    Q_PROPERTY( QgsQuickMapSettings *mapSettings MEMBER mMapSettings NOTIFY mapSettingsChanged )
 
   public:
     explicit QgsQuickCoordinateTransformer( QObject *parent = 0 );
@@ -47,10 +49,10 @@ class QUICK_EXPORT QgsQuickCoordinateTransformer : public QObject
     void setSourcePosition( QgsPoint sourcePosition );
 
     QgsCoordinateReferenceSystem destinationCrs() const;
-    void setDestinationCrs( const QgsCoordinateReferenceSystem& destinationCrs );
+    void setDestinationCrs( const QgsCoordinateReferenceSystem &destinationCrs );
 
     QgsCoordinateReferenceSystem sourceCrs() const;
-    void setSourceCrs( const QgsCoordinateReferenceSystem& sourceCrs );
+    void setSourceCrs( const QgsCoordinateReferenceSystem &sourceCrs );
 
   private:
     void updatePosition();
@@ -60,11 +62,13 @@ class QUICK_EXPORT QgsQuickCoordinateTransformer : public QObject
     void sourcePositionChanged();
     void destinationCrsChanged();
     void sourceCrsChanged();
+    void mapSettingsChanged();
 
   private:
     QgsPoint mProjectedPosition;
     QgsPoint mSourcePosition;
     QgsCoordinateTransform mCoordinateTransform;
+    QgsQuickMapSettings *mMapSettings;
 };
 
 #endif // QGSQUICKCOORDINATETRANSFORMER_H

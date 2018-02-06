@@ -18,6 +18,8 @@
 #include "qgslayout.h"
 #include "qgsproject.h"
 #include "qgsreadwritecontext.h"
+#include "qgslayoutpagecollection.h"
+#include "qgslayoutundostack.h"
 #include <QGraphicsLineItem>
 
 
@@ -76,10 +78,6 @@ void QgsLayoutGuide::update()
     return;
   }
 
-  if ( mLineItem->parentItem() != mPage )
-  {
-    mLineItem->setParentItem( mPage );
-  }
   double layoutPos = mLayout->convertToLayoutUnits( mPosition );
   bool showGuide = mLayout->guides().visible();
   switch ( mOrientation )
@@ -91,7 +89,7 @@ void QgsLayoutGuide::update()
       }
       else
       {
-        mLineItem->setLine( 0, layoutPos, mPage->rect().width(), layoutPos );
+        mLineItem->setLine( 0, layoutPos + mPage->y(), mPage->rect().width(), layoutPos + mPage->y() );
         mLineItem->setVisible( showGuide );
       }
 
@@ -104,7 +102,7 @@ void QgsLayoutGuide::update()
       }
       else
       {
-        mLineItem->setLine( layoutPos, 0, layoutPos, mPage->rect().height() );
+        mLineItem->setLine( layoutPos, mPage->y(), layoutPos, mPage->y() + mPage->rect().height() );
         mLineItem->setVisible( showGuide );
       }
 
@@ -142,11 +140,11 @@ void QgsLayoutGuide::setLayoutPosition( double position )
   switch ( mOrientation )
   {
     case Qt::Horizontal:
-      p = mLineItem->mapFromScene( QPointF( 0, position ) ).y();
+      p = mPage->mapFromScene( QPointF( 0, position ) ).y();
       break;
 
     case Qt::Vertical:
-      p = mLineItem->mapFromScene( QPointF( position, 0 ) ).x();
+      p = mPage->mapFromScene( QPointF( position, 0 ) ).x();
       break;
   }
   mPosition = mLayout->convertFromLayoutUnits( p, mPosition.units() );
@@ -171,7 +169,7 @@ void QgsLayoutGuide::setLayout( QgsLayout *layout )
     QPen linePen( Qt::DotLine );
     linePen.setColor( Qt::red );
     // use a pen width of 0, since this activates a cosmetic pen
-    // which doesn't scale with the composer and keeps a constant size
+    // which doesn't scale with the layout and keeps a constant size
     linePen.setWidthF( 0 );
     mLineItem->setPen( linePen );
   }
@@ -301,6 +299,9 @@ bool QgsLayoutGuideCollection::setData( const QModelIndex &index, const QVariant
         return false;
 
       QgsLayoutMeasurement m = guide->position();
+      if ( m.length() == newPos )
+        return true;
+
       m.setLength( newPos );
       mLayout->undoStack()->beginCommand( mPageCollection, tr( "Move Guide" ), Move + index.row() );
       whileBlocking( guide )->setPosition( m );
@@ -467,6 +468,11 @@ void QgsLayoutGuideCollection::update()
   {
     guide->update();
   }
+}
+
+QList<QgsLayoutGuide *> QgsLayoutGuideCollection::guides()
+{
+  return mGuides;
 }
 
 QList<QgsLayoutGuide *> QgsLayoutGuideCollection::guides( Qt::Orientation orientation, int page )

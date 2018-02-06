@@ -34,11 +34,13 @@ class QgsMinimumEnclosingCircleAlgorithm : public QgsProcessingFeatureBasedAlgor
   public:
 
     QgsMinimumEnclosingCircleAlgorithm() = default;
+    Flags flags() const override;
     void initParameters( const QVariantMap &configuration = QVariantMap() ) override;
     QString name() const override;
     QString displayName() const override;
-    virtual QStringList tags() const override;
+    QStringList tags() const override;
     QString group() const override;
+    QString groupId() const override;
     QString shortHelpString() const override;
     QgsMinimumEnclosingCircleAlgorithm *createInstance() const override SIP_FACTORY;
 
@@ -47,7 +49,7 @@ class QgsMinimumEnclosingCircleAlgorithm : public QgsProcessingFeatureBasedAlgor
     QgsWkbTypes::Type outputWkbType( QgsWkbTypes::Type ) const override;
     QgsFields outputFields( const QgsFields &inputFields ) const override;
     bool prepareAlgorithm( const QVariantMap &parameters, QgsProcessingContext &context, QgsProcessingFeedback *feedback ) override;
-    QgsFeature processFeature( const QgsFeature &feature, QgsProcessingFeedback *feedback ) override;
+    QgsFeature processFeature( const QgsFeature &feature,  QgsProcessingContext &context, QgsProcessingFeedback *feedback ) override;
 
   private:
 

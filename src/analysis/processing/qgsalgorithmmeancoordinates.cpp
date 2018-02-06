@@ -39,6 +39,16 @@ QString QgsMeanCoordinatesAlgorithm::group() const
   return QObject::tr( "Vector analysis" );
 }
 
+QString QgsMeanCoordinatesAlgorithm::groupId() const
+{
+  return QStringLiteral( "vectoranalysis" );
+}
+
+QgsProcessingAlgorithm::Flags QgsMeanCoordinatesAlgorithm::flags() const
+{
+  return QgsProcessingAlgorithm::flags() | QgsProcessingAlgorithm::FlagCanRunInBackground;
+}
+
 void QgsMeanCoordinatesAlgorithm::initAlgorithm( const QVariantMap & )
 {
   addParameter( new QgsProcessingParameterFeatureSource( QStringLiteral( "INPUT" ),
@@ -164,7 +174,7 @@ QVariantMap QgsMeanCoordinatesAlgorithm::processAlgorithm( const QVariantMap &pa
 
     QgsVertexId vid;
     QgsPoint pt;
-    const QgsAbstractGeometry *g = feat.geometry().geometry();
+    const QgsAbstractGeometry *g = feat.geometry().constGet();
     // NOTE - should this be including the duplicate nodes for closed rings? currently it is,
     // but I suspect that the expected behavior would be to NOT include these
     while ( g->nextVertex( vid, pt ) )
@@ -196,7 +206,7 @@ QVariantMap QgsMeanCoordinatesAlgorithm::processAlgorithm( const QVariantMap &pa
     double cy = it.value().at( 1 ) / it.value().at( 2 );
 
     QgsPointXY meanPoint( cx, cy );
-    outFeat.setGeometry( QgsGeometry::fromPoint( meanPoint ) );
+    outFeat.setGeometry( QgsGeometry::fromPointXY( meanPoint ) );
 
     QgsAttributes attributes;
     attributes << cx << cy;

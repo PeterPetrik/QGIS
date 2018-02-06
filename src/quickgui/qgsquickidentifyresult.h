@@ -18,35 +18,42 @@
 
 #include <QObject>
 
+#include "qgsfeature.h"
+
 #include "qgis_quick.h"
-#include <qgsfeature.h>
+
 class QgsVectorLayer;
 
+/**
+ * \ingroup quick
+ * Helper class for QgsFeature and QgsVectorLayer where it belongs.
+ *
+ * \note QML Type: IdentifyResult
+ *
+ * \since QGIS 3.2
+ */
 class QUICK_EXPORT QgsQuickIdentifyResult
 {
     Q_GADGET
 
-    Q_PROPERTY( QgsVectorLayer* layer READ layer )
+    Q_PROPERTY( QgsVectorLayer *layer READ layer )
     Q_PROPERTY( QgsFeature feature READ feature )
-    Q_PROPERTY( bool valid READ valid)
+    Q_PROPERTY( bool valid READ valid )
 
   public:
     QgsQuickIdentifyResult();
-    QgsQuickIdentifyResult( const QgsFeature& feature,
-                            QgsVectorLayer* layer);
+    QgsQuickIdentifyResult( const QgsFeature &feature,
+                            QgsVectorLayer *layer );
 
-    //QgsQuickIdentifyResult(const QgsQuickIdentifyResult& other);
-    //QgsQuickIdentifyResult &operator=( const QgsQuickIdentifyResult &rhs );
-
-    QgsVectorLayer* layer() const;
+    QgsVectorLayer *layer() const;
     QgsFeature feature() const;
     bool valid() const;
 
   private:
-    QgsVectorLayer* mLayer;
+    QgsVectorLayer *mLayer;
     QgsFeature mFeature;
 };
 
-Q_DECLARE_METATYPE(QgsQuickIdentifyResult)
+Q_DECLARE_METATYPE( QgsQuickIdentifyResult )
 
 #endif // QGSQUICKIDENTIFYRESULT_H

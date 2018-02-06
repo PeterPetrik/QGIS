@@ -34,10 +34,12 @@ class QgsDropGeometryAlgorithm : public QgsProcessingFeatureBasedAlgorithm
   public:
 
     QgsDropGeometryAlgorithm() = default;
+    Flags flags() const override;
     QString name() const override;
     QString displayName() const override;
     QStringList tags() const override;
     QString group() const override;
+    QString groupId() const override;
     QString shortHelpString() const override;
     QgsDropGeometryAlgorithm *createInstance() const override SIP_FACTORY;
     QgsCoordinateReferenceSystem outputCrs( const QgsCoordinateReferenceSystem &inputCrs ) const override;
@@ -47,7 +49,7 @@ class QgsDropGeometryAlgorithm : public QgsProcessingFeatureBasedAlgorithm
     QString outputName() const override;
     QgsWkbTypes::Type outputWkbType( QgsWkbTypes::Type inputWkbType ) const override;
     QgsFeatureRequest request() const override;
-    QgsFeature processFeature( const QgsFeature &feature, QgsProcessingFeedback *feedback ) override;
+    QgsFeature processFeature( const QgsFeature &feature, QgsProcessingContext &context, QgsProcessingFeedback *feedback ) override;
 };
 
 ///@endcond PRIVATE

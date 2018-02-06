@@ -111,7 +111,7 @@ void QgsMapToolLabel::createRubberBands()
         fixPoint = s.mapToLayerCoordinates( vlayer, fixPoint );
       }
 
-      QgsGeometry pointGeom = QgsGeometry::fromPoint( fixPoint );
+      QgsGeometry pointGeom = QgsGeometry::fromPointXY( fixPoint );
       mFixPointRubberBand = new QgsRubberBand( mCanvas, QgsWkbTypes::LineGeometry );
       mFixPointRubberBand->setColor( QColor( 0, 0, 255, 65 ) );
       mFixPointRubberBand->setToGeometry( pointGeom, vlayer );
@@ -146,7 +146,7 @@ QString QgsMapToolLabel::currentLabelText( int trunc )
     if ( trunc > 0 && labelText.length() > trunc )
     {
       labelText.truncate( trunc );
-      labelText += QStringLiteral( "…" );
+      labelText += QChar( 0x2026 );
     }
     return labelText;
   }
@@ -169,7 +169,7 @@ QString QgsMapToolLabel::currentLabelText( int trunc )
         if ( trunc > 0 && labelText.length() > trunc )
         {
           labelText.truncate( trunc );
-          labelText += QStringLiteral( "…" );
+          labelText += QChar( 0x2026 );
         }
         return labelText;
       }
@@ -470,7 +470,7 @@ bool QgsMapToolLabel::currentLabelDataDefinedPosition( double &x, bool &xSuccess
 
 bool QgsMapToolLabel::layerIsRotatable( QgsVectorLayer *vlayer, int &rotationCol ) const
 {
-  if ( !vlayer || !vlayer->isEditable() || !vlayer->labeling() )
+  if ( !vlayer || !vlayer->isEditable() || !vlayer->labelsEnabled() )
   {
     return false;
   }
@@ -591,7 +591,7 @@ bool QgsMapToolLabel::diagramMoveable( QgsVectorLayer *vlayer, int &xCol, int &y
 
 bool QgsMapToolLabel::labelMoveable( QgsVectorLayer *vlayer, int &xCol, int &yCol ) const
 {
-  if ( !vlayer || !vlayer->isEditable() || !vlayer->labeling() )
+  if ( !vlayer || !vlayer->isEditable() || !vlayer->labelsEnabled() )
   {
     return false;
   }
@@ -624,7 +624,7 @@ bool QgsMapToolLabel::layerCanPin( QgsVectorLayer *vlayer, int &xCol, int &yCol 
 
 bool QgsMapToolLabel::labelCanShowHide( QgsVectorLayer *vlayer, int &showCol ) const
 {
-  if ( !vlayer || !vlayer->isEditable() || !vlayer->labeling() )
+  if ( !vlayer || !vlayer->isEditable() || !vlayer->labelsEnabled() )
   {
     return false;
   }
@@ -691,7 +691,7 @@ QgsMapToolLabel::LabelDetails::LabelDetails( const QgsLabelPosition &p )
   : pos( p )
 {
   layer = qobject_cast<QgsVectorLayer *>( QgsProject::instance()->mapLayer( pos.layerID ) );
-  if ( layer && layer->labeling() && !p.isDiagram )
+  if ( layer && layer->labelsEnabled() && !p.isDiagram )
   {
     settings = layer->labeling()->settings( pos.providerID );
     valid = true;
@@ -719,8 +719,8 @@ bool QgsMapToolLabel::createAuxiliaryFields( LabelDetails &details, QgsPalIndexe
   QgsVectorLayer *vlayer = details.layer;
   QString providerId = details.pos.providerID;
 
-  if ( !vlayer || !vlayer->labeling() )
-    return newAuxiliaryLayer;
+  if ( !vlayer || !vlayer->labelsEnabled() )
+    return false;
 
   if ( !vlayer->auxiliaryLayer() )
   {

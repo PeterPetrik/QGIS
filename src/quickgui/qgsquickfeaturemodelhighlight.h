@@ -1,9 +1,9 @@
 /***************************************************************************
-              qgsquickfeaturemodelhighlight.h
-               ----------------------------------------------------
-              date                 : 9.12.2014
-              copyright            : (C) 2014 by Matthias Kuhn
-              email                : matthias.kuhn (at) opengis.ch
+  qgsqguickfeaturemodelhighlight.h
+  --------------------------------------
+  Date                 : 9.12.2014
+  Copyright            : (C) 2014 by Matthias Kuhn
+  Email                : matthias@opengis.ch
  ***************************************************************************
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -17,23 +17,31 @@
 #define QGSQUICKFEATUREMODELHIGHLIGHT_H
 
 #include <QQuickItem>
+
 #include "qgis_quick.h"
 
 class QgsQuickMapSettings;
 class QgsQuickFeatureModel;
 
 /**
+ * \ingroup quick
+ *
  * Creates map highlights for a geometry provided by a FeatureModel.
+ *
  * The highlights are compatible with the QtQuick scene graph.
+ *
+ * \note QML Type: FeatureModelHighlight
+ *
+ * \since QGIS 3.2
  */
 class QUICK_EXPORT QgsQuickFeatureModelHighlight : public QQuickItem
 {
     Q_OBJECT
 
-    Q_PROPERTY( QgsQuickFeatureModel* model MEMBER mModel NOTIFY modelChanged )
+    Q_PROPERTY( QgsQuickFeatureModel *model MEMBER mModel NOTIFY modelChanged )
     Q_PROPERTY( QColor color MEMBER mColor NOTIFY colorChanged )
     Q_PROPERTY( unsigned int width MEMBER mWidth NOTIFY widthChanged )
-    Q_PROPERTY( QgsQuickMapSettings* mapSettings MEMBER mMapSettings NOTIFY mapSettingsChanged )
+    Q_PROPERTY( QgsQuickMapSettings *mapSettings MEMBER mMapSettings NOTIFY mapSettingsChanged )
 
   public:
     explicit QgsQuickFeatureModelHighlight( QQuickItem *parent = 0 );
@@ -50,13 +58,13 @@ class QUICK_EXPORT QgsQuickFeatureModelHighlight : public QQuickItem
     void onModelDataChanged();
 
   private:
-    virtual QSGNode* updatePaintNode( QSGNode *n, UpdatePaintNodeData * ) override;
+    virtual QSGNode *updatePaintNode( QSGNode *n, UpdatePaintNodeData * ) override;
 
     QColor mColor;
-    QgsQuickFeatureModel* mModel;
+    QgsQuickFeatureModel *mModel;
     bool mDirty;
     unsigned int mWidth;
-    QgsQuickMapSettings* mMapSettings;
+    QgsQuickMapSettings *mMapSettings;
 };
 
 #endif // QGSQUICKFEATUREMODELHIGHLIGHT_H

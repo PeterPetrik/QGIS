@@ -49,12 +49,12 @@ QgsProjectionSelectionTreeWidget::QgsProjectionSelectionTreeWidget( QWidget *par
 
   mPreviewBand2 = new QgsRubberBand( mAreaCanvas, QgsWkbTypes::PolygonGeometry );
   mPreviewBand2->setWidth( 4 );
-  QColor rectColor =  QColor( 185, 84, 210, 60 );
+  QColor rectColor = QColor( 185, 84, 210, 60 );
   mPreviewBand2->setColor( rectColor );
 
   mVertexMarker = new QgsVertexMarker( mAreaCanvas );
   mVertexMarker->setIconType( QgsVertexMarker::ICON_CROSS );
-  mVertexMarker->setColor( Qt::magenta );
+  mVertexMarker->setColor( QColor( 185, 84, 210 ) );
   mVertexMarker->setPenWidth( 3 );
 
   QgsCoordinateReferenceSystem srs( 4326, QgsCoordinateReferenceSystem::EpsgCrsId );
@@ -64,7 +64,7 @@ QgsProjectionSelectionTreeWidget::QgsProjectionSelectionTreeWidget( QWidget *par
   mLayers << new QgsVectorLayer( layerPath );
   mAreaCanvas->setLayers( mLayers );
   mAreaCanvas->setMapTool( new QgsMapToolPan( mAreaCanvas ) );
-
+  mAreaCanvas->setPreviewJobsEnabled( true );
   mAreaCanvas->setVisible( mShowMap );
 
   if ( QDialog *dlg = qobject_cast<QDialog *>( parent ) )
@@ -1028,14 +1028,32 @@ void QgsProjectionSelectionTreeWidget::updateBoundsPreview()
     return;
 
   QgsRectangle rect = currentCrs.bounds();
-  if ( !rect.isEmpty() )
+  if ( !qgsDoubleNear( rect.area(), 0.0 ) )
   {
-    mPreviewBand->setToGeometry( QgsGeometry::fromRect( rect ), nullptr );
+    QgsGeometry geom;
+    if ( rect.xMinimum() > rect.xMaximum() )
+    {
+      QgsRectangle rect1 = QgsRectangle( -180, rect.yMinimum(), rect.xMaximum(), rect.yMaximum() );
+      QgsRectangle rect2 = QgsRectangle( rect.xMinimum(), rect.yMinimum(), 180, rect.yMaximum() );
+      geom = QgsGeometry::fromRect( rect1 );
+      geom.addPart( QgsGeometry::fromRect( rect2 ) );
+    }
+    else
+    {
+      geom = QgsGeometry::fromRect( rect );
+    }
+    mPreviewBand->setToGeometry( geom, nullptr );
     mPreviewBand->setColor( QColor( 255, 0, 0, 65 ) );
-    mAreaCanvas->setExtent( rect );
+    QgsRectangle extent = geom.boundingBox();
+    extent.scale( 1.1 );
+    mAreaCanvas->setExtent( extent );
+    mAreaCanvas->refresh();
     mPreviewBand->show();
-    mAreaCanvas->zoomOut();
-    QString extentString = tr( "Extent: %1" ).arg( rect.toString( 2 ) );
+    QString extentString = tr( "Extent: %1, %2, %3, %4" )
+                           .arg( rect.xMinimum(), 0, 'f', 2 )
+                           .arg( rect.yMinimum(), 0, 'f', 2 )
+                           .arg( rect.xMaximum(), 0, 'f', 2 )
+                           .arg( rect.yMaximum(), 0, 'f', 2 );
     QString proj4String = tr( "Proj4: %1" ).arg( selectedProj4String() );
     teProjection->setText( extentString + "\n" + proj4String );
   }

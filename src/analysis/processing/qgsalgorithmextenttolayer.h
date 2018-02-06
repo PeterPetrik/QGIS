@@ -34,18 +34,20 @@ class QgsExtentToLayerAlgorithm : public QgsProcessingAlgorithm
   public:
 
     QgsExtentToLayerAlgorithm() = default;
+    Flags flags() const override;
     void initAlgorithm( const QVariantMap &configuration = QVariantMap() ) override;
     QString name() const override;
     QString displayName() const override { return QObject::tr( "Create layer from extent" ); }
-    virtual QStringList tags() const override { return QObject::tr( "extent,layer,polygon,create,new" ).split( ',' ); }
+    QStringList tags() const override { return QObject::tr( "extent,layer,polygon,create,new" ).split( ',' ); }
     QString group() const override { return QObject::tr( "Vector geometry" ); }
+    QString groupId() const override { return QStringLiteral( "vectorgeometry" ); }
     QString shortHelpString() const override;
     QgsExtentToLayerAlgorithm *createInstance() const override SIP_FACTORY;
 
   protected:
 
-    virtual QVariantMap processAlgorithm( const QVariantMap &parameters,
-                                          QgsProcessingContext &context, QgsProcessingFeedback *feedback ) override;
+    QVariantMap processAlgorithm( const QVariantMap &parameters,
+                                  QgsProcessingContext &context, QgsProcessingFeedback *feedback ) override;
 
 };
 

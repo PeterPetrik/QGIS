@@ -35,7 +35,7 @@
 #include <QAbstractItemModel>
 
 #include "qgsfilterlineedit.h"
-
+#include "qgsmessagebaritem.h"
 #include "qgslogger.h"
 
 QgsOptionsDialogBase::QgsOptionsDialogBase( const QString &settingsKey, QWidget *parent, Qt::WindowFlags fl, QgsSettings *settings )
@@ -265,6 +265,10 @@ void QgsOptionsDialogBase::registerTextSearchWidgets()
   {
     Q_FOREACH ( QWidget *w, mOptStackedWidget->widget( i )->findChildren<QWidget *>() )
     {
+      // do not register message bar content, items disappear and causes QGIS to crash
+      if ( qobject_cast< QgsMessageBarItem * >( w ) || qobject_cast< QgsMessageBarItem * >( w->parentWidget() ) )
+        continue;
+
       QgsSearchHighlightOptionWidget *shw = new QgsSearchHighlightOptionWidget( w );
       if ( shw->isValid() )
       {
@@ -356,24 +360,24 @@ void QgsOptionsDialogBase::updateOptionsListVerticalTabs()
     mOptListWidget->setWordWrap( true );
 }
 
-void QgsOptionsDialogBase::optionsStackedWidget_CurrentChanged( int indx )
+void QgsOptionsDialogBase::optionsStackedWidget_CurrentChanged( int index )
 {
   mOptListWidget->blockSignals( true );
-  mOptListWidget->setCurrentRow( indx );
+  mOptListWidget->setCurrentRow( index );
   mOptListWidget->blockSignals( false );
 
   updateWindowTitle();
 }
 
-void QgsOptionsDialogBase::optionsStackedWidget_WidgetRemoved( int indx )
+void QgsOptionsDialogBase::optionsStackedWidget_WidgetRemoved( int index )
 {
   // will need to take item first, if widgets are set for item in future
-  delete mOptListWidget->item( indx );
+  delete mOptListWidget->item( index );
 
   QList<QPair< QgsSearchHighlightOptionWidget *, int > >::iterator it = mRegisteredSearchWidgets.begin();
   while ( it != mRegisteredSearchWidgets.end() )
   {
-    if ( ( *it ).second == indx )
+    if ( ( *it ).second == index )
       it = mRegisteredSearchWidgets.erase( it );
     else
       ++it;
@@ -460,27 +464,60 @@ bool QgsSearchHighlightOptionWidget::searchHighlight( const QString &searchText 
     if ( !mWidget->isVisible() )
     {
       // show the widget to get initial stylesheet in case it's modified
-      mWidget->show();
+      QgsDebugMsg( QString( "installing event filter on: %1 (%2)" )
+                   .arg( mWidget->objectName() )
+                   .arg( qobject_cast<QLabel *>( mWidget ) ? qobject_cast<QLabel *>( mWidget )->text() : QString() ) );
+      mWidget->installEventFilter( this );
+      mInstalledFilter = true;
     }
-    mWidget->setStyleSheet( mWidget->styleSheet() + mStyleSheet );
-    mChangedStyle = true;
+    else
+    {
+      mWidget->setStyleSheet( mWidget->styleSheet() + mStyleSheet );
+      mChangedStyle = true;
+    }
   }
 
   return found;
 }
 
+bool QgsSearchHighlightOptionWidget::eventFilter( QObject *obj, QEvent *event )
+{
+  if ( mInstalledFilter && event->type() == QEvent::Show && obj == mWidget )
+  {
+    removeEventFilter( mWidget );
+    mInstalledFilter = false;
+    mWidget->show();
+    //QTimer::singleShot( 500, this, [ = ]
+    //{
+    mWidget->setStyleSheet( mWidget->styleSheet() + mStyleSheet );
+    mChangedStyle = true;
+    //} );
+    return true;
+  }
+  return QObject::eventFilter( obj, event );
+}
+
 void QgsSearchHighlightOptionWidget::reset()
 {
-  if ( mValid && mChangedStyle )
+  if ( mWidget && mValid )
   {
-    QString ss = mWidget->styleSheet();
-    ss.remove( mStyleSheet );
-    mWidget->setStyleSheet( ss );
-    mChangedStyle = false;
+    if ( mChangedStyle )
+    {
+      QString ss = mWidget->styleSheet();
+      ss.remove( mStyleSheet );
+      mWidget->setStyleSheet( ss );
+      mChangedStyle = false;
+    }
+    else if ( mInstalledFilter )
+    {
+      removeEventFilter( mWidget );
+      mInstalledFilter = false;
+    }
   }
 }
 
 void QgsSearchHighlightOptionWidget::widgetDestroyed()
 {
+  mWidget = nullptr;
   mValid = false;
 }

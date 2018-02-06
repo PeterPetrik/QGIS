@@ -16,33 +16,55 @@
 #ifndef QGSQUICKSTYLE_H
 #define QGSQUICKSTYLE_H
 
-#include "qgis_quick.h"
-
 #include <QObject>
 #include <QString>
 #include <QUrl>
 
+#include "qgis_quick.h"
+
+/**
+ * \ingroup quick
+ *
+ * Singleton encapsulating the visual (color, icons, ...) properties for Items in the QgsQuick library.
+ *
+ * \note QML Type: Style (singleton)
+ *
+ * \since QGIS 3.2
+ */
 class QUICK_EXPORT QgsQuickStyle: public QObject
 {
-  Q_OBJECT
+    Q_OBJECT
 
-  Q_PROPERTY( qreal dp READ devicePixels WRITE setDevicePixels NOTIFY devicePixelsChanged )
-  Q_PROPERTY( QString theme READ themeDir WRITE setThemeDir NOTIFY themeDirChanged )
+    /**
+      * Device pixels. Used to scale all pixel sizes for GUI elements.
+      * Defaults to 1. Use QApplication::desktop()->physicalDpiX() to initialize.
+      */
+    Q_PROPERTY( qreal dp READ devicePixels WRITE setDevicePixels NOTIFY devicePixelsChanged )
 
-public:
-  explicit QgsQuickStyle(QObject *parent = 0);
+    /**
+      * Directory with the icons. If icon is not found in the theme directory, it is taken from
+      * QgsQuick library resources. Use this to replace default images with the customized.
+      *
+      * /sa QgsQuickUtils::getThemeIcon()
+      */
+    Q_PROPERTY( QString theme READ themeDir WRITE setThemeDir NOTIFY themeDirChanged )
 
-  qreal devicePixels() const;
-  QString themeDir() const;
+  public:
+    explicit QgsQuickStyle( QObject *parent = 0 );
 
-  void setDevicePixels(qreal dp);
-  void setThemeDir(QString dir);
+    qreal devicePixels() const;
+    QString themeDir() const;
+    bool useVectorIcons() const;
 
-signals:
+    void setUseVectorIcons( bool use );
+    void setDevicePixels( qreal dp );
+    void setThemeDir( QString dir );
+
+  signals:
     void devicePixelsChanged();
     void themeDirChanged();
 
-private:
+  private:
     QString mThemeDir;
     qreal mDevicePixels;
 };

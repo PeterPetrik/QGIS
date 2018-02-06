@@ -284,7 +284,7 @@ bool QgsWmsCapabilities::parseCapabilitiesDom( QByteArray const &xml, QgsWmsCapa
   {
     mErrorCaption = QObject::tr( "Dom Exception" );
     mErrorFormat = QStringLiteral( "text/plain" );
-    mError = QObject::tr( "Could not get WMS capabilities in the expected format (DTD): no %1 or %2 found.\nThis might be due to an incorrect WMS Server URL.\nTag:%3\nResponse was:\n%4" )
+    mError = QObject::tr( "Could not get WMS capabilities in the expected format (DTD): no %1 or %2 found.\nThis might be due to an incorrect WMS Server URL.\nTag: %3\nResponse was:\n%4" )
              .arg( QStringLiteral( "WMS_Capabilities" ),
                    QStringLiteral( "WMT_MS_Capabilities" ),
                    docElem.tagName(),
@@ -829,7 +829,9 @@ void QgsWmsCapabilities::parseLayer( QDomElement const &e, QgsWmsLayerProperty &
 
             QgsCoordinateReferenceSystem dst = QgsCoordinateReferenceSystem::fromOgcWmsCrs( DEFAULT_LATLON_CRS );
 
+            Q_NOWARN_DEPRECATED_PUSH
             QgsCoordinateTransform ct( src, dst );
+            Q_NOWARN_DEPRECATED_POP
             layerProperty.ex_GeographicBoundingBox = ct.transformBoundingBox( layerProperty.ex_GeographicBoundingBox );
           }
           catch ( QgsCsException &cse )
@@ -1921,17 +1923,17 @@ bool QgsWmsCapabilitiesDownload::downloadCapabilities( const QString &baseUrl, c
 
 bool QgsWmsCapabilitiesDownload::downloadCapabilities()
 {
-  QgsDebugMsg( QString( "entering: forceRefresh=%1" ).arg( mForceRefresh ) );
+  QgsDebugMsgLevel( QStringLiteral( "entering: forceRefresh=%1" ).arg( mForceRefresh ), 2 );
   abort(); // cancel previous
   mIsAborted = false;
 
   QString url = mBaseUrl;
-  QgsDebugMsg( "url = " + url );
   if ( !url.contains( QLatin1String( "SERVICE=WMTS" ), Qt::CaseInsensitive ) &&
        !url.contains( QLatin1String( "/WMTSCapabilities.xml" ), Qt::CaseInsensitive ) )
   {
     url += QLatin1String( "SERVICE=WMS&REQUEST=GetCapabilities" );
   }
+  QgsDebugMsgLevel( QStringLiteral( "url = %1" ).arg( url ), 2 );
 
   mError.clear();
 

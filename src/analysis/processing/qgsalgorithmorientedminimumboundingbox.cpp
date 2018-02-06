@@ -19,6 +19,11 @@
 
 ///@cond PRIVATE
 
+QgsProcessingAlgorithm::Flags QgsOrientedMinimumBoundingBoxAlgorithm::flags() const
+{
+  return QgsProcessingFeatureBasedAlgorithm::flags() | QgsProcessingAlgorithm::FlagCanRunInBackground;
+}
+
 QString QgsOrientedMinimumBoundingBoxAlgorithm::name() const
 {
   return QStringLiteral( "orientedminimumboundingbox" );
@@ -37,6 +42,11 @@ QStringList QgsOrientedMinimumBoundingBoxAlgorithm::tags() const
 QString QgsOrientedMinimumBoundingBoxAlgorithm::group() const
 {
   return QObject::tr( "Vector geometry" );
+}
+
+QString QgsOrientedMinimumBoundingBoxAlgorithm::groupId() const
+{
+  return QStringLiteral( "vectorgeometry" );
 }
 
 QString QgsOrientedMinimumBoundingBoxAlgorithm::outputName() const
@@ -72,7 +82,7 @@ QgsFields QgsOrientedMinimumBoundingBoxAlgorithm::outputFields( const QgsFields 
   return fields;
 }
 
-QgsFeature QgsOrientedMinimumBoundingBoxAlgorithm::processFeature( const QgsFeature &feature, QgsProcessingFeedback * )
+QgsFeature QgsOrientedMinimumBoundingBoxAlgorithm::processFeature( const QgsFeature &feature, QgsProcessingContext &, QgsProcessingFeedback * )
 {
   QgsFeature f = feature;
   if ( f.hasGeometry() )

@@ -19,6 +19,11 @@
 
 ///@cond PRIVATE
 
+QgsProcessingAlgorithm::Flags QgsFixGeometriesAlgorithm::flags() const
+{
+  return QgsProcessingFeatureBasedAlgorithm::flags() | QgsProcessingAlgorithm::FlagCanRunInBackground;
+}
+
 QString QgsFixGeometriesAlgorithm::name() const
 {
   return QStringLiteral( "fixgeometries" );
@@ -37,6 +42,11 @@ QStringList QgsFixGeometriesAlgorithm::tags() const
 QString QgsFixGeometriesAlgorithm::group() const
 {
   return QObject::tr( "Vector geometry" );
+}
+
+QString QgsFixGeometriesAlgorithm::groupId() const
+{
+  return QStringLiteral( "vectorgeometry" );
 }
 
 QgsProcessingFeatureSource::Flag QgsFixGeometriesAlgorithm::sourceFlags() const
@@ -67,7 +77,7 @@ QgsFixGeometriesAlgorithm *QgsFixGeometriesAlgorithm::createInstance() const
   return new QgsFixGeometriesAlgorithm();
 }
 
-QgsFeature QgsFixGeometriesAlgorithm::processFeature( const QgsFeature &feature, QgsProcessingFeedback *feedback )
+QgsFeature QgsFixGeometriesAlgorithm::processFeature( const QgsFeature &feature, QgsProcessingContext &, QgsProcessingFeedback *feedback )
 {
   if ( !feature.hasGeometry() )
     return feature;
@@ -83,11 +93,11 @@ QgsFeature QgsFixGeometriesAlgorithm::processFeature( const QgsFeature &feature,
   }
 
   if ( outputGeometry.wkbType() == QgsWkbTypes::Unknown ||
-       QgsWkbTypes::flatType( outputGeometry.geometry()->wkbType() ) == QgsWkbTypes::GeometryCollection )
+       QgsWkbTypes::flatType( outputGeometry.wkbType() ) == QgsWkbTypes::GeometryCollection )
   {
     // keep only the parts of the geometry collection with correct type
-    const QList< QgsGeometry > tmpGeometries = outputGeometry.asGeometryCollection();
-    QList< QgsGeometry > matchingParts;
+    const QVector< QgsGeometry > tmpGeometries = outputGeometry.asGeometryCollection();
+    QVector< QgsGeometry > matchingParts;
     for ( const QgsGeometry &g : tmpGeometries )
     {
       if ( g.type() == feature.geometry().type() )
@@ -100,7 +110,16 @@ QgsFeature QgsFixGeometriesAlgorithm::processFeature( const QgsFeature &feature,
   }
 
   outputGeometry.convertToMultiType();
-  outputFeature.setGeometry( outputGeometry );
+  if ( QgsWkbTypes::geometryType( outputGeometry.wkbType() ) != QgsWkbTypes::geometryType( feature.geometry().wkbType() ) )
+  {
+    // don't keep geometries which have different types - e.g. lines converted to points
+    feedback->pushInfo( QObject::tr( "Fixing geometry for feature %1 resulted in %2, geometry has been dropped." ).arg( feature.id() ).arg( QgsWkbTypes::displayString( outputGeometry.wkbType() ) ) );
+    outputFeature.clearGeometry();
+  }
+  else
+  {
+    outputFeature.setGeometry( outputGeometry );
+  }
   return outputFeature;
 }
 

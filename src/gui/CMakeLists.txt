@@ -125,6 +125,7 @@ SET(QGIS_GUI_SRCS
   editorwidgets/qgsrangeconfigdlg.cpp
   editorwidgets/qgsrangewidgetwrapper.cpp
   editorwidgets/qgsrangewidgetfactory.cpp
+  editorwidgets/qgsrelationaggregatesearchwidgetwrapper.cpp
   editorwidgets/qgssearchwidgettoolbutton.cpp
   editorwidgets/qgsspinbox.cpp
   editorwidgets/qgsrelationwidgetwrapper.cpp
@@ -159,10 +160,13 @@ SET(QGIS_GUI_SRCS
   layertree/qgslayertreeview.cpp
   layertree/qgslayertreeviewdefaultactions.cpp
 
+  layout/qgslayoutcustomdrophandler.cpp
   layout/qgslayoutitemguiregistry.cpp
+  layout/qgslayoutitemcombobox.cpp
   layout/qgslayoutitemwidget.cpp
   layout/qgslayoutmousehandles.cpp
   layout/qgslayoutnewitempropertiesdialog.cpp
+  layout/qgslayoutreportsectionlabel.cpp
   layout/qgslayoutruler.cpp
   layout/qgslayoutunitscombobox.cpp
   layout/qgslayoutview.cpp
@@ -170,6 +174,9 @@ SET(QGIS_GUI_SRCS
   layout/qgslayoutviewrubberband.cpp
   layout/qgslayoutviewtool.cpp
   layout/qgslayoutviewtooladditem.cpp
+  layout/qgslayoutviewtooladdnodeitem.cpp
+  layout/qgslayoutviewtooleditnodes.cpp
+  layout/qgslayoutviewtoolmoveitemcontent.cpp
   layout/qgslayoutviewtoolpan.cpp
   layout/qgslayoutviewtoolselect.cpp
   layout/qgslayoutviewtooltemporarykeypan.cpp
@@ -183,16 +190,21 @@ SET(QGIS_GUI_SRCS
   ogr/qgsnewogrconnection.cpp
   ogr/qgsvectorlayersaveasdialog.cpp
 
+  processing/qgsprocessingalgorithmdialogbase.cpp
+
   qgisinterface.cpp
   qgsactionmenu.cpp
   qgsadvanceddigitizingcanvasitem.cpp
   qgsadvanceddigitizingdockwidget.cpp
+  qgsaggregatetoolbutton.cpp
   qgsattributedialog.cpp
   qgsattributeform.cpp
   qgsattributeformeditorwidget.cpp
   qgsattributeforminterface.cpp
   qgsattributeformlegacyinterface.cpp
   qgsattributetypeloaddialog.cpp
+  qgsattributeformwidget.cpp
+  qgsattributeformrelationeditorwidget.cpp
   qgsblendmodecombobox.cpp
   qgsbrowsertreeview.cpp
   qgsbrowserdockwidget.cpp
@@ -213,13 +225,9 @@ SET(QGIS_GUI_SRCS
   qgscolorschemelist.cpp
   qgscolorswatchgrid.cpp
   qgscolorwidgets.cpp
-  qgscomposeritemcombobox.cpp
-  qgscomposerruler.cpp
-  qgscomposerview.cpp
   qgscompoundcolorwidget.cpp
   qgsconfigureshortcutsdialog.cpp
   qgscredentialdialog.cpp
-  qgscursors.cpp
   qgscustomdrophandler.cpp
   qgscurveeditorwidget.cpp
   qgsdatumtransformdialog.cpp
@@ -241,6 +249,7 @@ SET(QGIS_GUI_SRCS
   qgsfeatureselectiondlg.cpp
   qgsfieldcombobox.cpp
   qgsfieldexpressionwidget.cpp
+  qgsfeaturelistcombobox.cpp
   qgsfieldvalidator.cpp
   qgsfieldvalueslineedit.cpp
   qgsfilewidget.cpp
@@ -333,6 +342,7 @@ SET(QGIS_GUI_SRCS
   qgssearchquerybuilder.cpp
   qgsshortcutsmanager.cpp
   qgsslider.cpp
+  qgssnapindicator.cpp
   qgssublayersdialog.cpp
   qgssubstitutionlistwidget.cpp
   qgssqlcomposerdialog.cpp
@@ -346,12 +356,14 @@ SET(QGIS_GUI_SRCS
   qgstextpreview.cpp
   qgstreewidgetitem.cpp
   qgsunitselectionwidget.cpp
-  qgsuserinputdockwidget.cpp
+  qgsuserinputwidget.cpp
   qgsvariableeditorwidget.cpp
   qgsvertexmarker.cpp
-  qgsfiledownloader.cpp
+  qgsfiledownloaderdialog.cpp
+  qgsvscrollarea.cpp
   qgsdatasourcemanagerdialog.cpp
   qgsabstractdatasourcewidget.cpp
+  qgswidgetstatehelper_p.cpp
   qgssourceselectprovider.cpp
   qgssourceselectproviderregistry.cpp
 )
@@ -360,9 +372,12 @@ SET(QGIS_GUI_MOC_HDRS
   qgisinterface.h
   qgsactionmenu.h
   qgsadvanceddigitizingdockwidget.h
+  qgsaggregatetoolbutton.h
   qgsattributedialog.h
   qgsattributeform.h
   qgsattributeformeditorwidget.h
+  qgsattributeformrelationeditorwidget.h
+  qgsattributeformwidget.h
   qgsattributetypeloaddialog.h
   qgsblendmodecombobox.h
   qgsbrowsertreeview.h
@@ -382,10 +397,6 @@ SET(QGIS_GUI_MOC_HDRS
   qgscolorschemelist.h
   qgscolorswatchgrid.h
   qgscolorwidgets.h
-  qgscomposerinterface.h
-  qgscomposeritemcombobox.h
-  qgscomposerruler.h
-  qgscomposerview.h
   qgscompoundcolorwidget.h
   qgsconfigureshortcutsdialog.h
   qgscredentialdialog.h
@@ -411,6 +422,7 @@ SET(QGIS_GUI_MOC_HDRS
   qgsfeatureselectiondlg.h
   qgsfieldcombobox.h
   qgsfieldexpressionwidget.h
+  qgsfeaturelistcombobox.h
   qgsfieldvalidator.h
   qgsfieldvalueslineedit.h
   qgsfilewidget.h
@@ -507,11 +519,12 @@ SET(QGIS_GUI_MOC_HDRS
   qgstextpreview.h
   qgstreewidgetitem.h
   qgsunitselectionwidget.h
-  qgsuserinputdockwidget.h
+  qgsuserinputwidget.h
   qgsvariableeditorwidget.h
-  qgsfiledownloader.h
+  qgsfiledownloaderdialog.h
   qgsdatasourcemanagerdialog.h
   qgsabstractdatasourcewidget.h
+  qgswidgetstatehelper_p.h
 
   ogr/qgsnewogrconnection.h
   ogr/qgsvectorlayersaveasdialog.h
@@ -637,6 +650,7 @@ SET(QGIS_GUI_MOC_HDRS
   editorwidgets/qgsrelationreferencewidget.h
   editorwidgets/qgsrelationreferencewidgetwrapper.h
   editorwidgets/qgsrelationwidgetwrapper.h
+  editorwidgets/qgsrelationaggregatesearchwidgetwrapper.h
   editorwidgets/qgssearchwidgettoolbutton.h
   editorwidgets/qgsspinbox.h
   editorwidgets/qgstexteditconfigdlg.h
@@ -659,7 +673,9 @@ SET(QGIS_GUI_MOC_HDRS
   layertree/qgslayertreeview.h
   layertree/qgslayertreeviewdefaultactions.h
 
+  layout/qgslayoutcustomdrophandler.h
   layout/qgslayoutdesignerinterface.h
+  layout/qgslayoutitemcombobox.h
   layout/qgslayoutitemguiregistry.h
   layout/qgslayoutitemwidget.h
   layout/qgslayoutmousehandles.h
@@ -667,8 +683,12 @@ SET(QGIS_GUI_MOC_HDRS
   layout/qgslayoutruler.h
   layout/qgslayoutunitscombobox.h
   layout/qgslayoutview.h
+  layout/qgslayoutviewrubberband.h
   layout/qgslayoutviewtool.h
   layout/qgslayoutviewtooladditem.h
+  layout/qgslayoutviewtooladdnodeitem.h
+  layout/qgslayoutviewtooleditnodes.h
+  layout/qgslayoutviewtoolmoveitemcontent.h
   layout/qgslayoutviewtoolpan.h
   layout/qgslayoutviewtoolselect.h
   layout/qgslayoutviewtooltemporarykeypan.h
@@ -677,6 +697,8 @@ SET(QGIS_GUI_MOC_HDRS
   layout/qgslayoutviewtoolzoom.h
 
   locator/qgslocatorwidget.h
+
+  processing/qgsprocessingalgorithmdialogbase.h
 )
 SET_PROPERTY(GLOBAL PROPERTY QGIS_GUI_MOC_HDRS ${QGIS_GUI_MOC_HDRS})
 
@@ -694,7 +716,6 @@ SET(QGIS_GUI_HDRS
   qgsattributeeditorcontext.h
   qgsattributeforminterface.h
   qgsattributeformlegacyinterface.h
-  qgscursors.h
   qgsdetaileditemdata.h
   qgsexpressionbuilderdialog.h
   qgsgeometryrubberband.h
@@ -710,17 +731,19 @@ SET(QGIS_GUI_HDRS
   qgsmapmouseevent.h
   qgsmaptip.h
   qgsrubberband.h
+  qgssnapindicator.h
   qgssqlcomposerdialog.h
   qgstablewidgetitem.h
-  qgsuserinputdockwidget.h
+  qgsuserinputwidget.h
   qgsbrowserdockwidget.h
   qgsbrowserdockwidget_p.h
   qgsvertexmarker.h
-  qgsfiledownloader.h
   qgsdatasourcemanagerdialog.h
   qgsabstractdatasourcewidget.h
+  qgswidgetstatehelper_p.h
   qgssourceselectprovider.h
   qgssourceselectproviderregistry.h
+  qgsvscrollarea.h
 
   ogr/qgsogrhelperfunctions.h
   ogr/qgsnewogrconnection.h
@@ -773,8 +796,8 @@ SET(QGIS_GUI_HDRS
   layertree/qgslayertreeembeddedconfigwidget.h
   layertree/qgslayertreeembeddedwidgetregistry.h
 
+  layout/qgslayoutreportsectionlabel.h
   layout/qgslayoutviewmouseevent.h
-  layout/qgslayoutviewrubberband.h
 
   raster/qgsrasterrendererwidget.h
 
@@ -842,7 +865,6 @@ INCLUDE_DIRECTORIES(
   ${CMAKE_SOURCE_DIR}/src/core
   ${CMAKE_SOURCE_DIR}/src/core/annotations
   ${CMAKE_SOURCE_DIR}/src/core/auth
-  ${CMAKE_SOURCE_DIR}/src/core/composer
   ${CMAKE_SOURCE_DIR}/src/core/fieldformatter
   ${CMAKE_SOURCE_DIR}/src/core/geometry
   ${CMAKE_SOURCE_DIR}/src/core/layertree

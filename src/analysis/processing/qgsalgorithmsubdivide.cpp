@@ -20,6 +20,11 @@
 ///@cond PRIVATE
 
 
+QgsProcessingAlgorithm::Flags QgsSubdivideAlgorithm::flags() const
+{
+  return QgsProcessingFeatureBasedAlgorithm::flags() | QgsProcessingAlgorithm::FlagCanRunInBackground;
+}
+
 void QgsSubdivideAlgorithm::initParameters( const QVariantMap & )
 {
   addParameter( new QgsProcessingParameterNumber( QStringLiteral( "MAX_NODES" ), QObject::tr( "Maximum nodes in parts" ), QgsProcessingParameterNumber::Integer,
@@ -38,12 +43,17 @@ QString QgsSubdivideAlgorithm::displayName() const
 
 QStringList QgsSubdivideAlgorithm::tags() const
 {
-  return QObject::tr( "subdivide,segmentize,split,tesselate" ).split( ',' );
+  return QObject::tr( "subdivide,segmentize,split,tessellate" ).split( ',' );
 }
 
 QString QgsSubdivideAlgorithm::group() const
 {
   return QObject::tr( "Vector geometry" );
+}
+
+QString QgsSubdivideAlgorithm::groupId() const
+{
+  return QStringLiteral( "vectorgeometry" );
 }
 
 QString QgsSubdivideAlgorithm::shortHelpString() const
@@ -71,7 +81,7 @@ QgsWkbTypes::Type QgsSubdivideAlgorithm::outputWkbType( QgsWkbTypes::Type inputW
   return QgsWkbTypes::multiType( inputWkbType );
 }
 
-QgsFeature QgsSubdivideAlgorithm::processFeature( const QgsFeature &f, QgsProcessingFeedback *feedback )
+QgsFeature QgsSubdivideAlgorithm::processFeature( const QgsFeature &f, QgsProcessingContext &, QgsProcessingFeedback *feedback )
 {
   QgsFeature feature = f;
   if ( feature.hasGeometry() )

@@ -23,7 +23,7 @@
 #include "qgsvectorlayer.h"
 #include "qgsvectorlayertools.h"
 #include "qgis_gui.h"
-
+#include "qgsproject.h"
 
 /**
  * \ingroup gui
@@ -53,8 +53,8 @@ class GUI_EXPORT QgsAttributeEditorContext
       Popup             //!< A widget was opened as a popup (e.g. attribute table editor widget)
     };
 
-    QgsAttributeEditorContext()
-    {}
+    //! Constructor for QgsAttributeEditorContext
+    QgsAttributeEditorContext() = default;
 
     QgsAttributeEditorContext( const QgsAttributeEditorContext &parentContext, FormMode formMode )
       : mParentContext( &parentContext )
@@ -81,7 +81,7 @@ class GUI_EXPORT QgsAttributeEditorContext
       if ( mLayer )
       {
         mDistanceArea = distanceArea;
-        mDistanceArea.setSourceCrs( mLayer->crs() );
+        mDistanceArea.setSourceCrs( mLayer->crs(), QgsProject::instance()->transformContext() );
       }
     }
 

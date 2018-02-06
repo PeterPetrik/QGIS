@@ -38,8 +38,9 @@ int QgsEditorWidgetWrapper::fieldIdx() const
 
 QgsField QgsEditorWidgetWrapper::field() const
 {
-  if ( mFieldIdx < layer()->fields().count() )
-    return layer()->fields().at( mFieldIdx );
+  QgsVectorLayer *vl = layer();
+  if ( vl && mFieldIdx < vl->fields().count() )
+    return vl->fields().at( mFieldIdx );
   else
     return QgsField();
 }
@@ -71,52 +72,56 @@ void QgsEditorWidgetWrapper::setFeature( const QgsFeature &feature )
   setValue( feature.attribute( mFieldIdx ) );
 }
 
-void QgsEditorWidgetWrapper::valueChanged( const QString &value )
-{
-  emit valueChanged( QVariant( value ) );
-}
-
-void QgsEditorWidgetWrapper::valueChanged( int value )
-{
-  emit valueChanged( QVariant( value ) );
-}
-
-void QgsEditorWidgetWrapper::valueChanged( double value )
-{
-  emit valueChanged( QVariant( value ) );
-}
-
-void QgsEditorWidgetWrapper::valueChanged( bool value )
-{
-  emit valueChanged( QVariant( value ) );
-}
-
-void QgsEditorWidgetWrapper::valueChanged( qlonglong value )
-{
-  emit valueChanged( QVariant( value ) );
-}
-
-void QgsEditorWidgetWrapper::valueChanged()
+void QgsEditorWidgetWrapper::emitValueChanged()
 {
   emit valueChanged( value() );
 }
 
-void QgsEditorWidgetWrapper::updateConstraintWidgetStatus( ConstraintResult constraintResult )
+void QgsEditorWidgetWrapper::updateConstraintWidgetStatus()
 {
-  switch ( constraintResult )
+  if ( !mConstraintResultVisible )
   {
-    case ConstraintResultPass:
-      widget()->setStyleSheet( QString() );
-      break;
-
-    case ConstraintResultFailHard:
-      widget()->setStyleSheet( QStringLiteral( "background-color: #dd7777;" ) );
-      break;
-
-    case ConstraintResultFailSoft:
-      widget()->setStyleSheet( QStringLiteral( "background-color: #ffd85d;" ) );
-      break;
+    widget()->setStyleSheet( QString() );
   }
+  else
+  {
+    switch ( mConstraintResult )
+    {
+      case ConstraintResultPass:
+        widget()->setStyleSheet( QString() );
+        break;
+
+      case ConstraintResultFailHard:
+        widget()->setStyleSheet( QStringLiteral( "background-color: #FFE0B2;" ) );
+        break;
+
+      case ConstraintResultFailSoft:
+        widget()->setStyleSheet( QStringLiteral( "background-color: #FFECB3;" ) );
+        break;
+    }
+  }
+}
+
+QgsEditorWidgetWrapper::ConstraintResult QgsEditorWidgetWrapper::constraintResult() const
+{
+  return mConstraintResult;
+}
+
+bool QgsEditorWidgetWrapper::constraintResultVisible() const
+{
+  return mConstraintResultVisible;
+}
+
+void QgsEditorWidgetWrapper::setConstraintResultVisible( bool constraintResultVisible )
+{
+  if ( mConstraintResultVisible == constraintResultVisible )
+    return;
+
+  mConstraintResultVisible = constraintResultVisible;
+
+  updateConstraintWidgetStatus();
+
+  emit constraintResultVisibleChanged( mConstraintResultVisible );
 }
 
 void QgsEditorWidgetWrapper::updateConstraint( const QgsFeature &ft, QgsFieldConstraints::ConstraintOrigin constraintOrigin )
@@ -210,7 +215,9 @@ void QgsEditorWidgetWrapper::updateConstraint( const QgsVectorLayer *layer, int 
 
     ConstraintResult result = !hardConstraintsOk ? ConstraintResultFailHard
                               : ( !softConstraintsOk ? ConstraintResultFailSoft : ConstraintResultPass );
-    updateConstraintWidgetStatus( result );
+    //set the constraint result
+    mConstraintResult = result;
+    updateConstraintWidgetStatus();
     emit constraintStatusChanged( expressionDesc, description, errStr, result );
   }
 }

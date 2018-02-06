@@ -1,9 +1,9 @@
 /***************************************************************************
-
-               ----------------------------------------------------
-              date                 : 20.12.2014
-              copyright            : (C) 2014 by Matthias Kuhn
-              email                : matthias (at) opengis.ch
+  qgsquickmaptransform.h
+  --------------------------------------
+  Date                 : 27.12.2014
+  Copyright            : (C) 2014 by Matthias Kuhn
+  Email                : matthias (at) opengis.ch
  ***************************************************************************
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -17,25 +17,36 @@
 #define QGSQUICKMAPTRANSFORM_H
 
 #include <QQuickItem>
-#include "qgis_quick.h"
-
 #include <QMatrix4x4>
+
+#include "qgis_quick.h"
 
 class QgsQuickMapSettings;
 
+/**
+ * \ingroup quick
+ * The QgsQuickMapTransform is transformation that can be attached to any QQuickItem. Transformation scales and translates
+ * Item based on the current QgsQuickMapSettings settings.
+ *
+ * For example it can be used on QgsQuickFeatureModelHighlight to place it correctly on the map canvas.
+ *
+ * \note QML Type: MapTransform
+ *
+ * \since QGIS 3.2
+ */
 class QUICK_EXPORT QgsQuickMapTransform : public QQuickTransform
 {
     Q_OBJECT
-    Q_PROPERTY( QgsQuickMapSettings* mapSettings READ mapSettings WRITE setMapSettings NOTIFY mapSettingsChanged )
+    Q_PROPERTY( QgsQuickMapSettings *mapSettings READ mapSettings WRITE setMapSettings NOTIFY mapSettingsChanged )
 
   public:
     QgsQuickMapTransform();
     ~QgsQuickMapTransform();
 
-    void applyTo( QMatrix4x4* matrix ) const;
+    void applyTo( QMatrix4x4 *matrix ) const;
 
-    QgsQuickMapSettings* mapSettings() const;
-    void setMapSettings( QgsQuickMapSettings* mapSettings );
+    QgsQuickMapSettings *mapSettings() const;
+    void setMapSettings( QgsQuickMapSettings *mapSettings );
 
   signals:
     void mapSettingsChanged();
@@ -44,7 +55,7 @@ class QUICK_EXPORT QgsQuickMapTransform : public QQuickTransform
     void updateMatrix();
 
   private:
-    QgsQuickMapSettings* mMapSettings = nullptr;
+    QgsQuickMapSettings *mMapSettings = nullptr;
     QMatrix4x4 mMatrix;
 };
 

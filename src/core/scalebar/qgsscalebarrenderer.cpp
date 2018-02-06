@@ -16,7 +16,7 @@
 
 #include "qgsscalebarrenderer.h"
 #include "qgsscalebarsettings.h"
-#include "qgscomposerutils.h"
+#include "qgslayoututils.h"
 #include <QFontMetricsF>
 #include <QPainter>
 
@@ -31,11 +31,12 @@ void QgsScaleBarRenderer::drawDefaultLabels( QgsRenderContext &context, const Qg
 
   painter->save();
 
-  painter->setFont( settings.font() );
+  QFont scaledFont = settings.font();
+  scaledFont.setPointSizeF( scaledFont.pointSizeF() * context.scaleFactor() );
   painter->setPen( QPen( settings.fontColor() ) );
 
   QString firstLabel = firstLabelString( settings );
-  double xOffset = QgsComposerUtils::textWidthMM( settings.font(), firstLabel ) / 2;
+  double xOffset = context.convertToPainterUnits( QgsLayoutUtils::textWidthMM( settings.font(), firstLabel ) / 2, QgsUnitTypes::RenderMillimeters );
 
   double currentLabelNumber = 0.0;
 
@@ -64,8 +65,9 @@ void QgsScaleBarRenderer::drawDefaultLabels( QgsRenderContext &context, const Qg
 
     if ( segmentCounter == 0 || segmentCounter >= nSegmentsLeft ) //don't draw label for intermediate left segments
     {
-      QgsComposerUtils::drawText( painter, QPointF( positions.at( i ) - QgsComposerUtils::textWidthMM( settings.font(), currentNumericLabel ) / 2 + xOffset, QgsComposerUtils::fontAscentMM( settings.font() ) + settings.boxContentSpace() ),
-                                  currentNumericLabel, settings.font(), settings.fontColor() );
+      QgsLayoutUtils::drawText( painter, QPointF( context.convertToPainterUnits( positions.at( i ) - QgsLayoutUtils::textWidthMM( settings.font(), currentNumericLabel ) / 2, QgsUnitTypes::RenderMillimeters ) + xOffset,
+                                context.convertToPainterUnits( QgsLayoutUtils::fontAscentMM( settings.font() ) + settings.boxContentSpace(), QgsUnitTypes::RenderMillimeters ) ),
+                                currentNumericLabel, scaledFont, settings.fontColor() );
     }
 
     if ( segmentCounter >= nSegmentsLeft )
@@ -79,8 +81,9 @@ void QgsScaleBarRenderer::drawDefaultLabels( QgsRenderContext &context, const Qg
   if ( !positions.isEmpty() )
   {
     currentNumericLabel = QString::number( currentLabelNumber / settings.mapUnitsPerScaleBarUnit() );
-    QgsComposerUtils::drawText( painter, QPointF( positions.at( positions.size() - 1 ) + scaleContext.segmentWidth - QgsComposerUtils::textWidthMM( settings.font(), currentNumericLabel ) / 2 + xOffset, QgsComposerUtils::fontAscentMM( settings.font() ) + settings.boxContentSpace() ),
-                                currentNumericLabel + ' ' + settings.unitLabel(), settings.font(), settings.fontColor() );
+    QgsLayoutUtils::drawText( painter, QPointF( context.convertToPainterUnits( positions.at( positions.size() - 1 ) + scaleContext.segmentWidth - QgsLayoutUtils::textWidthMM( settings.font(), currentNumericLabel ) / 2, QgsUnitTypes::RenderMillimeters ) + xOffset,
+                              context.convertToPainterUnits( QgsLayoutUtils::fontAscentMM( settings.font() ) + settings.boxContentSpace(), QgsUnitTypes::RenderMillimeters ) ),
+                              currentNumericLabel + ' ' + settings.unitLabel(), scaledFont, settings.fontColor() );
   }
 
   painter->restore();
@@ -90,19 +93,19 @@ QSizeF QgsScaleBarRenderer::calculateBoxSize( const QgsScaleBarSettings &setting
     const QgsScaleBarRenderer::ScaleBarContext &scaleContext ) const
 {
   //consider centered first label
-  double firstLabelLeft = QgsComposerUtils::textWidthMM( settings.font(), firstLabelString( settings ) ) / 2;
+  double firstLabelLeft = QgsLayoutUtils::textWidthMM( settings.font(), firstLabelString( settings ) ) / 2;
 
   //consider last number and label
 
   double largestLabelNumber = settings.numberOfSegments() * settings.unitsPerSegment() / settings.mapUnitsPerScaleBarUnit();
   QString largestNumberLabel = QString::number( largestLabelNumber );
   QString largestLabel = QString::number( largestLabelNumber ) + ' ' + settings.unitLabel();
-  double largestLabelWidth = QgsComposerUtils::textWidthMM( settings.font(), largestLabel ) - QgsComposerUtils::textWidthMM( settings.font(), largestNumberLabel ) / 2;
+  double largestLabelWidth = QgsLayoutUtils::textWidthMM( settings.font(), largestLabel ) - QgsLayoutUtils::textWidthMM( settings.font(), largestNumberLabel ) / 2;
 
   double totalBarLength = scaleContext.segmentWidth * ( settings.numberOfSegments() + ( settings.numberOfSegmentsLeft() > 0 ? 1 : 0 ) );
 
   double width = firstLabelLeft + totalBarLength + 2 * settings.pen().widthF() + largestLabelWidth + 2 * settings.boxContentSpace();
-  double height = settings.height() + settings.labelBarSpace() + 2 * settings.boxContentSpace() + QgsComposerUtils::fontAscentMM( settings.font() );
+  double height = settings.height() + settings.labelBarSpace() + 2 * settings.boxContentSpace() + QgsLayoutUtils::fontAscentMM( settings.font() );
 
   return QSizeF( width, height );
 }
@@ -122,7 +125,7 @@ QString QgsScaleBarRenderer::firstLabelString( const QgsScaleBarSettings &settin
 double QgsScaleBarRenderer::firstLabelXOffset( const QgsScaleBarSettings &settings ) const
 {
   QString firstLabel = firstLabelString( settings );
-  return QgsComposerUtils::textWidthMM( settings.font(), firstLabel ) / 2.0;
+  return QgsLayoutUtils::textWidthMM( settings.font(), firstLabel ) / 2.0;
 }
 
 QList<double> QgsScaleBarRenderer::segmentPositions( const ScaleBarContext &scaleContext, const QgsScaleBarSettings &settings ) const

@@ -84,7 +84,7 @@ void QgsMapToolMoveFeature::cadCanvasReleaseEvent( QgsMapMouseEvent *e )
       QgsFeatureIterator fit = vlayer->getFeatures( QgsFeatureRequest().setFilterRect( selectRect ).setSubsetOfAttributes( QgsAttributeList() ) );
 
       //find the closest feature
-      QgsGeometry pointGeometry = QgsGeometry::fromPoint( layerCoords );
+      QgsGeometry pointGeometry = QgsGeometry::fromPointXY( layerCoords );
       if ( pointGeometry.isNull() )
       {
         cadDockWidget()->clear();
@@ -196,4 +196,14 @@ void QgsMapToolMoveFeature::deactivate()
   mRubberBand = nullptr;
 
   QgsMapTool::deactivate();
+}
+
+void QgsMapToolMoveFeature::keyReleaseEvent( QKeyEvent *e )
+{
+  if ( mRubberBand && e->key() == Qt::Key_Escape )
+  {
+    cadDockWidget()->clear();
+    delete mRubberBand;
+    mRubberBand = nullptr;
+  }
 }

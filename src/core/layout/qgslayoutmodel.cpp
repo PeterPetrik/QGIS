@@ -139,6 +139,16 @@ QVariant QgsLayoutModel::data( const QModelIndex &index, int role ) const
         return QVariant();
       }
 
+    case Qt::DecorationRole:
+      if ( index.column() == ItemId )
+      {
+        return item->icon();
+      }
+      else
+      {
+        return QVariant();
+      }
+
     case Qt::EditRole:
       if ( index.column() == ItemId )
       {
@@ -238,11 +248,11 @@ QVariant QgsLayoutModel::headerData( int section, Qt::Orientation orientation, i
     {
       if ( section == Visibility )
       {
-        return qVariantFromValue( QgsApplication::getThemeIcon( QStringLiteral( "/mActionShowAllLayers.svg" ) ) );
+        return qVariantFromValue( QgsApplication::getThemeIcon( QStringLiteral( "/mActionShowAllLayersGray.svg" ) ) );
       }
       else if ( section == LockStatus )
       {
-        return qVariantFromValue( QgsApplication::getThemeIcon( QStringLiteral( "/locked.svg" ) ) );
+        return qVariantFromValue( QgsApplication::getThemeIcon( QStringLiteral( "/lockedGray.svg" ) ) );
       }
 
       return QVariant();
@@ -500,11 +510,9 @@ void QgsLayoutModel::rebuildSceneItemList()
 ///@cond PRIVATE
 void QgsLayoutModel::addItemAtTop( QgsLayoutItem *item )
 {
-  beginInsertRows( QModelIndex(), 0, 0 );
   mItemZList.push_front( item );
   refreshItemsInScene();
   item->setZValue( mItemZList.size() );
-  endInsertRows();
 }
 
 void QgsLayoutModel::removeItem( QgsLayoutItem *item )

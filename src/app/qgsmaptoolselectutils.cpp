@@ -28,6 +28,7 @@ email                : jpalmer at linz dot govt dot nz
 #include "qgsexception.h"
 #include "qgslogger.h"
 #include "qgis.h"
+#include "qgsproject.h"
 
 #include <QMouseEvent>
 #include <QApplication>
@@ -86,21 +87,21 @@ void QgsMapToolSelectUtils::expandSelectRectangle( QRect &selectRect,
   selectRect.setBottom( point.y() + boxSize );
 }
 
-void QgsMapToolSelectUtils::selectMultipleFeatures( QgsMapCanvas *canvas, const QgsGeometry &selectGeometry, QMouseEvent *e )
+void QgsMapToolSelectUtils::selectMultipleFeatures( QgsMapCanvas *canvas, const QgsGeometry &selectGeometry, const Qt::KeyboardModifiers &modifiers )
 {
   QgsVectorLayer::SelectBehavior behavior = QgsVectorLayer::SetSelection;
-  if ( e->modifiers() & Qt::ShiftModifier && e->modifiers() & Qt::ControlModifier )
+  if ( modifiers & Qt::ShiftModifier && modifiers & Qt::ControlModifier )
     behavior = QgsVectorLayer::IntersectSelection;
-  else if ( e->modifiers() & Qt::ShiftModifier )
+  else if ( modifiers & Qt::ShiftModifier )
     behavior = QgsVectorLayer::AddToSelection;
-  else if ( e->modifiers() & Qt::ControlModifier )
+  else if ( modifiers & Qt::ControlModifier )
     behavior = QgsVectorLayer::RemoveFromSelection;
 
-  bool doContains = e->modifiers() & Qt::AltModifier;
+  bool doContains = modifiers & Qt::AltModifier;
   setSelectedFeatures( canvas, selectGeometry, behavior, doContains );
 }
 
-void QgsMapToolSelectUtils::selectSingleFeature( QgsMapCanvas *canvas, const QgsGeometry &selectGeometry, QMouseEvent *e )
+void QgsMapToolSelectUtils::selectSingleFeature( QgsMapCanvas *canvas, const QgsGeometry &selectGeometry, const Qt::KeyboardModifiers &modifiers )
 {
   QgsVectorLayer *vlayer = QgsMapToolSelectUtils::getCurrentVectorLayer( canvas );
   if ( !vlayer )
@@ -111,7 +112,7 @@ void QgsMapToolSelectUtils::selectSingleFeature( QgsMapCanvas *canvas, const Qgs
   QgsFeatureIds selectedFeatures = getMatchingFeatures( canvas, selectGeometry, false, true );
   if ( selectedFeatures.isEmpty() )
   {
-    if ( !( e->modifiers() & Qt::ShiftModifier || e->modifiers() & Qt::ControlModifier ) )
+    if ( !( modifiers & Qt::ShiftModifier || modifiers & Qt::ControlModifier ) )
     {
       // if no modifiers then clicking outside features clears the selection
       // but if there's a shift or ctrl modifier, then it's likely the user was trying
@@ -126,7 +127,7 @@ void QgsMapToolSelectUtils::selectSingleFeature( QgsMapCanvas *canvas, const Qgs
   QgsVectorLayer::SelectBehavior behavior = QgsVectorLayer::SetSelection;
 
   //either shift or control modifier switches to "toggle" selection mode
-  if ( e->modifiers() & Qt::ShiftModifier || e->modifiers() & Qt::ControlModifier )
+  if ( modifiers & Qt::ShiftModifier || modifiers & Qt::ControlModifier )
   {
     QgsFeatureId selectId = *selectedFeatures.constBegin();
     QgsFeatureIds layerSelectedFeatures = vlayer->selectedFeatureIds();
@@ -176,20 +177,20 @@ QgsFeatureIds QgsMapToolSelectUtils::getMatchingFeatures( QgsMapCanvas *canvas, 
 
   try
   {
-    QgsCoordinateTransform ct( canvas->mapSettings().destinationCrs(), vlayer->crs() );
+    QgsCoordinateTransform ct( canvas->mapSettings().destinationCrs(), vlayer->crs(), QgsProject::instance() );
 
     if ( !ct.isShortCircuited() && selectGeomTrans.type() == QgsWkbTypes::PolygonGeometry )
     {
       // convert add more points to the edges of the rectangle
       // improve transformation result
-      QgsPolygon poly( selectGeomTrans.asPolygon() );
+      QgsPolygonXY poly( selectGeomTrans.asPolygon() );
       if ( poly.size() == 1 && poly.at( 0 ).size() == 5 )
       {
-        const QgsPolyline &ringIn = poly.at( 0 );
+        const QgsPolylineXY &ringIn = poly.at( 0 );
 
-        QgsPolygon newpoly( 1 );
+        QgsPolygonXY newpoly( 1 );
         newpoly[0].resize( 41 );
-        QgsPolyline &ringOut = newpoly[0];
+        QgsPolylineXY &ringOut = newpoly[0];
 
         ringOut[ 0 ] = ringIn.at( 0 );
 
@@ -204,7 +205,7 @@ QgsFeatureIds QgsMapToolSelectUtils::getMatchingFeatures( QgsMapCanvas *canvas, 
           }
           ringOut[ i++ ] = ringIn.at( j );
         }
-        selectGeomTrans = QgsGeometry::fromPolygon( newpoly );
+        selectGeomTrans = QgsGeometry::fromPolygonXY( newpoly );
       }
     }
 
@@ -224,14 +225,17 @@ QgsFeatureIds QgsMapToolSelectUtils::getMatchingFeatures( QgsMapCanvas *canvas, 
   }
 
   QgsDebugMsgLevel( "Selection layer: " + vlayer->name(), 3 );
-  QgsDebugMsgLevel( "Selection polygon: " + selectGeomTrans.exportToWkt(), 3 );
+  QgsDebugMsgLevel( "Selection polygon: " + selectGeomTrans.asWkt(), 3 );
   QgsDebugMsgLevel( "doContains: " + QString( doContains ? "T" : "F" ), 3 );
 
   QgsRenderContext context = QgsRenderContext::fromMapSettings( canvas->mapSettings() );
   context.expressionContext() << QgsExpressionContextUtils::layerScope( vlayer );
-  QgsFeatureRenderer *r = vlayer->renderer();
-  if ( r )
+  std::unique_ptr< QgsFeatureRenderer > r;
+  if ( vlayer->renderer() )
+  {
+    r.reset( vlayer->renderer()->clone() );
     r->startRender( context, vlayer->fields() );
+  }
 
   QgsFeatureRequest request;
   request.setFilterRect( selectGeomTrans.boundingBox() );

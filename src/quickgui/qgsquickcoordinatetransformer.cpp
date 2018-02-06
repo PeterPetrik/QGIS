@@ -13,14 +13,16 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "qgsquickcoordinatetransformer.h"
-
 #include <QtDebug>
+
+#include "qgsquickcoordinatetransformer.h"
 
 QgsQuickCoordinateTransformer::QgsQuickCoordinateTransformer( QObject *parent )
   : QObject( parent )
+  , mMapSettings( nullptr )
 {
   mCoordinateTransform.setSourceCrs( QgsCoordinateReferenceSystem::fromEpsgId( 4326 ) );
+  mCoordinateTransform.setContext( QgsCoordinateTransformContext() );
 }
 
 QgsPoint QgsQuickCoordinateTransformer::projectedPosition() const
@@ -49,7 +51,7 @@ QgsCoordinateReferenceSystem QgsQuickCoordinateTransformer::destinationCrs() con
   return mCoordinateTransform.destinationCrs();
 }
 
-void QgsQuickCoordinateTransformer::setDestinationCrs( const QgsCoordinateReferenceSystem& destinationCrs )
+void QgsQuickCoordinateTransformer::setDestinationCrs( const QgsCoordinateReferenceSystem &destinationCrs )
 {
   if ( destinationCrs == mCoordinateTransform.destinationCrs() )
     return;
@@ -64,7 +66,7 @@ QgsCoordinateReferenceSystem QgsQuickCoordinateTransformer::sourceCrs() const
   return mCoordinateTransform.sourceCrs();
 }
 
-void QgsQuickCoordinateTransformer::setSourceCrs( const QgsCoordinateReferenceSystem& sourceCrs )
+void QgsQuickCoordinateTransformer::setSourceCrs( const QgsCoordinateReferenceSystem &sourceCrs )
 {
   if ( sourceCrs == mCoordinateTransform.sourceCrs() )
     return;
@@ -88,6 +90,9 @@ void QgsQuickCoordinateTransformer::updatePosition()
   {
     z = 0;
   }
+
+  if ( mMapSettings )
+    mCoordinateTransform.setContext( mMapSettings->transformContext() );
 
   mCoordinateTransform.transformInPlace( x, y, z );
 

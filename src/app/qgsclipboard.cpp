@@ -38,6 +38,7 @@
 #include "qgssettings.h"
 #include "qgisapp.h"
 #include "qgsmapcanvas.h"
+#include "qgsproject.h"
 
 QgsClipboard::QgsClipboard()
 {
@@ -115,7 +116,7 @@ QString QgsClipboard::generateClipboardText() const
         if ( format == AttributesWithWKT )
         {
           if ( it->hasGeometry() )
-            textFields += it->geometry().exportToWkt();
+            textFields += it->geometry().asWkt();
           else
           {
             textFields += QgsApplication::nullRepresentation();
@@ -147,6 +148,12 @@ QString QgsClipboard::generateClipboardText() const
 
 void QgsClipboard::setSystemClipboard()
 {
+  // avoid overwriting internal clipboard - note that on Windows, the call to QClipboard::setText
+  // below doesn't immediately trigger QClipboard::dataChanged, and accordingly the call to
+  // systemClipboardChanged() is delayed. So by setting mIgnoreNextSystemClipboardChange we indicate
+  // that just the next call to systemClipboardChanged() should be ignored
+  mIgnoreNextSystemClipboardChange = true;
+
   QString textCopy = generateClipboardText();
 
   QClipboard *cb = QApplication::clipboard();
@@ -249,7 +256,7 @@ void QgsClipboard::insert( const QgsFeature &feature )
 {
   mFeatureClipboard.push_back( feature );
 
-  QgsDebugMsgLevel( "inserted " + feature.geometry().exportToWkt(), 4 );
+  QgsDebugMsgLevel( "inserted " + feature.geometry().asWkt(), 4 );
   mUseSystemClipboard = false;
   emit changed();
 }
@@ -269,16 +276,8 @@ QgsFeatureList QgsClipboard::transformedCopyOf( const QgsCoordinateReferenceSyst
 {
   QgsFeatureList featureList = copyOf( fields );
 
-  QgsCoordinateTransform ct;
-  if ( mSrcLayer )
-  {
-    QgisApp::instance()->mapCanvas()->getDatumTransformInfo( mSrcLayer, crs().authid(), destCRS.authid() );
-    ct = QgisApp::instance()->mapCanvas()->mapSettings().datumTransformStore().transformation( mSrcLayer, crs().authid(), destCRS.authid() );
-  }
-  else
-  {
-    ct = QgsCoordinateTransform( crs(), destCRS );
-  }
+  QgisApp::instance()->askUserForDatumTransform( crs(), destCRS );
+  QgsCoordinateTransform ct = QgsCoordinateTransform( crs(), destCRS, QgsProject::instance() );
 
   QgsDebugMsg( "transforming clipboard." );
   for ( QgsFeatureList::iterator iter = featureList.begin(); iter != featureList.end(); ++iter )
@@ -330,8 +329,22 @@ QByteArray QgsClipboard::data( const QString &mimeType ) const
   return QApplication::clipboard()->mimeData()->data( mimeType );
 }
 
+QgsFields QgsClipboard::fields() const
+{
+  if ( !mUseSystemClipboard )
+    return mFeatureFields;
+  else
+    return retrieveFields();
+}
+
 void QgsClipboard::systemClipboardChanged()
 {
+  if ( mIgnoreNextSystemClipboardChange )
+  {
+    mIgnoreNextSystemClipboardChange = false;
+    return;
+  }
+
   mUseSystemClipboard = true;
   emit changed();
 }

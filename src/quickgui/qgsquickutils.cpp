@@ -13,33 +13,29 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "qgsquickutils.h"
-#include "qgsquickstyle.h"
-#include "qgscoordinatereferencesystem.h"
-#include "qgscoordinatetransform.h"
-#include "qgsvectorlayer.h"
-
-#include <QMap>
-#include <QString>
 #include <QDebug>
-#include <QThread>
-#include <QFileInfo>
-#include <QLibraryInfo>
 #include <QDir>
 #include <QFile>
-#include <QDebug>
+#include <QFileInfo>
+#include <QString>
+#include <QThread>
 
-#ifdef ANDROID
-#include <QAndroidJniEnvironment>
-#include <QAndroidJniObject>
-#include <QtAndroid>
-#endif
+#include "qgscoordinatereferencesystem.h"
+#include "qgscoordinatetransform.h"
+#include "qgsdistancearea.h"
+#include "qgsmessagelog.h"
+#include "qgsvectorlayer.h"
 
-QgsQuickUtils* QgsQuickUtils::sInstance = 0;
+#include "qgsquickmapsettings.h"
+#include "qgsquickutils.h"
+#include "qgsquickstyle.h"
 
-QgsQuickUtils* QgsQuickUtils::instance()
+
+QgsQuickUtils *QgsQuickUtils::sInstance = 0;
+
+QgsQuickUtils *QgsQuickUtils::instance()
 {
-  if (!sInstance)
+  if ( !sInstance )
   {
     qDebug() << "QgsQuickUtils created: " << QThread::currentThreadId();
     sInstance = new QgsQuickUtils();
@@ -47,129 +43,207 @@ QgsQuickUtils* QgsQuickUtils::instance()
   return sInstance;
 }
 
-QgsQuickUtils::QgsQuickUtils(QObject *parent):
-    QObject(parent)
+QgsQuickUtils::QgsQuickUtils( QObject *parent ):
+  QObject( parent )
 {
-    mCoordinateReferenceSystem = new QgsCoordinateReferenceSystem();
+  mCoordinateReferenceSystem = new QgsCoordinateReferenceSystem();
 
-    // style is not owned by the Utils class: it will be passed to QML engine and destroyed by it afterwards
-    setStyle( new QgsQuickStyle );
+  // style is not owned by the Utils class: it will be passed to QML engine and destroyed by it afterwards
+  setStyle( new QgsQuickStyle );
 }
 
-QgsQuickUtils::~QgsQuickUtils() {
+QgsQuickUtils::~QgsQuickUtils()
+{
 
-    if (mCoordinateReferenceSystem) {
-        delete mCoordinateReferenceSystem;
-        mCoordinateReferenceSystem = 0;
-    }
+  if ( mCoordinateReferenceSystem )
+  {
+    delete mCoordinateReferenceSystem;
+    mCoordinateReferenceSystem = 0;
+  }
 }
 
-QgsCoordinateReferenceSystem QgsQuickUtils::coordinateReferenceSystemFromEpsgId(long epsg) const {
-    return QgsCoordinateReferenceSystem::fromEpsgId(epsg);
+QgsCoordinateReferenceSystem QgsQuickUtils::coordinateReferenceSystemFromEpsgId( long epsg ) const
+{
+  return QgsCoordinateReferenceSystem::fromEpsgId( epsg );
 }
 
-void QgsQuickUtils::setStyle( QgsQuickStyle *style ) {
+void QgsQuickUtils::setStyle( QgsQuickStyle *style )
+{
   Q_ASSERT( !mStyle && "Style must be assigned only once!" );
   mStyle = style;
 }
 
-QgsQuickStyle* QgsQuickUtils::style() const {
-    return mStyle;
-}
-
-QgsPointXY QgsQuickUtils::pointXYFactory(double x, double y) const {
-    return QgsPointXY(x, y);
-}
-
-QgsPoint QgsQuickUtils::pointFactory(double x, double y) const {
-    return QgsPoint(x, y);
-}
-
-
-QgsPointXY QgsQuickUtils::transformPoint(QgsCoordinateReferenceSystem srcCrs, QgsCoordinateReferenceSystem destCrs, QgsPointXY srcPoint) const {
-    QgsCoordinateTransform mTransform;
-    mTransform.setSourceCrs(srcCrs);
-    mTransform.setDestinationCrs(destCrs);
-    mTransform.initialize();
-    QgsPointXY pt = mTransform.transform( srcPoint );
-    return pt;
-}
-
-bool QgsQuickUtils::fileExists(QString path) {
-    QFileInfo check_file(path);
-    // check if file exists and if yes: Is it really a file and no directory?
-    if (check_file.exists() && check_file.isFile()) {
-        return true;
-    } else {
-        return false;
-    }
-}
-
-void QgsQuickUtils::copyFile(QString sourcePath, QString targetPath)
+QgsQuickStyle *QgsQuickUtils::style() const
 {
-    if (!fileExists(sourcePath)) {
-        qDebug() << "Source file does not exist!" << sourcePath;
-        return;
-    }
+  return mStyle;
+}
 
-    if ( !QDir::root().mkpath( targetPath ) )
+QgsPointXY QgsQuickUtils::pointXYFactory( double x, double y ) const
+{
+  return QgsPointXY( x, y );
+}
+
+QgsPoint QgsQuickUtils::pointFactory( double x, double y ) const
+{
+  return QgsPoint( x, y );
+}
+
+
+QgsPointXY QgsQuickUtils::transformPoint( const QgsCoordinateReferenceSystem &srcCrs,
+    const QgsCoordinateReferenceSystem &destCrs,
+    const QgsCoordinateTransformContext &context,
+    const QgsPointXY &srcPoint ) const
+{
+  QgsCoordinateTransform mTransform( srcCrs, destCrs, context );
+  QgsPointXY pt = mTransform.transform( srcPoint );
+  return pt;
+}
+
+bool QgsQuickUtils::hasValidGeometry( QgsVectorLayer *layer, const QgsFeature &feat )
+{
+  if ( !layer )
+    return false;
+
+  if ( !feat.hasGeometry() )
+    return false;
+
+  if ( feat.geometry().type() != layer->geometryType() )
+    return false;
+
+  if ( QgsWkbTypes::hasZ( layer->wkbType() ) != QgsWkbTypes::hasZ( feat.geometry().wkbType() ) )
+    return false;
+
+  return true;
+}
+
+double QgsQuickUtils::screenUnitsToMeters( QgsQuickMapSettings *mapSettings, int baseLengthPixels ) const
+{
+  if ( mapSettings == 0 ) return 0;
+
+  QgsDistanceArea mDistanceArea;
+  mDistanceArea.setEllipsoid( "WGS84" );
+  mDistanceArea.setSourceCrs( mapSettings->destinationCrs(), mapSettings->transformContext() );
+
+  // calculate the geographic distance from the central point of extent
+  // to the specified number of points on the right side
+  QSize s = mapSettings->outputSize();
+  QPoint pointCenter( s.width() / 2, s.height() / 2 );
+  QgsPointXY p1 = mapSettings->screenToCoordinate( pointCenter );
+  QgsPointXY p2 = mapSettings->screenToCoordinate( pointCenter + QPoint( baseLengthPixels, 0 ) );
+  return mDistanceArea.measureLine( p1, p2 );
+}
+
+bool QgsQuickUtils::fileExists( QString path )
+{
+  QFileInfo check_file( path );
+  // check if file exists and if yes: Is it really a file and no directory?
+  if ( check_file.exists() && check_file.isFile() )
+  {
+    return true;
+  }
+  else
+  {
+    return false;
+  }
+}
+
+void QgsQuickUtils::copyFile( QString sourcePath, QString targetPath )
+{
+  if ( !fileExists( sourcePath ) )
+  {
+    qDebug() << "Source file does not exist!" << sourcePath;
+    return;
+  }
+
+  if ( !QDir::root().mkpath( targetPath ) )
+  {
+    QgsApplication::messageLog()->logMessage( tr( "Could not create folder %1" ).arg( targetPath ), "QgsQuick", QgsMessageLog::CRITICAL );
+    return;
+  }
+
+  QDir dir( targetPath );
+  QString filename( QFile( sourcePath ).fileName() );
+
+  if ( !QFile( sourcePath ).rename( dir.absoluteFilePath( filename ) ) )
+  {
+    qDebug() << "Couldn't rename file! Trying to copy instead";
+    if ( !QFile( sourcePath ).copy( dir.absoluteFilePath( filename ) ) )
     {
-      //QgsApplication::messageLog()->logMessage( tr( "Could not create folder %1" ).arg( targetPath ), "QField", QgsMessageLog::CRITICAL );
-      qDebug() << "Could not create folder " << targetPath;
+      QgsApplication::messageLog()->logMessage( tr( "File %1 could not be copied to folder %2.", "QgsQuick", QgsMessageLog::CRITICAL ).arg( sourcePath, targetPath ) );
       return;
     }
+  }
+}
 
-    QDir dir( targetPath );
-    QString filename( QFile( sourcePath ).fileName() );
+void QgsQuickUtils::remove( QString path )
+{
+  QFile::remove( path );
+}
 
-    if ( !QFile( sourcePath ).rename( dir.absoluteFilePath( filename ) ) )
+QString QgsQuickUtils::getFileName( QString path )
+{
+  QFileInfo fileInfo( path );
+  QString filename( fileInfo.fileName() );
+  return filename;
+}
+
+void QgsQuickUtils::logMessage( const QString &message, const QString &tag, QgsMessageLog::MessageLevel level )
+{
+  QgsMessageLog::logMessage( message, tag, level );
+}
+
+QUrl QgsQuickUtils::getThemeIcon( const QString &name )
+{
+  Q_ASSERT( mStyle );
+
+  QString extension( ".svg" );
+
+  // Check in custom dir
+  QString path( mStyle->themeDir() + "/" + name + extension );
+  qDebug() << "Custom icon from " << path;
+  if ( !fileExists( path ) )
+  {
+    path = "qrc:/" + name + extension;
+  }
+
+  qDebug() << "Using icon " << name << " from " << path;
+  return QUrl( path );
+}
+
+QString QgsQuickUtils::qgsPointToString( const QgsPoint &point, int decimals )
+{
+  QString label;
+  label += QString::number( point.x(), 'f', decimals );
+  label += ", ";
+  label += QString::number( point.y(), 'f', decimals );
+  return label;
+}
+
+QString QgsQuickUtils::distanceToString( qreal dist, int decimals )
+{
+  if ( dist < 0 )
+  {
+    return "0 m";
+  }
+
+  QString label;
+  if ( dist > 1000 )
+  {
+    label += QString::number( dist / 1000.0, 'f', decimals );
+    label += QString( " km" );
+  }
+  else
+  {
+    if ( dist > 1 )
     {
-      qDebug() << "Couldn't rename file! Trying to copy instead";
-      if ( !QFile( sourcePath ).copy( dir.absoluteFilePath( filename ) ) )
-      {
-        //QgsApplication::messageLog()->logMessage( tr( "Image %1 could not be copied to project folder %2.", "QField", QgsMessageLog::CRITICAL ).arg( sourcePath.toString(), targetPath ) );
-        qDebug() << "Image " << sourcePath << " could not be copied to project folder " << targetPath;
-        return;
-      }
+      label += QString::number( dist, 'f', decimals );
+      label += QString( " m" );
     }
-}
-
-void QgsQuickUtils::remove(QString path)
-{
-    QFile::remove(path);
-}
-
-QString QgsQuickUtils::getFileName(QString path)
-{
-    QFileInfo fileInfo(path);
-    QString filename(fileInfo.fileName());
-    return filename;
-}
-
-
-QUrl QgsQuickUtils::getThemeIcon(const QString& name) {
-    Q_ASSERT(mStyle);
-
-    float ppi = mStyle->devicePixels() / 0.00768443;
-    QString ppitype;
-
-    if ( ppi >= 360 )
-        ppitype = "xxxhdpi";
-    else if ( ppi >= 270 )
-        ppitype = "xxhdpi";
-    else if ( ppi >= 180 )
-        ppitype = "xhdpi";
-    else if ( ppi >= 135 )
-        ppitype = "hdpi";
     else
-        ppitype = "mdpi";
-
-    // Check in custom dir
-    QString path(mStyle->themeDir() + "/" + ppitype + "/" + name + ".png");
-    qDebug() << "Custom icon from " << path;
-    if (!fileExists(path)) {
-        path = "qrc:/" + ppitype + "/" + name + ".png";
+    {
+      label += QString::number( dist * 1000, 'f', decimals );
+      label += QString( " mm" );
     }
-    qDebug() << "Using icon " << name << " from " << path;
-    return QUrl(path);
+  }
+  return label;
 }

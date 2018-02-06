@@ -19,6 +19,11 @@
 
 ///@cond PRIVATE
 
+QgsProcessingAlgorithm::Flags QgsSimplifyAlgorithm::flags() const
+{
+  return QgsProcessingFeatureBasedAlgorithm::flags() | QgsProcessingAlgorithm::FlagCanRunInBackground;
+}
+
 QString QgsSimplifyAlgorithm::name() const
 {
   return QStringLiteral( "simplifygeometries" );
@@ -26,7 +31,7 @@ QString QgsSimplifyAlgorithm::name() const
 
 QString QgsSimplifyAlgorithm::displayName() const
 {
-  return QObject::tr( "Simplify geometries" );
+  return QObject::tr( "Simplify" );
 }
 
 QStringList QgsSimplifyAlgorithm::tags() const
@@ -37,6 +42,11 @@ QStringList QgsSimplifyAlgorithm::tags() const
 QString QgsSimplifyAlgorithm::group() const
 {
   return QObject::tr( "Vector geometry" );
+}
+
+QString QgsSimplifyAlgorithm::groupId() const
+{
+  return QStringLiteral( "vectorgeometry" );
 }
 
 QString QgsSimplifyAlgorithm::outputName() const
@@ -88,7 +98,7 @@ bool QgsSimplifyAlgorithm::prepareAlgorithm( const QVariantMap &parameters, QgsP
   return true;
 }
 
-QgsFeature QgsSimplifyAlgorithm::processFeature( const QgsFeature &feature, QgsProcessingFeedback * )
+QgsFeature QgsSimplifyAlgorithm::processFeature( const QgsFeature &feature, QgsProcessingContext &, QgsProcessingFeedback * )
 {
   QgsFeature f = feature;
   if ( f.hasGeometry() )

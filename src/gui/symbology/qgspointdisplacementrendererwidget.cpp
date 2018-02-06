@@ -40,7 +40,7 @@ QgsPointDisplacementRendererWidget::QgsPointDisplacementRendererWidget( QgsVecto
   }
 
   //the renderer only applies to point vector layers
-  if ( layer->wkbType() != QgsWkbTypes::Point && layer->wkbType()  != QgsWkbTypes::Point25D )
+  if ( QgsWkbTypes::geometryType( layer->wkbType() ) != QgsWkbTypes::PointGeometry || QgsWkbTypes::isMultiType( layer->wkbType() ) )
   {
     //setup blank dialog
     mRenderer = nullptr;
@@ -79,6 +79,7 @@ QgsPointDisplacementRendererWidget::QgsPointDisplacementRendererWidget( QgsVecto
 
   mPlacementComboBox->addItem( tr( "Ring" ), QgsPointDisplacementRenderer::Ring );
   mPlacementComboBox->addItem( tr( "Concentric rings" ), QgsPointDisplacementRenderer::ConcentricRings );
+  mPlacementComboBox->addItem( tr( "Grid" ), QgsPointDisplacementRenderer::Grid );
 
   //insert attributes into combo box
   if ( layer )
@@ -263,7 +264,7 @@ void QgsPointDisplacementRendererWidget::mRendererSettingsButton_clicked()
   if ( m )
   {
     QgsRendererWidget *w = m->createRendererWidget( mLayer, mStyle, mRenderer->embeddedRenderer()->clone() );
-    w->setPanelTitle( tr( "Renderer settings" ) );
+    w->setPanelTitle( tr( "Renderer Settings" ) );
 
     QgsSymbolWidgetContext context = mContext;
 
@@ -411,7 +412,7 @@ void QgsPointDisplacementRendererWidget::updateRendererFromWidget()
 
 void QgsPointDisplacementRendererWidget::setupBlankUi( const QString &layerName )
 {
-  QLabel *label = new QLabel( tr( "The point displacement renderer only applies to (single) point layers. \n'%1' is not a point layer and cannot be displayed by the point displacement renderer" ).arg( layerName ), this );
+  QLabel *label = new QLabel( tr( "The point displacement renderer only applies to (single) point layers. \n'%1' is not a (single) point layer and cannot be displayed by the point displacement renderer." ).arg( layerName ), this );
   QVBoxLayout *layout = new QVBoxLayout( this );
   layout->setContentsMargins( 0, 0, 0, 0 );
   layout->addWidget( label );

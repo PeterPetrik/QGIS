@@ -1,11 +1,32 @@
+/***************************************************************************
+ qgsquickexternalresource.qml
+  --------------------------------------
+  Date                 : 2017
+  Copyright            : (C) 2017 by Matthias Kuhn
+  Email                : matthias@opengis.ch
+ ***************************************************************************
+ *                                                                         *
+ *   This program is free software; you can redistribute it and/or modify  *
+ *   it under the terms of the GNU General Public License as published by  *
+ *   the Free Software Foundation; either version 2 of the License, or     *
+ *   (at your option) any later version.                                   *
+ *                                                                         *
+ ***************************************************************************/
+
 import QtQuick 2.5
 import QtQuick.Controls 2.0
-import QgisQuick 1.0 as QgsQuick
+import QgisQuick 0.1 as QgsQuick
 
+// External Resource (Photo capture) for QGIS Attribute Form
+// Requires various global properties set to function, see qgsquickfeatureform Loader section
+// Do not use directly from Application QML
 
 Item {
   signal valueChanged(var value, bool isNull)
 
+  property var image: image
+
+  id: fieldItem
   anchors.left: parent.left
   anchors.right: parent.right
 
@@ -19,44 +40,39 @@ Item {
     autoTransform: true
     fillMode: Image.PreserveAspectFit
 
-    source: {
+    Component.onCompleted: image.source = getSource()
+
+    function getSource() {
       if (image.status === Image.Error)
-        QgsQuick.Utils.getThemeIcon("ic_broken_image_black_24dp")
+        return QgsQuick.Utils.getThemeIcon("ic_broken_image_black")
       else if (image.currentValue && QgsQuick.Utils.fileExists(homePath + "/" + image.currentValue)) {
-          homePath + "/" + image.currentValue
+        return homePath + "/" + image.currentValue
       }
-      else
-        QgsQuick.Utils.getThemeIcon("ic_photo_notavailable_white_48dp")
+      else       {
+        return QgsQuick.Utils.getThemeIcon("ic_photo_notavailable_white")
+      }
     }
   }
 
   Button {
     id: button
-    width: 36 * QgsQuick.Style.dp
-    height: 36 * QgsQuick.Style.dp
+    visible: fieldItem.enabled
+    width: 45 * QgsQuick.Style.dp
+    height: 45 * QgsQuick.Style.dp
 
     anchors.right: parent.right
     anchors.bottom: parent.bottom
 
     onClicked: {
-        photoCapturePanel.visible = true
-        photoCapturePanel.targetDir = homePath
+      photoCapturePanel.visible = true
+      photoCapturePanel.targetDir = homePath
+      photoCapturePanel.fieldItem = fieldItem
     }
 
     background: Image {
-        source: QgsQuick.Utils.getThemeIcon("ic_camera_alt_border_24dp")
-        width: button.width
-        height: button.height
-    }
-  }
-
-  Connections {
-    target: photoCapturePanel
-    onVisibleChanged    : {
-        if (!photoCapturePanel.visible && photoCapturePanel.lastPhotoName !== "") {
-            image.source = homePath + "/" + photoCapturePanel.lastPhotoName
-            valueChanged(photoCapturePanel.lastPhotoName, photoCapturePanel.lastPhotoName === "" || photoCapturePanel.lastPhotoName === null)
-        }
+      source: QgsQuick.Utils.getThemeIcon("ic_camera_alt_border")
+      width: button.width
+      height: button.height
     }
   }
 }

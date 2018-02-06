@@ -19,6 +19,11 @@
 
 ///@cond PRIVATE
 
+QgsProcessingAlgorithm::Flags QgsAssignProjectionAlgorithm::flags() const
+{
+  return QgsProcessingFeatureBasedAlgorithm::flags() | QgsProcessingAlgorithm::FlagCanRunInBackground;
+}
+
 QString QgsAssignProjectionAlgorithm::name() const
 {
   return QStringLiteral( "assignprojection" );
@@ -37,6 +42,11 @@ QStringList QgsAssignProjectionAlgorithm::tags() const
 QString QgsAssignProjectionAlgorithm::group() const
 {
   return QObject::tr( "Vector general" );
+}
+
+QString QgsAssignProjectionAlgorithm::groupId() const
+{
+  return QStringLiteral( "vectorgeneral" );
 }
 
 QString QgsAssignProjectionAlgorithm::outputName() const
@@ -68,7 +78,7 @@ bool QgsAssignProjectionAlgorithm::prepareAlgorithm( const QVariantMap &paramete
   return true;
 }
 
-QgsFeature QgsAssignProjectionAlgorithm::processFeature( const QgsFeature &feature, QgsProcessingFeedback * )
+QgsFeature QgsAssignProjectionAlgorithm::processFeature( const QgsFeature &feature, QgsProcessingContext &, QgsProcessingFeedback * )
 {
   return feature;
 }

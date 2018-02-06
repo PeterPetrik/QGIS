@@ -173,11 +173,13 @@ bool QgsVectorLayerLabelProvider::prepare( const QgsRenderContext &context, QSet
   lyr.xform = &mapSettings.mapToPixel();
   lyr.ct = QgsCoordinateTransform();
   if ( context.coordinateTransform().isValid() )
-    // this is context for layer rendering - use its CT as it includes correct datum transform
+    // this is context for layer rendering
     lyr.ct = context.coordinateTransform();
   else
-    // otherwise fall back to creating our own CT - this one may not have the correct datum transform!
-    lyr.ct = QgsCoordinateTransform( mCrs, mapSettings.destinationCrs() );
+  {
+    // otherwise fall back to creating our own CT
+    lyr.ct = QgsCoordinateTransform( mCrs, mapSettings.destinationCrs(), mapSettings.transformContext() );
+  }
   lyr.ptZero = lyr.xform->toMapCoordinates( 0, 0 );
   lyr.ptOne = lyr.xform->toMapCoordinates( 1, 0 );
 
@@ -266,16 +268,16 @@ QgsGeometry QgsVectorLayerLabelProvider::getPointObstacleGeometry( QgsFeature &f
   if ( !fet.hasGeometry() || fet.geometry().type() != QgsWkbTypes::PointGeometry )
     return QgsGeometry();
 
-  bool isMultiPoint = fet.geometry().geometry()->nCoordinates() > 1;
+  bool isMultiPoint = fet.geometry().constGet()->nCoordinates() > 1;
   QgsAbstractGeometry *obstacleGeom = nullptr;
   if ( isMultiPoint )
-    obstacleGeom = new QgsMultiPolygonV2();
+    obstacleGeom = new QgsMultiPolygon();
 
   // for each point
-  for ( int i = 0; i < fet.geometry().geometry()->nCoordinates(); ++i )
+  for ( int i = 0; i < fet.geometry().constGet()->nCoordinates(); ++i )
   {
     QRectF bounds;
-    QgsPoint p = fet.geometry().geometry()->vertexAt( QgsVertexId( i, 0, 0 ) );
+    QgsPoint p = fet.geometry().constGet()->vertexAt( QgsVertexId( i, 0, 0 ) );
     double x = p.x();
     double y = p.y();
     double z = 0; // dummy variable for coordinate transforms
@@ -320,12 +322,12 @@ QgsGeometry QgsVectorLayerLabelProvider::getPointObstacleGeometry( QgsFeature &f
     }
     boundLineString->close();
 
-    QgsPolygonV2 *obstaclePolygon = new QgsPolygonV2();
+    QgsPolygon *obstaclePolygon = new QgsPolygon();
     obstaclePolygon->setExteriorRing( boundLineString );
 
     if ( isMultiPoint )
     {
-      static_cast<QgsMultiPolygonV2 *>( obstacleGeom )->addGeometry( obstaclePolygon );
+      static_cast<QgsMultiPolygon *>( obstacleGeom )->addGeometry( obstaclePolygon );
     }
     else
     {

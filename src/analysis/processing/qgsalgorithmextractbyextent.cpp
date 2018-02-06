@@ -39,6 +39,16 @@ QString QgsExtractByExtentAlgorithm::group() const
   return QObject::tr( "Vector overlay" );
 }
 
+QString QgsExtractByExtentAlgorithm::groupId() const
+{
+  return QStringLiteral( "vectoroverlay" );
+}
+
+QgsProcessingAlgorithm::Flags QgsExtractByExtentAlgorithm::flags() const
+{
+  return QgsProcessingAlgorithm::flags() | QgsProcessingAlgorithm::FlagCanRunInBackground;
+}
+
 void QgsExtractByExtentAlgorithm::initAlgorithm( const QVariantMap & )
 {
   addParameter( new QgsProcessingParameterFeatureSource( QStringLiteral( "INPUT" ), QObject::tr( "Input layer" ) ) );

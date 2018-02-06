@@ -29,7 +29,6 @@ QgsTask::QgsTask( const QString &name, const Flags &flags )
   : mFlags( flags )
   , mDescription( name )
 {
-  mNotFinishedMutex.lock();
 }
 
 QgsTask::~QgsTask()
@@ -44,6 +43,7 @@ QgsTask::~QgsTask()
 
 void QgsTask::start()
 {
+  mNotFinishedMutex.lock();
   mStartCount++;
   Q_ASSERT( mStartCount == 1 );
 
@@ -605,6 +605,12 @@ int QgsTaskManager::countActiveTasks() const
   QMutexLocker ml( mTaskMutex );
   QSet< QgsTask * > tasks = mActiveTasks;
   return tasks.intersect( mParentTasks ).count();
+}
+
+void QgsTaskManager::triggerTask( QgsTask *task )
+{
+  if ( task )
+    emit taskTriggered( task );
 }
 
 void QgsTaskManager::taskProgressChanged( double progress )

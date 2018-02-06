@@ -27,12 +27,14 @@ class QgsQuickFeatureModel;
  * \ingroup quick
  * This is a model implementation for attribute form of a feature from a vector layer.
  *
- * It is a wrapper around QgsQuickAttributeFormModelBase that adds filtering
- * of attribute (attributes may be visible or hidden based on expressions).
+ * The model is based on vector layer's edit form config (QgsEditFormConfig). It supports
+ * auto-generated editor layouts and "tab" layout (layout defined with groups and tabs).
+ * The form layout gets flattened into a list, each row has a bunch of roles with values
+ * extracted from the edit form config.
+ *
+ * It also adds filtering of attribute (attributes may be visible or hidden based on expressions).
  *
  * \note QML Type: AttributeFormModel
- *
- * \sa QgsQuickAttributeFormModelBase
  *
  * \since QGIS 3.2
  */
@@ -40,7 +42,7 @@ class QUICK_EXPORT QgsQuickAttributeFormModel : public QSortFilterProxyModel
 {
     Q_OBJECT
 
-    Q_PROPERTY( QgsQuickFeatureModel* featureModel READ featureModel WRITE setFeatureModel NOTIFY featureModelChanged )
+    Q_PROPERTY( QgsQuickFeatureModel *featureModel READ featureModel WRITE setFeatureModel NOTIFY featureModelChanged )
     Q_PROPERTY( bool hasTabs READ hasTabs WRITE setHasTabs NOTIFY hasTabsChanged )
     Q_PROPERTY( bool constraintsValid READ constraintsValid NOTIFY constraintsValidChanged )
 
@@ -65,19 +67,19 @@ class QUICK_EXPORT QgsQuickAttributeFormModel : public QSortFilterProxyModel
 
     Q_ENUM( FeatureRoles )
 
-    QgsQuickAttributeFormModel( QObject* parent = nullptr );
+    QgsQuickAttributeFormModel( QObject *parent = nullptr );
 
     bool hasTabs() const;
     void setHasTabs( bool hasTabs );
 
-    QgsQuickFeatureModel* featureModel() const;
-    void setFeatureModel( QgsQuickFeatureModel* featureModel );
+    QgsQuickFeatureModel *featureModel() const;
+    void setFeatureModel( QgsQuickFeatureModel *featureModel );
 
     bool constraintsValid() const;
 
     Q_INVOKABLE void save();
     Q_INVOKABLE void create();
-    Q_INVOKABLE QVariant attribute( const QString& name );
+    Q_INVOKABLE QVariant attribute( const QString &name );
 
   signals:
     void featureModelChanged();
@@ -86,10 +88,10 @@ class QUICK_EXPORT QgsQuickAttributeFormModel : public QSortFilterProxyModel
     void constraintsValidChanged();
 
   protected:
-    virtual bool filterAcceptsRow( int source_row, const QModelIndex& source_parent ) const override;
+    virtual bool filterAcceptsRow( int source_row, const QModelIndex &source_parent ) const override;
 
   private:
-    QgsQuickAttributeFormModelBase* mSourceModel;
+    QgsQuickAttributeFormModelBase *mSourceModel;
 };
 
 #endif // QGSQUICKATTRIBUTEFORMMODEL_H

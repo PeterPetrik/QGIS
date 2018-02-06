@@ -19,6 +19,11 @@
 
 ///@cond PRIVATE
 
+QgsProcessingAlgorithm::Flags QgsPromoteToMultipartAlgorithm::flags() const
+{
+  return QgsProcessingFeatureBasedAlgorithm::flags() | QgsProcessingAlgorithm::FlagCanRunInBackground;
+}
+
 QString QgsPromoteToMultipartAlgorithm::name() const
 {
   return QStringLiteral( "promotetomulti" );
@@ -37,6 +42,11 @@ QStringList QgsPromoteToMultipartAlgorithm::tags() const
 QString QgsPromoteToMultipartAlgorithm::group() const
 {
   return QObject::tr( "Vector geometry" );
+}
+
+QString QgsPromoteToMultipartAlgorithm::groupId() const
+{
+  return QStringLiteral( "vectorgeometry" );
 }
 
 QString QgsPromoteToMultipartAlgorithm::outputName() const
@@ -65,7 +75,7 @@ QgsWkbTypes::Type QgsPromoteToMultipartAlgorithm::outputWkbType( QgsWkbTypes::Ty
   return QgsWkbTypes::multiType( inputWkbType );
 }
 
-QgsFeature QgsPromoteToMultipartAlgorithm::processFeature( const QgsFeature &feature, QgsProcessingFeedback * )
+QgsFeature QgsPromoteToMultipartAlgorithm::processFeature( const QgsFeature &feature, QgsProcessingContext &, QgsProcessingFeedback * )
 {
   QgsFeature f = feature;
   if ( f.hasGeometry() && !f.geometry().isMultipart() )

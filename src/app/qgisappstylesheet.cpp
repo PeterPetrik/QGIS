@@ -84,7 +84,7 @@ QMap<QString, QVariant> QgisAppStyleSheet::defaultOptions()
 
   settings.endGroup(); // "qgis/stylesheet"
 
-  opts.insert( QStringLiteral( "iconSize" ), settings.value( QStringLiteral( "IconSize" ), QGIS_ICON_SIZE ) );
+  opts.insert( QStringLiteral( "iconSize" ), settings.value( QStringLiteral( "/qgis/iconSize" ), QGIS_ICON_SIZE ) );
 
   return opts;
 }
@@ -103,6 +103,21 @@ void QgisAppStyleSheet::buildStyleSheet( const QMap<QString, QVariant> &opts )
   if ( fontFamily.isEmpty() ) { return; }
 
   ss += QStringLiteral( "* { font: %1pt \"%2\"} " ).arg( fontSize, fontFamily );
+
+#if QT_VERSION >= 0x050900
+  // Fix for macOS Qt 5.9+, where close boxes do not show on document mode tab bar tabs
+  // See: https://bugreports.qt.io/browse/QTBUG-61092
+  //      https://bugreports.qt.io/browse/QTBUG-61742
+  // Setting any stylesheet makes the default close button disappear.
+  // Specifically setting a custom close button temporarily works around issue.
+  // TODO: Remove when regression is fixed (Qt 5.9.3 or 5.10?); though hard to tell,
+  //       since we are overriding the default close button image now.
+  if ( mMacStyle )
+  {
+    ss += QLatin1String( "QTabBar::close-button{ image: url(:/images/themes/default/mIconCloseTab.svg); }" );
+    ss += QLatin1String( "QTabBar::close-button:hover{ image: url(:/images/themes/default/mIconCloseTabHover.svg); }" );
+  }
+#endif
 
   // QGroupBox and QgsCollapsibleGroupBox, mostly for Ubuntu and Mac
   bool gbxCustom = opts.value( QStringLiteral( "groupBoxCustom" ) ).toBool();

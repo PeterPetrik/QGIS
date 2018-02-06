@@ -19,6 +19,11 @@
 
 ///@cond PRIVATE
 
+QgsProcessingAlgorithm::Flags QgsBoundingBoxAlgorithm::flags() const
+{
+  return QgsProcessingFeatureBasedAlgorithm::flags() | QgsProcessingAlgorithm::FlagCanRunInBackground;
+}
+
 QString QgsBoundingBoxAlgorithm::name() const
 {
   return QStringLiteral( "boundingboxes" );
@@ -37,6 +42,11 @@ QStringList QgsBoundingBoxAlgorithm::tags() const
 QString QgsBoundingBoxAlgorithm::group() const
 {
   return QObject::tr( "Vector geometry" );
+}
+
+QString QgsBoundingBoxAlgorithm::groupId() const
+{
+  return QStringLiteral( "vectorgeometry" );
 }
 
 QString QgsBoundingBoxAlgorithm::outputName() const
@@ -66,7 +76,7 @@ QgsFields QgsBoundingBoxAlgorithm::outputFields( const QgsFields &inputFields ) 
   return fields;
 }
 
-QgsFeature QgsBoundingBoxAlgorithm::processFeature( const QgsFeature &feature, QgsProcessingFeedback * )
+QgsFeature QgsBoundingBoxAlgorithm::processFeature( const QgsFeature &feature, QgsProcessingContext &, QgsProcessingFeedback * )
 {
   QgsFeature f = feature;
   if ( f.hasGeometry() )

@@ -39,6 +39,11 @@ QString QgsMinimumEnclosingCircleAlgorithm::group() const
   return QObject::tr( "Vector geometry" );
 }
 
+QString QgsMinimumEnclosingCircleAlgorithm::groupId() const
+{
+  return QStringLiteral( "vectorgeometry" );
+}
+
 QString QgsMinimumEnclosingCircleAlgorithm::outputName() const
 {
   return QObject::tr( "Minimum enclosing circles" );
@@ -47,6 +52,11 @@ QString QgsMinimumEnclosingCircleAlgorithm::outputName() const
 QgsWkbTypes::Type QgsMinimumEnclosingCircleAlgorithm::outputWkbType( QgsWkbTypes::Type ) const
 {
   return QgsWkbTypes::Polygon;
+}
+
+QgsProcessingAlgorithm::Flags QgsMinimumEnclosingCircleAlgorithm::flags() const
+{
+  return QgsProcessingFeatureBasedAlgorithm::flags() | QgsProcessingAlgorithm::FlagCanRunInBackground;
 }
 
 void QgsMinimumEnclosingCircleAlgorithm::initParameters( const QVariantMap & )
@@ -81,7 +91,7 @@ bool QgsMinimumEnclosingCircleAlgorithm::prepareAlgorithm( const QVariantMap &pa
   return true;
 }
 
-QgsFeature QgsMinimumEnclosingCircleAlgorithm::processFeature( const QgsFeature &feature, QgsProcessingFeedback * )
+QgsFeature QgsMinimumEnclosingCircleAlgorithm::processFeature( const QgsFeature &feature, QgsProcessingContext &, QgsProcessingFeedback * )
 {
   QgsFeature f = feature;
   if ( f.hasGeometry() )

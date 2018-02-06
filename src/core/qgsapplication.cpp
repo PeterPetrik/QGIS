@@ -43,6 +43,8 @@
 #include "qgsuserprofilemanager.h"
 #include "qgsreferencedgeometry.h"
 #include "qgs3drendererregistry.h"
+#include "qgslayoutrendercontext.h"
+#include "qgssqliteutils.h"
 
 #include "gps/qgsgpsconnectionregistry.h"
 #include "processing/qgsprocessingregistry.h"
@@ -152,6 +154,7 @@ void QgsApplication::init( QString profileFolder )
   qRegisterMetaType<QgsMessageLog::MessageLevel>( "QgsMessageLog::MessageLevel" );
   qRegisterMetaType<QgsReferencedRectangle>( "QgsReferencedRectangle" );
   qRegisterMetaType<QgsReferencedPointXY>( "QgsReferencedPointXY" );
+  qRegisterMetaType<QgsLayoutRenderContext::Flags>( "QgsLayoutRenderContext::Flags" );
 
   QString prefixPath( getenv( "QGIS_PREFIX_PATH" ) ? getenv( "QGIS_PREFIX_PATH" ) : applicationDirPath() );
   // QgsDebugMsg( QString( "prefixPath(): %1" ).arg( prefixPath ) );
@@ -429,7 +432,17 @@ QString QgsApplication::defaultThemePath()
 }
 QString QgsApplication::activeThemePath()
 {
-  return userThemesFolder() + QDir::separator() + themeName() + QDir::separator() + "icons/";
+  QString usersThemes = userThemesFolder() + QDir::separator() + themeName() + QDir::separator() + "icons/";
+  QDir dir( usersThemes );
+  if ( dir.exists() )
+  {
+    return usersThemes;
+  }
+  else
+  {
+    QString defaultThemes = defaultThemesFolder() + QDir::separator() + themeName() + QDir::separator() + "icons/";
+    return defaultThemes;
+  }
 }
 
 QString QgsApplication::appIconPath()
@@ -476,6 +489,70 @@ QIcon QgsApplication::getThemeIcon( const QString &name )
   if ( app )
     app->mIconCache.insert( name, icon );
   return icon;
+}
+
+QCursor QgsApplication::getThemeCursor( const Cursor &cursor )
+{
+  QgsApplication *app = instance();
+  if ( app && app->mCursorCache.contains( cursor ) )
+    return app->mCursorCache.value( cursor );
+
+  // All calculations are done on 32x32 icons
+  // Defaults to center, individual cursors may override
+  int activeX = 16;
+  int activeY = 16;
+
+  QString name;
+  switch ( cursor )
+  {
+    case ZoomIn:
+      name = QStringLiteral( "mZoomIn.svg" );
+      activeX = 13;
+      activeY = 13;
+      break;
+    case ZoomOut:
+      name = QStringLiteral( "mZoomOut.svg" );
+      activeX = 13;
+      activeY = 13;
+      break;
+    case Identify:
+      activeX = 3;
+      activeY = 6;
+      name = QStringLiteral( "mIdentify.svg" );
+      break;
+    case CrossHair:
+      name = QStringLiteral( "mCrossHair.svg" );
+      break;
+    case CapturePoint:
+      name = QStringLiteral( "mCapturePoint.svg" );
+      break;
+    case Select:
+      name = QStringLiteral( "mSelect.svg" );
+      activeX = 6;
+      activeY = 6;
+      break;
+    case Sampler:
+      activeX = 5;
+      activeY = 5;
+      name = QStringLiteral( "mSampler.svg" );
+      break;
+      // No default
+  }
+  // It should never get here!
+  Q_ASSERT( ! name.isEmpty( ) );
+
+  QIcon icon = getThemeIcon( QStringLiteral( "cursors" ) + QDir::separator() + name );
+  QCursor cursorIcon;
+  // Check if an icon exists for this cursor (the O.S. default cursor will be used if it does not)
+  if ( ! icon.isNull( ) )
+  {
+    // Apply scaling
+    float scale = Qgis::UI_SCALE_FACTOR * app->fontMetrics().height() / 32.0;
+    cursorIcon = QCursor( icon.pixmap( std::ceil( scale * 32 ), std::ceil( scale * 32 ) ), std::ceil( scale * activeX ), std::ceil( scale * activeY ) );
+  }
+  if ( app )
+    app->mCursorCache.insert( cursor, cursorIcon );
+  return cursorIcon;
 }
 
 // TODO: add some caching mechanism ?
@@ -538,7 +615,7 @@ void QgsApplication::setUITheme( const QString &themeName )
     while ( !in.atEnd() )
     {
       QString line = in.readLine();
-      // This is is a variable
+      // This is a variable
       if ( line.startsWith( '@' ) )
       {
         int index = line.indexOf( ':' );
@@ -563,7 +640,7 @@ void QgsApplication::setUITheme( const QString &themeName )
 
 QHash<QString, QString> QgsApplication::uiThemes()
 {
-  QStringList paths = QStringList() << userThemesFolder();
+  QStringList paths = QStringList() << userThemesFolder() << defaultThemesFolder();
   QHash<QString, QString> mapping;
   mapping.insert( QStringLiteral( "default" ), QLatin1String( "" ) );
   Q_FOREACH ( const QString &path, paths )
@@ -707,12 +784,12 @@ QStringList QgsApplication::svgPaths()
   return paths;
 }
 
-QStringList QgsApplication::composerTemplatePaths()
+QStringList QgsApplication::layoutTemplatePaths()
 {
-  //local directories to search when looking for an SVG with a given basename
+  //local directories to search when looking for an template with a given basename
   //defined by user in options dialog
   QgsSettings settings;
-  QStringList pathList = settings.value( QStringLiteral( "composer/searchPathsForTemplates" ) ).toStringList();
+  QStringList pathList = settings.value( QStringLiteral( "Layout/searchPathsForTemplates" ), QVariant(), QgsSettings::Core ).toStringList();
 
   return pathList;
 }
@@ -732,7 +809,7 @@ QString QgsApplication::userLoginName()
   if ( !sUserName.isEmpty() )
     return sUserName;
 
-#ifdef Q_OS_WIN
+#ifdef _MSC_VER
   TCHAR name [ UNLEN + 1 ];
   DWORD size = UNLEN + 1;
 
@@ -767,7 +844,7 @@ QString QgsApplication::userFullName()
   if ( !sUserFullName.isEmpty() )
     return sUserFullName;
 
-#ifdef Q_OS_WIN
+#ifdef _MSC_VER
   TCHAR name [ UNLEN + 1 ];
   DWORD size = UNLEN + 1;
 
@@ -780,7 +857,7 @@ QString QgsApplication::userFullName()
   //fall back to login name
   if ( sUserFullName.isEmpty() )
     sUserFullName = userLoginName();
-#elif defined(Q_OS_ANDROID)
+#elif defined(Q_OS_ANDROID) || defined(__MINGW32__)
   sUserFullName = "Not available";
 #else
   struct passwd *p = getpwuid( getuid() );
@@ -822,7 +899,14 @@ QString QgsApplication::locale()
   bool overrideLocale = settings.value( QStringLiteral( "locale/overrideFlag" ), false ).toBool();
   if ( overrideLocale )
   {
-    return settings.value( QStringLiteral( "locale/userLocale" ), QString() ).toString();
+    QString locale = settings.value( QStringLiteral( "locale/userLocale" ), QString() ).toString();
+    // don't differentiate en_US and en_GB
+    if ( locale.startsWith( QStringLiteral( "en" ), Qt::CaseInsensitive ) )
+    {
+      return locale.left( 2 );
+    }
+
+    return locale;
   }
   else
   {
@@ -870,31 +954,60 @@ void QgsApplication::initQgis()
   // set the provider plugin path (this creates provider registry)
   QgsProviderRegistry::instance( pluginPath() );
 
-  instance()->mDataItemProviderRegistry = new QgsDataItemProviderRegistry();
+  // create data item provider registry
+  ( void )QgsApplication::dataItemProviderRegistry();
 
   // create project instance if doesn't exist
   QgsProject::instance();
 
+  // Initialize authentication manager and connect to database
+  authManager()->init( pluginPath(), qgisAuthDatabaseFilePath() );
+
   // Make sure we have a NAM created on the main thread.
+  // Note that this might call QgsApplication::authManager to
+  // setup the proxy configuration that's why it needs to be
+  // called after the QgsAuthManager instance has been created
   QgsNetworkAccessManager::instance();
 
-  // initialize authentication manager and connect to database
-  QgsAuthManager::instance()->init( pluginPath() );
 }
+
+
+QgsAuthManager *QgsApplication::authManager()
+{
+  if ( instance() )
+  {
+    if ( !instance()->mAuthManager )
+    {
+      instance()->mAuthManager = QgsAuthManager::instance();
+    }
+    return instance()->mAuthManager;
+  }
+  else
+  {
+    // no QgsApplication instance
+    static QgsAuthManager *sAuthManager = nullptr;
+    if ( !sAuthManager )
+      sAuthManager = QgsAuthManager::instance();
+    return sAuthManager;
+  }
+}
+
 
 void QgsApplication::exitQgis()
 {
-  delete QgsAuthManager::instance();
+  delete QgsApplication::authManager();
 
   //Ensure that all remaining deleteLater QObjects are actually deleted before we exit.
   //This isn't strictly necessary (since we're exiting anyway) but doing so prevents a lot of
   //LeakSanitiser noise which hides real issues
   QgsApplication::sendPostedEvents( nullptr, QEvent::DeferredDelete );
 
-  delete QgsProviderRegistry::instance();
-
   //delete all registered functions from expression engine (see above comment)
   QgsExpression::cleanRegisteredFunctions();
+
+  delete QgsProject::instance();
+
+  delete QgsProviderRegistry::instance();
 
   // tear-down GDAL/OGR
   OGRCleanupAll();
@@ -939,45 +1052,7 @@ QString QgsApplication::reportStyleSheet()
   QColor myColor2 = myColor1;
   myColor2 = myColor2.lighter( 110 ); //10% lighter
   QString myStyle;
-  myStyle = "p.glossy{ background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, "
-            "  stop: 0 " + myColor1.name()  + ","
-            "  stop: 0.1 " + myColor2.name() + ","
-            "  stop: 0.5 " + myColor1.name()  + ","
-            "  stop: 0.9 " + myColor2.name() + ","
-            "  stop: 1 " + myColor1.name() + ");"
-            "  color: black;"
-            "  padding-left: 4px;"
-            "  padding-top: 20px;"
-            "  padding-bottom: 8px;"
-            "  border: 1px solid #6c6c6c;"
-            "}"
-            "p.subheaderglossy{ background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, "
-            "  stop: 0 " + myColor1.name()  + ","
-            "  stop: 0.1 " + myColor2.name() + ","
-            "  stop: 0.5 " + myColor1.name()  + ","
-            "  stop: 0.9 " + myColor2.name() + ","
-            "  stop: 1 " + myColor1.name() + ");"
-            "  font-weight: bold;"
-            "  font-size: medium;"
-            "  line-height: 1.1em;"
-            "  width: 100%;"
-            "  color: black;"
-            "  padding-left: 4px;"
-            "  padding-right: 4px;"
-            "  padding-top: 20px;"
-            "  padding-bottom: 8px;"
-            "  border: 1px solid #6c6c6c;"
-            "}"
-            "th.glossy{ background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, "
-            "  stop: 0 " + myColor1.name()  + ","
-            "  stop: 0.1 " + myColor2.name() + ","
-            "  stop: 0.5 " + myColor1.name()  + ","
-            "  stop: 0.9 " + myColor2.name() + ","
-            "  stop: 1 " + myColor1.name() + ");"
-            "  color: black;"
-            "  border: 1px solid #6c6c6c;"
-            "}"
-            ".overview{"
+  myStyle = ".overview{"
             "  font: 1.82em;"
             "  font-weight: bold;"
             "}"
@@ -1044,6 +1119,9 @@ QString QgsApplication::reportStyleSheet()
             "  width: 20%;"
             "  padding-right: 15px;"
             "  padding-left: 20px;"
+            "  font-weight: bold;"
+            "}"
+            "th .strong {"
             "  font-weight: bold;"
             "}"
             ".tabular-view{ "
@@ -1230,7 +1308,6 @@ bool QgsApplication::createThemeFolder()
     myDir.mkpath( folder );
   }
 
-  copyPath( defaultThemesFolder(), userThemesFolder() );
   return true;
 }
 
@@ -1401,8 +1478,8 @@ bool QgsApplication::createDatabase( QString *errorMessage )
   else
   {
     // migrate if necessary
-    sqlite3 *db = nullptr;
-    if ( sqlite3_open( QgsApplication::qgisUserDatabaseFilePath().toUtf8().constData(), &db ) != SQLITE_OK )
+    sqlite3_database_unique_ptr database;
+    if ( database.open( QgsApplication::qgisUserDatabaseFilePath() ) != SQLITE_OK )
     {
       if ( errorMessage )
       {
@@ -1412,11 +1489,11 @@ bool QgsApplication::createDatabase( QString *errorMessage )
     }
 
     char *errmsg = nullptr;
-    int res = sqlite3_exec( db, "SELECT epsg FROM tbl_srs LIMIT 0", nullptr, nullptr, &errmsg );
+    int res = sqlite3_exec( database.get(), "SELECT epsg FROM tbl_srs LIMIT 0", nullptr, nullptr, &errmsg );
     if ( res == SQLITE_OK )
     {
       // epsg column exists => need migration
-      if ( sqlite3_exec( db,
+      if ( sqlite3_exec( database.get(),
                          "ALTER TABLE tbl_srs RENAME TO tbl_srs_bak;"
                          "CREATE TABLE tbl_srs ("
                          "srs_id INTEGER PRIMARY KEY,"
@@ -1439,7 +1516,6 @@ bool QgsApplication::createDatabase( QString *errorMessage )
           *errorMessage = tr( "Migration of private qgis.db failed.\n%1" ).arg( QString::fromUtf8( errmsg ) );
         }
         sqlite3_free( errmsg );
-        sqlite3_close( db );
         return false;
       }
     }
@@ -1448,12 +1524,12 @@ bool QgsApplication::createDatabase( QString *errorMessage )
       sqlite3_free( errmsg );
     }
 
-    if ( sqlite3_exec( db, "DROP VIEW vw_srs", nullptr, nullptr, &errmsg ) != SQLITE_OK )
+    if ( sqlite3_exec( database.get(), "DROP VIEW vw_srs", nullptr, nullptr, &errmsg ) != SQLITE_OK )
     {
       QgsDebugMsg( QString( "vw_srs didn't exists in private qgis.db: %1" ).arg( errmsg ) );
     }
 
-    if ( sqlite3_exec( db,
+    if ( sqlite3_exec( database.get(),
                        "CREATE VIEW vw_srs AS"
                        " SELECT"
                        " a.description AS description"
@@ -1474,11 +1550,8 @@ bool QgsApplication::createDatabase( QString *errorMessage )
         *errorMessage = tr( "Update of view in private qgis.db failed.\n%1" ).arg( QString::fromUtf8( errmsg ) );
       }
       sqlite3_free( errmsg );
-      sqlite3_close( db );
       return false;
     }
-
-    sqlite3_close( db );
   }
   return true;
 }
@@ -1531,7 +1604,22 @@ QgsRasterRendererRegistry *QgsApplication::rasterRendererRegistry()
 
 QgsDataItemProviderRegistry *QgsApplication::dataItemProviderRegistry()
 {
-  return instance()->mDataItemProviderRegistry;
+  if ( instance() )
+  {
+    if ( !instance()->mDataItemProviderRegistry )
+    {
+      instance()->mDataItemProviderRegistry = new QgsDataItemProviderRegistry();
+    }
+    return instance()->mDataItemProviderRegistry;
+  }
+  else
+  {
+    // no QgsApplication instance
+    static QgsDataItemProviderRegistry *sDataItemProviderRegistry = nullptr;
+    if ( !sDataItemProviderRegistry )
+      sDataItemProviderRegistry = new QgsDataItemProviderRegistry();
+    return sDataItemProviderRegistry;
+  }
 }
 
 QgsSvgCache *QgsApplication::svgCache()
@@ -1549,7 +1637,7 @@ QgsLayoutItemRegistry *QgsApplication::layoutItemRegistry()
   return members()->mLayoutItemRegistry;
 }
 
-QgsGPSConnectionRegistry *QgsApplication::gpsConnectionRegistry()
+QgsGpsConnectionRegistry *QgsApplication::gpsConnectionRegistry()
 {
   return members()->mGpsConnectionRegistry;
 }
@@ -1605,7 +1693,7 @@ QgsApplication::ApplicationMembers::ApplicationMembers()
   mSymbolLayerRegistry = new QgsSymbolLayerRegistry();
   mRendererRegistry = new QgsRendererRegistry();
   mRasterRendererRegistry = new QgsRasterRendererRegistry();
-  mGpsConnectionRegistry = new QgsGPSConnectionRegistry();
+  mGpsConnectionRegistry = new QgsGpsConnectionRegistry();
   mPluginLayerRegistry = new QgsPluginLayerRegistry();
   mProcessingRegistry = new QgsProcessingRegistry();
   mPageSizeRegistry = new QgsPageSizeRegistry();

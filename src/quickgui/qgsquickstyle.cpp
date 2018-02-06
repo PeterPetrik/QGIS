@@ -15,30 +15,37 @@
 
 #include "qgsquickstyle.h"
 
-QgsQuickStyle::QgsQuickStyle(QObject *parent):
-    QObject(parent)
-  , mDevicePixels(1.0f)
+QgsQuickStyle::QgsQuickStyle( QObject *parent ):
+  QObject( parent )
+  , mDevicePixels( 1.0f )
 {
 }
 
-qreal QgsQuickStyle::devicePixels() const {
-    return mDevicePixels;
+qreal QgsQuickStyle::devicePixels() const
+{
+  return mDevicePixels;
 }
 
-QString QgsQuickStyle::themeDir() const {
-    return mThemeDir;
+QString QgsQuickStyle::themeDir() const
+{
+  return mThemeDir;
 }
 
-void QgsQuickStyle::setDevicePixels(qreal dp) {
-    if (dp != mDevicePixels) {
-        mDevicePixels = dp;
-        emit devicePixelsChanged();
-    }
+void QgsQuickStyle::setDevicePixels( qreal dp )
+{
+  if ( dp != mDevicePixels )
+  {
+    mDevicePixels = dp;
+    emit devicePixelsChanged();
+  }
 }
 
-void QgsQuickStyle::setThemeDir(QString dir) {
-    if (dir != mThemeDir) {
-        mThemeDir = dir;
-        emit themeDirChanged();
-    }
+void QgsQuickStyle::setThemeDir( QString dir )
+{
+  if ( dir != mThemeDir )
+  {
+    mThemeDir = dir;
+    emit themeDirChanged();
+  }
 }
+

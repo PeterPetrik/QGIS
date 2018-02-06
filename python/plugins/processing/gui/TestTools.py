@@ -16,7 +16,6 @@
 *                                                                         *
 ***************************************************************************
 """
-from builtins import str
 
 __author__ = 'Victor Olaya'
 __date__ = 'February 2013'
@@ -247,6 +246,9 @@ def createTest(text):
     definition['params'] = params
 
     for i, out in enumerate([out for out in alg.destinationParameterDefinitions() if not out.flags() & QgsProcessingParameterDefinition.FlagHidden]):
+        if not out.name() in parameters:
+            continue
+
         token = parameters[out.name()]
 
         if isinstance(out, QgsProcessingParameterRasterDestination):

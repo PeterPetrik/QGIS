@@ -2,18 +2,19 @@
 # sources
 
 SET(QGIS_CORE_SRCS
-  gps/context.c
-  gps/gmath.c
-  gps/info.c
-  gps/parse.c
+  ${CMAKE_SOURCE_DIR}/external/nmea/context.c
+  ${CMAKE_SOURCE_DIR}/external/nmea/gmath.c
+  ${CMAKE_SOURCE_DIR}/external/nmea/info.c
+  ${CMAKE_SOURCE_DIR}/external/nmea/parse.c
+  ${CMAKE_SOURCE_DIR}/external/nmea/sentence.c
+  ${CMAKE_SOURCE_DIR}/external/nmea/time.c
+  ${CMAKE_SOURCE_DIR}/external/nmea/tok.c
+
   gps/qgsgpsconnection.cpp
   gps/qgsgpsconnectionregistry.cpp
   gps/qgsgpsdconnection.cpp
   gps/qgsgpsdetector.cpp
   gps/qgsnmeaconnection.cpp
-  gps/sentence.c
-  gps/time.c
-  gps/tok.c
 
   symbology/qgs25drenderer.cpp
   symbology/qgsarrowsymbollayer.cpp
@@ -100,6 +101,7 @@ SET(QGIS_CORE_SRCS
 
   processing/qgsprocessingalgorithm.cpp
   processing/qgsprocessingalgrunnertask.cpp
+  processing/qgsprocessingfeedback.cpp
   processing/qgsprocessingoutputs.cpp
   processing/qgsprocessingparameters.cpp
   processing/qgsprocessingprovider.cpp
@@ -145,12 +147,13 @@ SET(QGIS_CORE_SRCS
   qgscolorscheme.cpp
   qgscolorschemeregistry.cpp
   qgsconditionalstyle.cpp
+  qgscoordinateformatter.cpp
   qgscoordinatereferencesystem.cpp
   qgscoordinatetransform.cpp
   qgscoordinatetransform_p.cpp
+  qgscoordinatetransformcontext.cpp
   qgscoordinateutils.cpp
   qgscredentials.cpp
-  qgscrscache.cpp
   qgsdartmeasurement.cpp
   qgsdatadefinedsizelegend.cpp
   qgsdataitem.cpp
@@ -159,7 +162,7 @@ SET(QGIS_CORE_SRCS
   qgsdatasourceuri.cpp
   qgsdataprovider.cpp
   qgsdatetimestatisticalsummary.cpp
-  qgsdatumtransformstore.cpp
+  qgsdatumtransform.cpp
   qgsdbfilterproxymodel.cpp
   qgsdefaultvalue.cpp
   qgsdiagramrenderer.cpp
@@ -175,6 +178,7 @@ SET(QGIS_CORE_SRCS
   qgsfeaturesink.cpp
   qgsfeaturesource.cpp
   qgsfeaturestore.cpp
+  qgsfeaturefiltermodel.cpp
   qgsfield.cpp
   qgsfieldconstraints.cpp
   qgsfieldformatter.cpp
@@ -182,12 +186,15 @@ SET(QGIS_CORE_SRCS
   qgsfieldmodel.cpp
   qgsfieldproxymodel.cpp
   qgsfields.cpp
+  qgsfiledownloader.cpp
+  qgsfileutils.cpp
   qgsfontutils.cpp
   qgsgeometrysimplifier.cpp
   qgsgeometryvalidator.cpp
   qgsgml.cpp
   qgsgmlschema.cpp
   qgshistogram.cpp
+  qgshtmlutils.cpp
   qgsinterval.cpp
   qgsjsonutils.cpp
   qgslabelfeature.cpp
@@ -265,12 +272,13 @@ SET(QGIS_CORE_SRCS
   qgsscalecalculator.cpp
   qgsscaleutils.cpp
   qgssimplifymethod.cpp
-  qgsslconnect.cpp
   qgssnappingutils.cpp
   qgsspatialindex.cpp
   qgssqlexpressioncompiler.cpp
   qgssqliteexpressioncompiler.cpp
   qgssqlstatement.cpp
+  qgssqliteutils.cpp
+  qgsspatialiteutils.cpp
   qgsstatisticalsummary.cpp
   qgsstringstatisticalsummary.cpp
   qgsstringutils.cpp
@@ -311,73 +319,59 @@ SET(QGIS_CORE_SRCS
   qgsmapthemecollection.cpp
   qgsxmlutils.cpp
   qgssettings.cpp
-  qgsstacktrace.cpp
   qgsarchive.cpp
+  qgstestutils.cpp
   qgsziputils.cpp
-
-  composer/qgsaddremoveitemcommand.cpp
-  composer/qgsaddremovemultiframecommand.cpp
-  composer/qgsatlascomposition.cpp
-  composer/qgscomposerarrow.cpp
-  composer/qgscomposerattributetablemodelv2.cpp
-  composer/qgscomposerattributetablev2.cpp
-  composer/qgscomposereffect.cpp
-  composer/qgscomposerframe.cpp
-  composer/qgscomposerhtml.cpp
-  composer/qgscomposeritem.cpp
-  composer/qgscomposeritemcommand.cpp
-  composer/qgscomposeritemgroup.cpp
-  composer/qgscomposerlabel.cpp
-  composer/qgscomposerlegend.cpp
-  composer/qgscomposermap.cpp
-  composer/qgscomposermapgrid.cpp
-  composer/qgscomposermapitem.cpp
-  composer/qgscomposermapoverview.cpp
-  composer/qgscomposermodel.cpp
-  composer/qgscomposermousehandles.cpp
-  composer/qgscomposermultiframe.cpp
-  composer/qgscomposermultiframecommand.cpp
-  composer/qgscomposerobject.cpp
-  composer/qgscomposerpicture.cpp
-  composer/qgscomposerscalebar.cpp
-  composer/qgscomposershape.cpp
-  composer/qgscomposernodesitem.cpp
-  composer/qgscomposerpolygon.cpp
-  composer/qgscomposerpolyline.cpp
-  composer/qgscomposertablecolumn.cpp
-  composer/qgscomposertablev2.cpp
-  composer/qgscomposertexttable.cpp
-  composer/qgscomposerutils.cpp
-  composer/qgscomposition.cpp
-  composer/qgsgroupungroupitemscommand.cpp
-  composer/qgslayoutmanager.cpp
-  composer/qgspaperitem.cpp
 
   dxf/qgsdxfexport.cpp
   dxf/qgsdxfpaintdevice.cpp
   dxf/qgsdxfpaintengine.cpp
   dxf/qgsdxfpallabeling.cpp
 
+  layout/qgsabstractreportsection.cpp
   layout/qgslayout.cpp
   layout/qgslayoutaligner.cpp
-  layout/qgslayoutcontext.cpp
+  layout/qgslayoutatlas.cpp
+  layout/qgslayouteffect.cpp
+  layout/qgslayoutexporter.cpp
   layout/qgslayoutgridsettings.cpp
   layout/qgslayoutguidecollection.cpp
+  layout/qgslayoutframe.cpp
   layout/qgslayoutitem.cpp
+  layout/qgslayoutitemattributetable.cpp
   layout/qgslayoutitemgroup.cpp
   layout/qgslayoutitemgroupundocommand.cpp
+  layout/qgslayoutitemhtml.cpp
+  layout/qgslayoutitemlabel.cpp
+  layout/qgslayoutitemlegend.cpp
   layout/qgslayoutitemmap.cpp
+  layout/qgslayoutitemmapgrid.cpp
+  layout/qgslayoutitemmapitem.cpp
+  layout/qgslayoutitemmapoverview.cpp
+  layout/qgslayoutitemnodeitem.cpp
   layout/qgslayoutitempage.cpp
+  layout/qgslayoutitempicture.cpp
+  layout/qgslayoutitempolygon.cpp
+  layout/qgslayoutitempolyline.cpp
   layout/qgslayoutitemregistry.cpp
+  layout/qgslayoutitemscalebar.cpp
   layout/qgslayoutitemshape.cpp
+  layout/qgslayoutitemtexttable.cpp
   layout/qgslayoutitemundocommand.cpp
+  layout/qgslayoutmanager.cpp
   layout/qgslayoutmeasurement.cpp
   layout/qgslayoutmeasurementconverter.cpp
   layout/qgslayoutmodel.cpp
+  layout/qgslayoutmultiframe.cpp
+  layout/qgslayoutmultiframeundocommand.cpp
   layout/qgslayoutobject.cpp
   layout/qgslayoutpagecollection.cpp
+  layout/qgslayoutrendercontext.cpp
+  layout/qgslayoutreportcontext.cpp
   layout/qgslayoutserializableobject.cpp
   layout/qgslayoutsnapper.cpp
+  layout/qgslayouttable.cpp
+  layout/qgslayouttablecolumn.cpp
   layout/qgslayoutundocommand.cpp
   layout/qgslayoutundostack.cpp
   layout/qgslayoututils.cpp
@@ -385,6 +379,11 @@ SET(QGIS_CORE_SRCS
   layout/qgslayoutpoint.cpp
   layout/qgslayoutserializableobject.cpp
   layout/qgslayoutsize.cpp
+  layout/qgsprintlayout.cpp
+  layout/qgsreport.cpp
+  layout/qgsreportsectionfieldgroup.cpp
+  layout/qgsreportsectionlayout.cpp
+  layout/qgscompositionconverter.cpp
 
   pal/costcalculator.cpp
   pal/feature.cpp
@@ -466,6 +465,7 @@ SET(QGIS_CORE_SRCS
   geometry/qgsrectangle.cpp
   geometry/qgsreferencedgeometry.cpp
   geometry/qgsregularpolygon.cpp
+  geometry/qgssurface.cpp
   geometry/qgstriangle.cpp
   geometry/qgswkbptr.cpp
   geometry/qgswkbtypes.cpp
@@ -526,18 +526,18 @@ ENDIF (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
 
 IF (WITH_INTERNAL_QEXTSERIALPORT)
   SET(QGIS_CORE_SRCS ${QGIS_CORE_SRCS}
-    gps/qextserialport/qextserialport.cpp
-    gps/qextserialport/qextserialenumerator.cpp
+    ${CMAKE_SOURCE_DIR}/external/qextserialport/qextserialport.cpp
+    ${CMAKE_SOURCE_DIR}/external/qextserialport/qextserialenumerator.cpp
   )
   IF(WIN32)
     SET(QGIS_CORE_SRCS ${QGIS_CORE_SRCS}
-      gps/qextserialport/win_qextserialport.cpp
+      ${CMAKE_SOURCE_DIR}/external/qextserialport/win_qextserialport.cpp
     )
     ADD_DEFINITIONS(-D_TTY_WIN_)
 
   ELSE(WIN32)
     SET(QGIS_CORE_SRCS ${QGIS_CORE_SRCS}
-      gps/qextserialport/posix_qextserialport.cpp
+      ${CMAKE_SOURCE_DIR}/external/qextserialport/posix_qextserialport.cpp
     )
     ADD_DEFINITIONS(-D_TTY_POSIX_)
   ENDIF(WIN32)
@@ -563,10 +563,6 @@ ELSE(NOT MSVC)
     pal/feature.cpp
     pal/pointset.cpp
     PROPERTIES COMPILE_FLAGS -wd4702)
-  # -wd4091 Avoid 'typedef' ignored on left of '' when no variable is declared warning in DbgHelp.h
-  SET_SOURCE_FILES_PROPERTIES(
-    qgsstacktrace.cpp
-    PROPERTIES COMPILE_FLAGS -wd4091)
 ENDIF(NOT MSVC)
 
 SET(QGIS_CORE_MOC_HDRS
@@ -588,6 +584,9 @@ SET(QGIS_CORE_MOC_HDRS
   qgsfieldformatterregistry.h
   qgsfieldmodel.h
   qgsfieldproxymodel.h
+  qgsfiledownloader.h
+  qgsfeaturefiltermodel.h
+  qgsfeaturefiltermodel_p.h
   qgsgeometryvalidator.h
   qgsgml.h
   qgsgmlschema.h
@@ -650,40 +649,6 @@ SET(QGIS_CORE_MOC_HDRS
   auth/qgsauthmanager.h
   auth/qgsauthmethod.h
 
-  composer/qgsaddremoveitemcommand.h
-  composer/qgsatlascomposition.h
-  composer/qgscomposerarrow.h
-  composer/qgscomposerattributetablemodelv2.h
-  composer/qgscomposerattributetablev2.h
-  composer/qgscomposereffect.h
-  composer/qgscomposerframe.h
-  composer/qgscomposerhtml.h
-  composer/qgscomposeritemgroup.h
-  composer/qgscomposeritem.h
-  composer/qgscomposerlabel.h
-  composer/qgscomposerlegend.h
-  composer/qgscomposermapgrid.h
-  composer/qgscomposermap.h
-  composer/qgscomposermapitem.h
-  composer/qgscomposermapoverview.h
-  composer/qgscomposermodel.h
-  composer/qgscomposermousehandles.h
-  composer/qgscomposermultiframe.h
-  composer/qgscomposerobject.h
-  composer/qgscomposerpicture.h
-  composer/qgscomposerscalebar.h
-  composer/qgscomposershape.h
-  composer/qgscomposernodesitem.h
-  composer/qgscomposerpolygon.h
-  composer/qgscomposerpolyline.h
-  composer/qgscomposertablecolumn.h
-  composer/qgscomposertablev2.h
-  composer/qgscomposertexttable.h
-  composer/qgscomposition.h
-  composer/qgsgroupungroupitemscommand.h
-  composer/qgslayoutmanager.h
-  composer/qgspaperitem.h
-
   locator/qgslocator.h
   locator/qgslocatorfilter.h
   locator/qgslocatormodel.h
@@ -692,7 +657,6 @@ SET(QGIS_CORE_MOC_HDRS
   processing/qgsprocessingfeedback.h
   processing/qgsprocessingprovider.h
   processing/qgsprocessingregistry.h
-  processing/models/qgsprocessingmodelalgorithm.h
 
   providers/memory/qgsmemoryprovider.h
 
@@ -712,17 +676,42 @@ SET(QGIS_CORE_MOC_HDRS
   gps/qgsgpsdconnection.h
 
   layout/qgslayout.h
+  layout/qgslayoutatlas.h
+  layout/qgslayouteffect.h
   layout/qgslayoutguidecollection.h
+  layout/qgslayoutframe.h
   layout/qgslayoutitem.h
+  layout/qgslayoutitemattributetable.h
   layout/qgslayoutitemgroup.h
   layout/qgslayoutitemgroupundocommand.h
+  layout/qgslayoutitemhtml.h
+  layout/qgslayoutitemlabel.h
+  layout/qgslayoutitemlegend.h
   layout/qgslayoutitemmap.h
+  layout/qgslayoutitemmapgrid.h
+  layout/qgslayoutitemmapitem.h
+  layout/qgslayoutitemmapoverview.h
+  layout/qgslayoutitemnodeitem.h
   layout/qgslayoutitempage.h
+  layout/qgslayoutitempicture.h
+  layout/qgslayoutitempolygon.h
+  layout/qgslayoutitempolyline.h
   layout/qgslayoutitemregistry.h
+  layout/qgslayoutitemscalebar.h
   layout/qgslayoutitemshape.h
+  layout/qgslayoutitemtexttable.h
+  layout/qgslayoutmanager.h
   layout/qgslayoutmodel.h
+  layout/qgslayoutmultiframe.h
   layout/qgslayoutpagecollection.h
   layout/qgslayoutobject.h
+  layout/qgslayoutrendercontext.h
+  layout/qgslayoutreportcontext.h
+  layout/qgslayouttable.h
+  layout/qgslayouttablecolumn.h
+  layout/qgslayoutundostack.h
+  layout/qgsprintlayout.h
+  layout/qgsreport.h
 
   symbology/qgscptcityarchive.h
   symbology/qgssvgcache.h
@@ -752,8 +741,8 @@ ENDIF(NOT WITH_QTWEBKIT)
 
 IF (WITH_INTERNAL_QEXTSERIALPORT)
   SET(QGIS_CORE_MOC_HDRS ${QGIS_CORE_MOC_HDRS}
-    gps/qextserialport/qextserialport.h
-    gps/qextserialport/qextserialenumerator.h
+    ${CMAKE_SOURCE_DIR}/external/qextserialport/qextserialport.h
+    ${CMAKE_SOURCE_DIR}/external/qextserialport/qextserialenumerator.h
   )
 ENDIF (WITH_INTERNAL_QEXTSERIALPORT)
 
@@ -807,16 +796,17 @@ SET(QGIS_CORE_HDRS
   qgscolorschemeregistry.h
   qgsconnectionpool.h
   qgsconditionalstyle.h
+  qgscoordinateformatter.h
   qgscoordinatetransform.h
+  qgscoordinatetransformcontext.h
   qgscoordinateutils.h
-  qgscrscache.h
   qgsdartmeasurement.h
   qgsdatadefinedsizelegend.h
   qgsdataitemprovider.h
   qgsdataitemproviderregistry.h
   qgsdatasourceuri.h
   qgsdatetimestatisticalsummary.h
-  qgsdatumtransformstore.h
+  qgsdatumtransform.h
   qgsdbfilterproxymodel.h
   qgsdefaultvalue.h
   qgsdiagramrenderer.h
@@ -828,6 +818,7 @@ SET(QGIS_CORE_HDRS
   qgsexception.h
   qgsexpressioncontext.h
   qgsexpressioncontextgenerator.h
+  qgsexpressioncontextscopegenerator.h
   qgsexpressionfieldbuffer.h
   qgsfeaturefilterprovider.h
   qgsfeatureiterator.h
@@ -838,9 +829,11 @@ SET(QGIS_CORE_HDRS
   qgsfieldformatter.h
   qgsfield_p.h
   qgsfields.h
+  qgsfileutils.h
   qgsfontutils.h
   qgsgeometrysimplifier.h
   qgshistogram.h
+  qgshtmlutils.h
   qgsindexedfeature.h
   qgsinterval.h
   qgsjsonutils.h
@@ -900,6 +893,9 @@ SET(QGIS_CORE_HDRS
   qgssimplifymethod.h
   qgssnappingutils.h
   qgsspatialindex.h
+  qgsspatialiteutils.h
+  qgssqlstatement.h
+  qgssqliteutils.h
   qgssqlexpressioncompiler.h
   qgssqlstatement.h
   qgsstatisticalsummary.h
@@ -931,6 +927,7 @@ SET(QGIS_CORE_HDRS
   qgsmapthemecollection.h
   qgsxmlutils.h
   qgsarchive.h
+  qgstestutils.h
   qgsziputils.h
   qgsvector.h
   qgslocalec.h
@@ -962,28 +959,26 @@ SET(QGIS_CORE_HDRS
   effects/qgstransformeffect.h
   effects/qgscoloreffect.h
 
-  composer/qgsaddremovemultiframecommand.h
-  composer/qgscomposerarrow.h
-  composer/qgscomposerframe.h
-  composer/qgscomposeritemcommand.h
-  composer/qgscomposermultiframecommand.h
-  composer/qgscomposertexttable.h
-  composer/qgspaperitem.h
-
+  layout/qgsabstractlayoutiterator.h
+  layout/qgsabstractreportsection.h
+  layout/qgsmasterlayoutinterface.h
   layout/qgslayoutaligner.h
-  layout/qgslayoutcontext.h
+  layout/qgslayoutexporter.h
   layout/qgslayoutgridsettings.h
   layout/qgslayoutitemundocommand.h
   layout/qgslayoutmeasurement.h
   layout/qgslayoutmeasurementconverter.h
+  layout/qgslayoutmultiframeundocommand.h
   layout/qgspagesizeregistry.h
   layout/qgslayoutpoint.h
   layout/qgslayoutserializableobject.h
   layout/qgslayoutsize.h
   layout/qgslayoutsnapper.h
   layout/qgslayoutundocommand.h
-  layout/qgslayoutundostack.h
   layout/qgslayoututils.h
+  layout/qgsreportsectionfieldgroup.h
+  layout/qgsreportsectionlayout.h
+  layout/qgscompositionconverter.h
 
   metadata/qgslayermetadata.h
   metadata/qgslayermetadatavalidator.h
@@ -995,6 +990,7 @@ SET(QGIS_CORE_HDRS
   processing/qgsprocessingoutputs.h
   processing/qgsprocessingparameters.h
   processing/qgsprocessingutils.h
+  processing/models/qgsprocessingmodelalgorithm.h
   processing/models/qgsprocessingmodelchildalgorithm.h
   processing/models/qgsprocessingmodelchildparametersource.h
   processing/models/qgsprocessingmodelcomponent.h
@@ -1142,7 +1138,6 @@ INCLUDE_DIRECTORIES(
   3d
   annotations
   auth
-  composer
   dxf
   effects
   ${CMAKE_SOURCE_DIR}/src/core/expression
@@ -1163,9 +1158,13 @@ INCLUDE_DIRECTORIES(
   renderer
   scalebar
   symbology
-  gps/qextserialport
   metadata
+  ${CMAKE_SOURCE_DIR}/external/nmea
 )
+IF (WITH_INTERNAL_QEXTSERIALPORT)
+  INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR}/external/qextserialport)
+ENDIF(WITH_INTERNAL_QEXTSERIALPORT)
+
 INCLUDE_DIRECTORIES(SYSTEM
   ${LIBZIP_INCLUDE_DIRS}
   ${SPATIALINDEX_INCLUDE_DIR}
@@ -1178,6 +1177,14 @@ INCLUDE_DIRECTORIES(SYSTEM
   ${QCA_INCLUDE_DIR}
   ${QTKEYCHAIN_INCLUDE_DIR}
 )
+
+
+IF (APPLE)
+  # Libtasn1 is for DER-encoded PKI ASN.1 parsing/extracting workarounds
+  INCLUDE_DIRECTORIES(SYSTEM
+    ${LIBTASN1_INCLUDE_DIR}
+  )
+ENDIF (APPLE)
 
 
 #for PAL classes
@@ -1249,7 +1256,7 @@ IF (WIN32)
 ENDIF (WIN32)
 
 IF (APPLE)
-  TARGET_LINK_LIBRARIES(qgis_core qgis_native)
+  TARGET_LINK_LIBRARIES(qgis_core qgis_native ${LIBTASN1_LIBRARY})
 ENDIF (APPLE)
 
 IF (NOT WITH_INTERNAL_QEXTSERIALPORT)

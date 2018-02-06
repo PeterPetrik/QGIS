@@ -29,6 +29,8 @@
 #include "qgsnative.h"
 #endif
 #include "qgsshortcutsmanager.h"
+#include "qgswidgetstatehelper_p.h"
+#include "qgslogger.h"
 
 QgsGui *QgsGui::instance()
 {
@@ -71,6 +73,15 @@ QgsLayoutItemGuiRegistry *QgsGui::layoutItemGuiRegistry()
   return instance()->mLayoutItemGuiRegistry;
 }
 
+void QgsGui::enableAutoGeometryRestore( QWidget *widget, const QString &key )
+{
+  if ( widget->objectName().isEmpty() )
+  {
+    QgsDebugMsg( "WARNING: No object name set. Best for it to be set objectName when using QgsGui::enableAutoGeometryRestore" );
+  }
+  instance()->mWidgetStateHelper->registerWidget( widget, key );
+}
+
 QgsGui::~QgsGui()
 {
   delete mLayoutItemGuiRegistry;
@@ -80,6 +91,7 @@ QgsGui::~QgsGui()
   delete mSourceSelectProviderRegistry;
   delete mShortcutsManager;
   delete mNative;
+  delete mWidgetStateHelper;
 }
 
 QgsGui::QgsGui()
@@ -96,5 +108,5 @@ QgsGui::QgsGui()
   mMapLayerActionRegistry = new QgsMapLayerActionRegistry();
   mSourceSelectProviderRegistry = new QgsSourceSelectProviderRegistry();
   mLayoutItemGuiRegistry = new QgsLayoutItemGuiRegistry();
-  mLayoutItemGuiRegistry->populate();
+  mWidgetStateHelper = new QgsWidgetStateHelper();
 }

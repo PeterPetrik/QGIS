@@ -34,10 +34,12 @@ class QgsTransformAlgorithm : public QgsProcessingFeatureBasedAlgorithm
   public:
 
     QgsTransformAlgorithm() = default;
+    Flags flags() const override;
     QString name() const override;
     QString displayName() const override;
-    virtual QStringList tags() const override;
+    QStringList tags() const override;
     QString group() const override;
+    QString groupId() const override;
     QString shortHelpString() const override;
     QgsTransformAlgorithm *createInstance() const override SIP_FACTORY;
 
@@ -48,13 +50,14 @@ class QgsTransformAlgorithm : public QgsProcessingFeatureBasedAlgorithm
     QString outputName() const override;
 
     bool prepareAlgorithm( const QVariantMap &parameters, QgsProcessingContext &context, QgsProcessingFeedback *feedback ) override;
-    QgsFeature processFeature( const QgsFeature &feature, QgsProcessingFeedback *feedback ) override;
+    QgsFeature processFeature( const QgsFeature &feature,  QgsProcessingContext &context, QgsProcessingFeedback *feedback ) override;
 
   private:
 
     bool mCreatedTransform = false;
     QgsCoordinateReferenceSystem mDestCrs;
     QgsCoordinateTransform mTransform;
+    QgsCoordinateTransformContext mTransformContext;
 
 };
 

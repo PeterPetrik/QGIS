@@ -40,6 +40,16 @@ QString QgsSplitWithLinesAlgorithm::group() const
   return QObject::tr( "Vector overlay" );
 }
 
+QString QgsSplitWithLinesAlgorithm::groupId() const
+{
+  return QStringLiteral( "vectoroverlay" );
+}
+
+QgsProcessingAlgorithm::Flags QgsSplitWithLinesAlgorithm::flags() const
+{
+  return QgsProcessingAlgorithm::flags() | QgsProcessingAlgorithm::FlagCanRunInBackground;
+}
+
 void QgsSplitWithLinesAlgorithm::initAlgorithm( const QVariantMap & )
 {
   addParameter( new QgsProcessingParameterFeatureSource( QStringLiteral( "INPUT" ),
@@ -52,8 +62,7 @@ void QgsSplitWithLinesAlgorithm::initAlgorithm( const QVariantMap & )
 QString QgsSplitWithLinesAlgorithm::shortHelpString() const
 {
   return QObject::tr( "This algorithm splits the lines or polygons in one layer using the lines in another layer to define the breaking points. "
-                      "Intersection between geometries in both layers are considered as split points.\n\n"
-                      "Output will contain multi geometries for split features." );
+                      "Intersection between geometries in both layers are considered as split points." );
 }
 
 QgsSplitWithLinesAlgorithm *QgsSplitWithLinesAlgorithm::createInstance() const
@@ -83,7 +92,7 @@ QVariantMap QgsSplitWithLinesAlgorithm::processAlgorithm( const QVariantMap &par
   QMap< QgsFeatureId, QgsGeometry > splitGeoms;
   QgsFeatureRequest request;
   request.setSubsetOfAttributes( QgsAttributeList() );
-  request.setDestinationCrs( source->sourceCrs() );
+  request.setDestinationCrs( source->sourceCrs(), context.transformContext() );
 
   QgsFeatureIterator splitLines = linesSource->getFeatures( request );
   QgsFeature aSplitFeature;
@@ -121,12 +130,12 @@ QVariantMap QgsSplitWithLinesAlgorithm::processAlgorithm( const QVariantMap &par
     QgsGeometry inGeom = inFeatureA.geometry();
     outFeat.setAttributes( inFeatureA.attributes() );
 
-    QList< QgsGeometry > inGeoms = inGeom.asGeometryCollection();
+    QVector< QgsGeometry > inGeoms = inGeom.asGeometryCollection();
 
     const QgsFeatureIds lines = spatialIndex.intersects( inGeom.boundingBox() ).toSet();
     if ( !lines.empty() ) // has intersection of bounding boxes
     {
-      QList< QgsGeometry > splittingLines;
+      QVector< QgsGeometry > splittingLines;
 
       // use prepared geometries for faster intersection tests
       std::unique_ptr< QgsGeometryEngine > engine;
@@ -140,13 +149,13 @@ QVariantMap QgsSplitWithLinesAlgorithm::processAlgorithm( const QVariantMap &par
         QgsGeometry splitGeom = splitGeoms.value( line );
         if ( !engine )
         {
-          engine.reset( QgsGeometry::createGeometryEngine( inGeom.geometry() ) );
+          engine.reset( QgsGeometry::createGeometryEngine( inGeom.constGet() ) );
           engine->prepareGeometry();
         }
 
-        if ( engine->intersects( splitGeom.geometry() ) )
+        if ( engine->intersects( splitGeom.constGet() ) )
         {
-          QList< QgsGeometry > splitGeomParts = splitGeom.asGeometryCollection();
+          QVector< QgsGeometry > splitGeomParts = splitGeom.asGeometryCollection();
           splittingLines.append( splitGeomParts );
         }
       }
@@ -155,11 +164,11 @@ QVariantMap QgsSplitWithLinesAlgorithm::processAlgorithm( const QVariantMap &par
       {
         for ( const QgsGeometry &splitGeom : qgis::as_const( splittingLines ) )
         {
-          QList<QgsPointXY> splitterPList;
-          QList< QgsGeometry > outGeoms;
+          QVector<QgsPointXY> splitterPList;
+          QVector< QgsGeometry > outGeoms;
 
           // use prepared geometries for faster intersection tests
-          std::unique_ptr< QgsGeometryEngine > splitGeomEngine( QgsGeometry::createGeometryEngine( splitGeom.geometry() ) );
+          std::unique_ptr< QgsGeometryEngine > splitGeomEngine( QgsGeometry::createGeometryEngine( splitGeom.constGet() ) );
           splitGeomEngine->prepareGeometry();
           while ( !inGeoms.empty() )
           {
@@ -172,12 +181,12 @@ QVariantMap QgsSplitWithLinesAlgorithm::processAlgorithm( const QVariantMap &par
             if ( !inGeom )
               continue;
 
-            if ( splitGeomEngine->intersects( inGeom.geometry() ) )
+            if ( splitGeomEngine->intersects( inGeom.constGet() ) )
             {
               QgsGeometry before = inGeom;
               if ( splitterPList.empty() )
               {
-                const QgsCoordinateSequence sequence = splitGeom.geometry()->coordinateSequence();
+                const QgsCoordinateSequence sequence = splitGeom.constGet()->coordinateSequence();
                 for ( const QgsRingSequence &part : sequence )
                 {
                   for ( const QgsPointSequence &ring : part )
@@ -190,15 +199,15 @@ QVariantMap QgsSplitWithLinesAlgorithm::processAlgorithm( const QVariantMap &par
                 }
               }
 
-              QList< QgsGeometry > newGeometries;
-              QList<QgsPointXY> topologyTestPoints;
+              QVector< QgsGeometry > newGeometries;
+              QVector<QgsPointXY> topologyTestPoints;
               QgsGeometry::OperationResult result = inGeom.splitGeometry( splitterPList, newGeometries, false, topologyTestPoints );
 
               // splitGeometry: If there are several intersections
               // between geometry and splitLine, only the first one is considered.
               if ( result == QgsGeometry::Success ) // split occurred
               {
-                if ( inGeom.equals( before ) )
+                if ( inGeom.isGeosEqual( before ) )
                 {
                   // bug in splitGeometry: sometimes it returns 0 but
                   // the geometry is unchanged
@@ -226,7 +235,7 @@ QVariantMap QgsSplitWithLinesAlgorithm::processAlgorithm( const QVariantMap &par
       }
     }
 
-    QList< QgsGeometry > parts;
+    QVector< QgsGeometry > parts;
     for ( const QgsGeometry &aGeom : qgis::as_const( inGeoms ) )
     {
       if ( feedback->isCanceled() )
@@ -237,12 +246,12 @@ QVariantMap QgsSplitWithLinesAlgorithm::processAlgorithm( const QVariantMap &par
       bool passed = true;
       if ( QgsWkbTypes::geometryType( aGeom.wkbType() ) == QgsWkbTypes::LineGeometry )
       {
-        int numPoints = aGeom.geometry()->nCoordinates();
+        int numPoints = aGeom.constGet()->nCoordinates();
 
         if ( numPoints <= 2 )
         {
           if ( numPoints == 2 )
-            passed = !static_cast< QgsCurve * >( aGeom.geometry() )->isClosed(); // tests if vertex 0 = vertex 1
+            passed = !static_cast< const QgsCurve * >( aGeom.constGet() )->isClosed(); // tests if vertex 0 = vertex 1
           else
             passed = false; // sometimes splitting results in lines of zero length
         }
@@ -252,9 +261,9 @@ QVariantMap QgsSplitWithLinesAlgorithm::processAlgorithm( const QVariantMap &par
         parts.append( aGeom );
     }
 
-    if ( !parts.empty() )
+    for ( const QgsGeometry &g : parts )
     {
-      outFeat.setGeometry( QgsGeometry::collectGeometry( parts ) );
+      outFeat.setGeometry( g );
       sink->addFeature( outFeat, QgsFeatureSink::FastInsert );
     }
 

@@ -16,13 +16,12 @@
 #ifndef QGSQUICKSCALEBARKIT_H
 #define QGSQUICKSCALEBARKIT_H
 
-#include "qgis_quick.h"
-
 #include <QObject>
 #include <QString>
 
+#include "qgis_quick.h"
+
 class QgsQuickMapSettings;
-class QgsDistanceArea;
 
 /**
  * \ingroup quick
@@ -37,47 +36,61 @@ class QgsDistanceArea;
  * distance in meters or kilometers (int) rounded to "nice" number (e.g. 72.4 to 100)
  * and units text (e.g. km)
  *
+ * \note QML Type: ScaleBarKit
+ *
  * \since QGIS 3.2
  */
 class QUICK_EXPORT QgsQuickScaleBarKit : public QObject
 {
-  Q_OBJECT
+    Q_OBJECT
 
-  Q_PROPERTY( int preferredWidth MEMBER mPreferredWidth NOTIFY preferredWidthChanged)
-  Q_PROPERTY( QgsQuickMapSettings* mapSettings MEMBER mMapSettings WRITE setMapSettings NOTIFY mapSettingsChanged)
+    Q_PROPERTY( QgsQuickMapSettings *mapSettings MEMBER mMapSettings WRITE setMapSettings NOTIFY mapSettingsChanged )
 
-  Q_PROPERTY( QString units READ units NOTIFY scaleBarChanged )
-  Q_PROPERTY( int distance READ distance NOTIFY scaleBarChanged )
-  Q_PROPERTY( int width READ width NOTIFY scaleBarChanged )
+    /**
+      * Preferred width of scalebar in pixels. Defaults to 300
+      */
+    Q_PROPERTY( int preferredWidth MEMBER mPreferredWidth NOTIFY preferredWidthChanged )
 
-public:
-  explicit QgsQuickScaleBarKit(QObject *parent = 0);
-  ~QgsQuickScaleBarKit();
+    /**
+      * Units of distance (e.g. km or m) Read-only (result)
+      */
+    Q_PROPERTY( QString units READ units NOTIFY scaleBarChanged )
 
-  void setMapSettings(QgsQuickMapSettings* mapSettings);
-  int width() const;
-  int distance() const;
-  QString units() const;
+    /**
+      * Distance rounded to "nice" number (e.g. 100, 20). To be used with units property for labels. Read-only (result)
+      */
+    Q_PROPERTY( int distance READ distance NOTIFY scaleBarChanged )
 
-signals:
-  void scaleBarChanged();
-  void mapSettingsChanged();
-  void preferredWidthChanged();
+    /**
+      * Calculated width of scalebar in pixels representing distance + units. Differs minimum possible from prefferedWidth to
+      * get "nice" distance number.
+      */
+    Q_PROPERTY( int width READ width NOTIFY scaleBarChanged )
 
-public slots:
-  void updateScaleBar();
-  void setCrs();
+  public:
+    explicit QgsQuickScaleBarKit( QObject *parent = 0 );
+    ~QgsQuickScaleBarKit();
 
-private:
-  double screenUnitsToMeters() const;
+    void setMapSettings( QgsQuickMapSettings *mapSettings );
+    int width() const;
+    int distance() const;
+    QString units() const;
 
-  QgsQuickMapSettings* mMapSettings;
-  QgsDistanceArea* mDistanceArea;
+  signals:
+    void scaleBarChanged();
+    void mapSettingsChanged();
+    void preferredWidthChanged();
 
-  int mPreferredWidth; // pixels
-  int mWidth; // pixels
-  int mDistance; // in meters or kilometers, rounded
-  QString mUnits; // km or m
+  public slots:
+    void updateScaleBar();
+
+  private:
+    QgsQuickMapSettings *mMapSettings;
+
+    int mPreferredWidth; // pixels
+    int mWidth; // pixels
+    int mDistance; // in meters or kilometers, rounded
+    QString mUnits; // km or m
 };
 
 

@@ -1,24 +1,23 @@
 ############################################################
 # sources
 SET(QGIS_QUICK_GUI_MOC_HDRS
-  qgsquickmapcanvasmap.h
-  qgsquickmapsettings.h
-  qgsquickscalebarkit.h
-  qgsquickidentifykit.h
-  qgsquickidentifyresult.h
   qgsquickattributeformmodel.h
   qgsquickattributeformmodelbase.h
+  qgsquickcoordinatetransformer.h
   qgsquickfeaturemodel.h
   qgsquickfeaturemodelhighlight.h
-  qgsquickgeometry.h
+  qgsquickidentifykit.h
+  qgsquickidentifyresult.h
+  qgsquickmapcanvasmap.h
+  qgsquickmapsettings.h
   qgsquickmaptransform.h
-  qgsquickrubberband.h
-  qgsquickrubberbandmodel.h
+  qgsquickmessagelogmodel.h
+  qgsquickpositionkit.h
+  qgsquickscalebarkit.h
+  qgsquicksimulatedpositionsource.h
+  qgsquickstyle.h
   qgsquicksubmodel.h
   qgsquickutils.h
-  qgsquickstyle.h
-  qgsquickpositionkit.h
-  qgsquickcoordinatetransformer.h
 )
 
 SET(QGIS_QUICK_GUI_HDRS
@@ -27,25 +26,24 @@ SET(QGIS_QUICK_GUI_HDRS
 )
 
 SET(QGIS_QUICK_GUI_SRC
-  qgsquickmapcanvasmap.cpp
-  qgsquickmapsettings.cpp
-  qgsquickscalebarkit.cpp
-  qgsquickidentifykit.cpp
-  qgsquickidentifyresult.cpp
   qgsquickattributeformmodel.cpp
   qgsquickattributeformmodelbase.cpp
+  qgsquickcoordinatetransformer.cpp
   qgsquickfeaturemodel.cpp
   qgsquickfeaturemodelhighlight.cpp
-  qgsquickgeometry.cpp
+  qgsquickidentifykit.cpp
+  qgsquickidentifyresult.cpp
+  qgsquickmapcanvasmap.cpp
+  qgsquickmapsettings.cpp
   qgsquickmaptransform.cpp
-  qgsquickrubberband.cpp
-  qgsquickrubberbandmodel.cpp
+  qgsquickmessagelogmodel.cpp
+  qgsquickpositionkit.cpp
+  qgsquickscalebarkit.cpp
   qgsquicksgrubberband.cpp
+  qgsquicksimulatedpositionsource.cpp
+  qgsquickstyle.cpp
   qgsquicksubmodel.cpp
   qgsquickutils.cpp
-  qgsquickpositionkit.cpp
-  qgsquickstyle.cpp
-  qgsquickcoordinatetransformer.cpp
 )
 
 INCLUDE_DIRECTORIES(
@@ -107,7 +105,7 @@ ADD_LIBRARY(qgis_quick SHARED
     ${QGIS_QUICK_GUI_MOC_HDRS}
     ${QGIS_QUICK_GUI_MOC_SRCS}
     ${QGIS_QUICK_GUI_HDRS})
-TARGET_LINK_LIBRARIES(qgis_quick Qt5::Quick Qt5::Qml Qt5::Xml Qt5::Widgets Qt5::Concurrent Qt5::Positioning qgis_core)
+TARGET_LINK_LIBRARIES(qgis_quick Qt5::Quick Qt5::Qml Qt5::Xml Qt5::Concurrent Qt5::Positioning qgis_core)
 IF(CMAKE_SYSTEM_NAME STREQUAL "Android")
   TARGET_LINK_LIBRARIES(qgis_quick Qt5::AndroidExtras)
 ENDIF(CMAKE_SYSTEM_NAME STREQUAL "Android")

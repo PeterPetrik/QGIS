@@ -13,12 +13,15 @@
  *                                                                         *
  ***************************************************************************/
 
+#include "qgseditorwidgetsetup.h"
+#include "qgsvectorlayer.h"
+
 #include "qgsquickattributeformmodelbase.h"
 #include "qgsquickattributeformmodel.h"
-#include <qgsvectorlayer.h>
-#include <qgseditorwidgetsetup.h>
 
-QgsQuickAttributeFormModelBase::QgsQuickAttributeFormModelBase( QObject* parent )
+/// @cond PRIVATE
+
+QgsQuickAttributeFormModelBase::QgsQuickAttributeFormModelBase( QObject *parent )
   : QStandardItemModel( 0, 1, parent )
   , mFeatureModel( nullptr )
   , mLayer( nullptr )
@@ -50,7 +53,7 @@ QHash<int, QByteArray> QgsQuickAttributeFormModelBase::roleNames() const
   return roles;
 }
 
-bool QgsQuickAttributeFormModelBase::setData( const QModelIndex& index, const QVariant& value, int role )
+bool QgsQuickAttributeFormModelBase::setData( const QModelIndex &index, const QVariant &value, int role )
 {
   if ( data( index, role ) != value )
   {
@@ -58,7 +61,7 @@ bool QgsQuickAttributeFormModelBase::setData( const QModelIndex& index, const QV
     {
       case QgsQuickAttributeFormModel::RememberValue:
       {
-        QStandardItem* item = itemFromIndex( index );
+        QStandardItem *item = itemFromIndex( index );
         int fieldIndex = item->data( QgsQuickAttributeFormModel::FieldIndex ).toInt();
         mFeatureModel->setData( mFeatureModel->index( fieldIndex ), value, QgsQuickFeatureModel::RememberAttribute );
         item->setData( value, QgsQuickAttributeFormModel::RememberValue );
@@ -67,7 +70,7 @@ bool QgsQuickAttributeFormModelBase::setData( const QModelIndex& index, const QV
 
       case QgsQuickAttributeFormModel::AttributeValue:
       {
-        QStandardItem* item = itemFromIndex( index );
+        QStandardItem *item = itemFromIndex( index );
         int fieldIndex = item->data( QgsQuickAttributeFormModel::FieldIndex ).toInt();
         bool changed = mFeatureModel->setData( mFeatureModel->index( fieldIndex ), value, QgsQuickFeatureModel::AttributeValue );
         if ( changed )
@@ -84,17 +87,18 @@ bool QgsQuickAttributeFormModelBase::setData( const QModelIndex& index, const QV
   return false;
 }
 
-QgsQuickFeatureModel* QgsQuickAttributeFormModelBase::featureModel() const
+QgsQuickFeatureModel *QgsQuickAttributeFormModelBase::featureModel() const
 {
   return mFeatureModel;
 }
 
-void QgsQuickAttributeFormModelBase::setFeatureModel( QgsQuickFeatureModel* featureModel )
+void QgsQuickAttributeFormModelBase::setFeatureModel( QgsQuickFeatureModel *featureModel )
 {
   if ( mFeatureModel == featureModel )
     return;
 
-  if (mFeatureModel) {
+  if ( mFeatureModel )
+  {
     disconnect( mFeatureModel, &QgsQuickFeatureModel::layerChanged, this, &QgsQuickAttributeFormModelBase::onLayerChanged );
     disconnect( mFeatureModel, &QgsQuickFeatureModel::featureChanged, this, &QgsQuickAttributeFormModelBase::onFeatureChanged );
     disconnect( mFeatureModel, &QgsQuickFeatureModel::modelReset, this, &QgsQuickAttributeFormModelBase::onFeatureChanged );
@@ -102,7 +106,8 @@ void QgsQuickAttributeFormModelBase::setFeatureModel( QgsQuickFeatureModel* feat
 
   mFeatureModel = featureModel;
 
-  if (mFeatureModel) {
+  if ( mFeatureModel )
+  {
     connect( mFeatureModel, &QgsQuickFeatureModel::layerChanged, this, &QgsQuickAttributeFormModelBase::onLayerChanged );
     connect( mFeatureModel, &QgsQuickFeatureModel::featureChanged, this, &QgsQuickAttributeFormModelBase::onFeatureChanged );
     connect( mFeatureModel, &QgsQuickFeatureModel::modelReset, this, &QgsQuickAttributeFormModelBase::onFeatureChanged );
@@ -121,7 +126,7 @@ void QgsQuickAttributeFormModelBase::onLayerChanged()
 
   if ( mLayer )
   {
-    QgsAttributeEditorContainer* root;
+    QgsAttributeEditorContainer *root;
     delete mTemporaryContainer;
     mTemporaryContainer = nullptr;
 
@@ -140,13 +145,13 @@ void QgsQuickAttributeFormModelBase::onLayerChanged()
     invisibleRootItem()->setColumnCount( 1 );
     if ( mHasTabs )
     {
-      Q_FOREACH( QgsAttributeEditorElement* element, root->children() )
+      Q_FOREACH ( QgsAttributeEditorElement *element, root->children() )
       {
         if ( element->type() == QgsAttributeEditorElement::AeTypeContainer )
         {
-          QgsAttributeEditorContainer* container = static_cast<QgsAttributeEditorContainer*>( element );
+          QgsAttributeEditorContainer *container = static_cast<QgsAttributeEditorContainer *>( element );
 
-          QStandardItem* item = new QStandardItem();
+          QStandardItem *item = new QStandardItem();
           item->setData( element->name(), QgsQuickAttributeFormModel::Name );
           item->setData( "container", QgsQuickAttributeFormModel::ElementType );
           item->setData( true, QgsQuickAttributeFormModel::CurrentlyVisible );
@@ -154,17 +159,17 @@ void QgsQuickAttributeFormModelBase::onLayerChanged()
 
           if ( container->visibilityExpression().enabled() )
           {
-            mVisibilityExpressions.append( qMakePair( container->visibilityExpression().data(), QVector<QStandardItem*>() << item ) );
+            mVisibilityExpressions.append( qMakePair( container->visibilityExpression().data(), QVector<QStandardItem *>() << item ) );
           }
 
-          QVector<QStandardItem*> dummy;
+          QVector<QStandardItem *> dummy;
           flatten( container, item, QString(), dummy );
         }
       }
     }
     else
     {
-      QVector<QStandardItem*> dummy;
+      QVector<QStandardItem *> dummy;
       flatten( invisibleRootContainer(), invisibleRootItem(), QString(), dummy );
     }
 
@@ -182,27 +187,27 @@ void QgsQuickAttributeFormModelBase::onFeatureChanged()
   updateVisibility();
 }
 
-QgsAttributeEditorContainer* QgsQuickAttributeFormModelBase::generateRootContainer() const
+QgsAttributeEditorContainer *QgsQuickAttributeFormModelBase::generateRootContainer() const
 {
-  QgsAttributeEditorContainer* root = new QgsAttributeEditorContainer( QString(), nullptr );
+  QgsAttributeEditorContainer *root = new QgsAttributeEditorContainer( QString(), nullptr );
   QgsFields fields = mLayer->fields();
   for ( int i = 0; i < fields.size(); ++i )
   {
     if ( fields.at( i ).editorWidgetSetup().type() != QStringLiteral( "Hidden" ) )
     {
-      QgsAttributeEditorField* field = new QgsAttributeEditorField( fields.at( i ).name(), i, root );
+      QgsAttributeEditorField *field = new QgsAttributeEditorField( fields.at( i ).name(), i, root );
       root->addChildElement( field );
     }
   }
   return root;
 }
 
-QgsAttributeEditorContainer* QgsQuickAttributeFormModelBase::invisibleRootContainer() const
+QgsAttributeEditorContainer *QgsQuickAttributeFormModelBase::invisibleRootContainer() const
 {
   return mTemporaryContainer ? mTemporaryContainer : mLayer->editFormConfig().invisibleRootContainer();
 }
 
-void QgsQuickAttributeFormModelBase::updateAttributeValue( QStandardItem* item )
+void QgsQuickAttributeFormModelBase::updateAttributeValue( QStandardItem *item )
 {
   if ( item->data( QgsQuickAttributeFormModel::ElementType ) == "field" )
   {
@@ -217,17 +222,17 @@ void QgsQuickAttributeFormModelBase::updateAttributeValue( QStandardItem* item )
   }
 }
 
-void QgsQuickAttributeFormModelBase::flatten( QgsAttributeEditorContainer* container, QStandardItem* parent, const QString& visibilityExpressions, QVector<QStandardItem*>& items )
+void QgsQuickAttributeFormModelBase::flatten( QgsAttributeEditorContainer *container, QStandardItem *parent, const QString &visibilityExpressions, QVector<QStandardItem *> &items )
 {
   QString visibilityExpression = visibilityExpressions;
 
-  Q_FOREACH( QgsAttributeEditorElement* element, container->children() )
+  Q_FOREACH ( QgsAttributeEditorElement *element, container->children() )
   {
     switch ( element->type() )
     {
       case QgsAttributeEditorElement::AeTypeContainer:
       {
-        QgsAttributeEditorContainer* container = static_cast<QgsAttributeEditorContainer*>( element );
+        QgsAttributeEditorContainer *container = static_cast<QgsAttributeEditorContainer *>( element );
         if ( container->visibilityExpression().enabled() )
         {
           if ( visibilityExpression.isNull() )
@@ -236,7 +241,7 @@ void QgsQuickAttributeFormModelBase::flatten( QgsAttributeEditorContainer* conta
             visibilityExpression += " AND " + container->visibilityExpression().data().expression();
         }
 
-        QVector<QStandardItem*> newItems;
+        QVector<QStandardItem *> newItems;
         flatten( container, parent, visibilityExpression, newItems );
         if ( !visibilityExpression.isEmpty() )
           mVisibilityExpressions.append( qMakePair( QgsExpression( visibilityExpression ), newItems ) );
@@ -245,14 +250,14 @@ void QgsQuickAttributeFormModelBase::flatten( QgsAttributeEditorContainer* conta
 
       case QgsAttributeEditorElement::AeTypeField:
       {
-        QgsAttributeEditorField* editorField = static_cast<QgsAttributeEditorField*>( element );
+        QgsAttributeEditorField *editorField = static_cast<QgsAttributeEditorField *>( element );
         int fieldIndex = editorField->idx();
         if ( fieldIndex < 0 || fieldIndex >= mLayer->fields().size() )
           continue;
 
         QgsField field = mLayer->fields().at( fieldIndex );
 
-        QStandardItem* item = new QStandardItem();
+        QStandardItem *item = new QStandardItem();
 
 
         item->setData( mLayer->attributeDisplayName( fieldIndex ), QgsQuickAttributeFormModel::Name );
@@ -298,7 +303,7 @@ void QgsQuickAttributeFormModelBase::updateVisibility( int fieldIndex )
   mExpressionContext.setFields( fields );
   mExpressionContext.setFeature( mFeatureModel->feature() );
 
-  Q_FOREACH( const VisibilityExpression& it, mVisibilityExpressions )
+  Q_FOREACH ( const VisibilityExpression &it, mVisibilityExpressions )
   {
     if ( fieldIndex == -1 || it.first.referencedAttributeIndexes( fields ).contains( fieldIndex ) )
     {
@@ -306,7 +311,7 @@ void QgsQuickAttributeFormModelBase::updateVisibility( int fieldIndex )
       exp.prepare( &mExpressionContext );
 
       bool visible = exp.evaluate( &mExpressionContext ).toInt();
-      Q_FOREACH( QStandardItem* item, it.second )
+      Q_FOREACH ( QStandardItem *item, it.second )
       {
         if ( item->data( QgsQuickAttributeFormModel::CurrentlyVisible ).toBool() != visible )
         {
@@ -317,10 +322,10 @@ void QgsQuickAttributeFormModelBase::updateVisibility( int fieldIndex )
   }
 
   bool allConstraintsValid = true;
-  QMap<QStandardItem*, QgsExpression>::ConstIterator constraintIterator( mConstraints.constBegin() );
+  QMap<QStandardItem *, QgsExpression>::ConstIterator constraintIterator( mConstraints.constBegin() );
   for ( ; constraintIterator != mConstraints.constEnd(); ++constraintIterator )
   {
-    QStandardItem* item = constraintIterator.key();
+    QStandardItem *item = constraintIterator.key();
     if ( item->data( QgsQuickAttributeFormModel::FieldIndex ) == fieldIndex || fieldIndex == -1 )
     {
       QgsExpression exp = constraintIterator.value();
@@ -347,7 +352,7 @@ bool QgsQuickAttributeFormModelBase::constraintsValid() const
   return mConstraintsValid;
 }
 
-QVariant QgsQuickAttributeFormModelBase::attribute( const QString& name )
+QVariant QgsQuickAttributeFormModelBase::attribute( const QString &name )
 {
   if ( !mLayer )
     return QVariant();
@@ -388,3 +393,5 @@ void QgsQuickAttributeFormModelBase::create()
 {
   mFeatureModel->create();
 }
+
+/// @endcond

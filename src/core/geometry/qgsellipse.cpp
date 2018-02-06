@@ -84,7 +84,7 @@ QgsEllipse QgsEllipse::fromCenter2Points( const QgsPoint &center, const QgsPoint
   double azimuth = 180.0 / M_PI * QgsGeometryUtils::lineAngle( center.x(), center.y(), pt1.x(), pt1.y() );
   double axis_a = center.distance( pt1 );
 
-  double length = pt2.distance( QgsGeometryUtils::projPointOnSegment( pt2, center, pt1 ) );
+  double length = pt2.distance( QgsGeometryUtils::projectPointOnSegment( pt2, center, pt1 ) );
   QgsPoint pp = center.project( length, 90 + azimuth );
   double axis_b = center.distance( pp );
 
@@ -210,9 +210,9 @@ QgsPointSequence QgsEllipse::points( unsigned int segments ) const
   return pts;
 }
 
-QgsPolygonV2 *QgsEllipse::toPolygon( unsigned int segments ) const
+QgsPolygon *QgsEllipse::toPolygon( unsigned int segments ) const
 {
-  std::unique_ptr<QgsPolygonV2> polygon( new QgsPolygonV2() );
+  std::unique_ptr<QgsPolygon> polygon( new QgsPolygon() );
   if ( segments < 3 )
   {
     return polygon.release();
@@ -233,6 +233,7 @@ QgsLineString *QgsEllipse::toLineString( unsigned int segments ) const
 
   QgsPointSequence pts;
   pts = points( segments );
+  pts.append( pts.at( 0 ) ); // close linestring
 
   ext->setPoints( pts );
 
@@ -277,9 +278,9 @@ QString QgsEllipse::toString( int pointPrecision, int axisPrecision, int azimuth
   return rep;
 }
 
-QgsPolygonV2 *QgsEllipse::orientedBoundingBox() const
+QgsPolygon *QgsEllipse::orientedBoundingBox() const
 {
-  std::unique_ptr<QgsPolygonV2> ombb( new QgsPolygonV2() );
+  std::unique_ptr<QgsPolygon> ombb( new QgsPolygon() );
   if ( isEmpty() )
   {
     return ombb.release();

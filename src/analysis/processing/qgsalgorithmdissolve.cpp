@@ -23,8 +23,13 @@
 // QgsCollectorAlgorithm
 //
 
+QgsProcessingAlgorithm::Flags QgsCollectorAlgorithm::flags() const
+{
+  return QgsProcessingAlgorithm::flags() | QgsProcessingAlgorithm::FlagCanRunInBackground;
+}
+
 QVariantMap QgsCollectorAlgorithm::processCollection( const QVariantMap &parameters, QgsProcessingContext &context, QgsProcessingFeedback *feedback,
-    const std::function<QgsGeometry( const QList< QgsGeometry >& )> &collector, int maxQueueLength )
+    const std::function<QgsGeometry( const QVector< QgsGeometry >& )> &collector, int maxQueueLength )
 {
   std::unique_ptr< QgsFeatureSource > source( parameterAsSource( parameters, QStringLiteral( "INPUT" ), context ) );
   if ( !source )
@@ -51,7 +56,7 @@ QVariantMap QgsCollectorAlgorithm::processCollection( const QVariantMap &paramet
     // dissolve all - not using fields
     bool firstFeature = true;
     // we dissolve geometries in blocks using unaryUnion
-    QList< QgsGeometry > geomQueue;
+    QVector< QgsGeometry > geomQueue;
     QgsFeature outputFeature;
 
     while ( it.nextFeature( f ) )
@@ -97,7 +102,7 @@ QVariantMap QgsCollectorAlgorithm::processCollection( const QVariantMap &paramet
     }
 
     QHash< QVariant, QgsAttributes > attributeHash;
-    QHash< QVariant, QList< QgsGeometry > > geometryHash;
+    QHash< QVariant, QVector< QgsGeometry > > geometryHash;
 
     while ( it.nextFeature( f ) )
     {
@@ -181,6 +186,11 @@ QString QgsDissolveAlgorithm::group() const
   return QObject::tr( "Vector geometry" );
 }
 
+QString QgsDissolveAlgorithm::groupId() const
+{
+  return QStringLiteral( "vectorgeometry" );
+}
+
 
 void QgsDissolveAlgorithm::initAlgorithm( const QVariantMap & )
 {
@@ -207,7 +217,7 @@ QgsDissolveAlgorithm *QgsDissolveAlgorithm::createInstance() const
 
 QVariantMap QgsDissolveAlgorithm::processAlgorithm( const QVariantMap &parameters, QgsProcessingContext &context, QgsProcessingFeedback *feedback )
 {
-  return processCollection( parameters, context, feedback, []( const QList< QgsGeometry > &parts )->QgsGeometry
+  return processCollection( parameters, context, feedback, []( const QVector< QgsGeometry > &parts )->QgsGeometry
   {
     return QgsGeometry::unaryUnion( parts );
   }, 10000 );
@@ -237,9 +247,14 @@ QString QgsCollectAlgorithm::group() const
   return QObject::tr( "Vector geometry" );
 }
 
+QString QgsCollectAlgorithm::groupId() const
+{
+  return QStringLiteral( "vectorgeometry" );
+}
+
 QVariantMap QgsCollectAlgorithm::processAlgorithm( const QVariantMap &parameters, QgsProcessingContext &context, QgsProcessingFeedback *feedback )
 {
-  return processCollection( parameters, context, feedback, []( const QList< QgsGeometry > &parts )->QgsGeometry
+  return processCollection( parameters, context, feedback, []( const QVector< QgsGeometry > &parts )->QgsGeometry
   {
     return QgsGeometry::collectGeometry( parts );
   } );

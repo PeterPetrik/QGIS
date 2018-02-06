@@ -31,7 +31,7 @@ QString QgsBufferAlgorithm::displayName() const
 
 QStringList QgsBufferAlgorithm::tags() const
 {
-  return QObject::tr( "buffer,grow" ).split( ',' );
+  return QObject::tr( "buffer,grow,fixed,variable,distance" ).split( ',' );
 }
 
 QString QgsBufferAlgorithm::group() const
@@ -39,10 +39,20 @@ QString QgsBufferAlgorithm::group() const
   return QObject::tr( "Vector geometry" );
 }
 
+QString QgsBufferAlgorithm::groupId() const
+{
+  return QStringLiteral( "vectorgeometry" );
+}
+
 void QgsBufferAlgorithm::initAlgorithm( const QVariantMap & )
 {
   addParameter( new QgsProcessingParameterFeatureSource( QStringLiteral( "INPUT" ), QObject::tr( "Input layer" ) ) );
-  addParameter( new QgsProcessingParameterNumber( QStringLiteral( "DISTANCE" ), QObject::tr( "Distance" ), QgsProcessingParameterNumber::Double, 10 ) );
+
+  auto bufferParam = qgis::make_unique < QgsProcessingParameterNumber >( QStringLiteral( "DISTANCE" ), QObject::tr( "Distance" ), QgsProcessingParameterNumber::Double, 10 );
+  bufferParam->setIsDynamic( true );
+  bufferParam->setDynamicPropertyDefinition( QgsPropertyDefinition( QStringLiteral( "Distance" ), QObject::tr( "Buffer distance" ), QgsPropertyDefinition::Double ) );
+  bufferParam->setDynamicLayerParameterName( QStringLiteral( "INPUT" ) );
+  addParameter( bufferParam.release() );
   addParameter( new QgsProcessingParameterNumber( QStringLiteral( "SEGMENTS" ), QObject::tr( "Segments" ), QgsProcessingParameterNumber::Integer, 5, false, 1 ) );
 
   addParameter( new QgsProcessingParameterEnum( QStringLiteral( "END_CAP_STYLE" ), QObject::tr( "End cap style" ), QStringList() << QObject::tr( "Round" ) << QObject::tr( "Flat" ) << QObject::tr( "Square" ), false ) );
@@ -51,6 +61,11 @@ void QgsBufferAlgorithm::initAlgorithm( const QVariantMap & )
 
   addParameter( new QgsProcessingParameterBoolean( QStringLiteral( "DISSOLVE" ), QObject::tr( "Dissolve result" ), false ) );
   addParameter( new QgsProcessingParameterFeatureSink( QStringLiteral( "OUTPUT" ), QObject::tr( "Buffered" ), QgsProcessing::TypeVectorPolygon ) );
+}
+
+QgsProcessingAlgorithm::Flags QgsBufferAlgorithm::flags() const
+{
+  return QgsProcessingAlgorithm::flags() | QgsProcessingAlgorithm::FlagCanRunInBackground;
 }
 
 QString QgsBufferAlgorithm::shortHelpString() const
@@ -86,7 +101,12 @@ QVariantMap QgsBufferAlgorithm::processAlgorithm( const QVariantMap &parameters,
   double miterLimit = parameterAsDouble( parameters, QStringLiteral( "MITER_LIMIT" ), context );
   double bufferDistance = parameterAsDouble( parameters, QStringLiteral( "DISTANCE" ), context );
   bool dynamicBuffer = QgsProcessingParameters::isDynamic( parameters, QStringLiteral( "DISTANCE" ) );
-  const QgsProcessingParameterDefinition *distanceParamDef = parameterDefinition( QStringLiteral( "DISTANCE" ) );
+  QgsExpressionContext expressionContext = createExpressionContext( parameters, context, dynamic_cast< QgsProcessingFeatureSource * >( source.get() ) );
+  QgsProperty bufferProperty;
+  if ( dynamicBuffer )
+  {
+    bufferProperty = parameters.value( QStringLiteral( "DISTANCE" ) ).value< QgsProperty >();
+  }
 
   long count = source->featureCount();
 
@@ -96,7 +116,7 @@ QVariantMap QgsBufferAlgorithm::processAlgorithm( const QVariantMap &parameters,
   double step = count > 0 ? 100.0 / count : 1;
   int current = 0;
 
-  QList< QgsGeometry > bufferedGeometriesForDissolve;
+  QVector< QgsGeometry > bufferedGeometriesForDissolve;
   QgsAttributes dissolveAttrs;
 
   while ( it.nextFeature( f ) )
@@ -111,13 +131,14 @@ QVariantMap QgsBufferAlgorithm::processAlgorithm( const QVariantMap &parameters,
     QgsFeature out = f;
     if ( out.hasGeometry() )
     {
+      double distance =  bufferDistance;
       if ( dynamicBuffer )
       {
-        context.expressionContext().setFeature( f );
-        bufferDistance = QgsProcessingParameters::parameterAsDouble( distanceParamDef, parameters, context );
+        expressionContext.setFeature( f );
+        distance = bufferProperty.valueAsDouble( expressionContext, bufferDistance );
       }
 
-      QgsGeometry outputGeometry = f.geometry().buffer( bufferDistance, segments, endCapStyle, joinStyle, miterLimit );
+      QgsGeometry outputGeometry = f.geometry().buffer( distance, segments, endCapStyle, joinStyle, miterLimit );
       if ( !outputGeometry )
       {
         QgsMessageLog::logMessage( QObject::tr( "Error calculating buffer for feature %1" ).arg( f.id() ), QObject::tr( "Processing" ), QgsMessageLog::WARNING );

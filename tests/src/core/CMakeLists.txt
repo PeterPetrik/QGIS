@@ -1,7 +1,3 @@
-# Standard includes and utils to compile into all tests.
-#SET (util_SRCS qgscompositionchecker.cpp)
-
-
 #####################################################
 # Don't forget to include output directory, otherwise
 # the UI file won't be wrapped!
@@ -10,7 +6,7 @@ INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_SOURCE_DIR}/src/core
   ${CMAKE_SOURCE_DIR}/src/annotations
   ${CMAKE_SOURCE_DIR}/src/core/auth
-  ${CMAKE_SOURCE_DIR}/src/core/composer
+  ${CMAKE_SOURCE_DIR}/src/core/dxf
   ${CMAKE_SOURCE_DIR}/src/core/expression
   ${CMAKE_SOURCE_DIR}/src/core/geometry
   ${CMAKE_SOURCE_DIR}/src/core/layout
@@ -72,8 +68,8 @@ ENDMACRO (ADD_QGIS_TEST)
 SET(TESTS
  testqgs25drenderer.cpp
  testqgsapplication.cpp
- testqgsatlascomposition.cpp
  testqgsauthcrypto.cpp
+ testqgsauthcertutils.cpp
  testqgsauthconfig.cpp
  testqgsauthmanager.cpp
  testqgsblendmodes.cpp
@@ -81,23 +77,7 @@ SET(TESTS
  testqgsclipper.cpp
  testqgscolorscheme.cpp
  testqgscolorschemeregistry.cpp
- testqgscomposerdd.cpp
- testqgscomposereffects.cpp
- testqgscomposergroup.cpp
- testqgscomposerlabel.cpp
- testqgscomposermapgrid.cpp
- testqgscomposermapoverview.cpp
- testqgscomposermap.cpp
- testqgscomposermodel.cpp
- testqgscomposermultiframe.cpp
- testqgscomposerobject.cpp
- testqgscomposerpaper.cpp
- testqgscomposerpicture.cpp
- testqgscomposerrotation.cpp
- testqgscomposerscalebar.cpp
- testqgscomposershapes.cpp
- testqgscomposertablev2.cpp
- testqgscomposerutils.cpp
+ testqgscompositionconverter.cpp
  testqgsconnectionpool.cpp
  testcontrastenhancements.cpp
  testqgscoordinatereferencesystem.cpp
@@ -108,6 +88,7 @@ SET(TESTS
  testqgsdatasourceuri.cpp
  testqgsdiagram.cpp
  testqgsdistancearea.cpp
+ testqgsdxfexport.cpp
  testqgsellipsemarker.cpp
  testqgsexpressioncontext.cpp
  testqgsexpression.cpp
@@ -131,12 +112,24 @@ SET(TESTS
  testqgslabelingengine.cpp
  testqgslayertree.cpp
  testqgslayout.cpp
+ testqgslayoutatlas.cpp
  testqgslayoutcontext.cpp
+ testqgslayouthtml.cpp
  testqgslayoutitem.cpp
  testqgslayoutitemgroup.cpp
+ testqgslayoutlabel.cpp
+ testqgslayoutmap.cpp
+ testqgslayoutmapgrid.cpp
+ testqgslayoutmapoverview.cpp
  testqgslayoutmodel.cpp
+ testqgslayoutmultiframe.cpp
  testqgslayoutobject.cpp
  testqgslayoutpage.cpp
+ testqgslayoutpicture.cpp
+ testqgslayoutpolyline.cpp
+ testqgslayoutscalebar.cpp
+ testqgslayoutshapes.cpp
+ testqgslayouttable.cpp
  testqgslayoutunits.cpp
  testqgslayoututils.cpp
  testqgslegendrenderer.cpp
@@ -179,6 +172,7 @@ SET(TESTS
  testqgsstatisticalsummary.cpp
  testqgsstringutils.cpp
  testqgsstyle.cpp
+ testqgssvgcache.cpp
  testqgssvgmarker.cpp
  testqgssymbol.cpp
  testqgstaskmanager.cpp
@@ -193,8 +187,6 @@ SET(TESTS
 
 IF(WITH_QTWEBKIT)
   SET(TESTS ${TESTS}
-      testqgscomposerhtml.cpp
-      testqgscomposition.cpp
         )
 ENDIF(WITH_QTWEBKIT)
 

@@ -34,11 +34,13 @@ class QgsCentroidAlgorithm : public QgsProcessingFeatureBasedAlgorithm
   public:
 
     QgsCentroidAlgorithm() = default;
+    Flags flags() const override;
     void initAlgorithm( const QVariantMap &configuration = QVariantMap() ) override;
     QString name() const override;
     QString displayName() const override;
     QStringList tags() const override;
     QString group() const override;
+    QString groupId() const override;
     QString shortHelpString() const override;
     QgsCentroidAlgorithm *createInstance() const override SIP_FACTORY;
 
@@ -48,7 +50,7 @@ class QgsCentroidAlgorithm : public QgsProcessingFeatureBasedAlgorithm
     QgsProcessing::SourceType outputLayerType() const override { return QgsProcessing::TypeVectorPoint; }
     QgsWkbTypes::Type outputWkbType( QgsWkbTypes::Type inputWkbType ) const override { Q_UNUSED( inputWkbType ); return QgsWkbTypes::Point; }
 
-    QgsFeature processFeature( const QgsFeature &feature, QgsProcessingFeedback *feedback ) override;
+    QgsFeature processFeature( const QgsFeature &feature,  QgsProcessingContext &context, QgsProcessingFeedback *feedback ) override;
 };
 
 ///@endcond PRIVATE

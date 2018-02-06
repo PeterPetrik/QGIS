@@ -47,11 +47,13 @@ class APP_EXPORT QgsAttributeTableDialog : public QDialog, private Ui::QgsAttrib
     /**
      * Constructor
      * \param layer layer pointer
+     * \param initialMode initial filter for dialog
      * \param parent parent object
      * \param flags window flags
      */
-    QgsAttributeTableDialog( QgsVectorLayer *layer, QWidget *parent = nullptr, Qt::WindowFlags flags = Qt::Window );
-    ~QgsAttributeTableDialog();
+    QgsAttributeTableDialog( QgsVectorLayer *layer, QgsAttributeTableFilterModel::FilterMode initialMode = QgsAttributeTableFilterModel::ShowAll, QWidget *parent = nullptr, Qt::WindowFlags flags = Qt::Window );
+
+    ~QgsAttributeTableDialog() override;
 
     QgsExpressionContext createExpressionContext() const override;
 
@@ -217,6 +219,7 @@ class APP_EXPORT QgsAttributeTableDialog : public QDialog, private Ui::QgsAttrib
     void updateFieldFromExpressionSelected();
     void viewModeChanged( QgsAttributeForm::Mode mode );
     void formFilterSet( const QString &filter, QgsAttributeForm::FilterType type );
+    void showContextMenu( QgsActionMenu *menu, const QgsFeatureId fid );
 
   private:
     QMenu *mMenuActions = nullptr;
@@ -228,12 +231,13 @@ class APP_EXPORT QgsAttributeTableDialog : public QDialog, private Ui::QgsAttrib
     QMenu *mFilterColumnsMenu = nullptr;
     QSignalMapper *mFilterActionMapper = nullptr;
 
-    QgsVectorLayer *mLayer = nullptr;
+    QPointer< QgsVectorLayer > mLayer = nullptr;
     QgsSearchWidgetWrapper *mCurrentSearchWidgetWrapper = nullptr;
     QStringList mVisibleFields;
     QgsAttributeEditorContext mEditorContext;
 
     void updateMultiEditButtonState();
+    void deleteFeature( const QgsFeatureId fid );
 
     friend class TestQgsAttributeTable;
 };
@@ -244,9 +248,9 @@ class QgsAttributeTableDock : public QgsDockWidget
     Q_OBJECT
 
   public:
-    QgsAttributeTableDock( const QString &title, QWidget *parent = nullptr, Qt::WindowFlags flags = 0 );
+    QgsAttributeTableDock( const QString &title, QWidget *parent = nullptr, Qt::WindowFlags flags = nullptr );
 
-    virtual void closeEvent( QCloseEvent *ev ) override;
+    void closeEvent( QCloseEvent *ev ) override;
 };
 
 

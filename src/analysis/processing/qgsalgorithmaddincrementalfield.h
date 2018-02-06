@@ -34,10 +34,12 @@ class QgsAddIncrementalFieldAlgorithm : public QgsProcessingFeatureBasedAlgorith
   public:
 
     QgsAddIncrementalFieldAlgorithm() = default;
+    Flags flags() const override;
     QString name() const override;
     QString displayName() const override;
-    virtual QStringList tags() const override;
+    QStringList tags() const override;
     QString group() const override;
+    QString groupId() const override;
     QString shortHelpString() const override;
     QList<int> inputLayerTypes() const override;
     QgsAddIncrementalFieldAlgorithm *createInstance() const override SIP_FACTORY;
@@ -49,13 +51,17 @@ class QgsAddIncrementalFieldAlgorithm : public QgsProcessingFeatureBasedAlgorith
     QgsFields outputFields( const QgsFields &inputFields ) const override;
 
     bool prepareAlgorithm( const QVariantMap &parameters, QgsProcessingContext &context, QgsProcessingFeedback *feedback ) override;
-    QgsFeature processFeature( const QgsFeature &feature, QgsProcessingFeedback *feedback ) override;
+    QgsFeature processFeature( const QgsFeature &feature,  QgsProcessingContext &context, QgsProcessingFeedback *feedback ) override;
 
   private:
 
+    long long mStartValue = 0;
     long long mValue = 0;
     QString mFieldName;
-
+    QHash< QgsAttributes, long long > mGroupedValues;
+    mutable QgsFields mFields;
+    QStringList mGroupedFieldNames;
+    QgsAttributeList mGroupedFields;
 };
 
 ///@endcond PRIVATE

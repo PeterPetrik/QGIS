@@ -39,6 +39,16 @@ QString QgsExtractByExpressionAlgorithm::group() const
   return QObject::tr( "Vector selection" );
 }
 
+QString QgsExtractByExpressionAlgorithm::groupId() const
+{
+  return QStringLiteral( "vectorselection" );
+}
+
+QgsProcessingAlgorithm::Flags QgsExtractByExpressionAlgorithm::flags() const
+{
+  return QgsProcessingAlgorithm::flags() | QgsProcessingAlgorithm::FlagCanRunInBackground;
+}
+
 void QgsExtractByExpressionAlgorithm::initAlgorithm( const QVariantMap & )
 {
   addParameter( new QgsProcessingParameterFeatureSource( QStringLiteral( "INPUT" ), QObject::tr( "Input layer" ) ) );
@@ -87,7 +97,7 @@ QVariantMap QgsExtractByExpressionAlgorithm::processAlgorithm( const QVariantMap
     throw QgsProcessingException( expression.parserErrorString() );
   }
 
-  QgsExpressionContext expressionContext = createExpressionContext( parameters, context );
+  QgsExpressionContext expressionContext = createExpressionContext( parameters, context, dynamic_cast< QgsProcessingFeatureSource * >( source.get() ) );
 
   long count = source->featureCount();
 

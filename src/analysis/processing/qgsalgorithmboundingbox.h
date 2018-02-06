@@ -34,10 +34,12 @@ class QgsBoundingBoxAlgorithm : public QgsProcessingFeatureBasedAlgorithm
   public:
 
     QgsBoundingBoxAlgorithm() = default;
+    Flags flags() const override;
     QString name() const override;
     QString displayName() const override;
-    virtual QStringList tags() const override;
+    QStringList tags() const override;
     QString group() const override;
+    QString groupId() const override;
     QString shortHelpString() const override;
     QgsBoundingBoxAlgorithm *createInstance() const override SIP_FACTORY;
 
@@ -45,7 +47,7 @@ class QgsBoundingBoxAlgorithm : public QgsProcessingFeatureBasedAlgorithm
     QString outputName() const override;
     QgsWkbTypes::Type outputWkbType( QgsWkbTypes::Type ) const override { return QgsWkbTypes::Polygon; }
     QgsFields outputFields( const QgsFields &inputFields ) const override;
-    QgsFeature processFeature( const QgsFeature &feature, QgsProcessingFeedback *feedback ) override;
+    QgsFeature processFeature( const QgsFeature &feature,  QgsProcessingContext &context, QgsProcessingFeedback *feedback ) override;
 
 };
 

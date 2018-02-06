@@ -34,10 +34,12 @@ class QgsSmoothAlgorithm : public QgsProcessingFeatureBasedAlgorithm
   public:
 
     QgsSmoothAlgorithm() = default;
+    Flags flags() const override;
     QString name() const override;
     QString displayName() const override;
-    virtual QStringList tags() const override;
+    QStringList tags() const override;
     QString group() const override;
+    QString groupId() const override;
     QString shortHelpString() const override;
     QgsSmoothAlgorithm *createInstance() const override SIP_FACTORY;
     QList<int> inputLayerTypes() const override;
@@ -47,7 +49,7 @@ class QgsSmoothAlgorithm : public QgsProcessingFeatureBasedAlgorithm
     QString outputName() const override;
     QgsProcessing::SourceType outputLayerType() const override;
     bool prepareAlgorithm( const QVariantMap &parameters, QgsProcessingContext &context, QgsProcessingFeedback *feedback ) override;
-    QgsFeature processFeature( const QgsFeature &feature, QgsProcessingFeedback *feedback ) override;
+    QgsFeature processFeature( const QgsFeature &feature,  QgsProcessingContext &context, QgsProcessingFeedback *feedback ) override;
 
   private:
     int mIterations = 1;

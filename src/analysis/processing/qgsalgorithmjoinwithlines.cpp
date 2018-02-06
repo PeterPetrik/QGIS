@@ -40,6 +40,16 @@ QString QgsJoinWithLinesAlgorithm::group() const
   return QObject::tr( "Vector analysis" );
 }
 
+QString QgsJoinWithLinesAlgorithm::groupId() const
+{
+  return QStringLiteral( "vectoranalysis" );
+}
+
+QgsProcessingAlgorithm::Flags QgsJoinWithLinesAlgorithm::flags() const
+{
+  return QgsProcessingAlgorithm::flags() | QgsProcessingAlgorithm::FlagCanRunInBackground;
+}
+
 void QgsJoinWithLinesAlgorithm::initAlgorithm( const QVariantMap & )
 {
   addParameter( new QgsProcessingParameterFeatureSource( QStringLiteral( "HUBS" ),
@@ -177,9 +187,9 @@ QVariantMap QgsJoinWithLinesAlgorithm::processAlgorithm( const QVariantMap &para
   {
     QgsPoint p;
     if ( feature.geometry().type() == QgsWkbTypes::PointGeometry && !feature.geometry().isMultipart() )
-      p = *static_cast< QgsPoint *>( feature.geometry().geometry() );
+      p = *static_cast< const QgsPoint *>( feature.geometry().constGet() );
     else
-      p = *static_cast< QgsPoint *>( feature.geometry().pointOnSurface().geometry() );
+      p = *static_cast< const QgsPoint *>( feature.geometry().pointOnSurface().constGet() );
     if ( hasZ && !p.is3D() )
       p.addZValue( 0 );
     if ( hasM && !p.isMeasure() )
@@ -215,7 +225,7 @@ QVariantMap QgsJoinWithLinesAlgorithm::processAlgorithm( const QVariantMap &para
       hubAttributes << hubFeature.attribute( j );
     }
 
-    QgsFeatureRequest spokeRequest = QgsFeatureRequest().setDestinationCrs( hubSource->sourceCrs() );
+    QgsFeatureRequest spokeRequest = QgsFeatureRequest().setDestinationCrs( hubSource->sourceCrs(), context.transformContext() );
     spokeRequest.setSubsetOfAttributes( spokeFields2Fetch );
     spokeRequest.setFilterExpression( QgsExpression::createFieldEqualityExpression( fieldSpokeName, hubFeature.attribute( fieldHubIndex ) ) );
 

@@ -62,6 +62,9 @@ class Intersection(QgisAlgorithm):
     def group(self):
         return self.tr('Vector overlay')
 
+    def groupId(self):
+        return 'vectoroverlay'
+
     def __init__(self):
         super().__init__()
 
@@ -129,7 +132,7 @@ class Intersection(QgisAlgorithm):
                                                output_fields, geomType, sourceA.sourceCrs())
 
         outFeat = QgsFeature()
-        indexB = QgsSpatialIndex(sourceB.getFeatures(QgsFeatureRequest().setSubsetOfAttributes([]).setDestinationCrs(sourceA.sourceCrs())), feedback)
+        indexB = QgsSpatialIndex(sourceB.getFeatures(QgsFeatureRequest().setSubsetOfAttributes([]).setDestinationCrs(sourceA.sourceCrs(), context.transformContext())), feedback)
 
         total = 100.0 / sourceA.featureCount() if sourceA.featureCount() else 1
         count = 0
@@ -146,13 +149,13 @@ class Intersection(QgisAlgorithm):
             intersects = indexB.intersects(geom.boundingBox())
 
             request = QgsFeatureRequest().setFilterFids(intersects)
-            request.setDestinationCrs(sourceA.sourceCrs())
+            request.setDestinationCrs(sourceA.sourceCrs(), context.transformContext())
             request.setSubsetOfAttributes(field_indices_b)
 
             engine = None
             if len(intersects) > 0:
                 # use prepared geometries for faster intersection tests
-                engine = QgsGeometry.createGeometryEngine(geom.geometry())
+                engine = QgsGeometry.createGeometryEngine(geom.constGet())
                 engine.prepareGeometry()
 
             for featB in sourceB.getFeatures(request):
@@ -160,11 +163,11 @@ class Intersection(QgisAlgorithm):
                     break
 
                 tmpGeom = featB.geometry()
-                if engine.intersects(tmpGeom.geometry()):
+                if engine.intersects(tmpGeom.constGet()):
                     out_attributes = [featA.attributes()[i] for i in field_indices_a]
                     out_attributes.extend([featB.attributes()[i] for i in field_indices_b])
                     int_geom = QgsGeometry(geom.intersection(tmpGeom))
-                    if int_geom.wkbType() == QgsWkbTypes.Unknown or QgsWkbTypes.flatType(int_geom.geometry().wkbType()) == QgsWkbTypes.GeometryCollection:
+                    if int_geom.wkbType() == QgsWkbTypes.Unknown or QgsWkbTypes.flatType(int_geom.wkbType()) == QgsWkbTypes.GeometryCollection:
                         int_com = geom.combine(tmpGeom)
                         int_geom = QgsGeometry()
                         if int_com:

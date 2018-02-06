@@ -22,6 +22,7 @@
 
 #include "qgsserversettings.h"
 #include "qgswmsparameters.h"
+#include "qgsfeaturefilter.h"
 #include <QDomDocument>
 #include <QMap>
 #include <QPair>
@@ -30,7 +31,7 @@
 
 class QgsCapabilitiesCache;
 class QgsCoordinateReferenceSystem;
-class QgsComposition;
+class QgsPrintLayout;
 class QgsConfigParser;
 class QgsFeature;
 class QgsFeatureRenderer;
@@ -56,6 +57,7 @@ class QImage;
 class QPaintDevice;
 class QPainter;
 class QStandardItem;
+class QgsLayerTreeGroup;
 
 /**
  * This class handles requestsi that share rendering:
@@ -83,6 +85,8 @@ namespace QgsWms
       QgsRenderer( QgsServerInterface *serverIface,
                    const QgsProject *project,
                    const QgsServerRequest::Parameters &parameters );
+
+      ~QgsRenderer();
 
       /**
        * Returns the map legend as an image (or a null pointer in case of error). The caller takes ownership
@@ -133,6 +137,8 @@ namespace QgsWms
       // Init a map with nickname for layers' project
       void initNicknameLayers();
 
+      void initLayerGroupsRecursive( const QgsLayerTreeGroup *group, const QString &groupName );
+
       // Return the nickname of the layer (short name, id or name according to
       // the project configuration)
       QString layerNickname( const QgsMapLayer &layer ) const;
@@ -154,7 +160,7 @@ namespace QgsWms
       void annotationsRendering( QPainter *painter ) const;
 
       // Return a list of layers stylized with LAYERS/STYLES parameters
-      QList<QgsMapLayer *> stylizedLayers( const QList<QgsWmsParametersLayer> &params ) const;
+      QList<QgsMapLayer *> stylizedLayers( const QList<QgsWmsParametersLayer> &params );
 
       // Return a list of layers stylized with SLD parameter
       QList<QgsMapLayer *> sldStylizedLayers( const QString &sld ) const;
@@ -163,7 +169,7 @@ namespace QgsWms
       void setLayerOpacity( QgsMapLayer *layer, int opacity ) const;
 
       // Set layer filter
-      void setLayerFilter( QgsMapLayer *layer, const QStringList &filter ) const;
+      void setLayerFilter( QgsMapLayer *layer, const QStringList &filter );
 
       // Set layer python filter
       void setLayerAccessControlFilter( QgsMapLayer *layer ) const;
@@ -271,21 +277,31 @@ namespace QgsWms
       //! Gets layer search rectangle (depending on request parameter, layer type, map and layer crs)
       QgsRectangle featureInfoSearchRect( QgsVectorLayer *ml, const QgsMapSettings &ms, const QgsRenderContext &rct, const QgsPointXY &infoPoint ) const;
 
-      //! configure the composition for the GetPrint request
-      bool configureComposition( QgsComposition *c, const QgsMapSettings &mapSettings );
+      //! configure the print layout for the GetPrint request
+      bool configurePrintLayout( QgsPrintLayout *c, const QgsMapSettings &mapSettings );
+
+      //! Creates external WMS layer. Caller takes ownership
+      QgsMapLayer *createExternalWMSLayer( const QString &externalLayerId ) const;
+
+      void removeTemporaryLayers();
 
     private:
 
       const QgsServerRequest::Parameters &mParameters;
 
+#ifdef HAVE_SERVER_PYTHON_PLUGINS
       //! The access control helper
       QgsAccessControl *mAccessControl = nullptr;
+#endif
+      QgsFeatureFilter mFeatureFilter;
 
       const QgsServerSettings &mSettings;
       const QgsProject *mProject = nullptr;
       QgsWmsParameters mWmsParameters;
       QStringList mRestrictedLayers;
       QMap<QString, QgsMapLayer *> mNicknameLayers;
+      QMap<QString, QList<QgsMapLayer *> > mLayerGroups;
+      QList<QgsMapLayer *> mTemporaryLayers;
 
     public:
 

@@ -13,47 +13,37 @@
  *                                                                         *
  ***************************************************************************/
 
+#include "qgsvectorlayer.h"
+#include "qgsfeature.h"
+
 #include "qgsquickidentifyresult.h"
 
-#include <qgsvectorlayer.h>
-#include <qgsfeature.h>
-
-QgsQuickIdentifyResult::QgsQuickIdentifyResult( const QgsFeature& feature, QgsVectorLayer* layer)
+QgsQuickIdentifyResult::QgsQuickIdentifyResult( const QgsFeature &feature, QgsVectorLayer *layer )
   : mLayer( layer )
   , mFeature( feature )
 {
-    if (!mLayer) {
-        mFeature.setValid(false);
-    }
+  if ( !mLayer )
+  {
+    mFeature.setValid( false );
+  }
 }
 
-QgsQuickIdentifyResult::QgsQuickIdentifyResult(): mLayer(0)
+QgsQuickIdentifyResult::QgsQuickIdentifyResult(): mLayer( 0 )
 {
-    mFeature.setValid(false);
+  mFeature.setValid( false );
 }
 
-/*
-QgsQuickIdentifyResult::QgsQuickIdentifyResult(const QgsQuickIdentifyResult& other)
-    : mLayer (other.layer())
-    , mFeature (other.feature())
+QgsVectorLayer *QgsQuickIdentifyResult::layer() const
 {
+  return mLayer;
 }
 
-QgsQuickIdentifyResult &QgsQuickIdentifyResult::operator=( const QgsQuickIdentifyResult &rhs ) {
-    mLayer = rhs.mLayer;
-    mFeature = rhs.mFeature;
-    return *this;
-}
-*/
-
-QgsVectorLayer* QgsQuickIdentifyResult::layer() const {
-    return mLayer;
+QgsFeature QgsQuickIdentifyResult::feature() const
+{
+  return mFeature;
 }
 
-QgsFeature QgsQuickIdentifyResult::feature() const{
-    return mFeature;
-}
-
-bool QgsQuickIdentifyResult::valid() const {
-    return (mLayer && mFeature.isValid());
+bool QgsQuickIdentifyResult::valid() const
+{
+  return ( mLayer && mFeature.isValid() );
 }

@@ -58,16 +58,29 @@ void QgsValueMapWidgetWrapper::initWidget( QWidget *editor )
 
   if ( mComboBox )
   {
-    const QVariantMap map = config().value( QStringLiteral( "map" ) ).toMap();
-    QVariantMap::ConstIterator it = map.constBegin();
+    QList<QVariant> valueList = config().value( QStringLiteral( "map" ) ).toList();
 
-    while ( it != map.constEnd() )
+    if ( valueList.count() > 0 )
     {
-      mComboBox->addItem( it.key(), it.value() );
-      ++it;
+      for ( int i = 0, row = 0; i < valueList.count(); i++, row++ )
+      {
+        mComboBox->addItem( valueList[i].toMap().constBegin().key(), valueList[i].toMap().constBegin().value() );
+      }
     }
+    else
+    {
+      const QVariantMap map = config().value( QStringLiteral( "map" ) ).toMap();
+      QVariantMap::ConstIterator it = map.constBegin();
+
+      while ( it != map.constEnd() )
+      {
+        mComboBox->addItem( it.key(), it.value() );
+        ++it;
+      }
+    }
+
     connect( mComboBox, static_cast<void ( QComboBox::* )( int )>( &QComboBox::currentIndexChanged ),
-             this, static_cast<void ( QgsEditorWidgetWrapper::* )()>( &QgsEditorWidgetWrapper::valueChanged ) );
+             this, static_cast<void ( QgsEditorWidgetWrapper::* )()>( &QgsEditorWidgetWrapper::emitValueChanged ) );
   }
 }
 

@@ -39,6 +39,16 @@ QString QgsJoinByAttributeAlgorithm::group() const
   return QObject::tr( "Vector general" );
 }
 
+QString QgsJoinByAttributeAlgorithm::groupId() const
+{
+  return QStringLiteral( "vectorgeneral" );
+}
+
+QgsProcessingAlgorithm::Flags QgsJoinByAttributeAlgorithm::flags() const
+{
+  return QgsProcessingAlgorithm::flags() | QgsProcessingAlgorithm::FlagCanRunInBackground;
+}
+
 void QgsJoinByAttributeAlgorithm::initAlgorithm( const QVariantMap & )
 {
   addParameter( new QgsProcessingParameterFeatureSource( QStringLiteral( "INPUT" ),

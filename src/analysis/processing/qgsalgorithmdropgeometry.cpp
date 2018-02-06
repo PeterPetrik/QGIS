@@ -19,6 +19,11 @@
 
 ///@cond PRIVATE
 
+QgsProcessingAlgorithm::Flags QgsDropGeometryAlgorithm::flags() const
+{
+  return QgsProcessingFeatureBasedAlgorithm::flags() | QgsProcessingAlgorithm::FlagCanRunInBackground;
+}
+
 QString QgsDropGeometryAlgorithm::name() const
 {
   return QStringLiteral( "dropgeometries" );
@@ -37,6 +42,11 @@ QStringList QgsDropGeometryAlgorithm::tags() const
 QString QgsDropGeometryAlgorithm::group() const
 {
   return QObject::tr( "Vector general" );
+}
+
+QString QgsDropGeometryAlgorithm::groupId() const
+{
+  return QStringLiteral( "vectorgeneral" );
 }
 
 QString QgsDropGeometryAlgorithm::outputName() const
@@ -69,7 +79,7 @@ QgsFeatureRequest QgsDropGeometryAlgorithm::request() const
   return QgsFeatureRequest().setFlags( QgsFeatureRequest::NoGeometry );
 }
 
-QgsFeature QgsDropGeometryAlgorithm::processFeature( const QgsFeature &feature, QgsProcessingFeedback * )
+QgsFeature QgsDropGeometryAlgorithm::processFeature( const QgsFeature &feature, QgsProcessingContext &, QgsProcessingFeedback * )
 {
   QgsFeature f = feature;
   f.clearGeometry();

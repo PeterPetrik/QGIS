@@ -16,7 +16,7 @@
 import QtQuick 2.3
 import QtQuick.Controls 2.2
 import QtQml 2.2
-import QgisQuick 1.0 as QgsQuick
+import QgisQuick 0.1 as QgsQuick
 
 Item {
   id: mapArea
@@ -87,7 +87,6 @@ Item {
       onDoubleClicked: {
         var center = Qt.point( mouse.x, mouse.y )
         mapCanvasWrapper.zoom( center, 0.8 )
-        // mapCanvasWrapper.pan( pinch.center, pinch.previousCenter )
       }
 
       onClicked: {
