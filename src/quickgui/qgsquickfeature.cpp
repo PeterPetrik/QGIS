@@ -1,5 +1,5 @@
 /***************************************************************************
-  qgsquickidentifyresult.cpp
+  qgsquickfeature.cpp
  ---------------------
   Date                 : Nov 2017
   Copyright            : (C) 2017 by Peter Petrik
@@ -16,9 +16,9 @@
 #include "qgsvectorlayer.h"
 #include "qgsfeature.h"
 
-#include "qgsquickidentifyresult.h"
+#include "qgsquickfeature.h"
 
-QgsQuickIdentifyResult::QgsQuickIdentifyResult( const QgsFeature &feature, QgsVectorLayer *layer )
+QgsQuickFeature::QgsQuickFeature( const QgsFeature &feature, QgsVectorLayer *layer )
   : mLayer( layer )
   , mFeature( feature )
 {
@@ -28,22 +28,22 @@ QgsQuickIdentifyResult::QgsQuickIdentifyResult( const QgsFeature &feature, QgsVe
   }
 }
 
-QgsQuickIdentifyResult::QgsQuickIdentifyResult(): mLayer( 0 )
+QgsQuickFeature::QgsQuickFeature(): mLayer( 0 )
 {
   mFeature.setValid( false );
 }
 
-QgsVectorLayer *QgsQuickIdentifyResult::layer() const
+QgsVectorLayer *QgsQuickFeature::layer() const
 {
   return mLayer;
 }
 
-QgsFeature QgsQuickIdentifyResult::feature() const
+QgsFeature QgsQuickFeature::feature() const
 {
   return mFeature;
 }
 
-bool QgsQuickIdentifyResult::valid() const
+bool QgsQuickFeature::valid() const
 {
   return ( mLayer && mFeature.isValid() );
 }

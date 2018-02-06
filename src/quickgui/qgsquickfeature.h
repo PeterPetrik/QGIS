@@ -1,5 +1,5 @@
 /***************************************************************************
-  qgsquickidentifyresult.h
+  qgsquickfeature.h
  ---------------------
   Date                 : Nov 2017
   Copyright            : (C) 2017 by Peter Petrik
@@ -13,8 +13,8 @@
  *                                                                         *
  ***************************************************************************/
 
-#ifndef QGSQUICKIDENTIFYRESULT_H
-#define QGSQUICKIDENTIFYRESULT_H
+#ifndef QGSQUICKFEATURE_H
+#define QGSQUICKFEATURE_H
 
 #include <QObject>
 
@@ -32,7 +32,7 @@ class QgsVectorLayer;
  *
  * \since QGIS 3.2
  */
-class QUICK_EXPORT QgsQuickIdentifyResult
+class QUICK_EXPORT QgsQuickFeature
 {
     Q_GADGET
 
@@ -41,8 +41,8 @@ class QUICK_EXPORT QgsQuickIdentifyResult
     Q_PROPERTY( bool valid READ valid )
 
   public:
-    QgsQuickIdentifyResult();
-    QgsQuickIdentifyResult( const QgsFeature &feature,
+    QgsQuickFeature();
+    QgsQuickFeature( const QgsFeature &feature,
                             QgsVectorLayer *layer );
 
     QgsVectorLayer *layer() const;
@@ -54,6 +54,6 @@ class QUICK_EXPORT QgsQuickIdentifyResult
     QgsFeature mFeature;
 };
 
-Q_DECLARE_METATYPE( QgsQuickIdentifyResult )
+Q_DECLARE_METATYPE( QgsQuickFeature )
 
-#endif // QGSQUICKIDENTIFYRESULT_H
+#endif // QGSQUICKFEATURE_H

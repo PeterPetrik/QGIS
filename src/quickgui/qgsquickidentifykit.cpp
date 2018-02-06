@@ -44,9 +44,9 @@ void QgsQuickIdentifyKit::setMapSettings( QgsQuickMapSettings *mapSettings )
 }
 
 
-QList<QgsQuickIdentifyResult> QgsQuickIdentifyKit::identify( const QPointF &point )
+QList<QgsQuickFeature> QgsQuickIdentifyKit::identify( const QPointF &point )
 {
-  QList<QgsQuickIdentifyResult> results;
+  QList<QgsQuickFeature> results;
 
   if ( !mMapSettings )
   {
@@ -74,7 +74,7 @@ QList<QgsQuickIdentifyResult> QgsQuickIdentifyKit::identify( const QPointF &poin
 
       Q_FOREACH ( const QgsFeature &feature, featureList )
       {
-        results.append( QgsQuickIdentifyResult( feature, vl ) );
+        results.append( QgsQuickFeature( feature, vl ) );
       }
     }
   }
@@ -108,7 +108,7 @@ static QgsFeature _closestFeature( const QgsFeatureList &results, const QgsMapSe
 }
 
 
-static QgsQuickIdentifyResult _closestFeature( const QList<QgsQuickIdentifyResult> &results, const QgsMapSettings &mapSettings, const QPointF &point )
+static QgsQuickFeature _closestFeature( const QList<QgsQuickFeature> &results, const QgsMapSettings &mapSettings, const QPointF &point )
 {
   QgsPointXY mapPoint = mapSettings.mapToPixel().toMapCoordinates( point.toPoint() );
   QgsGeometry mapPointGeom( QgsGeometry::fromPointXY( mapPoint ) );
@@ -118,7 +118,7 @@ static QgsQuickIdentifyResult _closestFeature( const QList<QgsQuickIdentifyResul
   int iMin = -1;
   for ( int i = 0; i < results.count(); ++i )
   {
-    const QgsQuickIdentifyResult &res = results.at( i );
+    const QgsQuickFeature &res = results.at( i );
     QgsGeometry geom( res.feature().geometry() );
     geom.transform( mapSettings.layerTransform( res.layer() ) );
 
@@ -149,12 +149,12 @@ QgsFeature QgsQuickIdentifyKit::identifyOne( QgsVectorLayer *layer, const QPoint
 }
 
 
-QgsQuickIdentifyResult QgsQuickIdentifyKit::identifyOne( const QPointF &point )
+QgsQuickFeature QgsQuickIdentifyKit::identifyOne( const QPointF &point )
 {
-  QList<QgsQuickIdentifyResult> results = identify( point );
+  QList<QgsQuickFeature> results = identify( point );
   if ( results.empty() )
   {
-    QgsQuickIdentifyResult emptyRes;
+    QgsQuickFeature emptyRes;
     return emptyRes;
   }
   else

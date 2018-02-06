@@ -25,7 +25,7 @@
 #include "qgsrendercontext.h"
 
 #include "qgis_quick.h"
-#include "qgsquickidentifyresult.h"
+#include "qgsquickfeature.h"
 
 class QgsQuickProject;
 class QgsMapLayer;
@@ -74,7 +74,7 @@ class QUICK_EXPORT QgsQuickIdentifyKit : public QObject
     /**
       * Get the closest feature to the point from any identifiable layer
       */
-    Q_INVOKABLE QgsQuickIdentifyResult identifyOne( const QPointF &point );
+    Q_INVOKABLE QgsQuickFeature identifyOne( const QPointF &point );
 
     /**
       * Get all features interseting the point from the layer in case it is identifiable layer
@@ -84,7 +84,7 @@ class QUICK_EXPORT QgsQuickIdentifyKit : public QObject
     /**
       * Get all features interseting the point from any identifiable layer
       */
-    Q_INVOKABLE QList<QgsQuickIdentifyResult> identify( const QPointF &point );
+    Q_INVOKABLE QList<QgsQuickFeature> identify( const QPointF &point );
 
 
   signals:

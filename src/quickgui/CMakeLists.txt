@@ -7,7 +7,7 @@ SET(QGIS_QUICK_GUI_MOC_HDRS
   qgsquickfeaturemodel.h
   qgsquickfeaturemodelhighlight.h
   qgsquickidentifykit.h
-  qgsquickidentifyresult.h
+  qgsquickfeature.h
   qgsquickmapcanvasmap.h
   qgsquickmapsettings.h
   qgsquickmaptransform.h
@@ -32,7 +32,7 @@ SET(QGIS_QUICK_GUI_SRC
   qgsquickfeaturemodel.cpp
   qgsquickfeaturemodelhighlight.cpp
   qgsquickidentifykit.cpp
-  qgsquickidentifyresult.cpp
+  qgsquickfeature.cpp
   qgsquickmapcanvasmap.cpp
   qgsquickmapsettings.cpp
   qgsquickmaptransform.cpp

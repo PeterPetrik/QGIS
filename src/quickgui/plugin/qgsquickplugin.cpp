@@ -30,7 +30,7 @@
 #include "qgsquickfeaturemodel.h"
 #include "qgsquickfeaturemodelhighlight.h"
 #include "qgsquickidentifykit.h"
-#include "qgsquickidentifyresult.h"
+#include "qgsquickfeature.h"
 #include "qgsquickmapcanvasmap.h"
 #include "qgsquickmapsettings.h"
 #include "qgsquickmaptransform.h"
@@ -70,7 +70,7 @@ void QgisQuickPlugin::registerTypes( const char *uri )
   qRegisterMetaType< QgsFeatureId > ( "QgsFeatureId" );
   qRegisterMetaType< QgsPoint >( "QgsPoint" );
   qRegisterMetaType< QgsPointXY >( "QgsPointXY" );
-  qRegisterMetaType< QgsQuickIdentifyResult >( "QgsQuickIdentifyResult" );
+  qRegisterMetaType< QgsQuickFeature >( "QgsQuickFeature" );
 
   qmlRegisterType< QgsProject >( uri, 0, 1, "Project" );
   qmlRegisterType< QgsQuickAttributeFormModel >( uri, 0, 1, "AttributeFormModel" );
