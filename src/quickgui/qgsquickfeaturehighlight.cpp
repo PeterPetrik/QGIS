@@ -16,12 +16,12 @@
 #include "qgsvectorlayer.h"
 
 #include "qgsquickfeaturemodel.h"
-#include "qgsquickfeaturemodelhighlight.h"
+#include "qgsquickfeaturehighlight.h"
 #include "qgsquickmapsettings.h"
-#include "qgsquicksgrubberband.h"
+#include "qgsquickhighlightsnode.h"
 
 
-QgsQuickFeatureModelHighlight::QgsQuickFeatureModelHighlight( QQuickItem *parent )
+QgsQuickFeatureHighlight::QgsQuickFeatureHighlight( QQuickItem *parent )
   : QQuickItem( parent )
   , mModel( nullptr )
   , mDirty( false )
@@ -30,27 +30,27 @@ QgsQuickFeatureModelHighlight::QgsQuickFeatureModelHighlight( QQuickItem *parent
   setFlags( QQuickItem::ItemHasContents );
   setAntialiasing( true );
 
-  connect( this, &QgsQuickFeatureModelHighlight::modelChanged, this, &QgsQuickFeatureModelHighlight::onDataChanged );
+  connect( this, &QgsQuickFeatureHighlight::modelChanged, this, &QgsQuickFeatureHighlight::onDataChanged );
 }
 
-void QgsQuickFeatureModelHighlight::onDataChanged()
+void QgsQuickFeatureHighlight::onDataChanged()
 {
   if ( mModel )
   {
-    connect( mModel, &QgsQuickFeatureModel::modelReset, this, &QgsQuickFeatureModelHighlight::onModelDataChanged );
-    connect( mModel, &QgsQuickFeatureModel::rowsRemoved, this, &QgsQuickFeatureModelHighlight::onModelDataChanged );
+    connect( mModel, &QgsQuickFeatureModel::modelReset, this, &QgsQuickFeatureHighlight::onModelDataChanged );
+    connect( mModel, &QgsQuickFeatureModel::rowsRemoved, this, &QgsQuickFeatureHighlight::onModelDataChanged );
   }
 
   onModelDataChanged();
 }
 
-void QgsQuickFeatureModelHighlight::onModelDataChanged()
+void QgsQuickFeatureHighlight::onModelDataChanged()
 {
   mDirty = true;
   update();
 }
 
-QSGNode *QgsQuickFeatureModelHighlight::updatePaintNode( QSGNode *n, QQuickItem::UpdatePaintNodeData * )
+QSGNode *QgsQuickFeatureHighlight::updatePaintNode( QSGNode *n, QQuickItem::UpdatePaintNodeData * )
 {
   if ( !mDirty || !mMapSettings )
     return n;
@@ -70,12 +70,12 @@ QSGNode *QgsQuickFeatureModelHighlight::updatePaintNode( QSGNode *n, QQuickItem:
     QgsGeometry geom( feature.geometry() );
     geom.transform( transf );
 
-    // TODO: this is very crude conversion! QgsQuickSGRubberband should accept any type of geometry
+    // TODO: this is very crude conversion! QgsQuickHighlightsNode should accept any type of geometry
     QVector<QgsPoint> points;
     for ( auto it = geom.vertices_begin(); it != geom.vertices_end(); ++it )
       points.append( *it );
 
-    QgsQuickSGRubberband *rb = new QgsQuickSGRubberband( points, geom.type(), mColor, mWidth );
+    QgsQuickHighlightsNode *rb = new QgsQuickHighlightsNode( points, geom.type(), mColor, mWidth );
     rb->setFlag( QSGNode::OwnedByParent );
     n->appendChildNode( rb );
   }

@@ -28,7 +28,7 @@
 #include "qgsquickattributeformmodelbase.h"
 #include "qgsquickcoordinatetransformer.h"
 #include "qgsquickfeaturemodel.h"
-#include "qgsquickfeaturemodelhighlight.h"
+#include "qgsquickfeaturehighlight.h"
 #include "qgsquickidentifykit.h"
 #include "qgsquickfeature.h"
 #include "qgsquickmapcanvasmap.h"
@@ -39,7 +39,7 @@
 #include "qgsquickplugin.h"
 #include "qgsquickpositionkit.h"
 #include "qgsquickscalebarkit.h"
-#include "qgsquicksgrubberband.h"
+#include "qgsquickhighlightsnode.h"
 #include "qgsquickstyle.h"
 #include "qgsquicksubmodel.h"
 #include "qgsquickutils.h"
@@ -76,7 +76,7 @@ void QgisQuickPlugin::registerTypes( const char *uri )
   qmlRegisterType< QgsQuickAttributeFormModel >( uri, 0, 1, "AttributeFormModel" );
   qmlRegisterType< QgsQuickCoordinateTransformer >( uri, 0, 1, "CoordinateTransformer" );
   qmlRegisterType< QgsQuickFeatureModel >( uri, 0, 1, "FeatureModel" );
-  qmlRegisterType< QgsQuickFeatureModelHighlight >( uri, 0, 1, "FeatureModelHighlight" );
+  qmlRegisterType< QgsQuickFeatureHighlight >( uri, 0, 1, "FeatureModelHighlight" );
   qmlRegisterType< QgsQuickIdentifyKit >( uri, 0, 1, "IdentifyKit" );
   qmlRegisterType< QgsQuickMapCanvasMap >( uri, 0, 1, "MapCanvasMap" );
   qmlRegisterType< QgsQuickMapSettings >( uri, 0, 1, "MapSettings" );

@@ -13,8 +13,8 @@
  *                                                                         *
  ***************************************************************************/
 
-#ifndef QGSQUICKFEATUREMODELHIGHLIGHT_H
-#define QGSQUICKFEATUREMODELHIGHLIGHT_H
+#ifndef QGSQUICKFEATUREHIGHLIGHT_H
+#define QGSQUICKFEATUREHIGHLIGHT_H
 
 #include <QQuickItem>
 
@@ -34,7 +34,7 @@ class QgsQuickFeatureModel;
  *
  * \since QGIS 3.2
  */
-class QUICK_EXPORT QgsQuickFeatureModelHighlight : public QQuickItem
+class QUICK_EXPORT QgsQuickFeatureHighlight : public QQuickItem
 {
     Q_OBJECT
 
@@ -44,7 +44,7 @@ class QUICK_EXPORT QgsQuickFeatureModelHighlight : public QQuickItem
     Q_PROPERTY( QgsQuickMapSettings *mapSettings MEMBER mMapSettings NOTIFY mapSettingsChanged )
 
   public:
-    explicit QgsQuickFeatureModelHighlight( QQuickItem *parent = 0 );
+    explicit QgsQuickFeatureHighlight( QQuickItem *parent = 0 );
 
   signals:
     void modelChanged();
@@ -67,4 +67,4 @@ class QUICK_EXPORT QgsQuickFeatureModelHighlight : public QQuickItem
     QgsQuickMapSettings *mMapSettings;
 };
 
-#endif // QGSQUICKFEATUREMODELHIGHLIGHT_H
+#endif // QGSQUICKFEATUREHIGHLIGHT_H

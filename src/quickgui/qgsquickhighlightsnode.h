@@ -36,10 +36,10 @@ class QgsQuickRubberbandModel;
  *
  * \since QGIS 3.2
  */
-class QUICK_NO_EXPORT QgsQuickSGRubberband : public QSGNode
+class QUICK_NO_EXPORT QgsQuickHighlightsNode : public QSGNode
 {
   public:
-    QgsQuickSGRubberband( const QVector<QgsPoint> &points, QgsWkbTypes::GeometryType type, const QColor &color, qreal width );
+    QgsQuickHighlightsNode( const QVector<QgsPoint> &points, QgsWkbTypes::GeometryType type, const QColor &color, qreal width );
 
   private:
     QSGGeometryNode *createLineGeometry( const QVector<QgsPoint> &points, qreal width );

@@ -13,10 +13,10 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "qgsquicksgrubberband.h"
+#include "qgsquickhighlightsnode.h"
 
 
-QgsQuickSGRubberband::QgsQuickSGRubberband( const QVector<QgsPoint> &points, QgsWkbTypes::GeometryType type, const QColor &color, qreal width )
+QgsQuickHighlightsNode::QgsQuickHighlightsNode( const QVector<QgsPoint> &points, QgsWkbTypes::GeometryType type, const QColor &color, qreal width )
   : QSGNode()
 {
   mMaterial.setColor( color );
@@ -49,7 +49,7 @@ QgsQuickSGRubberband::QgsQuickSGRubberband( const QVector<QgsPoint> &points, Qgs
   }
 }
 
-QSGGeometryNode *QgsQuickSGRubberband::createLineGeometry( const QVector<QgsPoint> &points, qreal width )
+QSGGeometryNode *QgsQuickHighlightsNode::createLineGeometry( const QVector<QgsPoint> &points, qreal width )
 {
   QSGGeometryNode *node = new QSGGeometryNode;
   QSGGeometry *sgGeom = new QSGGeometry( QSGGeometry::defaultAttributes_Point2D(), points.count() );
@@ -70,7 +70,7 @@ QSGGeometryNode *QgsQuickSGRubberband::createLineGeometry( const QVector<QgsPoin
   return node;
 }
 
-QSGGeometryNode *QgsQuickSGRubberband::createPointGeometry( const QgsPoint &point, qreal width )
+QSGGeometryNode *QgsQuickHighlightsNode::createPointGeometry( const QgsPoint &point, qreal width )
 {
   QSGGeometryNode *node = new QSGGeometryNode;
 
@@ -88,7 +88,7 @@ QSGGeometryNode *QgsQuickSGRubberband::createPointGeometry( const QgsPoint &poin
   return node;
 }
 
-QSGGeometryNode *QgsQuickSGRubberband::createPolygonGeometry( const QVector<QgsPoint> &points )
+QSGGeometryNode *QgsQuickHighlightsNode::createPolygonGeometry( const QVector<QgsPoint> &points )
 {
   Q_UNUSED( points );
   return 0;

@@ -28,7 +28,7 @@ class QgsQuickMapSettings;
  * The QgsQuickMapTransform is transformation that can be attached to any QQuickItem. Transformation scales and translates
  * Item based on the current QgsQuickMapSettings settings.
  *
- * For example it can be used on QgsQuickFeatureModelHighlight to place it correctly on the map canvas.
+ * For example it can be used on QgsQuickFeatureHighlight to place it correctly on the map canvas.
  *
  * \note QML Type: MapTransform
  *
