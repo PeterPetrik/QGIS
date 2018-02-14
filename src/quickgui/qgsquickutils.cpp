@@ -28,7 +28,6 @@
 
 #include "qgsquickmapsettings.h"
 #include "qgsquickutils.h"
-#include "qgsquickstyle.h"
 
 
 QgsQuickUtils *QgsQuickUtils::sInstance = 0;
@@ -47,9 +46,6 @@ QgsQuickUtils::QgsQuickUtils( QObject *parent ):
   QObject( parent )
 {
   mCoordinateReferenceSystem = new QgsCoordinateReferenceSystem();
-
-  // style is not owned by the Utils class: it will be passed to QML engine and destroyed by it afterwards
-  setStyle( new QgsQuickStyle );
 }
 
 QgsQuickUtils::~QgsQuickUtils()
@@ -65,17 +61,6 @@ QgsQuickUtils::~QgsQuickUtils()
 QgsCoordinateReferenceSystem QgsQuickUtils::coordinateReferenceSystemFromEpsgId( long epsg ) const
 {
   return QgsCoordinateReferenceSystem::fromEpsgId( epsg );
-}
-
-void QgsQuickUtils::setStyle( QgsQuickStyle *style )
-{
-  Q_ASSERT( !mStyle && "Style must be assigned only once!" );
-  mStyle = style;
-}
-
-QgsQuickStyle *QgsQuickUtils::style() const
-{
-  return mStyle;
 }
 
 QgsPointXY QgsQuickUtils::pointXYFactory( double x, double y ) const
@@ -194,18 +179,18 @@ void QgsQuickUtils::logMessage( const QString &message, const QString &tag, QgsM
 
 QUrl QgsQuickUtils::getThemeIcon( const QString &name )
 {
-  Q_ASSERT( mStyle );
+  //Q_ASSERT( mStyle );
 
   QString extension( ".svg" );
 
-  // Check in custom dir
-  QString path( mStyle->themeDir() + "/" + name + extension );
-  qDebug() << "Custom icon from " << path;
-  if ( !fileExists( path ) )
-  {
-    path = "qrc:/" + name + extension;
-  }
-
+//  // Check in custom dir
+//  QString path( mStyle->themeDir() + "/" + name + extension );
+//  qDebug() << "Custom icon from " << path;
+//  if ( !fileExists( path ) )
+//  {
+//    path = "qrc:/" + name + extension;
+//  }
+  QString path = "qrc:/" + name + extension;
   qDebug() << "Using icon " << name << " from " << path;
   return QUrl( path );
 }
@@ -246,4 +231,19 @@ QString QgsQuickUtils::distanceToString( qreal dist, int decimals )
     }
   }
   return label;
+}
+
+qreal QgsQuickUtils::devicePixels() const
+{
+  return mDevicePixels;
+}
+
+void QgsQuickUtils::setDevicePixels( qreal dp )
+{
+    // Q_ASSERT( !mStyle && "Style must be assigned only once!" );
+  if ( dp != mDevicePixels )
+  {
+    mDevicePixels = dp;
+    emit devicePixelsChanged();
+  }
 }

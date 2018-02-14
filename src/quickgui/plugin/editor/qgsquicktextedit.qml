@@ -29,9 +29,9 @@ Item {
 
   TextField {
     id: textField
-    height: textArea.height == 0 ? fontMetrics.height + 20 * QgsQuick.Style.dp : 0
-    topPadding: 10 * QgsQuick.Style.dp
-    bottomPadding: 10 * QgsQuick.Style.dp
+    height: textArea.height == 0 ? fontMetrics.height + 20 * QgsQuick.Utils.dp : 0
+    topPadding: 10 * QgsQuick.Utils.dp
+    bottomPadding: 10 * QgsQuick.Utils.dp
     visible: height !== 0
     anchors.left: parent.left
     anchors.right: parent.right
@@ -55,8 +55,8 @@ Item {
 
     background: Rectangle {
       y: textField.height - height - textField.bottomPadding / 2
-      implicitWidth: 120 * QgsQuick.Style.dp
-      height: textField.activeFocus ? 2 * QgsQuick.Style.dp : 1 * QgsQuick.Style.dp
+      implicitWidth: 120 * QgsQuick.Utils.dp
+      height: textField.activeFocus ? 2 * QgsQuick.Utils.dp : 1 * QgsQuick.Utils.dp
       color: textField.activeFocus ? "#4CAF50" : "#C8E6C9"
     }
 

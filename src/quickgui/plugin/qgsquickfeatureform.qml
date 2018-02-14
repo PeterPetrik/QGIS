@@ -115,8 +115,8 @@ Item {
           TabButton {
             id: tabButton
             text: Name
-            leftPadding: 8 * QgsQuick.Style.dp
-            rightPadding: 8 * QgsQuick.Style.dp
+            leftPadding: 8 * QgsQuick.Utils.dp
+            rightPadding: 8 * QgsQuick.Utils.dp
 
             width: contentItem.width + leftPadding + rightPadding
             height: form.style.tabs.height
@@ -219,7 +219,7 @@ Item {
       anchors {
         left: parent.left
         right: parent.right
-        leftMargin: 12 * QgsQuick.Style.dp
+        leftMargin: 12 * QgsQuick.Utils.dp
       }
 
       Label {
@@ -339,7 +339,7 @@ Item {
   /** The title toolbar **/
   Item {
     id: toolbar
-    height: visible ? 48 * QgsQuick.Style.dp : 0
+    height: visible ? 48 * QgsQuick.Utils.dp : 0
     visible: form.state === 'Add'
     anchors {
       top: parent.top

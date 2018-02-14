@@ -91,7 +91,7 @@ Drawer {
 
       Rectangle {
         id: captureBtn
-        property int borderWidth: 10 * QgsQuick.Style.dp
+        property int borderWidth: 10 * QgsQuick.Utils.dp
         width: parent.width/20
         height: parent.width/20
         color: photoPanel.bgColor
@@ -138,7 +138,7 @@ Drawer {
           id: cancelBtn
           visible: camera.imageCapture.capturedImagePath != ""
 
-          property int borderWidth: 10 * QgsQuick.Style.dp
+          property int borderWidth: 10 * QgsQuick.Utils.dp
           width: parent.width/20
           height: parent.width/20
           color: photoPanel.bgColor
@@ -174,7 +174,7 @@ Drawer {
           id: confirmBtn
           visible: camera.imageCapture.capturedImagePath != ""
 
-          property int borderWidth: 10 * QgsQuick.Style.dp
+          property int borderWidth: 10 * QgsQuick.Utils.dp
           width: parent.width/20
           height: parent.width/20
           color: photoPanel.bgColor

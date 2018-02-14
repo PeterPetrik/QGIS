@@ -15,7 +15,6 @@ SET(QGIS_QUICK_GUI_MOC_HDRS
   qgsquickpositionkit.h
   qgsquickscalebarkit.h
   qgsquicksimulatedpositionsource.h
-  qgsquickstyle.h
   qgsquicksubmodel.h
   qgsquickutils.h
 )
@@ -41,7 +40,6 @@ SET(QGIS_QUICK_GUI_SRC
   qgsquickscalebarkit.cpp
   qgsquickhighlightsnode.cpp
   qgsquicksimulatedpositionsource.cpp
-  qgsquickstyle.cpp
   qgsquicksubmodel.cpp
   qgsquickutils.cpp
 )

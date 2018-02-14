@@ -40,7 +40,6 @@
 #include "qgsquickpositionkit.h"
 #include "qgsquickscalebarkit.h"
 #include "qgsquickhighlightsnode.h"
-#include "qgsquickstyle.h"
 #include "qgsquicksubmodel.h"
 #include "qgsquickutils.h"
 
@@ -49,13 +48,6 @@ static QObject *_utilsProvider( QQmlEngine *engine, QJSEngine *scriptEngine )
   Q_UNUSED( engine )
   Q_UNUSED( scriptEngine )
   return QgsQuickUtils::instance();  // the object will be owned by QML engine and destroyed by the engine on exit
-}
-
-static QObject *_styleProvider( QQmlEngine *engine, QJSEngine *scriptEngine )
-{
-  Q_UNUSED( engine )
-  Q_UNUSED( scriptEngine )
-  return QgsQuickUtils::instance()->style();  // the object will be owned by QML engine and destroyed by the engine on exit
 }
 
 void QgisQuickPlugin::registerTypes( const char *uri )
@@ -76,7 +68,7 @@ void QgisQuickPlugin::registerTypes( const char *uri )
   qmlRegisterType< QgsQuickAttributeFormModel >( uri, 0, 1, "AttributeFormModel" );
   qmlRegisterType< QgsQuickCoordinateTransformer >( uri, 0, 1, "CoordinateTransformer" );
   qmlRegisterType< QgsQuickFeatureModel >( uri, 0, 1, "FeatureModel" );
-  qmlRegisterType< QgsQuickFeatureHighlight >( uri, 0, 1, "FeatureModelHighlight" );
+  qmlRegisterType< QgsQuickFeatureHighlight >( uri, 0, 1, "FeatureHighlight" );
   qmlRegisterType< QgsQuickIdentifyKit >( uri, 0, 1, "IdentifyKit" );
   qmlRegisterType< QgsQuickMapCanvasMap >( uri, 0, 1, "MapCanvasMap" );
   qmlRegisterType< QgsQuickMapSettings >( uri, 0, 1, "MapSettings" );
@@ -89,7 +81,6 @@ void QgisQuickPlugin::registerTypes( const char *uri )
   qmlRegisterType< QgsVectorLayer >( uri, 0, 1, "VectorLayer" );
 
   qmlRegisterSingletonType< QgsQuickUtils >( uri, 0, 1, "Utils", _utilsProvider );
-  qmlRegisterSingletonType< QgsQuickStyle >( uri, 0, 1, "Style", _styleProvider );
 
   qmlRegisterUncreatableType< QgsMessageLog >( uri, 0, 1, "QgsMessageLog", "Expose MessageLevel" );
 

@@ -11,13 +11,13 @@ Item {
         id: scaleBarKit
     }
 
-    property int textWidth: 50 * QgsQuick.Style.dp
+    property int textWidth: 50 * QgsQuick.Utils.dp
     property color barColor: "white"
     property color barBackgroundColor: "grey"
     property double barOpacity: 0.8
     property string barText: scaleBarKit.distance + " " + scaleBarKit.units
     property int barWidth: scaleBarKit.width
-    property int lineWidth: 5 * QgsQuick.Style.dp
+    property int lineWidth: 5 * QgsQuick.Utils.dp
 
     width: textWidth + barWidth
 
@@ -62,14 +62,14 @@ Item {
         Rectangle {
             id: leftBar
             width: scaleBar.lineWidth
-            height: scaleBar.height - 20 * QgsQuick.Style.dp
+            height: scaleBar.height - 20 * QgsQuick.Utils.dp
             y: (scaleBar.height - leftBar.height) / 2
             color: barColor
             opacity: 1
         }
 
         Rectangle {
-            width: scaleBar.width - text.width - 15 * QgsQuick.Style.dp
+            width: scaleBar.width - text.width - 15 * QgsQuick.Utils.dp
             height: scaleBar.lineWidth
             y: (scaleBar.height - scaleBar.lineWidth) / 2
             color: barColor
@@ -78,7 +78,7 @@ Item {
         Rectangle {
             id: rightBar
             width: scaleBar.lineWidth
-            height: scaleBar.height - 20 * QgsQuick.Style.dp
+            height: scaleBar.height - 20 * QgsQuick.Utils.dp
             y: (scaleBar.height - leftBar.height) / 2
             color: barColor
         }

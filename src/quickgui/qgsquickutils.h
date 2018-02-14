@@ -32,7 +32,6 @@
 
 class QgsFeature;
 class QgsVectorLayer;
-class QgsQuickStyle;
 class QgsCoordinateReferenceSystem;
 
 /**
@@ -40,7 +39,6 @@ class QgsCoordinateReferenceSystem;
  *
  * Singleton encapsulating the common utilies for QgsQuick library.
  *
- * \note QML Type: Style (singleton)
  *
  * \since QGIS 3.2
  */
@@ -48,8 +46,17 @@ class QUICK_EXPORT QgsQuickUtils: public QObject
 {
     Q_OBJECT
 
+    /**
+      * Device pixels. Used to scale all pixel sizes for GUI elements.
+      * Defaults to 1. Use QApplication::desktop()->physicalDpiX() to initialize.
+      */
+    Q_PROPERTY( qreal dp READ devicePixels WRITE setDevicePixels NOTIFY devicePixelsChanged )
+
   public:
     static QgsQuickUtils *instance();
+
+    qreal devicePixels() const;
+    void setDevicePixels( qreal dp );
 
     // CRS and geometry
 
@@ -102,8 +109,6 @@ class QUICK_EXPORT QgsQuickUtils: public QObject
       *
       * Android 4.4 (API level 20) and lower doesn't support vector drawables (svg)
       * https://developer.android.com/studio/write/vector-asset-studio.html
-      * Set useVectorIcons in Style to use SVGs instead of PNGs.
-      *
       */
     Q_INVOKABLE QUrl getThemeIcon( const QString &name );
 
@@ -119,11 +124,6 @@ class QUICK_EXPORT QgsQuickUtils: public QObject
       */
     Q_INVOKABLE QString distanceToString( qreal dist, int decimals = 1 );
 
-
-    // Singletons
-    void setStyle( QgsQuickStyle *style );
-    QgsQuickStyle *style() const; //if you want to access it from QML, use Style QML singleton
-
   signals:
     void devicePixelsChanged();
     void themeDirChanged();
@@ -134,8 +134,7 @@ class QUICK_EXPORT QgsQuickUtils: public QObject
 
     static QgsQuickUtils *sInstance;
 
-    // style - not owned by this class
-    QgsQuickStyle *mStyle = nullptr;
+    qreal mDevicePixels;
     // created and owned by the sigleton to be able to use static functions
     QgsCoordinateReferenceSystem *mCoordinateReferenceSystem;
 

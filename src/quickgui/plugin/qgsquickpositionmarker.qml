@@ -21,7 +21,7 @@ import QgisQuick 0.1 as QgsQuick
 
 Item {
   id: positionMarker
-  property int size: 48 * QgsQuick.Style.dp
+  property int size: 48 * QgsQuick.Utils.dp
 
   property QgsQuick.MapSettings mapSettings // required to be connected from parent!
 
@@ -134,7 +134,7 @@ Item {
     Rectangle {
         id: navigationMarker
         anchors.centerIn: parent
-        property int borderWidth: 10 * QgsQuick.Style.dp
+        property int borderWidth: 10 * QgsQuick.Utils.dp
         width: size
         height: size
         color: "#4286f4"

@@ -23,14 +23,14 @@ QtObject {
 
   property QtObject group: QtObject {
     property color backgroundColor: "lightGray"
-    property real height: 30 * QgsQuick.Style.dp
+    property real height: 30 * QgsQuick.Utils.dp
   }
 
   property QtObject tabs: QtObject {
     property color normalColor: "#4CAF50"
     property color activeColor: "#1B5E20"
     property color disabledColor: "#999999"
-    property real height: 48 * QgsQuick.Style.dp
+    property real height: 48 * QgsQuick.Utils.dp
   }
 
   property QtObject constraint: QtObject {
@@ -42,6 +42,6 @@ QtObject {
   property QtObject toolbutton: QtObject {
     property color backgroundColor: "transparent"
     property color backgroundColorInvalid: "#bdc3c7"
-    property real size: 80 * QgsQuick.Style.dp
+    property real size: 80 * QgsQuick.Utils.dp
   }
 }

@@ -21,7 +21,7 @@ Item {
   property alias model: table.model
   property color bgColor: "white"
   property color separatorColor: "gray"
-  property int separatorSize: 1 * QgsQuick.Style.dp
+  property int separatorSize: 1 * QgsQuick.Utils.dp
 
   id: item
 

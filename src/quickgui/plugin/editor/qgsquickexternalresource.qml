@@ -36,7 +36,7 @@ Item {
     property var currentValue: value
 
     id: image
-    width: 200 * QgsQuick.Style.dp
+    width: 200 * QgsQuick.Utils.dp
     autoTransform: true
     fillMode: Image.PreserveAspectFit
 
@@ -57,8 +57,8 @@ Item {
   Button {
     id: button
     visible: fieldItem.enabled
-    width: 45 * QgsQuick.Style.dp
-    height: 45 * QgsQuick.Style.dp
+    width: 45 * QgsQuick.Utils.dp
+    height: 45 * QgsQuick.Utils.dp
 
     anchors.right: parent.right
     anchors.bottom: parent.bottom
