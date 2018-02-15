@@ -121,37 +121,37 @@ Item {
     opacity: 0.1
   }
 
-  Image {
-    id: navigation
-    //source: QgsQuick.Utils.getThemeIcon("ic_navigation_black")
-    fillMode: Image.PreserveAspectFit
-    rotation: positionKit.direction
-    x: positionMarker.screenPosition.x - width/2
-    y: positionMarker.screenPosition.y - height/2
-    width: positionMarker.size
-    height: width
+  Rectangle {
+          id: navigationMarker
+          property int borderWidth: 10 * QgsQuick.Utils.dp
+          width: positionMarker.size + 20
+          height: width
+          color: "white"
+          border.color: baseColor
+          border.width: borderWidth
+          radius: width*0.5
+          antialiasing: true
+          x: positionMarker.screenPosition.x - width/2
+          y: positionMarker.screenPosition.y - height/2
 
-    Rectangle {
-        id: navigationMarker
-        anchors.centerIn: parent
-        property int borderWidth: 10 * QgsQuick.Utils.dp
-        width: size
-        height: size
-        color: "#4286f4"
-        border.color: "white"
-        border.width: borderWidth
-        radius: width*0.5
-        antialiasing: true
-    }
+          Image {
+            id: navigation
+            source: QgsQuick.Utils.getThemeIcon("ic_navigation_black")
+            fillMode: Image.PreserveAspectFit
+            rotation: positionKit.direction
+            anchors.centerIn: parent
+            width: positionMarker.size
+            height: width
+          }
 
-  }
+          // Makes positionMarker (navigation) grey if gps signal is lost.
+          ColorOverlay {
+            anchors.fill: navigation
+            source: navigation
+            color: positionKit.hasPosition ? baseColor : unavailableColor
+            rotation: positionKit.direction
+            visible: !(positionKit.hasPosition && baseColor == "black")
+          }
+      }
 
-  // Makes positionMarker (navigation) grey if gps signal is lost.
-//  ColorOverlay {
-//    anchors.fill: navigation
-//    source: navigation
-//    color: positionKit.hasPosition ? baseColor : unavailableColor
-//    rotation: positionKit.direction
-//    visible: !(positionKit.hasPosition && baseColor == "black")
-//  }
 }
