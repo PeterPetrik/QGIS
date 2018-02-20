@@ -123,7 +123,7 @@ Item {
 
   Rectangle {
           id: navigationMarker
-          property int borderWidth: 10 * QgsQuick.Utils.dp
+          property int borderWidth: 2
           width: positionMarker.size + 20
           height: width
           color: "white"
