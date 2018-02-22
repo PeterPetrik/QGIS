@@ -80,3 +80,8 @@ ENDMACRO (ADD_QGIS_TEST)
 # Tests:
 
 ADD_QGIS_TEST(qgsquickutils testqgsquickutils.cpp)
+
+
+#############################################################
+# Add also test application
+ADD_SUBDIRECTORY(app)
