@@ -93,7 +93,6 @@ int main( int argc, char *argv[] )
   // 3) Load project's layers
   QgsLayerTreeGroup *root = project.layerTreeRoot();
   QList<QgsMapLayer *> layers;
-  qDebug() << project.count() << " layers loading...";
   foreach ( QgsLayerTreeLayer *nodeLayer, root->findLayers() )
   {
     if ( nodeLayer->isVisible() )

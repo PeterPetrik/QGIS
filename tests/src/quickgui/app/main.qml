@@ -56,24 +56,17 @@ ApplicationWindow {
             mapSettings: mapCanvas.mapSettings
         }
 
-        // TODO delete
-        Rectangle {
-            width: 400
-            height: 400
-            color: "red"
-        }
-
         onClicked: {
-            console.log("onClicked")
-            //            var screenPoint = Qt.point( mouse.x, mouse.y );
-            //            var res = identifyKit.identifyOne(screenPoint);
-            //            if (res.valid)
-            //            {
-            //              featurePanel.show_panel(
-            //                          res.layer,
-            //                          res.feature,
-            //                          "Edit" )
-            //            }
+
+            var screenPoint = Qt.point( mouse.x, mouse.y );
+            var res = identifyKit.identifyOne(screenPoint);
+            if (res.valid)
+            {
+                featurePanel.show_panel(
+                            res.layer,
+                            res.feature,
+                            "Edit" )
+            }
         }
     }
 
@@ -133,14 +126,14 @@ ApplicationWindow {
         z: 1
     }
 
-        FeaturePanel {
-            id: featurePanel
-            height: window.height
-            width: QgsQuick.Utils.dp * 1000
-            edge: Qt.RightEdge
-            mapSettings: mapCanvas.mapSettings
-            project: __project
-        }
+    FeaturePanel {
+        id: featurePanel
+        height: window.height
+        width: QgsQuick.Utils.dp * 1000
+        edge: Qt.RightEdge
+        mapSettings: mapCanvas.mapSettings
+        project: __project
+    }
 
 
 }
