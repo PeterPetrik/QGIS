@@ -2,9 +2,19 @@
 
 \tableofcontents
 
+\section qgsquick_overview Overview
+QGIS Quick is a QT Quick based GUI library for a mobile/tablet devices. Covering basic componens (e.g. MapCanvas, Scalebar) allows to easily create a mobile solution for surveys, data gathering or other on-site work. Qt Quick provides tools to create a rich application with a fluid and dynamic user interface. Additionally, Qt Quick Controls 2 provides highly optimized controls for embedded/mobile devices with limited resources.
+
+\subsection qgsquick_overview_widgets QML Classes
+\subsubsection qgsquick_overview_widgets_mapcanvas Map canvas
+\subsubsection qgsquick_overview_widgets_featureform Feature form
+\subsubsection qgsquick_overview_widgets_positionmarker Position marker
+\subsubsection qgsquick_overview_widgets_photopanel PhotoPanel
+\subsubsection qgsquick_overview_widgets_scalebar Scalebar
+
 \section qgsquick_build Preparation of dev environment
 
-\subsection qgsquick_build_linux Build Linux application
+\subsection qgsquick_build_linux Build Linux application,
 
   Follow INSTALLATION "3. Building on GNU/Linux" with CMake flags:
    \li \c  BUILD_TESTING=ON
@@ -68,7 +78,7 @@
   export ANDROIDSDK="/opt/android/sdk"
   export ANDROIDNDK="/opt/android/crystax-ndk-10.3.2"
   export QTSDK="/opt/Qt/5.9.2"
-  export O4A_qgis_DIR="/home/peter/qmobile/repo/QGIS"
+  export O4A_qgis_DIR="path/to/QGIS"
   export ARCHES=("armeabi-v7a" "x86")
   \endcode
   
@@ -82,10 +92,8 @@
      modify config.pri (add path to your OSGeo4A repository)
      open QGIS/tests/src/quickgui/app/qgis_quickapp.pro in QtCreator and configure the project with your armeabi-v7a kit
      compile the application
-
-     TODO: set QML2_IMPORT_PATH to your install directory (for dektopok builds)
-     TODO: link to https://github.com/lutraconsulting/qgis-quick-demo-app
-     
+  Note that if the application is build outside the main QGIS application for desktops, a build variable QML2_IMPORT_PATH has to be defined and target to the /qml subfolder of instalation folder (e.g. {QGIS_INSTALL_PATH}/qml).
+  Be also sure that Qt library contains all required dependencies.
 \subsection qgsquick_build_deploy Deploy APK
   If you have connected tablet/mobile with USB cable and enabled developer tools and USB debugging, you should be able to also
   "Run" qgsquick_app from QtCreator. When launched, it asks which device to use and the application will be directly launched
@@ -93,6 +101,10 @@
 
   Otherwise, your APK is located in the build directory in subfolder android-build/build/outputs/apk/. APK should contain
   all dependencies of the application, so when copied it can installed on the device.
+
+\section qgsquick_demo_app Demo application
+A demo application with some basic componets and functionality is available on https://github.com/lutraconsulting/qgis-quick-demo-app
+
 
 */
 
