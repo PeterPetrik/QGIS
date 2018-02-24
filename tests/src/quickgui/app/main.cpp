@@ -76,24 +76,18 @@ int main( int argc, char *argv[] )
   qmlRegisterType< QgsQuickLayerTreeModel >("QgisQuickApp", 1, 0, "LayerTreeModel");
 
   // 2) Load QGIS Project
-#ifdef QGIS_QUICK_DATA_PATH
-  QString dataDir( QGIS_QUICK_DATA_PATH );
-#else
-  QString dataDir( ::getenv( "QGIS_QUICK_DATA_PATH" ) );
-#endif
-  QString projectFile = dataDir + "/test_project.qgs";
+ #ifdef QGIS_QUICK_DATA_PATH
+   QString dataDir( QGIS_QUICK_DATA_PATH );
+ #else
+   QString dataDir( ::getenv( "QGIS_QUICK_DATA_PATH" ) );
+ #endif
+   QString projectFile = dataDir + "/test_project.qgs";
+   qDebug() << "project file: " << projectFile;
+   QgsProject project;
+   bool res = project.read( projectFile );
+   Q_ASSERT( res );
 
-
-  qDebug() << "project file: " << projectFile;
-  // TODO
-  //QgsProject *project = new QgsProject;
-
-  QgsProject project;
-  //QList<QString> testLayersNames({"polys.shp"});
-  //loadTestLayers(testLayersNames, project);
-  bool res = project.read( projectFile );
-  Q_ASSERT( res );
-  engine.rootContext()->setContextProperty( "__project", &project );
+   engine.rootContext()->setContextProperty( "__project", &project );
 
 
   // 3) Load project's layers
@@ -145,6 +139,8 @@ int main( int argc, char *argv[] )
     return EXIT_FAILURE;
   }
 
+
+
   // Set up the QSettings environment must be done after qapp is created
   QCoreApplication::setOrganizationName( "QGIS" );
   QCoreApplication::setOrganizationDomain( "qgis.org" );
@@ -164,6 +160,8 @@ int main( int argc, char *argv[] )
   QgsApplication::messageLog()->logMessage( "data directory: " + dataDir );
   QgsApplication::messageLog()->logMessage( "All up and running" );
 
+
+  qDebug() << " loading finishing..." << QString::number( dp ) ;
   return app.exec();
 }
 

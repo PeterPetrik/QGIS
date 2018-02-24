@@ -28,6 +28,20 @@ ApplicationWindow {
         console.log("Completed Running!")
     }
 
+    // Some info
+    Button {
+        id: logbutton
+        text: "Log"
+        onClicked: logPanel.visible = true
+        z: 1
+    }
+
+    Label {
+        text: positionMarker.gpsPositionLabel
+        z: 1
+        x: logbutton.width + 10
+    }
+
     QgsQuick.MapCanvas {
         id: mapCanvas
 
@@ -42,17 +56,24 @@ ApplicationWindow {
             mapSettings: mapCanvas.mapSettings
         }
 
+        // TODO delete
+        Rectangle {
+            width: 400
+            height: 400
+            color: "red"
+        }
+
         onClicked: {
-             console.log("onClicked")
-            var screenPoint = Qt.point( mouse.x, mouse.y );
-            var res = identifyKit.identifyOne(screenPoint);
-            if (res.valid)
-            {
-              featurePanel.show_panel(
-                          res.layer,
-                          res.feature,
-                          "Edit" )
-            }
+            console.log("onClicked")
+            //            var screenPoint = Qt.point( mouse.x, mouse.y );
+            //            var res = identifyKit.identifyOne(screenPoint);
+            //            if (res.valid)
+            //            {
+            //              featurePanel.show_panel(
+            //                          res.layer,
+            //                          res.feature,
+            //                          "Edit" )
+            //            }
         }
     }
 
@@ -69,33 +90,33 @@ ApplicationWindow {
             mapSettings: mapCanvas.mapSettings
         }
 
-        z: 1   // make sure items from here are on top of the Z-order
+        z: 100   // make sure items from here are on top of the Z-order
     }
 
 
     Drawer {
-          id: logPanel
-          visible: false
-          modal: true
-          interactive: true
-          dragMargin: 0 // prevents opening the drawer by dragging.
-          height: window.height
-          width: QgsQuick.Utils.dp * 1000
-          edge: Qt.RightEdge
-          z: 2   // make sure items from here are on top of the Z-order
+        id: logPanel
+        visible: false
+        modal: true
+        interactive: true
+        dragMargin: 0 // prevents opening the drawer by dragging.
+        height: window.height
+        width: QgsQuick.Utils.dp * 1000
+        edge: Qt.RightEdge
+        z: 2   // make sure items from here are on top of the Z-order
 
-          background: Rectangle {
-              color: "red"
-          }
+        background: Rectangle {
+            color: "white"
+        }
 
-          QgsQuick.MessageLog {
-              id: messageLog
-              width: parent.width
-              height: parent.height
-              model: QgsQuick.MessageLogModel {}
-              visible: true
-          }
-      }
+        QgsQuick.MessageLog {
+            id: messageLog
+            width: parent.width
+            height: parent.height
+            model: QgsQuick.MessageLogModel {}
+            visible: true
+        }
+    }
 
     QgsQuick.PositionMarker {
         id: positionMarker
@@ -112,33 +133,14 @@ ApplicationWindow {
         z: 1
     }
 
-//    QgsQuick.FeatureForm {
-//          id: overlayFeatureForm
+        FeaturePanel {
+            id: featurePanel
+            height: window.height
+            width: QgsQuick.Utils.dp * 1000
+            edge: Qt.RightEdge
+            mapSettings: mapCanvas.mapSettings
+            project: __project
+        }
 
-//          anchors { right: parent.right; top: parent.top; bottom: parent.bottom }
-
-//          //width: qfieldSettings.fullScreenIdentifyView ? parent.width : parent.width / 3
-//          width: parent.width/ 3
-
-
-//          model: QgsQuick.AttributeFormModel {
-//            featureModel: digitizingFeature
-//          }
-
-
-//          state: "Add"
-
-//          visible: false
-
-//          onSaved: {
-//            visible = false
-
-
-//            if ( state === "Add" )
-//              digitizingRubberband.model.reset()
-
-//          }
-//          onCancelled: visible = false
-//        }
 
 }
