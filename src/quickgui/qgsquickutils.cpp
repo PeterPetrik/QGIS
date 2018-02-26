@@ -179,17 +179,7 @@ void QgsQuickUtils::logMessage( const QString &message, const QString &tag, QgsM
 
 QUrl QgsQuickUtils::getThemeIcon( const QString &name )
 {
-  //Q_ASSERT( mStyle );
-
   QString extension( ".svg" );
-
-//  // Check in custom dir
-//  QString path( mStyle->themeDir() + "/" + name + extension );
-//  qDebug() << "Custom icon from " << path;
-//  if ( !fileExists( path ) )
-//  {
-//    path = "qrc:/" + name + extension;
-//  }
   QString path = "qrc:/" + name + extension;
   qDebug() << "Using icon " << name << " from " << path;
   return QUrl( path );

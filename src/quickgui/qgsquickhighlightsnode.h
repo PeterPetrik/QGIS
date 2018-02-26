@@ -13,8 +13,8 @@
  *                                                                         *
  ***************************************************************************/
 
-#ifndef QGSQUICKQGSSGRUBBERBAND_H
-#define QGSQUICKQGSSGRUBBERBAND_H
+#ifndef QGSQUICKHIGHLIGHTSNODE_H
+#define QGSQUICKHIGHLIGHTSNODE_H
 
 #include <QtQuick/QSGNode>
 #include <QtQuick/QSGFlatColorMaterial>
@@ -23,9 +23,6 @@
 #include "qgswkbtypes.h"
 
 #include "qgis_quick.h"
-
-
-class QgsQuickRubberbandModel;
 
 /**
  * \ingroup quick
@@ -49,4 +46,4 @@ class QUICK_NO_EXPORT QgsQuickHighlightsNode : public QSGNode
     QSGFlatColorMaterial mMaterial;
 };
 
-#endif // QGSQUICKQGSSGRUBBERBAND_H
+#endif // QGSQUICKHIGHLIGHTSNODE
