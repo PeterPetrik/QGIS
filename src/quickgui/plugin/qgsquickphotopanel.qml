@@ -30,11 +30,19 @@ Drawer {
   property color bgColor: "white"
   property color borderColor: "black"
 
+  // icons:
+  property var captureBtnIcon: QgsQuick.Utils.getThemeIcon("ic_camera_alt_border")
+  property var okBtnIcon: QgsQuick.Utils.getThemeIcon("ic_check_black")
+  property var cancelBtnIcon: QgsQuick.Utils.getThemeIcon("ic_clear_black")
+
+
   id: photoPanel
   visible: false
   modal: true
   interactive: true
   dragMargin: 0 // prevents opening the drawer by dragging.
+
+
 
   background: Rectangle {
     color: photoPanel.bgColor
@@ -122,7 +130,7 @@ Drawer {
           anchors.centerIn: parent
           sourceSize.height: captureBtn.height/2
           height: captureBtn.height/2
-          source: QgsQuick.Utils.getThemeIcon("ic_camera_alt_border")
+          source: photoPanel.captureBtnIcon
         }
 
       }
@@ -165,7 +173,7 @@ Drawer {
             anchors.centerIn: parent
             sourceSize.height: captureBtn.height/2
             height: captureBtn.height/2
-            source: QgsQuick.Utils.getThemeIcon("ic_clear_black")
+            source: photoPanel.cancelBtnIcon
           }
         }
 
@@ -203,7 +211,7 @@ Drawer {
             anchors.centerIn: parent
             sourceSize.height: captureBtn.height/2
             height: captureBtn.height/2
-            source: QgsQuick.Utils.getThemeIcon("ic_check_black")
+            source: photoPanel.okBtnIcon
           }
         }
       }

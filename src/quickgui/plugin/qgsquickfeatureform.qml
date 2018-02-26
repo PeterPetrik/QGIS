@@ -37,6 +37,10 @@ Item {
   property bool allowRememberAttribute: false // when adding new feature, add checkbox to be able to save the same value for the next feature as default
   property QgsQuick.Project project
 
+  property var saveBtnIcon: QgsQuick.Utils.getThemeIcon( "ic_save_white" )
+  property var deleteBtnIcon: QgsQuick.Utils.getThemeIcon( "ic_delete_forever_white" )
+  property var closeBtnIcon: QgsQuick.Utils.getThemeIcon( "ic_clear_white" )
+
   property FeatureFormStyling style: FeatureFormStyling {}
 
   function reset() {
@@ -363,7 +367,7 @@ Item {
           width: parent.width * 0.8
           horizontalAlignment: Image.AlignHCenter
           verticalAlignment: Image.AlignVCenter
-          source: QgsQuick.Utils.getThemeIcon( "ic_save_white" )
+          source: form.saveBtnIcon
           antialiasing: true
         }
         background: Rectangle {
@@ -390,7 +394,7 @@ Item {
           width: parent.width * 0.8
           horizontalAlignment: Image.AlignHCenter
           verticalAlignment: Image.AlignVCenter
-          source: QgsQuick.Utils.getThemeIcon( "ic_delete_forever_white" )
+          source: form.deleteBtnIcon
           antialiasing: true
         }
 
@@ -439,7 +443,7 @@ Item {
           width: parent.width * 0.8
           horizontalAlignment: Image.AlignHCenter
           verticalAlignment: Image.AlignVCenter
-          source: QgsQuick.Utils.getThemeIcon( "ic_clear_white" )
+          source: form.closeBtnIcon
           antialiasing: true
         }
 

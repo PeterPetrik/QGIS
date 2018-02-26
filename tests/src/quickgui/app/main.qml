@@ -83,7 +83,7 @@ ApplicationWindow {
             mapSettings: mapCanvas.mapSettings
         }
 
-        z: 100   // make sure items from here are on top of the Z-order
+        z: 1   // make sure items from here are on top of the Z-order
     }
 
 

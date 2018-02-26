@@ -55,6 +55,7 @@ Item {
     }
   }
   property var withAccuracy: true
+  property var markerIcon: QgsQuick.Utils.getThemeIcon("ic_navigation_black")
 
   onMapSettingsChanged: update_location()
 
@@ -136,7 +137,7 @@ Item {
 
           Image {
             id: navigation
-            source: QgsQuick.Utils.getThemeIcon("ic_navigation_black")
+            source: positionMarker.markerIcon
             fillMode: Image.PreserveAspectFit
             rotation: positionKit.direction
             anchors.centerIn: parent
