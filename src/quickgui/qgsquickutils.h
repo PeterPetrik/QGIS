@@ -21,14 +21,16 @@
 #include <QString>
 
 #include "qgis.h"
+#include "qgsmessagelog.h"
+#include "qgsquickmapsettings.h"
 #include "qgis_quick.h"
 
+class QgsCoordinateReferenceSystem;
 /**
  * \ingroup quick
  *
- * Encapsulating the common utilies for QgsQuick library.
+ * Singleton encapsulating the common utilies for QgsQuick library.
  *
- * \note QML Type: Utils (Singleton)
  *
  * \since QGIS 3.2
  */
@@ -44,31 +46,42 @@ class QUICK_EXPORT QgsQuickUtils: public QObject
       *
       * 1dp is approximately 0.16mm. When screen has 160 DPI (baseline), the value of "dp" is 1.
       * On high DPI screen the value will be greater, e.g. 1.5.
-      *
-      * This is a readonly property.
       */
     Q_PROPERTY( qreal dp READ screenDensity CONSTANT )
 
   public:
-    //! Create new utilities
-    QgsQuickUtils( QObject *parent = nullptr );
-    //! dtor
-    ~QgsQuickUtils() = default;
+    //! return instance of the QgsQuickUtils singleton
+    static QgsQuickUtils *instance();
 
-    //! \copydoc QgsQuickUtils::dp
+    //! Calculated density of the screen - see "dp" property for more details
     qreal screenDensity() const;
 
     /**
-     * Returns a string with information about screen size and resolution
-     *
-     * Useful to log for debugging of graphical problems on various display sizes
-     */
+      * Create crs from epsg code in QML
+      */
+    Q_INVOKABLE QgsCoordinateReferenceSystem coordinateReferenceSystemFromEpsgId( long epsg ) const;
+    /**
+      * Calculate the distance in meter representing baseLengthPixels pixels on the screen based on the current map settings.
+      */
+    Q_INVOKABLE double screenUnitsToMeters( QgsQuickMapSettings *mapSettings, int baseLengthPixels ) const;
+
+//! Log message in QgsMessageLog
+    Q_INVOKABLE void logMessage( const QString &message,
+                                 const QString &tag = QString( "QgsQuick" ),
+                                 Qgis::MessageLevel level = Qgis::Warning );
+
+//! Returns a string with information about screen size and resolution - useful for debugging
     QString dumpScreenInfo() const;
 
+
   private:
-    static qreal calculateScreenDensity();
+    explicit QgsQuickUtils( QObject *parent = nullptr );
+    ~QgsQuickUtils();
+
+    static QgsQuickUtils *sInstance;
 
     qreal mScreenDensity;
+
 };
 
 #endif // QGSQUICKUTILS_H

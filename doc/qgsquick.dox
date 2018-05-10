@@ -13,6 +13,8 @@ QGIS Quick consists of a Qt plugin that provides the QML components and of a sha
 
 \subsection qgsquick_overview_widgets QML Classes
 \subsubsection qgsquick_overview_widgets_mapcanvas MapCanvas
+\subsubsection qgsquick_overview_widgets_scalebar ScaleBar
+\subsubsection qgsquick_overview_widgets_messagelog MessageLog
 
 \section qgsquick_styling Styling
 

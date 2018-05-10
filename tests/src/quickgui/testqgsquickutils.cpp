@@ -29,24 +29,20 @@ class TestQgsQuickUtils: public QObject
     void init() {} // will be called before each testfunction is executed.
     void cleanup() {} // will be called after every testfunction.
 
-    void screen_density();
-
-    void dump_screen_info();
-
-  private:
-    QgsQuickUtils utils;
+    void crs_and_geometry();
 };
 
-void TestQgsQuickUtils::screen_density()
+void TestQgsQuickUtils::crs_and_geometry()
 {
-  qreal dp = utils.screenDensity();
-  QVERIFY( ( dp > 0 ) && ( dp < 1000 ) );
-}
+  QgsCoordinateReferenceSystem crsGPS = QgsQuickUtils::instance()->coordinateReferenceSystemFromEpsgId( 4326 );
+  QVERIFY( crsGPS.authid() == "EPSG:4326" );
 
-void TestQgsQuickUtils::dump_screen_info()
-{
-  qreal dp = utils.screenDensity();
-  QVERIFY( utils.dumpScreenInfo().contains( QStringLiteral( "%1" ).arg( dp ) ) );
+  QgsQuickMapSettings ms;
+  ms.setDestinationCrs( crsGPS );
+  ms.setExtent( QgsRectangle( 49, 16, 50, 17 ) );
+  ms.setOutputSize( QSize( 1000, 500 ) );
+  double sutm = QgsQuickUtils::instance()->screenUnitsToMeters( &ms, 1 );
+  QVERIFY( fabs( sutm - 213 ) < 1.0 );
 }
 
 QGSTEST_MAIN( TestQgsQuickUtils )

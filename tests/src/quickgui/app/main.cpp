@@ -84,8 +84,9 @@ int main( int argc, char *argv[] )
   }
 
   // Add some data for debugging if needed
-  QgsApplication::messageLog()->logMessage( QgsQuickUtils().dumpScreenInfo() );
-  QgsDebugMsg( QStringLiteral( "data directory: %1" ).arg( dataDir ) );
+  QgsApplication::messageLog()->logMessage( QgsQuickUtils::instance()->dumpScreenInfo() );
+  QgsApplication::messageLog()->logMessage( "data directory: " + dataDir );
+  QgsApplication::messageLog()->logMessage( "All up and running" );
 
   return app.exec();
 }

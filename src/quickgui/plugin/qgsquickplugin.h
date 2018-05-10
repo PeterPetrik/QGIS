@@ -25,7 +25,7 @@
  *
  * \since QGIS 3.2
  */
-class QgsQuickPlugin : public QQmlExtensionPlugin
+class QgisQuickPlugin : public QQmlExtensionPlugin
 {
     Q_OBJECT
     Q_PLUGIN_METADATA( IID "org.qt-project.Qt.QQmlExtensionInterface" )

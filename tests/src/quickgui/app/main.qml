@@ -18,23 +18,56 @@ import QgsQuick 0.1 as QgsQuick
 import "."
 
 ApplicationWindow {
-  id: window
-  visible: true
-  visibility: "Maximized"
-  title: qsTr("QGIS Quick Test App")
+    id: window
+    visible: true
+    visibility: "Maximized"
+    title: qsTr("QGIS Quick Test App")
 
-  QgsQuick.MapCanvas {
-    id: mapCanvas
+    QgsQuick.MapCanvas {
+        id: mapCanvas
 
-    height: parent.height
-    width: parent.width
+        height: parent.height
+        width: parent.width
 
-    mapSettings.project: __project
-    mapSettings.layers: __layers
+        mapSettings.project: __project
+        mapSettings.layers: __layers
 
-    onClicked: {
-      var screenPoint = Qt.point(mouse.x, mouse.y)
-      console.log("clicked:" + screenPoint)
+        onClicked: {
+            var screenPoint = Qt.point(mouse.x, mouse.y)
+            console.log("clicked:" + screenPoint)
+        }
     }
-  }
+
+    Drawer {
+        id: logPanel
+        visible: false
+        modal: true
+        interactive: true
+        dragMargin: 0 // prevents opening the drawer by dragging.
+        height: window.height
+        width: QgsQuick.Utils.dp * 700
+        edge: Qt.RightEdge
+        z: 2   // make sure items from here are on top of the Z-order
+
+        background: Rectangle {
+            color: "white"
+        }
+
+        QgsQuick.MessageLog {
+            id: messageLog
+            width: parent.width
+            height: parent.height
+            model: QgsQuick.MessageLogModel {}
+            visible: true
+        }
+    }
+
+    QgsQuick.ScaleBar {
+        id: scaleBar
+        y: window.height - height
+        height: 50
+        mapSettings: mapCanvas.mapSettings
+        preferredWidth: 115 * QgsQuick.Utils.dp
+        z: 1
+    }
 }
