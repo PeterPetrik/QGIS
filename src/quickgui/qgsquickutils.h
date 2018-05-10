@@ -26,6 +26,7 @@
 #include "qgis_quick.h"
 
 class QgsCoordinateReferenceSystem;
+
 /**
  * \ingroup quick
  *
@@ -60,6 +61,7 @@ class QUICK_EXPORT QgsQuickUtils: public QObject
       * Create crs from epsg code in QML
       */
     Q_INVOKABLE QgsCoordinateReferenceSystem coordinateReferenceSystemFromEpsgId( long epsg ) const;
+
     /**
       * Calculate the distance in meter representing baseLengthPixels pixels on the screen based on the current map settings.
       */
