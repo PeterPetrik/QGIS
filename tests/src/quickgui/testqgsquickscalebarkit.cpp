@@ -50,10 +50,12 @@ void TestQgsQuickScaleBarKit::updateScaleBar()
   QgsQuickScaleBarKit kit;
   kit.setMapSettings( ms );
   QVERIFY( kit.units() == QString( "km" ) );
+  QVERIFY( kit.distance() == 50 );
 
-  qreal scale = 0.000005;
+  qreal scale = 0.005;
   canvas.zoom( extent.center().toQPointF(), scale );
   QVERIFY( kit.units() == QString( "m" ) );
+  QVERIFY( kit.distance() == 200 );
 }
 
 QGSTEST_MAIN( TestQgsQuickScaleBarKit )

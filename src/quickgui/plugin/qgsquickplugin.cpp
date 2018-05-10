@@ -54,7 +54,6 @@ void QgisQuickPlugin::registerTypes( const char *uri )
   qRegisterMetaType< QgsPoint >( "QgsPoint" );
   qRegisterMetaType< QgsPointXY >( "QgsPointXY" );
 
-
   qmlRegisterType< QgsProject >( uri, 0, 1, "Project" );
   qmlRegisterType< QgsQuickMapCanvasMap >( uri, 0, 1, "MapCanvasMap" );
   qmlRegisterType< QgsQuickMapSettings >( uri, 0, 1, "MapSettings" );
