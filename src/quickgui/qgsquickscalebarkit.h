@@ -96,7 +96,7 @@ class QUICK_EXPORT QgsQuickScaleBarKit : public QObject
 
     QgsQuickUtils utils() const;
 
-signals:
+  signals:
 
     /**
      * width, distance and/or units changed
