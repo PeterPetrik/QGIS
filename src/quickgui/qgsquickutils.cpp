@@ -27,30 +27,9 @@
 #include "qgsunittypes.h"
 
 
-QgsQuickUtils *QgsQuickUtils::sInstance = 0;
-
-QgsQuickUtils *QgsQuickUtils::instance()
-{
-  if ( !sInstance )
-  {
-    QgsDebugMsg( QStringLiteral( "QgsQuickUtils created: %1" ).arg( long( QThread::currentThreadId() ) ) );
-    sInstance = new QgsQuickUtils();
-  }
-  return sInstance;
-}
-
 QgsQuickUtils::QgsQuickUtils( QObject *parent )
   : QObject( parent )
-{
-
-  // calculate screen density for calculation of real pixel sizes from density-independent pixels
-  int dpiX = QApplication::desktop()->physicalDpiX();
-  int dpiY = QApplication::desktop()->physicalDpiY();
-  int dpi = dpiX < dpiY ? dpiX : dpiY; // In case of asymmetrical DPI. Improbable
-  mScreenDensity = dpi / 160.;  // 160 DPI is baseline for density-independent pixels in Android
-}
-
-QgsQuickUtils::~QgsQuickUtils()
+  , mScreenDensity( calculateScreenDensity() )
 {
 }
 
@@ -59,12 +38,37 @@ QgsCoordinateReferenceSystem QgsQuickUtils::coordinateReferenceSystemFromEpsgId(
   return QgsCoordinateReferenceSystem::fromEpsgId( epsg );
 }
 
+QgsPointXY QgsQuickUtils::pointXYFactory( double x, double y ) const
+{
+  return QgsPointXY( x, y );
+}
+
+QgsPoint QgsQuickUtils::pointFactory( double x, double y ) const
+{
+  return QgsPoint( x, y );
+}
+
+QgsPoint QgsQuickUtils::coordinateToPoint( const QGeoCoordinate &coor ) const
+{
+  return QgsPoint( coor.longitude(), coor.latitude(), coor.altitude() );
+}
+
+QgsPointXY QgsQuickUtils::transformPoint( const QgsCoordinateReferenceSystem &srcCrs,
+    const QgsCoordinateReferenceSystem &destCrs,
+    const QgsCoordinateTransformContext &context,
+    const QgsPointXY &srcPoint ) const
+{
+  QgsCoordinateTransform mTransform( srcCrs, destCrs, context );
+  QgsPointXY pt = mTransform.transform( srcPoint );
+  return pt;
+}
+
 double QgsQuickUtils::screenUnitsToMeters( QgsQuickMapSettings *mapSettings, int baseLengthPixels ) const
 {
-  if ( mapSettings == 0 ) return 0;
+  if ( mapSettings == nullptr ) return 0.0;
 
   QgsDistanceArea mDistanceArea;
-  mDistanceArea.setEllipsoid( "WGS84" );
+  mDistanceArea.setEllipsoid( QStringLiteral( "WGS84" ) );
   mDistanceArea.setSourceCrs( mapSettings->destinationCrs(), mapSettings->transformContext() );
 
   // calculate the geographic distance from the central point of extent
@@ -81,6 +85,44 @@ void QgsQuickUtils::logMessage( const QString &message, const QString &tag, Qgis
   QgsMessageLog::logMessage( message, tag, level );
 }
 
+QString QgsQuickUtils::qgsPointToString( const QgsPoint &point, int decimals )
+{
+  QString label;
+  label += QString::number( point.x(), 'f', decimals );
+  label += ", ";
+  label += QString::number( point.y(), 'f', decimals );
+  return label;
+}
+
+QString QgsQuickUtils::distanceToString( qreal dist, int decimals )
+{
+  if ( dist < 0 )
+  {
+    return "0 m";
+  }
+
+  QString label;
+  if ( dist > 1000 )
+  {
+    label += QString::number( dist / 1000.0, 'f', decimals );
+    label += QString( " km" );
+  }
+  else
+  {
+    if ( dist > 1 )
+    {
+      label += QString::number( dist, 'f', decimals );
+      label += QString( " m" );
+    }
+    else
+    {
+      label += QString::number( dist * 1000, 'f', decimals );
+      label += QString( " mm" );
+    }
+  }
+  return label;
+}
+
 QString QgsQuickUtils::dumpScreenInfo() const
 {
   QRect rec = QApplication::desktop()->screenGeometry();
@@ -88,18 +130,27 @@ QString QgsQuickUtils::dumpScreenInfo() const
   int dpiY = QApplication::desktop()->physicalDpiY();
   int height = rec.height();
   int width = rec.width();
-  double sizeX = ( double ) width / dpiX * 25.4;
-  double sizeY = ( double ) height / dpiY * 25.4;
+  double sizeX = static_cast<double>( width ) / dpiX * 25.4;
+  double sizeY = static_cast<double>( height ) / dpiY * 25.4;
 
   QString msg;
-  msg += "screen resolution: " + QString::number( width ) + "x" + QString::number( height ) + " px\n";
-  msg += "screen DPI: " + QString::number( dpiX ) + "x" + QString::number( dpiY ) + "\n";
-  msg += "screen size: " + QString::number( sizeX, 'f', 0 ) + "x" + QString::number( sizeY, 'f', 0 ) + " mm\n";
-  msg += "screen density: " + QString::number( mScreenDensity );
+  msg += tr( "screen resolution: %1x%2 px\n" ).arg( width ).arg( height );
+  msg += tr( "screen DPI: %1x%2\n" ).arg( dpiX ).arg( dpiY );
+  msg += tr( "screen size: %1x%2 mm\n" ).arg( QString::number( sizeX, 'f', 0 ), QString::number( sizeY, 'f', 0 ) );
+  msg += tr( "screen density: %1" ).arg( mScreenDensity );
   return msg;
 }
 
 qreal QgsQuickUtils::screenDensity() const
 {
   return mScreenDensity;
+}
+
+qreal QgsQuickUtils::calculateScreenDensity()
+{
+  // calculate screen density for calculation of real pixel sizes from density-independent pixels
+  int dpiX = QApplication::desktop()->physicalDpiX();
+  int dpiY = QApplication::desktop()->physicalDpiY();
+  int dpi = dpiX < dpiY ? dpiX : dpiY; // In case of asymmetrical DPI. Improbable
+  return dpi / 160.;  // 160 DPI is baseline for density-independent pixels in Android
 }

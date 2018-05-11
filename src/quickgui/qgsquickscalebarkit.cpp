@@ -82,7 +82,7 @@ void QgsQuickScaleBarKit::updateScaleBar()
   if ( !mMapSettings )
     return;
 
-  double dist = QgsQuickUtils::instance()->screenUnitsToMeters( mMapSettings, mPreferredWidth ); // meters
+  double dist = QgsQuickUtils().screenUnitsToMeters( mMapSettings, mPreferredWidth ); // meters
   if ( dist > 1000.0 )
   {
     dist = dist / 1000.0; // meters to kilometers

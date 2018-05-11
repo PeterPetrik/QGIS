@@ -20,6 +20,7 @@
 #include <QString>
 
 #include "qgis_quick.h"
+#include "qgsquickutils.h"
 
 class QgsQuickMapSettings;
 
@@ -95,7 +96,7 @@ class QUICK_EXPORT QgsQuickScaleBarKit : public QObject
      */
     QString units() const;
 
-  signals:
+signals:
     //! width, distance and/or units changed
     void scaleBarChanged();
 

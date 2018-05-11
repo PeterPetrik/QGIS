@@ -22,17 +22,26 @@
 
 QgsQuickMessageLogModel::QgsQuickMessageLogModel( QObject *parent )
   : QAbstractListModel( parent )
-  , mMessageLog( QgsApplication::messageLog() )
 {
-  connect( mMessageLog, static_cast<void ( QgsMessageLog::* )( const QString &message, const QString &tag, Qgis::MessageLevel  level )>( &QgsMessageLog::messageReceived ), this, &QgsQuickMessageLogModel::onMessageReceived );
+  connect( QgsApplication::messageLog(), static_cast<void ( QgsMessageLog::* )( const QString &message, const QString &tag, Qgis::MessageLevel  level )>( &QgsMessageLog::messageReceived ), this, &QgsQuickMessageLogModel::onMessageReceived );
+}
+
+QgsQuickMessageLogModel::LogMessage QgsQuickMessageLogModel::logMessage( const QString &tag, const QString &message, Qgis::MessageLevel level )
+{
+  LogMessage msg;
+  msg.tag = tag;
+  msg.message = message;
+  msg.level = level;
+
+  return msg;
 }
 
 QHash<int, QByteArray> QgsQuickMessageLogModel::roleNames() const
 {
   QHash<int, QByteArray> roles = QAbstractListModel::roleNames();
-  roles[MessageRole]  = "Message";
-  roles[MessageTagRole] = "MessageTag";
-  roles[MessageLevelRole] = "MessageLevel";
+  roles[MessageRole]  = QByteArrayLiteral( "Message" );
+  roles[MessageTagRole] = QByteArrayLiteral( "MessageTag" );
+  roles[MessageLevelRole] = QByteArrayLiteral( "MessageLevel" );
 
   return roles;
 }
@@ -61,7 +70,7 @@ QVariant QgsQuickMessageLogModel::data( const QModelIndex &index, int role ) con
 void QgsQuickMessageLogModel::onMessageReceived( const QString &message, const QString &tag, Qgis::MessageLevel level )
 {
   beginInsertRows( QModelIndex(), 0, 0 );
-  mMessages.prepend( LogMessage( tag, message, level ) );
+  mMessages.prepend( logMessage( tag, message, level ) );
   QgsDebugMsg( QStringLiteral( "Next message %1 : %2" ).arg( tag, message ) );
   endInsertRows();
 }

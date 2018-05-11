@@ -17,6 +17,10 @@
 #define QGSQUICKMESSAGELOGMODEL_H
 
 #include <QAbstractListModel>
+#include <QHash>
+#include <QString>
+#include <QVariant>
+#include <QVector>
 
 #include "qgis.h"
 #include "qgsmessagelog.h"
@@ -40,15 +44,7 @@ class QUICK_EXPORT QgsQuickMessageLogModel : public QAbstractListModel
 
     struct LogMessage
     {
-      LogMessage()
-      {}
-
-      LogMessage( const QString &tag, const QString &message, Qgis::MessageLevel level )
-      {
-        this->tag = tag;
-        this->message = message;
-        this->level = level;
-      }
+      LogMessage() = default;
 
       QString tag;
       QString message;
@@ -66,6 +62,8 @@ class QUICK_EXPORT QgsQuickMessageLogModel : public QAbstractListModel
     //! Create new message log model
     QgsQuickMessageLogModel( QObject *parent = nullptr );
 
+    LogMessage logMessage( const QString &tag, const QString &message, Qgis::MessageLevel level );
+
     QHash<int, QByteArray> roleNames() const override;
 
     int rowCount( const QModelIndex &parent ) const override;
@@ -75,7 +73,6 @@ class QUICK_EXPORT QgsQuickMessageLogModel : public QAbstractListModel
     void onMessageReceived( const QString &message, const QString &tag, Qgis::MessageLevel level );
 
   private:
-    QgsMessageLog *mMessageLog;
     QVector<LogMessage> mMessages;
 };
 

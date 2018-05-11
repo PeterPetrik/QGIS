@@ -16,20 +16,53 @@ import QtQuick 2.7
 import QtQuick.Controls 2.2
 import QgsQuick 0.1 as QgsQuick
 
+/*!
+    \qmltype ScaleBar
+    \brief A component that shows scale ratio between its length and distance on the MapCanvas
+*/
 Item {
     id: scaleBar
     property alias mapSettings: scaleBarKit.mapSettings
+    /*!
+    Preferred width of scalebar in pixels. Defaults set to 300.
+    */
     property alias preferredWidth: scaleBarKit.preferredWidth
+    /*!
+    *  Utility used for Scalebar properties.
+    */
     property QgsQuick.ScaleBarKit scaleBarKit: QgsQuick.ScaleBarKit {id: scaleBarKit}
 
+
+    /*!
+        Reserved text width.
+    */
     property int textWidth: fontMetrics.averageCharacterWidth * 8
+    /*!
+        Opacity of ScaleBar.
+    */
     property color barColor: "white"
+    /*!
+        Background color of scaleBar.
+    */
     property color barBackgroundColor: "grey"
+    /*!
+        Opacity of ScaleBar.
+    */
     property double barOpacity: 0.8
+    /*!
+     Defines text shown on ScaleBar.
+    */
     property string barText: scaleBarKit.distance + " " + scaleBarKit.units
+
+    /*!
+     Returns calculated width in pixels.
+    */
     property int barWidth: scaleBarKit.width
     property int lineWidth: 5 * QgsQuick.Utils.dp
 
+    /*!
+     The real width of the component.
+    */
     width: textWidth + barWidth
 
     MouseArea {

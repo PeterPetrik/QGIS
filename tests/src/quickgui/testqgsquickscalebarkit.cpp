@@ -1,9 +1,9 @@
 /***************************************************************************
-     testqgsquickutils.cpp
+     testqgsquickscalebarkit.cpp.cpp
      --------------------------------------
-  Date                 : Nov 2017
-  Copyright            : (C) 2017 by Peter Petrik
-  Email                : zilolv at gmail dot com
+  Date                 : May 2018
+  Copyright            : (C) 2018 by Viktor Sklencar
+  Email                : vsklencar at gmail dot com
  ***************************************************************************
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -24,6 +24,7 @@
 #include "qgsquickmapcanvasmap.h"
 #include "qgsquickscalebarkit.h"
 
+
 class TestQgsQuickScaleBarKit: public QObject
 {
     Q_OBJECT
@@ -31,12 +32,12 @@ class TestQgsQuickScaleBarKit: public QObject
     void init() {} // will be called before each testfunction is executed.
     void cleanup() {} // will be called after every testfunction.
 
-    void updateScaleBar();
+    void updateScaleBar(); // test text of scalebar after update.
 };
 
 void TestQgsQuickScaleBarKit::updateScaleBar()
 {
-  QgsCoordinateReferenceSystem crsGPS = QgsQuickUtils::instance()->coordinateReferenceSystemFromEpsgId( 4326 );
+  QgsCoordinateReferenceSystem crsGPS = QgsQuickUtils().coordinateReferenceSystemFromEpsgId( 4326 );
   QVERIFY( crsGPS.authid() == "EPSG:4326" );
 
   QgsRectangle extent = QgsRectangle( 49, 16, 50, 17 );
