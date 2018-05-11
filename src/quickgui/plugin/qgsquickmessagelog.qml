@@ -17,20 +17,37 @@ import QtQuick.Controls 2.0
 import QtQuick 2.5
 import QgsQuick 0.1 as QgsQuick
 
+/*!
+    \brief A component shows all log messages.
+*/
 Item {
+  /*!
+  MessageLogModel
+  */
   property alias model: table.model
+  /*!
+  Background color.
+  */
   property color bgColor: "white"
+  /*!
+  Separator color
+  */
   property color separatorColor: "gray"
+
+  /*!
+  Separator width
+  */
   property int separatorSize: 1 * QgsQuick.Utils.dp
+  /*!
+    True if a new message is added to the list.
+  */
   property bool unreadMessages: false
 
   id: item
 
-  Rectangle {
-    color: item.bgColor
-    anchors.fill: parent
-  }
-
+  /*!
+     List containing message logs.
+  */
   ListView {
     id: table
     anchors.fill: parent
@@ -47,6 +64,9 @@ Item {
         wrapMode: Text.WordWrap
       }
 
+      /*!
+      Message separator
+      */
       Rectangle {
         color: item.separatorColor
         height: item.separatorSize
@@ -55,6 +75,9 @@ Item {
     }
   }
 
+  /*!
+  Handles adding new messages to the list.
+  */
   Connections {
     target: model
 

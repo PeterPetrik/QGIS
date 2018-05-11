@@ -37,7 +37,7 @@ class TestQgsQuickScaleBarKit: public QObject
 
 void TestQgsQuickScaleBarKit::updateScaleBar()
 {
-  QgsCoordinateReferenceSystem crsGPS = QgsQuickUtils().coordinateReferenceSystemFromEpsgId( 4326 );
+  QgsCoordinateReferenceSystem crsGPS = QgsCoordinateReferenceSystem::fromEpsgId( 4326 );
   QVERIFY( crsGPS.authid() == "EPSG:4326" );
 
   QgsRectangle extent = QgsRectangle( 49, 16, 50, 17 );

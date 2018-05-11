@@ -59,20 +59,25 @@ class QUICK_EXPORT QgsQuickMessageLogModel : public QAbstractListModel
     };
 
   public:
-    //! Create new message log model
+    //! Create new message log model.
     QgsQuickMessageLogModel( QObject *parent = nullptr );
 
+    //! Returns new struct created according params.
     LogMessage logMessage( const QString &tag, const QString &message, Qgis::MessageLevel level );
 
     QHash<int, QByteArray> roleNames() const override;
 
+    //! number of messages stored in model.
     int rowCount( const QModelIndex &parent ) const override;
+
+    //! Returns message data from model according index and role.
     QVariant data( const QModelIndex &index, int role ) const override;
 
   private slots:
     void onMessageReceived( const QString &message, const QString &tag, Qgis::MessageLevel level );
 
   private:
+    //! Stores all messages.
     QVector<LogMessage> mMessages;
 };
 

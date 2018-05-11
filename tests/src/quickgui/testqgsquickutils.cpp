@@ -55,10 +55,10 @@ void TestQgsQuickUtils::dump_screen_info()
 
 void TestQgsQuickUtils::crs_and_geometry()
 {
-  QgsCoordinateReferenceSystem crs3857 = utils.coordinateReferenceSystemFromEpsgId( 3857 );
+  QgsCoordinateReferenceSystem crs3857 = QgsCoordinateReferenceSystem::fromEpsgId( 3857 );
   QVERIFY( crs3857.authid() == "EPSG:3857" );
 
-  QgsCoordinateReferenceSystem crsGPS = utils.coordinateReferenceSystemFromEpsgId( 4326 );
+  QgsCoordinateReferenceSystem crsGPS = QgsCoordinateReferenceSystem::fromEpsgId( 4326 );
   QVERIFY( crsGPS.authid() == "EPSG:4326" );
 
   QgsPointXY pointXY = utils.pointXYFactory( 49.9, 16.3 );

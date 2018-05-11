@@ -46,7 +46,7 @@ class QUICK_EXPORT QgsQuickScaleBarKit : public QObject
     Q_OBJECT
 
     /**
-      * Associated map settings
+      * Associated map settings. Should be initialized before the first use from mapcanvas map settings.
       */
     Q_PROPERTY( QgsQuickMapSettings *mapSettings MEMBER mMapSettings WRITE setMapSettings NOTIFY mapSettingsChanged )
 
@@ -61,7 +61,7 @@ class QUICK_EXPORT QgsQuickScaleBarKit : public QObject
     Q_PROPERTY( QString units READ units NOTIFY scaleBarChanged )
 
     /**
-      * Distance rounded to "nice" number (e.g. 100, 20). To be used with units property for labels. Read-only (result)
+      * Distance rounded to "nice" number (e.g. 100, 20) corresponding to width. To be used with units property for labels. Read-only (result)
       */
     Q_PROPERTY( int distance READ distance NOTIFY scaleBarChanged )
 
@@ -76,46 +76,51 @@ class QUICK_EXPORT QgsQuickScaleBarKit : public QObject
     explicit QgsQuickScaleBarKit( QObject *parent = nullptr );
     ~QgsQuickScaleBarKit() = default;
 
-    //! Set map settings
+    //! \copydoc QgsQuickScaleBarKit::mapSettings
     void setMapSettings( QgsQuickMapSettings *mapSettings );
 
-    //! Returns calculated width in pixels
+    //! \copydoc QgsQuickScaleBarKit::width
     int width() const;
 
     /**
-     * Returns distance corensponding to width
-     *
+     * \copydoc QgsQuickScaleBarKit::units
      * \see QgsQuickScaleBarKit::units()
      */
     int distance() const;
 
     /**
-     * Returns units of distance (m, km)
-     *
+     * \copydoc QgsQuickScaleBarKit::units
      * \see QgsQuickScaleBarKit::distance()
      */
     QString units() const;
 
 signals:
     //! width, distance and/or units changed
+    //! \copydoc QgsQuickScaleBarKit::width
+    //! \copydoc QgsQuickScaleBarKit::distance
+    //! \copydoc QgsQuickScaleBarKit::units
     void scaleBarChanged();
 
-    //! map settings changed
+    //! \copydoc QgsQuickScaleBarKit::mapSettings
     void mapSettingsChanged();
 
-    //! preferred width changed
+    //! \copydoc QgsQuickScaleBarKit::preferredWidth
     void preferredWidthChanged();
 
   public slots:
-    //! recalculate width, distance and units
+    //! recalculate width, distance and units.
     void updateScaleBar();
 
   private:
     QgsQuickMapSettings *mMapSettings = nullptr;
 
+    //! \copydoc QgsQuickScaleBarKit::preferredWidth
     int mPreferredWidth; // pixels
+    //! \copydoc QgsQuickScaleBarKit::width
     int mWidth; // pixels
+    //! \copydoc QgsQuickScaleBarKit::distance
     int mDistance; // in meters or kilometers, rounded
+    //! \copydoc QgsQuickScaleBarKit::units
     QString mUnits; // km or m
 };
 

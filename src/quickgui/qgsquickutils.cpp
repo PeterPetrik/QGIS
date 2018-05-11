@@ -33,11 +33,6 @@ QgsQuickUtils::QgsQuickUtils( QObject *parent )
 {
 }
 
-QgsCoordinateReferenceSystem QgsQuickUtils::coordinateReferenceSystemFromEpsgId( long epsg ) const
-{
-  return QgsCoordinateReferenceSystem::fromEpsgId( epsg );
-}
-
 QgsPointXY QgsQuickUtils::pointXYFactory( double x, double y ) const
 {
   return QgsPointXY( x, y );

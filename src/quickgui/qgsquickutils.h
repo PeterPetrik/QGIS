@@ -67,11 +67,6 @@ class QUICK_EXPORT QgsQuickUtils: public QObject
     qreal screenDensity() const;
 
     /**
-      * Create crs from epsg code in QML
-      */
-    Q_INVOKABLE QgsCoordinateReferenceSystem coordinateReferenceSystemFromEpsgId( long epsg ) const;
-
-    /**
       * Create QgsPointXY in QML
       */
     Q_INVOKABLE QgsPointXY pointXYFactory( double x, double y ) const;
