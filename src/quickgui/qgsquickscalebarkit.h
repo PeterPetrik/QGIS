@@ -51,17 +51,17 @@ class QUICK_EXPORT QgsQuickScaleBarKit : public QObject
     Q_PROPERTY( QgsQuickMapSettings *mapSettings MEMBER mMapSettings WRITE setMapSettings NOTIFY mapSettingsChanged )
 
     /**
-      * Preferred width of scalebar in pixels. Defaults to 300
+      * Preferred width of scalebar in pixels. Default set to 300.
       */
     Q_PROPERTY( int preferredWidth MEMBER mPreferredWidth NOTIFY preferredWidthChanged )
 
     /**
-      * Units of distance (e.g. km or m) Read-only (result)
+      * Units of distance (e.g. km or m) Read-only (result).
       */
     Q_PROPERTY( QString units READ units NOTIFY scaleBarChanged )
 
     /**
-      * Distance rounded to "nice" number (e.g. 100, 20) corresponding to width. To be used with units property for labels. Read-only (result)
+      * Distance rounded to "nice" number (e.g. 100, 20) corresponding to width. To be used with units property for labels. Read-only (result).
       */
     Q_PROPERTY( int distance READ distance NOTIFY scaleBarChanged )
 
@@ -94,11 +94,16 @@ class QUICK_EXPORT QgsQuickScaleBarKit : public QObject
      */
     QString units() const;
 
+    QgsQuickUtils utils() const;
+
 signals:
-    //! width, distance and/or units changed
-    //! \copydoc QgsQuickScaleBarKit::width
-    //! \copydoc QgsQuickScaleBarKit::distance
-    //! \copydoc QgsQuickScaleBarKit::units
+
+    /**
+     * width, distance and/or units changed
+     * \copydoc QgsQuickScaleBarKit::width
+     * \copydoc QgsQuickScaleBarKit::distance
+     * \copydoc QgsQuickScaleBarKit::units
+     */
     void scaleBarChanged();
 
     //! \copydoc QgsQuickScaleBarKit::mapSettings
@@ -122,6 +127,8 @@ signals:
     int mDistance; // in meters or kilometers, rounded
     //! \copydoc QgsQuickScaleBarKit::units
     QString mUnits; // km or m
+
+    QgsQuickUtils mUtils;
 };
 
 
