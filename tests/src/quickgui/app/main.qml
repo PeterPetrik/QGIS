@@ -43,11 +43,10 @@ ApplicationWindow {
     visible: true
     modal: true
     interactive: true
-    dragMargin: 0 // prevents opening the drawer by dragging.
     height: window.height
     width: QgsQuick.Utils.dp * 700
     edge: Qt.RightEdge
-    z: 2   // make sure items from here are on top of the Z-order
+    z: 2 // make sure items from here are on top of the Z-order
 
     background: Rectangle {
       color: "white"

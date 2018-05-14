@@ -17,9 +17,7 @@
 #define QGSQUICKMESSAGELOGMODEL_H
 
 #include <QAbstractListModel>
-#include <QHash>
 #include <QString>
-#include <QVariant>
 #include <QVector>
 
 #include "qgis.h"
@@ -30,11 +28,13 @@
 /**
  * \ingroup quick
  *
- * This model will connect to the QgsMessageLog and publish any
- * messages received from there. Can be used as a model for QListView,
- * for example QgsQuick MessageLog class.
+ * This model will connect to the QgsMessageLog singleton and store any
+ * messages received. Can be used as a model for QListView,
+ * for example QgsQuick.MessageLog (QML only)
  *
  * \note QML Type: MessageLogModel
+ *
+ * \sa QgsMessageLog
  *
  * \since QGIS 3.2
  */
@@ -59,25 +59,21 @@ class QUICK_EXPORT QgsQuickMessageLogModel : public QAbstractListModel
     };
 
   public:
-    //! Create new message log model.
+    //! Create new message log model
     QgsQuickMessageLogModel( QObject *parent = nullptr );
 
-    //! Returns new struct created according params.
-    LogMessage logMessage( const QString &tag, const QString &message, Qgis::MessageLevel level );
-
     QHash<int, QByteArray> roleNames() const override;
-
-    //! number of messages stored in model.
     int rowCount( const QModelIndex &parent ) const override;
-
-    //! Returns message data from model according index and role.
     QVariant data( const QModelIndex &index, int role ) const override;
 
   private slots:
     void onMessageReceived( const QString &message, const QString &tag, Qgis::MessageLevel level );
 
   private:
-    //! Stores all messages.
+    //! LogMessage factory
+    LogMessage logMessage( const QString &tag, const QString &message, Qgis::MessageLevel level );
+
+    //! Storage of all messages.
     QVector<LogMessage> mMessages;
 };
 

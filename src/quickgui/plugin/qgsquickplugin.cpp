@@ -63,7 +63,7 @@ void QgsQuickPlugin::registerTypes( const char *uri )
 
   qmlRegisterSingletonType< QgsQuickUtils >( uri, 0, 1, "Utils", _utilsProvider );
 
-  qmlRegisterUncreatableType< QgsRelationManager >( uri, 0, 1, "RelationManager", "The relation manager is available from the Project. Try `qgisProject.relationManager`" );
-  qmlRegisterUncreatableType< QgsMessageLog >( uri, 0, 1, "QgsMessageLog", "Expose MessageLevel" );
+  //qmlRegisterUncreatableType< QgsRelationManager >( uri, 0, 1, "RelationManager", "The relation manager is available from the Project. Try `qgisProject.relationManager`" );
+  //qmlRegisterUncreatableType< QgsMessageLog >( uri, 0, 1, "QgsMessageLog", "Expose MessageLevel" );
 }
 

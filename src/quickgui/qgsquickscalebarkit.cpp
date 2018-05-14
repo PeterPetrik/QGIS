@@ -96,7 +96,7 @@ void QgsQuickScaleBarKit::updateScaleBar()
   // we want to show nice round distances e.g. 200 km instead of e.g. 273 km
   // so we determine which "nice" number to use and also update the scale bar
   // length accordingly. First digit will be 1, 2 or 5, the rest will be zeroes.
-  int digits = floor( log10( ( dist ) ) ); // number of digits after first one
+  int digits = int( floor( log10( ( dist ) ) ) ); // number of digits after first one
   double base = pow( 10, digits ); // e.g. for 1234 this will be 1000
   double first_digit = dist / base; // get the first digit
   int round_digit;
@@ -107,8 +107,8 @@ void QgsQuickScaleBarKit::updateScaleBar()
   else
     round_digit = 5;
 
-  mDistance = round_digit * base;
-  mWidth = mPreferredWidth * mDistance / dist;
+  mDistance = int( round_digit * base );
+  mWidth = int( mPreferredWidth * mDistance / dist );
 
   emit scaleBarChanged();
 }

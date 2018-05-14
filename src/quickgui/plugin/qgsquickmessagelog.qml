@@ -12,41 +12,45 @@
  *   (at your option) any later version.                                   *
  *                                                                         *
  ***************************************************************************/
-
 import QtQuick.Controls 2.0
 import QtQuick 2.5
 import QgsQuick 0.1 as QgsQuick
 
+
 /**
- * \brief A component shows all log messages.
+ * \brief A component that shows all log messages. The component shows
+ * the items from QgsQuickMessageLogModel.
  */
 Item {
   /**
-   * MessageLogModel.
+   * Input for messages. Must be connected before usage from QgsQuick.MessageLog.
+   *
+   * See also QgsQuickMessageLogModel
    */
   property alias model: table.model
   /**
-   *Background color.
+   * Background color
    */
   property color bgColor: "white"
   /**
-   * Separator color.
+   * Separator color
    */
   property color separatorColor: "gray"
 
   /**
-   * Separator width.
+   * Separator width
    */
   property int separatorSize: 1 * QgsQuick.Utils.dp
   /**
-   * True if a new message is added to the list.
+   * True if there are unread messages in the list. All messages
+   * are marked read when the widget receives visibility.
    */
   property bool unreadMessages: false
 
   id: item
 
   /**
-   * List containing message logs.
+   * List containing message logs
    */
   ListView {
     id: table
@@ -82,13 +86,13 @@ Item {
     target: model
 
     onRowsInserted: {
-      if ( !visible )
+      if (!visible)
         unreadMessages = true
     }
   }
 
   onVisibleChanged: {
-    if ( visible )
+    if (visible)
       unreadMessages = false
   }
 }
