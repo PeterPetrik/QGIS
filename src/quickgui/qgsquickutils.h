@@ -19,12 +19,9 @@
 
 #include <QObject>
 #include <QString>
-#include <QtPositioning/QGeoCoordinate>
 
 #include "qgis.h"
 #include "qgsmessagelog.h"
-#include "qgspoint.h"
-#include "qgspointxy.h"
 
 #include "qgsquickmapsettings.h"
 #include "qgis_quick.h"
@@ -63,51 +60,18 @@ class QUICK_EXPORT QgsQuickUtils: public QObject
     //! dtor
     ~QgsQuickUtils() = default;
 
-    //! Calculated density of the screen - see "dp" property for more details
+    //! \copydoc QgsQuickUtils::dp
     qreal screenDensity() const;
-
-    /**
-      * Create QgsPointXY in QML
-      */
-    Q_INVOKABLE QgsPointXY pointXYFactory( double x, double y ) const;
-
-    /**
-      * Create QgsPoint in QML
-      */
-    Q_INVOKABLE QgsPoint pointFactory( double x, double y ) const;
-
-    /**
-      * Convert QGeoCoordinate to QgsPoint
-      */
-    Q_INVOKABLE QgsPoint coordinateToPoint( const QGeoCoordinate &coor ) const;
-
-    /**
-      * Transform point between different crs from QML
-      */
-    Q_INVOKABLE QgsPointXY transformPoint( const QgsCoordinateReferenceSystem &srcCrs,
-                                           const QgsCoordinateReferenceSystem &destCrs,
-                                           const QgsCoordinateTransformContext &context,
-                                           const QgsPointXY &srcPoint ) const;
 
     /**
       * Calculate the distance in meter representing baseLengthPixels pixels on the screen based on the current map settings.
       */
     Q_INVOKABLE double screenUnitsToMeters( QgsQuickMapSettings *mapSettings, int baseLengthPixels ) const;
 
-//! Log message in QgsMessageLog
+    //! Log message in QgsMessageLog
     Q_INVOKABLE void logMessage( const QString &message,
                                  const QString &tag = QString( "QgsQuick" ),
                                  Qgis::MessageLevel level = Qgis::Warning );
-
-    /**
-      * point to string, e.g. -2.234521, 34.4444421 -> -2.234, 34.444
-      */
-    Q_INVOKABLE QString qgsPointToString( const QgsPoint &point, int decimals = 3 );
-
-    /**
-      * distance in meters to human readable length e.g. 1222.234 m -> 1.2 km
-      */
-    Q_INVOKABLE QString distanceToString( qreal dist, int decimals = 1 );
 
     /**
      * Returns a string with information about screen size and resolution

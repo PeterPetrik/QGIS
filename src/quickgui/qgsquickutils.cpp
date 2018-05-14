@@ -16,11 +16,8 @@
 #include <QString>
 
 #include "qgis.h"
-#include "qgscoordinatereferencesystem.h"
-#include "qgscoordinatetransform.h"
 #include "qgsdistancearea.h"
 #include "qgslogger.h"
-#include "qgsvectorlayer.h"
 
 #include "qgsquickmapsettings.h"
 #include "qgsquickutils.h"
@@ -31,31 +28,6 @@ QgsQuickUtils::QgsQuickUtils( QObject *parent )
   : QObject( parent )
   , mScreenDensity( calculateScreenDensity() )
 {
-}
-
-QgsPointXY QgsQuickUtils::pointXYFactory( double x, double y ) const
-{
-  return QgsPointXY( x, y );
-}
-
-QgsPoint QgsQuickUtils::pointFactory( double x, double y ) const
-{
-  return QgsPoint( x, y );
-}
-
-QgsPoint QgsQuickUtils::coordinateToPoint( const QGeoCoordinate &coor ) const
-{
-  return QgsPoint( coor.longitude(), coor.latitude(), coor.altitude() );
-}
-
-QgsPointXY QgsQuickUtils::transformPoint( const QgsCoordinateReferenceSystem &srcCrs,
-    const QgsCoordinateReferenceSystem &destCrs,
-    const QgsCoordinateTransformContext &context,
-    const QgsPointXY &srcPoint ) const
-{
-  QgsCoordinateTransform mTransform( srcCrs, destCrs, context );
-  QgsPointXY pt = mTransform.transform( srcPoint );
-  return pt;
 }
 
 double QgsQuickUtils::screenUnitsToMeters( QgsQuickMapSettings *mapSettings, int baseLengthPixels ) const
@@ -78,44 +50,6 @@ double QgsQuickUtils::screenUnitsToMeters( QgsQuickMapSettings *mapSettings, int
 void QgsQuickUtils::logMessage( const QString &message, const QString &tag, Qgis::MessageLevel level )
 {
   QgsMessageLog::logMessage( message, tag, level );
-}
-
-QString QgsQuickUtils::qgsPointToString( const QgsPoint &point, int decimals )
-{
-  QString label;
-  label += QString::number( point.x(), 'f', decimals );
-  label += ", ";
-  label += QString::number( point.y(), 'f', decimals );
-  return label;
-}
-
-QString QgsQuickUtils::distanceToString( qreal dist, int decimals )
-{
-  if ( dist < 0 )
-  {
-    return "0 m";
-  }
-
-  QString label;
-  if ( dist > 1000 )
-  {
-    label += QString::number( dist / 1000.0, 'f', decimals );
-    label += QString( " km" );
-  }
-  else
-  {
-    if ( dist > 1 )
-    {
-      label += QString::number( dist, 'f', decimals );
-      label += QString( " m" );
-    }
-    else
-    {
-      label += QString::number( dist * 1000, 'f', decimals );
-      label += QString( " mm" );
-    }
-  }
-  return label;
 }
 
 QString QgsQuickUtils::dumpScreenInfo() const
