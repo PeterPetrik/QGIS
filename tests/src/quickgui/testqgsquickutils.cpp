@@ -33,7 +33,7 @@ class TestQgsQuickUtils: public QObject
     void dump_screen_info();
     void screenUnitsToMeters();
 
-   private:
+  private:
     QgsQuickUtils utils;
 };
 
