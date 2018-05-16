@@ -68,19 +68,19 @@ class QUICK_EXPORT QgsQuickPositionKit : public QObject
     //! Create new position kit
     explicit QgsQuickPositionKit( QObject *parent = 0 );
 
-    //! Return if GPS position is available
+    //! True if there is \copydoc QgsQuickPositionKit::position
     bool hasPosition() const;
 
-    //! Return GPS position in WGS84 coords
+    //! \copydoc QgsQuickPositionKit::position
     QgsPoint position() const;
 
-    //! Return GPS horizontal accuracy in meters, -1 if not available
+    //! \copydoc QgsQuickPositionKit::accuracy
     qreal accuracy() const;
 
-    //! Return GPS direction, bearing in degrees clockwise from north to direction of travel. -1 if not available
+    //! \copydoc QgsQuickPositionKit::direction
     qreal direction() const;
 
-    //! Return whether GPS source is simulated.
+    //! \copydoc QgsQuickPositionKit::isSimulated
     bool simulated() const;
 
     /**
@@ -98,17 +98,32 @@ class QUICK_EXPORT QgsQuickPositionKit : public QObject
      */
     Q_INVOKABLE void use_simulated_location( double longitude, double latitude, double radius );
 
-    Q_INVOKABLE QString gpsAccuracyLabel(bool withAccuracy, QString altMsg);
+    /**
+     * Generates label for gps accuracy according set gps source.
+     * \param withAccuracy If False, returns empty string.
+     * \param altMsg If there is no position, returns altMsg.
+     */
+    Q_INVOKABLE QString gpsAccuracyLabel( bool withAccuracy, QString altMsg );
+
+    /**
+     * Generates label for gps position according set gps source.
+     * \param precision Defines number of digits after comma.
+     * \param altMsg If there is no position, returns altMsg.
+     */
+    Q_INVOKABLE QString gpsPositionLabel( int precision, QString altMsg );
 
     /**
      * Use real GPS source (not simulated)
      */
     Q_INVOKABLE void use_gps_location();
 
-    Q_INVOKABLE void onSimulatePositionLongLatRadChanged(QVector<double> simulatePositionLongLatRad);
-    //Q_INVOKABLE void onSimulatePositionLongLatRadChanged();
+    /**
+     * Used for changing gps source when simulatePositionLongLatRad is un/set.
+     * \param simulatePositionLongLatRad Vector containing longitute, latitute and radius.
+     */
+    Q_INVOKABLE void onSimulatePositionLongLatRadChanged( QVector<double> simulatePositionLongLatRad );
 
-  signals:
+signals:
     //! GPS position changed
     void positionChanged();
 
@@ -125,9 +140,13 @@ class QUICK_EXPORT QgsQuickPositionKit : public QObject
     void onUpdateTimeout();
 
   protected:
+    //! \copydoc QgsQuickPositionKit::position
     QgsPoint mPosition;
+    //! \copydoc QgsQuickPositionKit::accuracy
     qreal mAccuracy;
+    //! \copydoc QgsQuickPositionKit::direction
     qreal mDirection;
+    //! \copydoc QgsQuickPositionKit::position
     bool mHasPosition;
 
     // Simulated source

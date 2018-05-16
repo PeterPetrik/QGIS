@@ -4,7 +4,6 @@ SET(QGIS_QUICK_GUI_MOC_HDRS
   qgsquickcoordinatetransformer.h
   qgsquickmapcanvasmap.h
   qgsquickmapsettings.h
-  qgsquickmaptransform.h
   qgsquickmessagelogmodel.h
   qgsquickpositionkit.h
   qgsquickscalebarkit.h
@@ -19,7 +18,6 @@ SET(QGIS_QUICK_GUI_SRC
   qgsquickcoordinatetransformer.cpp
   qgsquickmapcanvasmap.cpp
   qgsquickmapsettings.cpp
-  qgsquickmaptransform.cpp
   qgsquickmessagelogmodel.cpp
   qgsquickpositionkit.cpp
   qgsquickscalebarkit.cpp
