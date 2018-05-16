@@ -25,9 +25,121 @@
 
 #include <QVector>
 #include <QString>
+#include <QMap>
+#include <limits>
 
-typedef QgsPoint QgsMeshVertex; //xyz coords of vertex
-typedef QVector<int> QgsMeshFace; //list of vertex indexes
+//! xyz coords of vertex
+typedef QgsPoint QgsMeshVertex;
+
+//! List of vertex indexes
+typedef QVector<int> QgsMeshFace;
+
+/**
+ * \ingroup core
+ *
+ * QgsMeshDatasetValue represents single mesh dataset value
+ *
+ * could be scalar or vector. Nodata values are represented by NaNs.
+ *
+ * \note The API is considered EXPERIMENTAL and can be changed without a notice
+ *
+ * \since QGIS 3.2
+ */
+class CORE_EXPORT QgsMeshDatasetValue
+{
+  public:
+    //! Constructor for vector value
+    QgsMeshDatasetValue( double x,
+                         double y );
+
+    //! Constructor for scalar value
+    QgsMeshDatasetValue( double scalar );
+
+    //! Default Ctor, initialize to NaN
+    QgsMeshDatasetValue() = default;
+
+    //! Dtor
+    ~QgsMeshDatasetValue() = default;
+
+    //! Sets scalar value
+    void set( double scalar );
+
+    //! Sets X value
+    void setX( double x );
+
+    //! Sets Y value
+    void setY( double y ) ;
+
+    //! Returns magnitude of vector for vector data or scalar value for scalar data
+    double scalar() const;
+
+    //! Returns x value
+    double x() const;
+
+    //! Returns y value
+    double y() const;
+
+    //! Equals
+    bool operator==( const QgsMeshDatasetValue &other ) const;
+
+  private:
+    double mX  = std::numeric_limits<double>::quiet_NaN();
+    double mY  = std::numeric_limits<double>::quiet_NaN();
+};
+
+
+
+/**
+ * \ingroup core
+ *
+ * QgsMeshDatasetMetadata is a collection of mesh dataset metadata such
+ * as if the data is vector or scalar, etc.
+ *
+ * \note The API is considered EXPERIMENTAL and can be changed without a notice
+ *
+ * \since QGIS 3.2
+ */
+class CORE_EXPORT QgsMeshDatasetMetadata
+{
+  public:
+    QgsMeshDatasetMetadata() = default;
+    QgsMeshDatasetMetadata( bool isScalar,
+                            bool isValid,
+                            bool isOnVertices,
+                            const QMap<QString, QString> &extraOptions );
+
+    /**
+     * Returns extra metadata options
+     * Usually including name, description or time variable
+     */
+    QMap<QString, QString> extraOptions() const;
+
+    /**
+     * \brief Returns whether dataset has vector data
+     */
+    bool isVector() const;
+
+    /**
+     * \brief Returns whether dataset has scalar data
+     */
+    bool isScalar() const;
+
+    /**
+     * \brief Returns whether dataset data is defined on vertices
+     */
+    bool isOnVertices() const;
+
+    /**
+     * \brief Returns whether dataset is valid
+     */
+    bool isValid() const;
+
+  private:
+    bool mIsScalar = false;
+    bool mIsValid = false;
+    bool mIsOnVertices = false;
+    QMap<QString, QString> mExtraOptions;
+};
 
 /**
  * \ingroup core
@@ -38,6 +150,8 @@ typedef QVector<int> QgsMeshFace; //list of vertex indexes
  * Base on the underlying data provider/format, whole mesh is either stored in memory or
  * read on demand
  *
+ * \note The API is considered EXPERIMENTAL and can be changed without a notice
+ *
  * \since QGIS 3.2
  */
 class CORE_EXPORT QgsMeshSource SIP_ABSTRACT
@@ -47,20 +161,20 @@ class CORE_EXPORT QgsMeshSource SIP_ABSTRACT
     virtual ~QgsMeshSource() = default;
 
     /**
-     * \brief Return number of vertices in the native mesh
+     * \brief Returns number of vertices in the native mesh
      * \returns Number of vertices in the mesh
      */
     virtual int vertexCount() const = 0;
 
     /**
-     * \brief Return number of faces in the native mesh
+     * \brief Returns number of faces in the native mesh
      * \returns Number of faces in the mesh
      */
     virtual int faceCount() const = 0;
 
     /**
      * \brief Factory for mesh vertex with index
-     * \returns new mesh vertex on index
+     * \returns New mesh vertex on index
      */
     virtual QgsMeshVertex vertex( int index ) const = 0;
 
@@ -73,14 +187,57 @@ class CORE_EXPORT QgsMeshSource SIP_ABSTRACT
 
 /**
  * \ingroup core
-  * Base class for providing data for QgsMeshLayer
-  *
-  * Responsible for reading native mesh data
-  *
-  * \see QgsMeshSource
-  * \since QGIS 3.2
-  */
-class CORE_EXPORT QgsMeshDataProvider: public QgsDataProvider, public QgsMeshSource
+ * Dataset is a  collection of vector or scalar values on vertices or faces of the mesh
+ *
+ * Based on the underlying data provider/format, whole dataset is either stored in memory or
+ * read on demand
+ *
+ * \note The API is considered EXPERIMENTAL and can be changed without a notice
+ *
+ * \since QGIS 3.2
+ */
+class CORE_EXPORT QgsMeshDatasetSource SIP_ABSTRACT
+{
+  public:
+    //! Dtor
+    virtual ~QgsMeshDatasetSource() = default;
+
+    /**
+     * \brief Associate dataset with the mesh
+     */
+    virtual bool addDataset( const QString &uri ) = 0;
+
+    /**
+     * \brief Returns number of datasets loaded
+     */
+    virtual int datasetCount() const = 0;
+
+    /**
+     * \brief Returns dataset metadata
+     */
+    virtual QgsMeshDatasetMetadata datasetMetadata( int datasetIndex ) const = 0;
+
+    /**
+     * \brief Returns vector/scalar value associated with the index from the dataset
+     *
+     * See QgsMeshDatasetMetadata::isVector() to check if the returned value is vector or scalar
+     */
+    virtual QgsMeshDatasetValue datasetValue( int datasetIndex, int valueIndex ) const = 0;
+};
+
+
+/**
+ * \ingroup core
+ * Base class for providing data for QgsMeshLayer
+ *
+ * Responsible for reading native mesh data
+ *
+ * \note The API is considered EXPERIMENTAL and can be changed without a notice
+ *
+ * \see QgsMeshSource
+ * \since QGIS 3.2
+ */
+class CORE_EXPORT QgsMeshDataProvider: public QgsDataProvider, public QgsMeshSource, public QgsMeshDatasetSource
 {
     Q_OBJECT
 
