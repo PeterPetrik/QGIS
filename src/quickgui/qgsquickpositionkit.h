@@ -128,7 +128,7 @@ class QUICK_EXPORT QgsQuickPositionKit : public QObject
      * Calculates accuracy indicator width.
      * \param mapSettings QgsQuickMapSettings used for screenUnitsToMeters calculation.
      */
-    Q_INVOKABLE double accuracyIndicatorWidth(QgsQuickMapSettings *mapSettings);
+    Q_INVOKABLE double accuracyIndicatorWidth( QgsQuickMapSettings *mapSettings );
 
   signals:
     //! GPS position changed

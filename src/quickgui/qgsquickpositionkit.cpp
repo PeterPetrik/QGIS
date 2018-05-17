@@ -172,16 +172,17 @@ void QgsQuickPositionKit::onSimulatePositionLongLatRadChanged( QVector<double> s
   }
 }
 
-double QgsQuickPositionKit::accuracyIndicatorWidth(QgsQuickMapSettings *mapSettings)
+double QgsQuickPositionKit::accuracyIndicatorWidth( QgsQuickMapSettings *mapSettings )
 {
-    if (accuracy() > 0) {
-      double scpm = QgsQuickUtils().screenUnitsToMeters(mapSettings, 1); // scpm is how much meters is 1 pixel
-      if (scpm > 0)
-        return 2 * ( accuracy() / scpm );
-      else
-        return 2.0;
-    }
-    return 2.0;
+  if ( accuracy() > 0 )
+  {
+    double scpm = QgsQuickUtils().screenUnitsToMeters( mapSettings, 1 ); // scpm is how much meters is 1 pixel
+    if ( scpm > 0 )
+      return 2 * ( accuracy() / scpm );
+    else
+      return 2.0;
+  }
+  return 2.0;
 }
 
 void QgsQuickPositionKit::onUpdateTimeout()
