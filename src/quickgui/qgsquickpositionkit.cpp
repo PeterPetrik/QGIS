@@ -82,13 +82,16 @@ QString QgsQuickPositionKit::gpsAccuracyLabel( bool withAccuracy, QString altMsg
   }
 }
 
-QString QgsQuickPositionKit::gpsPositionLabel(int precision, QString altMsg)
+QString QgsQuickPositionKit::gpsPositionLabel( int precision, QString altMsg )
 {
-    if (hasPosition()) {
-      return QgsQuickUtils().qgsPointToString(position(), precision); // e.g -2.243, 45.441
-    } else {
-      return altMsg;
-    }
+  if ( hasPosition() )
+  {
+    return QgsQuickUtils().qgsPointToString( position(), precision ); // e.g -2.243, 45.441
+  }
+  else
+  {
+    return altMsg;
+  }
 }
 
 void QgsQuickPositionKit::use_gps_location()

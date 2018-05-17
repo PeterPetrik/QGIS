@@ -26,7 +26,10 @@ Item {
   id: positionMarker
   property int size: 48 * QgsQuick.Utils.dp
 
-  property QgsQuick.MapSettings mapSettings // required to be connected from parent!
+  /**
+   * Note: required to be connected from parent!
+   */
+  property QgsQuick.MapSettings mapSettings
   /**
    * Utils for handling position.
    */

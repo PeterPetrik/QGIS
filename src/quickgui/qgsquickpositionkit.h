@@ -123,7 +123,7 @@ class QUICK_EXPORT QgsQuickPositionKit : public QObject
      */
     Q_INVOKABLE void onSimulatePositionLongLatRadChanged( QVector<double> simulatePositionLongLatRad );
 
-signals:
+  signals:
     //! GPS position changed
     void positionChanged();
 
