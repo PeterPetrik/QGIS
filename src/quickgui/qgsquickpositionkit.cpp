@@ -78,7 +78,7 @@ QString QgsQuickPositionKit::gpsAccuracyLabel( bool withAccuracy, QString altMsg
   }
   else
   {
-    return QString( "" );
+    return QStringLiteral( "" );
   }
 }
 
@@ -103,22 +103,21 @@ void QgsQuickPositionKit::use_gps_location()
 
 void QgsQuickPositionKit::replacePositionSource( QGeoPositionInfoSource *source )
 {
-  if ( mSource == source )
+  if ( mSource.get() == source )
     return;
 
   if ( mSource )
   {
-    disconnect( mSource, nullptr, this, nullptr );
-    delete mSource;
-    mSource = nullptr;
+    disconnect( mSource.get(), nullptr, this, nullptr );
+    mSource.reset();
   }
 
-  mSource = source;
+  mSource.reset(source);
 
   if ( mSource )
   {
-    connect( mSource, &QGeoPositionInfoSource::positionUpdated, this, &QgsQuickPositionKit::positionUpdated );
-    connect( mSource, &QGeoPositionInfoSource::updateTimeout, this,  &QgsQuickPositionKit::onUpdateTimeout );
+    connect( mSource.get(), &QGeoPositionInfoSource::positionUpdated, this, &QgsQuickPositionKit::positionUpdated );
+    connect( mSource.get(), &QGeoPositionInfoSource::updateTimeout, this,  &QgsQuickPositionKit::onUpdateTimeout );
     mSource->startUpdates();
 
     QgsDebugMsg( QStringLiteral( "Position source changed: %1" ).arg( mSource->sourceName() ) );

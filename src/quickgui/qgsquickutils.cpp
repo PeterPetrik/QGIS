@@ -97,40 +97,31 @@ QUrl QgsQuickUtils::getThemeIcon( const QString &name )
 
 QString QgsQuickUtils::qgsPointToString( const QgsPoint &point, int decimals )
 {
-  QString label;
-  label += QString::number( point.x(), 'f', decimals );
-  label += ", ";
-  label += QString::number( point.y(), 'f', decimals );
-  return label;
+  return QString("%1, %2").arg(QString::number( point.x(), 'f', decimals )).arg(QString::number( point.y(), 'f', decimals ));
 }
 
 QString QgsQuickUtils::distanceToString( qreal dist, int decimals )
 {
   if ( dist < 0 )
   {
-    return "0 m";
+    return QStringLiteral("0 %1").arg(QgsUnitTypes::toAbbreviatedString( QgsUnitTypes::DistanceMeters ));
   }
 
-  QString label;
   if ( dist > 1000 )
   {
-    label += QString::number( dist / 1000.0, 'f', decimals );
-    label += QString( " km" );
+    return QStringLiteral("%1 %2").arg( QString::number( dist / 1000.0, 'f', decimals )).arg(QgsUnitTypes::toAbbreviatedString( QgsUnitTypes::DistanceKilometers ));
   }
   else
   {
     if ( dist > 1 )
     {
-      label += QString::number( dist, 'f', decimals );
-      label += QString( " m" );
+      return QStringLiteral("%1 %2").arg( QString::number( dist, 'f', decimals )).arg(QgsUnitTypes::toAbbreviatedString( QgsUnitTypes::DistanceMeters ));
     }
     else
     {
-      label += QString::number( dist * 1000, 'f', decimals );
-      label += QString( " mm" );
+      return QStringLiteral("%1 %2").arg( QString::number( dist * 1000, 'f', decimals )).arg(QgsUnitTypes::toAbbreviatedString( QgsUnitTypes::DistanceMillimeters ));
     }
   }
-  return label;
 }
 
 QString QgsQuickUtils::dumpScreenInfo() const
