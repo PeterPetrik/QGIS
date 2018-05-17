@@ -40,7 +40,7 @@ QGeoPositionInfoSource  *QgsQuickPositionKit::gpsSource()
   {
     QgsMessageLog::logMessage( tr( "Unable to create default GPS Position Source" )
                                + "(" + QString::number( ( long )source->error() ) + ")"
-                               , "QgsQuick"
+                               , QStringLiteral( "QgsQuick" )
                                , Qgis::Warning );
     delete source;
     return nullptr;
@@ -63,18 +63,35 @@ void QgsQuickPositionKit::use_simulated_location( double longitude, double latit
   replacePositionSource( source );
 }
 
-QString QgsQuickPositionKit::gpsAccuracyLabel(bool withAccuracy, QString altMsg)
+QString QgsQuickPositionKit::gpsAccuracyLabel( bool withAccuracy, QString altMsg )
 {
-    if (withAccuracy) {
-        if (hasPosition() && accuracy() > 0) {
-            return QgsQuickUtils().distanceToString(accuracy(), 0); // e.g 1 km or 15 m or 500 mm
-        }
-        else {
-            return altMsg;
-        }
-    } else {
-        return QString("");
+  if ( withAccuracy )
+  {
+    if ( hasPosition() && accuracy() > 0 )
+    {
+      return QgsQuickUtils().distanceToString( accuracy(), 0 ); // e.g 1 km or 15 m or 500 mm
     }
+    else
+    {
+      return altMsg;
+    }
+  }
+  else
+  {
+    return QString( "" );
+  }
+}
+
+QString QgsQuickPositionKit::gpsPositionLabel( int precision, QString altMsg )
+{
+  if ( hasPosition() )
+  {
+    return QgsQuickUtils().qgsPointToString( position(), precision ); // e.g -2.243, 45.441
+  }
+  else
+  {
+    return altMsg;
+  }
 }
 
 void QgsQuickPositionKit::use_gps_location()
@@ -139,17 +156,33 @@ void QgsQuickPositionKit::positionUpdated( const QGeoPositionInfo &info )
     emit hasPositionChanged();
   }
 }
-void QgsQuickPositionKit::onSimulatePositionLongLatRadChanged(QVector<double> simulatePositionLongLatRad)
+void QgsQuickPositionKit::onSimulatePositionLongLatRadChanged( QVector<double> simulatePositionLongLatRad )
 {
-    if (!simulatePositionLongLatRad.isEmpty()) {
-      double longitude = simulatePositionLongLatRad[0];
-      double latitude = simulatePositionLongLatRad[1];
-      double radius = simulatePositionLongLatRad[2];
-      QgsDebugMsg( QStringLiteral( "Use simulated position around longlat: %1, %2, %3"  ).arg( longitude ).arg( latitude).arg( radius ) );
-      use_simulated_location(longitude, latitude, radius);
-    } else {
-      use_gps_location();
-    }
+  if ( !simulatePositionLongLatRad.isEmpty() )
+  {
+    double longitude = simulatePositionLongLatRad[0];
+    double latitude = simulatePositionLongLatRad[1];
+    double radius = simulatePositionLongLatRad[2];
+    QgsDebugMsg( QStringLiteral( "Use simulated position around longlat: %1, %2, %3" ).arg( longitude ).arg( latitude ).arg( radius ) );
+    use_simulated_location( longitude, latitude, radius );
+  }
+  else
+  {
+    use_gps_location();
+  }
+}
+
+double QgsQuickPositionKit::accuracyIndicatorWidth( QgsQuickMapSettings *mapSettings )
+{
+  if ( accuracy() > 0 )
+  {
+    double scpm = QgsQuickUtils().screenUnitsToMeters( mapSettings, 1 ); // scpm is how much meters is 1 pixel
+    if ( scpm > 0 )
+      return 2 * ( accuracy() / scpm );
+    else
+      return 2.0;
+  }
+  return 2.0;
 }
 
 void QgsQuickPositionKit::onUpdateTimeout()
