@@ -61,19 +61,19 @@ ApplicationWindow {
     }
   }
 
-    QgsQuick.PositionMarker {
-        id: positionMarker
-        mapSettings: mapCanvas.mapSettings
-        simulatePositionLongLatRad: __use_simulated_position ? [-97.36, 36.93, 2] : undefined
-    }
+  QgsQuick.PositionMarker {
+    id: positionMarker
+    mapSettings: mapCanvas.mapSettings
+    simulatePositionLongLatRad: __use_simulated_position ? [-97.36, 36.93, 2] : undefined
+  }
 
-    QgsQuick.ScaleBar {
-        id: scaleBar
-        y: window.height - height
-        height: 50
-        mapSettings: mapCanvas.mapSettings
-        preferredWidth: 115 * QgsQuick.Utils.dp
-        z: 1
-    }
+  QgsQuick.ScaleBar {
+    id: scaleBar
+    y: window.height - height
+    height: 50
+    mapSettings: mapCanvas.mapSettings
+    preferredWidth: 115 * QgsQuick.Utils.dp
+    z: 1
+  }
 
 }
