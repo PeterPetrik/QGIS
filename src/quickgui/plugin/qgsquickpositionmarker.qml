@@ -119,14 +119,9 @@ Item {
     x: positionMarker.screenPosition.x - width/2
     y: positionMarker.screenPosition.y - height/2
     width: {
-      if (positionKit.accuracy > 0) {
-        var scpm = QgsQuick.Utils.screenUnitsToMeters(positionMarker.mapSettings, 1) // scpm is how much meters is 1 pixel
-        if (scpm > 0)
-          2 * ( positionKit.accuracy / scpm )
-        else
-          2
-      }
-      else 2
+      if (mapSettings)
+        positionKit.accuracyIndicatorWidth(positionMarker.mapSettings)
+      else 2;
     }
     height: accuracyIndicator.width
     color: baseColor

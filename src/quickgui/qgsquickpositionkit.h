@@ -22,6 +22,7 @@
 #include "qgspoint.h"
 
 #include "qgis_quick.h"
+#include "qgsquickmapsettings.h"
 
 /**
  * \ingroup quick
@@ -122,6 +123,12 @@ class QUICK_EXPORT QgsQuickPositionKit : public QObject
      * \param simulatePositionLongLatRad Vector containing longitute, latitute and radius.
      */
     Q_INVOKABLE void onSimulatePositionLongLatRadChanged( QVector<double> simulatePositionLongLatRad );
+
+    /**
+     * Calculates accuracy indicator width.
+     * \param mapSettings QgsQuickMapSettings used for screenUnitsToMeters calculation.
+     */
+    Q_INVOKABLE double accuracyIndicatorWidth(QgsQuickMapSettings *mapSettings);
 
   signals:
     //! GPS position changed
