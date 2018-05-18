@@ -115,7 +115,7 @@ Item {
              (accuracyIndicator.width > positionMarker.size / 2.0)
     x: positionMarker.screenPosition.x - width/2
     y: positionMarker.screenPosition.y - height/2
-    width:positionKit.screenAccuracy()
+    width:positionKit.screenAccuracy
     height: accuracyIndicator.width
     color: baseColor
     border.color: "black"

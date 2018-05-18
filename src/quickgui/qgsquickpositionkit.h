@@ -42,24 +42,29 @@ class QUICK_EXPORT QgsQuickPositionKit : public QObject
     Q_OBJECT
 
     /**
-     * GPS position in WGS84 coords
+     * GPS position in WGS84 coords.
      */
     Q_PROPERTY( QgsPoint position READ position NOTIFY positionChanged )
 
     /**
-     * GPS position in map coords
+     * GPS position in map coords.
      */
     Q_PROPERTY( QgsPoint projectedPosition READ projectedPosition NOTIFY positionChanged )
 
     /**
-     * GPS position is available (position property is a valid number)
+     * GPS position is available (position property is a valid number).
      */
     Q_PROPERTY( bool hasPosition READ hasPosition NOTIFY hasPositionChanged )
 
     /**
-     * GPS horizontal accuracy in accuracyUnits, -1 if not available
+     * GPS horizontal accuracy in accuracyUnits, -1 if not available.
      */
     Q_PROPERTY( qreal accuracy READ accuracy NOTIFY positionChanged )
+
+    /**
+     * Screen horizontal accuracy, 2 if not available or resolution is too small.
+     */
+    Q_PROPERTY( double screenAccuracy READ screenAccuracy NOTIFY positionChanged )
 
     /**
      * GPS horizontal accuracy units.
@@ -101,6 +106,10 @@ class QUICK_EXPORT QgsQuickPositionKit : public QObject
 
     //! \copydoc QgsQuickPositionKit::accuracy
     qreal accuracy() const;
+
+    //! \copydoc QgsQuickPositionKit::screenAccuracy
+    double screenAccuracy() const;
+
     //! \copydoc QgsQuickPositionKit::accuracyUnits
     QString accuracyUnits() const;
 
@@ -162,7 +171,7 @@ class QUICK_EXPORT QgsQuickPositionKit : public QObject
      * Calculates accuracy indicator width.
      * \param mapSettings QgsQuickMapSettings used for screenUnitsToMeters calculation.
      */
-    Q_INVOKABLE double screenAccuracy();
+    double calcScreenAccuracy();
 
     QgsQuickCoordinateTransformer *coordinateTransformer() const;
 
@@ -195,6 +204,9 @@ class QUICK_EXPORT QgsQuickPositionKit : public QObject
     QgsPoint mProjectedPosition;
     //! \copydoc QgsQuickPositionKit::accuracy
     qreal mAccuracy;
+    //! \copydoc QgsQuickPositionKit::screenAccuracy
+    double mScreenAccuracy;
+
     //! \copydoc QgsQuickPositionKit::accuracyUnits
     QString mAccuracyUnits;
     //! \copydoc QgsQuickPositionKit::direction

@@ -24,6 +24,7 @@
 QgsQuickPositionKit::QgsQuickPositionKit( QObject *parent )
   : QObject( parent )
   , mAccuracy( -1 )
+  , mScreenAccuracy( 2 )
   , mAccuracyUnits( QgsUnitTypes::toAbbreviatedString( QgsUnitTypes::DistanceMeters ) )
   , mDirection( -1 )
   , mHasPosition( false )
@@ -176,6 +177,8 @@ void QgsQuickPositionKit::positionUpdated( const QGeoPositionInfo &info )
   else
     mDirection = -1;
 
+  mScreenAccuracy = calcScreenAccuracy();
+
   coordinateTransformer()->setSourcePosition( mPosition );
   emit positionChanged();
 
@@ -202,11 +205,11 @@ void QgsQuickPositionKit::onSimulatePositionLongLatRadChanged( QVector<double> s
 }
 
 // TODO fix @vsklencar - always scpm == 0
-double QgsQuickPositionKit::screenAccuracy()
+double QgsQuickPositionKit::calcScreenAccuracy()
 {
   if ( accuracy() > 0 )
   {
-    double scpm = QgsQuickUtils::screenUnitsToMeters( mapSettings(), 1 ); // scpm is how much meters is 1 pixel
+    double scpm = QgsQuickUtils::screenUnitsToMeters( mMapSettings, 1 ); // scpm is how much meters is 1 pixel
     if ( scpm > 0 )
       return 2 * ( accuracy() / scpm );
     else
@@ -224,12 +227,17 @@ void QgsQuickPositionKit::onUpdateTimeout()
   }
 }
 
+double QgsQuickPositionKit::screenAccuracy() const
+{
+  return mScreenAccuracy;
+}
+
 QVector<double> QgsQuickPositionKit::simulatePositionLongLatRad() const
 {
   return mSimulatePositionLongLatRad;
 }
 
-// TODO @vsklencar
+// TODO @vsklencar - emit signal fix
 void QgsQuickPositionKit::setSimulatePositionLongLatRad( const QVector<double> &simulatePositionLongLatRad )
 {
   mSimulatePositionLongLatRad = simulatePositionLongLatRad;
