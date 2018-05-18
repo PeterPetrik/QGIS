@@ -24,10 +24,24 @@
 QgsQuickPositionKit::QgsQuickPositionKit( QObject *parent )
   : QObject( parent )
   , mAccuracy( -1 )
+  , mAccuracyUnits( QgsUnitTypes::toAbbreviatedString( QgsUnitTypes::DistanceMeters ) )
   , mDirection( -1 )
   , mHasPosition( false )
   , mIsSimulated( false )
 {
+
+  mCoordinateTransformer.reset( new QgsQuickCoordinateTransformer() );
+
+  connect( this, &QgsQuickPositionKit::simulatePositionLongLatRadChanged, this, &QgsQuickPositionKit::onSimulatePositionLongLatRadChanged );
+  connect( this, &QgsQuickPositionKit::mapSettingsChanged, this, &QgsQuickPositionKit::setCoordinateTransformMapSettings );
+  if ( mapSettings() )
+  {
+    coordinateTransformer()->setDestinationCrs( mapSettings()->destinationCrs() );
+    coordinateTransformer()->setMapSettings( mapSettings() );
+    coordinateTransformer()->setSourceCrs( QgsQuickUtils().coordinateReferenceSystemFromEpsgId( 4326 ) );
+    coordinateTransformer()->setSourcePosition( position() );
+  }
+
   use_gps_location();
 }
 
@@ -63,13 +77,13 @@ void QgsQuickPositionKit::use_simulated_location( double longitude, double latit
   replacePositionSource( source );
 }
 
-QString QgsQuickPositionKit::gpsAccuracyLabel( bool withAccuracy, QString altMsg )
+QString QgsQuickPositionKit::sourceAccuracyLabel( bool withAccuracy, QString altMsg )
 {
   if ( withAccuracy )
   {
     if ( hasPosition() && accuracy() > 0 )
     {
-      return QgsQuickUtils().distanceToString( accuracy(), 0 ); // e.g 1 km or 15 m or 500 mm
+      return QgsQuickUtils::distanceToString( accuracy(), 0 ); // e.g 1 km or 15 m or 500 mm
     }
     else
     {
@@ -82,11 +96,11 @@ QString QgsQuickPositionKit::gpsAccuracyLabel( bool withAccuracy, QString altMsg
   }
 }
 
-QString QgsQuickPositionKit::gpsPositionLabel( int precision, QString altMsg )
+QString QgsQuickPositionKit::sourcePositionLabel( int precision, QString altMsg )
 {
   if ( hasPosition() )
   {
-    return QgsQuickUtils().qgsPointToString( position(), precision ); // e.g -2.243, 45.441
+    return QgsQuickUtils::qgsPointToString( position(), precision ); // e.g -2.243, 45.441
   }
   else
   {
@@ -112,7 +126,7 @@ void QgsQuickPositionKit::replacePositionSource( QGeoPositionInfoSource *source 
     mSource.reset();
   }
 
-  mSource.reset(source);
+  mSource.reset( source );
 
   if ( mSource )
   {
@@ -122,6 +136,21 @@ void QgsQuickPositionKit::replacePositionSource( QGeoPositionInfoSource *source 
 
     QgsDebugMsg( QStringLiteral( "Position source changed: %1" ).arg( mSource->sourceName() ) );
   }
+}
+
+void QgsQuickPositionKit::setCoordinateTransformMapSettings()
+{
+  coordinateTransformer()->setMapSettings( mapSettings() );
+}
+
+QgsQuickMapSettings *QgsQuickPositionKit::mapSettings() const
+{
+  return mMapSettings;
+}
+
+QgsQuickCoordinateTransformer *QgsQuickPositionKit::coordinateTransformer() const
+{
+  return mCoordinateTransformer.get();
 }
 
 void QgsQuickPositionKit::positionUpdated( const QGeoPositionInfo &info )
@@ -147,6 +176,7 @@ void QgsQuickPositionKit::positionUpdated( const QGeoPositionInfo &info )
   else
     mDirection = -1;
 
+  coordinateTransformer()->setSourcePosition( mPosition );
   emit positionChanged();
 
   if ( !mHasPosition )
@@ -171,11 +201,12 @@ void QgsQuickPositionKit::onSimulatePositionLongLatRadChanged( QVector<double> s
   }
 }
 
-double QgsQuickPositionKit::accuracyIndicatorWidth( QgsQuickMapSettings *mapSettings )
+// TODO fix @vsklencar - always scpm == 0
+double QgsQuickPositionKit::screenAccuracy()
 {
   if ( accuracy() > 0 )
   {
-    double scpm = QgsQuickUtils().screenUnitsToMeters( mapSettings, 1 ); // scpm is how much meters is 1 pixel
+    double scpm = QgsQuickUtils::screenUnitsToMeters( mapSettings(), 1 ); // scpm is how much meters is 1 pixel
     if ( scpm > 0 )
       return 2 * ( accuracy() / scpm );
     else
@@ -193,6 +224,23 @@ void QgsQuickPositionKit::onUpdateTimeout()
   }
 }
 
+QVector<double> QgsQuickPositionKit::simulatePositionLongLatRad() const
+{
+  return mSimulatePositionLongLatRad;
+}
+
+// TODO @vsklencar
+void QgsQuickPositionKit::setSimulatePositionLongLatRad( const QVector<double> &simulatePositionLongLatRad )
+{
+  mSimulatePositionLongLatRad = simulatePositionLongLatRad;
+  emit simulatePositionLongLatRadChanged( simulatePositionLongLatRad );
+}
+
+QgsPoint QgsQuickPositionKit::projectedPosition() const
+{
+  return coordinateTransformer()->projectedPosition();
+}
+
 bool QgsQuickPositionKit::hasPosition() const
 {
   return mHasPosition;
@@ -208,6 +256,11 @@ qreal QgsQuickPositionKit::accuracy() const
   return mAccuracy;
 }
 
+QString QgsQuickPositionKit::accuracyUnits() const
+{
+  return mAccuracyUnits;
+}
+
 qreal QgsQuickPositionKit::direction() const
 {
   return mDirection;
@@ -216,4 +269,20 @@ qreal QgsQuickPositionKit::direction() const
 bool QgsQuickPositionKit::simulated() const
 {
   return mIsSimulated;
+}
+
+void QgsQuickPositionKit::setMapSettings( QgsQuickMapSettings *mapSettings )
+{
+  if ( mMapSettings == mapSettings )
+    return;
+
+
+  if ( mMapSettings )
+  {
+    disconnect( mMapSettings, nullptr, this, nullptr );
+  }
+
+  mMapSettings = mapSettings;
+
+  emit mapSettingsChanged();
 }

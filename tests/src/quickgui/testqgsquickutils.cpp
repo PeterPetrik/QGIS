@@ -70,26 +70,26 @@ void TestQgsQuickUtils::screenUnitsToMeters()
 
 void TestQgsQuickUtils::transformedPoint()
 {
-    QgsPointXY pointXY = utils.pointXYFactory( 49.9, 16.3 );
-    QVERIFY( pointXY.x() == 49.9 );
-    QVERIFY( pointXY.y() == 16.3 );
+  QgsPointXY pointXY = utils.pointXYFactory( 49.9, 16.3 );
+  QVERIFY( pointXY.x() == 49.9 );
+  QVERIFY( pointXY.y() == 16.3 );
 
-    QgsPoint point = utils.pointFactory( 1.0, -1.0 );
-    QVERIFY( point.x() == 1.0 );
-    QVERIFY( point.y() == -1.0 );
+  QgsPoint point = utils.pointFactory( 1.0, -1.0 );
+  QVERIFY( point.x() == 1.0 );
+  QVERIFY( point.y() == -1.0 );
 
-    QgsCoordinateReferenceSystem crs3857 = QgsCoordinateReferenceSystem::fromEpsgId( 3857 );
-    QVERIFY( crs3857.authid() == "EPSG:3857" );
+  QgsCoordinateReferenceSystem crs3857 = QgsCoordinateReferenceSystem::fromEpsgId( 3857 );
+  QVERIFY( crs3857.authid() == "EPSG:3857" );
 
-    QgsCoordinateReferenceSystem crsGPS = QgsCoordinateReferenceSystem::fromEpsgId( 4326 );
-    QVERIFY( crsGPS.authid() == "EPSG:4326" );
+  QgsCoordinateReferenceSystem crsGPS = QgsCoordinateReferenceSystem::fromEpsgId( 4326 );
+  QVERIFY( crsGPS.authid() == "EPSG:4326" );
 
-    QgsPointXY transformedPoint = utils.transformPoint( crsGPS,
-                                  crs3857,
-                                  QgsCoordinateTransformContext(),
-                                  pointXY );
-    QVERIFY( fabs( transformedPoint.x() - 5554843 ) < 1.0 );
-    QVERIFY( fabs( transformedPoint.y() - 1839491 ) < 1.0 );
+  QgsPointXY transformedPoint = utils.transformPoint( crsGPS,
+                                crs3857,
+                                QgsCoordinateTransformContext(),
+                                pointXY );
+  QVERIFY( fabs( transformedPoint.x() - 5554843 ) < 1.0 );
+  QVERIFY( fabs( transformedPoint.y() - 1839491 ) < 1.0 );
 }
 
 void TestQgsQuickUtils::formatting()

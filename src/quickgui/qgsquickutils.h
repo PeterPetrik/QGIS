@@ -60,7 +60,7 @@ class QUICK_EXPORT QgsQuickUtils: public QObject
   public:
     //! Create new utilities
     QgsQuickUtils( QObject *parent = nullptr );
-    //! dtor
+    //! Destructor
     ~QgsQuickUtils() = default;
 
     //! \copydoc QgsQuickUtils::dp
@@ -97,7 +97,7 @@ class QUICK_EXPORT QgsQuickUtils: public QObject
     /**
       * Calculate the distance in meter representing baseLengthPixels pixels on the screen based on the current map settings.
       */
-    Q_INVOKABLE double screenUnitsToMeters( QgsQuickMapSettings *mapSettings, int baseLengthPixels ) const;
+    Q_INVOKABLE static double screenUnitsToMeters( QgsQuickMapSettings *mapSettings, int baseLengthPixels );
 
     //! Log message in QgsMessageLog
     Q_INVOKABLE void logMessage( const QString &message,
@@ -113,13 +113,13 @@ class QUICK_EXPORT QgsQuickUtils: public QObject
       * Converts point to string with given decimals (default decimals = 3),
       * e.g. -2.234521, 34.4444421 -> -2.234, 34.444
       */
-    Q_INVOKABLE QString qgsPointToString( const QgsPoint &point, int decimals = 3 );
+    Q_INVOKABLE static QString qgsPointToString( const QgsPoint &point, int decimals = 3 );
 
     /**
       * Converts distance in meters to human readable length with given decimals (default decimals = 1),
       *  e.g. 1222.234 m -> 1.2 km
       */
-    Q_INVOKABLE QString distanceToString( qreal dist, int decimals = 1 );
+    Q_INVOKABLE static QString distanceToString( qreal dist, int decimals = 1 );
 
     //! Returns a string with information about screen size and resolution - useful for debugging
     QString dumpScreenInfo() const;

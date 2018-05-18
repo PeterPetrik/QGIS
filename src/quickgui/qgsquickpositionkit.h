@@ -23,6 +23,7 @@
 
 #include "qgis_quick.h"
 #include "qgsquickmapsettings.h"
+#include "qgsquickcoordinatetransformer.h"
 
 /**
  * \ingroup quick
@@ -46,14 +47,24 @@ class QUICK_EXPORT QgsQuickPositionKit : public QObject
     Q_PROPERTY( QgsPoint position READ position NOTIFY positionChanged )
 
     /**
+     * GPS position in map coords
+     */
+    Q_PROPERTY( QgsPoint projectedPosition READ projectedPosition NOTIFY positionChanged )
+
+    /**
      * GPS position is available (position property is a valid number)
      */
     Q_PROPERTY( bool hasPosition READ hasPosition NOTIFY hasPositionChanged )
 
     /**
-     * GPS horizontal accuracy in meters, -1 if not available
+     * GPS horizontal accuracy in accuracyUnits, -1 if not available
      */
     Q_PROPERTY( qreal accuracy READ accuracy NOTIFY positionChanged )
+
+    /**
+     * GPS horizontal accuracy units.
+     */
+    Q_PROPERTY( QString accuracyUnits READ accuracyUnits NOTIFY positionChanged )
 
     /**
      * GPS direction, bearing in degrees clockwise from north to direction of travel. -1 if not available
@@ -65,6 +76,16 @@ class QUICK_EXPORT QgsQuickPositionKit : public QObject
      */
     Q_PROPERTY( bool isSimulated READ simulated NOTIFY isSimulatedChanged )
 
+    /**
+     * Associated map settings. Should be initialized before the first use from mapcanvas map settings.
+     */
+    Q_PROPERTY( QgsQuickMapSettings *mapSettings MEMBER mMapSettings WRITE setMapSettings NOTIFY mapSettingsChanged )
+
+
+    Q_PROPERTY( QVector<double> simulatePositionLongLatRad READ simulatePositionLongLatRad WRITE setSimulatePositionLongLatRad NOTIFY simulatePositionLongLatRadChanged )
+
+
+
   public:
     //! Create new position kit
     explicit QgsQuickPositionKit( QObject *parent = 0 );
@@ -75,14 +96,27 @@ class QUICK_EXPORT QgsQuickPositionKit : public QObject
     //! \copydoc QgsQuickPositionKit::position
     QgsPoint position() const;
 
+    //! \copydoc QgsQuickPositionKit::projectedPosition
+    QgsPoint projectedPosition() const;
+
     //! \copydoc QgsQuickPositionKit::accuracy
     qreal accuracy() const;
+    //! \copydoc QgsQuickPositionKit::accuracyUnits
+    QString accuracyUnits() const;
 
     //! \copydoc QgsQuickPositionKit::direction
     qreal direction() const;
 
     //! \copydoc QgsQuickPositionKit::isSimulated
     bool simulated() const;
+
+    //! \copydoc QgsQuickPositionKit::mapSettings
+    void setMapSettings( QgsQuickMapSettings *mapSettings );
+
+    QgsQuickMapSettings *mapSettings() const;
+
+    QVector<double> simulatePositionLongLatRad() const;
+    void setSimulatePositionLongLatRad( const QVector<double> &simulatePositionLongLatRad );
 
     /**
      * Use simulated GPS source.
@@ -104,14 +138,14 @@ class QUICK_EXPORT QgsQuickPositionKit : public QObject
      * \param withAccuracy If False, returns empty string.
      * \param altMsg If there is no position, returns altMsg.
      */
-    Q_INVOKABLE QString gpsAccuracyLabel( bool withAccuracy, QString altMsg );
+    Q_INVOKABLE QString sourceAccuracyLabel( bool withAccuracy, QString altMsg );
 
     /**
      * Generates label for gps position according set gps source.
      * \param precision Defines number of digits after comma.
      * \param altMsg If there is no position, returns altMsg.
      */
-    Q_INVOKABLE QString gpsPositionLabel( int precision, QString altMsg );
+    Q_INVOKABLE QString sourcePositionLabel( int precision, QString altMsg );
 
     /**
      * Use real GPS source (not simulated)
@@ -128,7 +162,9 @@ class QUICK_EXPORT QgsQuickPositionKit : public QObject
      * Calculates accuracy indicator width.
      * \param mapSettings QgsQuickMapSettings used for screenUnitsToMeters calculation.
      */
-    Q_INVOKABLE double accuracyIndicatorWidth( QgsQuickMapSettings *mapSettings );
+    Q_INVOKABLE double screenAccuracy();
+
+    QgsQuickCoordinateTransformer *coordinateTransformer() const;
 
   signals:
     //! GPS position changed
@@ -140,6 +176,12 @@ class QUICK_EXPORT QgsQuickPositionKit : public QObject
     //! changed if GPS position is simulated or not
     void isSimulatedChanged();
 
+    //! \copydoc QgsQuickPositionKit::mapSettings
+    void mapSettingsChanged();
+
+    //! \copydoc QgsQuickPositionKit::simulatePositionLongLatRad
+    void simulatePositionLongLatRadChanged( QVector<double> simulatePositionLongLatRad );
+
   public slots:
 
   private slots:
@@ -149,8 +191,12 @@ class QUICK_EXPORT QgsQuickPositionKit : public QObject
   protected:
     //! \copydoc QgsQuickPositionKit::position
     QgsPoint mPosition;
+    //! \copydoc QgsQuickPositionKit::projectedPosition
+    QgsPoint mProjectedPosition;
     //! \copydoc QgsQuickPositionKit::accuracy
     qreal mAccuracy;
+    //! \copydoc QgsQuickPositionKit::accuracyUnits
+    QString mAccuracyUnits;
     //! \copydoc QgsQuickPositionKit::direction
     qreal mDirection;
     //! \copydoc QgsQuickPositionKit::position
@@ -159,12 +205,18 @@ class QUICK_EXPORT QgsQuickPositionKit : public QObject
     // Simulated source
     bool mIsSimulated;
 
-    //QGeoPositionInfoSource *mSource = nullptr;
+    QVector<double> mSimulatePositionLongLatRad;
+
     std::unique_ptr<QGeoPositionInfoSource> mSource;
 
   private:
     void replacePositionSource( QGeoPositionInfoSource *source );
     QString calculateStatusLabel();
+
+    QgsQuickMapSettings *mMapSettings = nullptr; // not owned
+    std::unique_ptr<QgsQuickCoordinateTransformer> mCoordinateTransformer;
+
+    void setCoordinateTransformMapSettings();
 
     QGeoPositionInfoSource *gpsSource();
     QGeoPositionInfoSource *simulatedSource( double longitude, double latitude, double radius );

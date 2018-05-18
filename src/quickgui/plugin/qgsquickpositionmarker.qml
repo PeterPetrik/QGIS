@@ -33,7 +33,12 @@ Item {
   /**
    * Utils for handling position.
    */
-  property QgsQuick.PositionKit positionKit: QgsQuick.PositionKit {id: positionKit}
+  property QgsQuick.PositionKit positionKit: QgsQuick.PositionKit
+  {id: positionKit
+    mapSettings: mapSettings
+    simulatePositionLongLatRad: [-97.36, 36.93, 2]
+    onProjectedPositionChanged: update_location()
+  }
   /**
    * use in debug mode to simulate movement around some GPS location
    * longitude, latitude, and radius, all in degrees WSG84
@@ -53,23 +58,34 @@ Item {
    * Color of the marker when gps signal is lost.
    */
   property color unavailableColor: "gray"
-  property alias mapPosition: wgs84toMapCrs.projectedPosition // in map coordinates
-  property alias gpsPosition: positionKit.position // in WGS84 coordinates
-  property alias gpsAccuracy: positionKit.accuracy // in meters
 
   /**
-   * Position info label.
+   * Position in map coordinates
+   * READ ONLY property
    */
-  property var gpsPositionLabel: qsTr(positionKit.gpsPositionLabel(3, "GPS signal lost"))
+  property alias mapPosition: positionKit.projectedPosition
+  /**
+   * Source position read from positionKit in WGS84 coordinates
+   */
+  property alias sourcePosition: positionKit.position
+
+  //property alias rawPositionCRS: positionKit.pos
 
   /**
-   * Accuracy info label.
+   * Source accuracy read from positionKit
    */
-  property var gpsAccuracyLabel: qsTr(positionKit.gpsAccuracyLabel(positionMarker.withAccuracy, "GPS accuracy N/A"))
+  property alias sourceAccuracy: positionKit.accuracy // in meters
+
+  /**
+   * Source accuracy units, default in meters.
+   */
+  property alias sourceAccuracyUnits: positionKit.accuracyUnits
+
   /**
    * Accuracy radius is active.
    */
   property var withAccuracy: true
+
   /**
    * Icon for position marker.
    */
@@ -84,26 +100,7 @@ Item {
 
   function update_location() {
     if (mapSettings)
-      screenPosition = mapSettings.coordinateToScreen(wgs84toMapCrs.projectedPosition)
-  }
-
-  /**
-   * Un/Set simulated GPS source on simulatePositionLongLatRad changed.
-   */
-  onSimulatePositionLongLatRadChanged: {
-    positionKit.onSimulatePositionLongLatRadChanged(simulatePositionLongLatRad);
-  }
-
-  /**
-   * Helper for transform of coordinates to a different coordinate reference system.
-   */
-  QgsQuick.CoordinateTransformer {
-    id: wgs84toMapCrs
-    sourceCrs: QgsQuick.Utils.coordinateReferenceSystemFromEpsgId(4326)
-    destinationCrs: mapSettings.destinationCrs
-    sourcePosition: positionKit.position
-    mapSettings: positionMarker.mapSettings
-    onProjectedPositionChanged: update_location()
+      screenPosition = mapSettings.coordinateToScreen(positionKit.projectedPosition)
   }
 
   /**
@@ -118,11 +115,7 @@ Item {
              (accuracyIndicator.width > positionMarker.size / 2.0)
     x: positionMarker.screenPosition.x - width/2
     y: positionMarker.screenPosition.y - height/2
-    width: {
-      if (mapSettings)
-        positionKit.accuracyIndicatorWidth(positionMarker.mapSettings)
-      else 2;
-    }
+    width:positionKit.screenAccuracy()
     height: accuracyIndicator.width
     color: baseColor
     border.color: "black"

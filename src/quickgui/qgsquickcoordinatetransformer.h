@@ -48,7 +48,7 @@ class QUICK_EXPORT QgsQuickCoordinateTransformer : public QObject
     Q_PROPERTY( QgsCoordinateReferenceSystem sourceCrs READ sourceCrs WRITE setSourceCrs NOTIFY sourceCrsChanged )
 
     //! Map settings, for getting transformation context
-    Q_PROPERTY( QgsQuickMapSettings *mapSettings MEMBER mMapSettings NOTIFY mapSettingsChanged )
+    Q_PROPERTY( QgsQuickMapSettings *mapSettings READ mapSettings WRITE setMapSettings NOTIFY mapSettingsChanged )
 
   public:
     //! create new coordinate transformer
@@ -74,6 +74,9 @@ class QUICK_EXPORT QgsQuickCoordinateTransformer : public QObject
 
     //!\copydoc QgsQuickCoordinateTransformer::sourceCrs
     void setSourceCrs( const QgsCoordinateReferenceSystem &sourceCrs );
+
+    QgsQuickMapSettings *mapSettings() const;
+    void setMapSettings( QgsQuickMapSettings *mapSettings );
 
   signals:
     //! projected position changed
