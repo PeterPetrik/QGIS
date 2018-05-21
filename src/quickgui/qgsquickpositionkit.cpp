@@ -43,10 +43,10 @@ QGeoPositionInfoSource  *QgsQuickPositionKit::gpsSource()
   // on Linux it comes from Geoclue library
   QGeoPositionInfoSource *source = QGeoPositionInfoSource::createDefaultSource( this );
   if ( source->error() != QGeoPositionInfoSource::NoError )
-  {    
-    QgsMessageLog::logMessage( QStringLiteral("%1 (%2)")
-                               .arg(tr( "Unable to create default GPS Position Source" ))
-                               .arg(QString::number( ( long )source->error() ))
+  {
+    QgsMessageLog::logMessage( QStringLiteral( "%1 (%2)" )
+                               .arg( tr( "Unable to create default GPS Position Source" ) )
+                               .arg( QString::number( ( long )source->error() ) )
                                , QStringLiteral( "QgsQuick" )
                                , Qgis::Warning );
     delete source;
@@ -194,7 +194,7 @@ void QgsQuickPositionKit::onSimulatePositionLongLatRadChanged( QVector<double> s
   }
   else
   {
-    QgsDebugMsg(QStringLiteral("Unable to set simulated position due to the input errors."));
+    QgsDebugMsg( QStringLiteral( "Unable to set simulated position due to the input errors." ) );
     use_gps_location();
   }
 }
