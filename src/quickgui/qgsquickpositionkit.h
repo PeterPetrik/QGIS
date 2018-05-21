@@ -52,6 +52,11 @@ class QUICK_EXPORT QgsQuickPositionKit : public QObject
     Q_PROPERTY( QgsPoint projectedPosition READ projectedPosition NOTIFY positionChanged )
 
     /**
+     * GPS position in pixels.
+     */
+    Q_PROPERTY( QPointF screenPosition READ screenPosition WRITE setScreenPosition NOTIFY screenPositionChanged )
+
+    /**
      * GPS position is available (position property is a valid number).
      */
     Q_PROPERTY( bool hasPosition READ hasPosition NOTIFY hasPositionChanged )
@@ -84,12 +89,13 @@ class QUICK_EXPORT QgsQuickPositionKit : public QObject
     /**
      * Associated map settings. Should be initialized before the first use from mapcanvas map settings.
      */
-    Q_PROPERTY( QgsQuickMapSettings *mapSettings MEMBER mMapSettings WRITE setMapSettings NOTIFY mapSettingsChanged )
+    Q_PROPERTY( QgsQuickMapSettings *mapSettings READ mapSettings WRITE setMapSettings NOTIFY mapSettingsChanged )
 
-
+    /**
+     * Vector containing longitude, latitude and radius of similated position. If empty, no simulated source will be used.
+     * e.g. [-97.36, 36.93, 2]
+     */
     Q_PROPERTY( QVector<double> simulatePositionLongLatRad READ simulatePositionLongLatRad WRITE setSimulatePositionLongLatRad NOTIFY simulatePositionLongLatRadChanged )
-
-
 
   public:
     //! Create new position kit
@@ -103,6 +109,12 @@ class QUICK_EXPORT QgsQuickPositionKit : public QObject
 
     //! \copydoc QgsQuickPositionKit::projectedPosition
     QgsPoint projectedPosition() const;
+
+    //! \copydoc QgsQuickPositionKit::screenPosition
+    QPointF screenPosition() const;
+
+    //! \copydoc QgsQuickPositionKit::screenPosition
+    void setScreenPosition( const QPointF &screenPosition );
 
     //! \copydoc QgsQuickPositionKit::accuracy
     qreal accuracy() const;
@@ -168,16 +180,16 @@ class QUICK_EXPORT QgsQuickPositionKit : public QObject
     Q_INVOKABLE void onSimulatePositionLongLatRadChanged( QVector<double> simulatePositionLongLatRad );
 
     /**
-     * Calculates accuracy indicator width.
-     * \param mapSettings QgsQuickMapSettings used for screenUnitsToMeters calculation.
+     * Updates screen position according projected position.
      */
-    double calcScreenAccuracy();
-
-    QgsQuickCoordinateTransformer *coordinateTransformer() const;
+    Q_INVOKABLE void updateScreenPosition();
 
   signals:
-    //! GPS position changed
+    //! source position changed
     void positionChanged();
+
+    //! screenPosition changed
+    void screenPositionChanged();
 
     //! hasPosition changed
     void hasPositionChanged();
@@ -202,6 +214,9 @@ class QUICK_EXPORT QgsQuickPositionKit : public QObject
     QgsPoint mPosition;
     //! \copydoc QgsQuickPositionKit::projectedPosition
     QgsPoint mProjectedPosition;
+    //! \copydoc QgsQuickPositionKit::screenPosition
+    QPointF mScreenPosition;
+
     //! \copydoc QgsQuickPositionKit::accuracy
     qreal mAccuracy;
     //! \copydoc QgsQuickPositionKit::screenAccuracy
@@ -224,15 +239,15 @@ class QUICK_EXPORT QgsQuickPositionKit : public QObject
   private:
     void replacePositionSource( QGeoPositionInfoSource *source );
     QString calculateStatusLabel();
+    double calculateScreenAccuracy();
 
     QgsQuickMapSettings *mMapSettings = nullptr; // not owned
-    std::unique_ptr<QgsQuickCoordinateTransformer> mCoordinateTransformer;
-
-    void setCoordinateTransformMapSettings();
+    QgsCoordinateTransform mCoordinateTransform;
 
     QGeoPositionInfoSource *gpsSource();
     QGeoPositionInfoSource *simulatedSource( double longitude, double latitude, double radius );
 
+    void updateProjectedPosition();
 };
 
 #endif // QGSQUICKPOSITIONKIT_H

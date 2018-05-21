@@ -27,29 +27,10 @@ Item {
   property int size: 48 * QgsQuick.Utils.dp
 
   /**
-   * Note: required to be connected from parent!
-   */
-  property QgsQuick.MapSettings mapSettings
-  /**
    * Utils for handling position.
    */
-  property QgsQuick.PositionKit positionKit: QgsQuick.PositionKit
-  {id: positionKit
-    mapSettings: mapSettings
-    simulatePositionLongLatRad: [-97.36, 36.93, 2]
-    onProjectedPositionChanged: update_location()
-  }
-  /**
-   * use in debug mode to simulate movement around some GPS location
-   * longitude, latitude, and radius, all in degrees WSG84
-   * e.g. simulatePositionLongLatRad = [60, 10, 0.02].
-   */
-  property var simulatePositionLongLatRad
+  property QgsQuick.PositionKit positionKit
 
-  /**
-   * Position in pixels
-   */
-  property point screenPosition
   /**
    * Color of the marker when gps is active.
    */
@@ -58,28 +39,6 @@ Item {
    * Color of the marker when gps signal is lost.
    */
   property color unavailableColor: "gray"
-
-  /**
-   * Position in map coordinates
-   * READ ONLY property
-   */
-  property alias mapPosition: positionKit.projectedPosition
-  /**
-   * Source position read from positionKit in WGS84 coordinates
-   */
-  property alias sourcePosition: positionKit.position
-
-  //property alias rawPositionCRS: positionKit.pos
-
-  /**
-   * Source accuracy read from positionKit
-   */
-  property alias sourceAccuracy: positionKit.accuracy // in meters
-
-  /**
-   * Source accuracy units, default in meters.
-   */
-  property alias sourceAccuracyUnits: positionKit.accuracyUnits
 
   /**
    * Accuracy radius is active.
@@ -91,18 +50,6 @@ Item {
    */
   property var markerIcon: QgsQuick.Utils.getThemeIcon("ic_navigation_black")
 
-  onMapSettingsChanged: update_location()
-
-  Connections {
-    target: mapSettings
-    onVisibleExtentChanged: update_location()
-  }
-
-  function update_location() {
-    if (mapSettings)
-      screenPosition = mapSettings.coordinateToScreen(positionKit.projectedPosition)
-  }
-
   /**
    * GPS accuracy circle-shaped indicator around positionMarker.
    */
@@ -113,8 +60,8 @@ Item {
              positionKit.hasPosition &&
              (positionKit.accuracy > 0) &&
              (accuracyIndicator.width > positionMarker.size / 2.0)
-    x: positionMarker.screenPosition.x - width/2
-    y: positionMarker.screenPosition.y - height/2
+    x: positionKit.screenPosition.x - width/2
+    y: positionKit.screenPosition.y - height/2
     width:positionKit.screenAccuracy
     height: accuracyIndicator.width
     color: baseColor
@@ -137,8 +84,8 @@ Item {
     border.width: borderWidth
     radius: width*0.5
     antialiasing: true
-    x: positionMarker.screenPosition.x - width/2
-    y: positionMarker.screenPosition.y - height/2
+    x: positionKit.screenPosition.x - width/2
+    y: positionKit.screenPosition.y - height/2
 
     Image {
       id: navigation
@@ -163,3 +110,4 @@ Item {
   }
 
 }
+

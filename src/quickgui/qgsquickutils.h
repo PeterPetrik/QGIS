@@ -69,7 +69,7 @@ class QUICK_EXPORT QgsQuickUtils: public QObject
     /**
       * Create crs from epsg code in QML
       */
-    Q_INVOKABLE QgsCoordinateReferenceSystem coordinateReferenceSystemFromEpsgId( long epsg ) const;
+    Q_INVOKABLE static QgsCoordinateReferenceSystem coordinateReferenceSystemFromEpsgId( long epsg );
 
     /**
       * Create QgsPointXY in QML
@@ -89,10 +89,10 @@ class QUICK_EXPORT QgsQuickUtils: public QObject
     /**
       * Transform point between different crs from QML
       */
-    Q_INVOKABLE QgsPointXY transformPoint( const QgsCoordinateReferenceSystem &srcCrs,
-                                           const QgsCoordinateReferenceSystem &destCrs,
-                                           const QgsCoordinateTransformContext &context,
-                                           const QgsPointXY &srcPoint ) const;
+    Q_INVOKABLE static QgsPointXY transformPoint( const QgsCoordinateReferenceSystem &srcCrs,
+        const QgsCoordinateReferenceSystem &destCrs,
+        const QgsCoordinateTransformContext &context,
+        const QgsPointXY &srcPoint );
 
     /**
       * Calculate the distance in meter representing baseLengthPixels pixels on the screen based on the current map settings.

@@ -100,13 +100,3 @@ void QgsQuickCoordinateTransformer::updatePosition()
 
   emit projectedPositionChanged();
 }
-
-QgsQuickMapSettings *QgsQuickCoordinateTransformer::mapSettings() const
-{
-  return mMapSettings;
-}
-
-void QgsQuickCoordinateTransformer::setMapSettings( QgsQuickMapSettings *mapSettings )
-{
-  mMapSettings = mapSettings;
-}

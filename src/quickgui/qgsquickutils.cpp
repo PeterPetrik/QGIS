@@ -35,7 +35,7 @@ QgsQuickUtils::QgsQuickUtils( QObject *parent )
 /**
  * Makes QgsCoordinateReferenceSystem::fromEpsgId accessable for QML components
  */
-QgsCoordinateReferenceSystem QgsQuickUtils::coordinateReferenceSystemFromEpsgId( long epsg ) const
+QgsCoordinateReferenceSystem QgsQuickUtils::coordinateReferenceSystemFromEpsgId( long epsg )
 {
   return QgsCoordinateReferenceSystem::fromEpsgId( epsg );
 }
@@ -58,7 +58,7 @@ QgsPoint QgsQuickUtils::coordinateToPoint( const QGeoCoordinate &coor ) const
 QgsPointXY QgsQuickUtils::transformPoint( const QgsCoordinateReferenceSystem &srcCrs,
     const QgsCoordinateReferenceSystem &destCrs,
     const QgsCoordinateTransformContext &context,
-    const QgsPointXY &srcPoint ) const
+    const QgsPointXY &srcPoint )
 {
   QgsCoordinateTransform mTransform( srcCrs, destCrs, context );
   QgsPointXY pt = mTransform.transform( srcPoint );
