@@ -69,7 +69,7 @@ Item {
     height: accuracyIndicator.width
     color: baseColor
     border.color: "black"
-    border.width: 3 * dp
+    border.width: 3 * QgsQuick.Utils.dp
     radius: width*0.5
     opacity: 0.1
   }
@@ -79,8 +79,8 @@ Item {
    */
   Rectangle {
     id: navigationMarker
-    property int borderWidth: 2 * dp
-    width: positionMarker.size + 20 * dp
+    property int borderWidth: 2 * QgsQuick.Utils.dp
+    width: positionMarker.size + 20 * QgsQuick.Utils.dp
     height: width
     color: "white"
     border.color: baseColor

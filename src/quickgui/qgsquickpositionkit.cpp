@@ -184,7 +184,7 @@ void QgsQuickPositionKit::positionUpdated( const QGeoPositionInfo &info )
 }
 void QgsQuickPositionKit::onSimulatePositionLongLatRadChanged( QVector<double> simulatePositionLongLatRad )
 {
-  if ( !simulatePositionLongLatRad.size() > 2 )
+  if ( simulatePositionLongLatRad.size() > 2 )
   {
     double longitude = simulatePositionLongLatRad[0];
     double latitude = simulatePositionLongLatRad[1];
