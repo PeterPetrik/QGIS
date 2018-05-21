@@ -67,27 +67,27 @@ class QUICK_EXPORT QgsQuickUtils: public QObject
     qreal screenDensity() const;
 
     /**
-      * Create crs from epsg code in QML
+      * Creates crs from epsg code in QML
       */
     Q_INVOKABLE static QgsCoordinateReferenceSystem coordinateReferenceSystemFromEpsgId( long epsg );
 
     /**
-      * Create QgsPointXY in QML
+      * Creates QgsPointXY in QML
       */
     Q_INVOKABLE QgsPointXY pointXYFactory( double x, double y ) const;
 
     /**
-      * Create QgsPoint in QML
+      * Creates QgsPoint in QML
       */
     Q_INVOKABLE QgsPoint pointFactory( double x, double y ) const;
 
     /**
-      * Convert QGeoCoordinate to QgsPoint
+      * Converts QGeoCoordinate to QgsPoint
       */
     Q_INVOKABLE QgsPoint coordinateToPoint( const QGeoCoordinate &coor ) const;
 
     /**
-      * Transform point between different crs from QML
+      * Transforms point between different crs from QML
       */
     Q_INVOKABLE static QgsPointXY transformPoint( const QgsCoordinateReferenceSystem &srcCrs,
         const QgsCoordinateReferenceSystem &destCrs,
@@ -95,7 +95,7 @@ class QUICK_EXPORT QgsQuickUtils: public QObject
         const QgsPointXY &srcPoint );
 
     /**
-      * Calculate the distance in meter representing baseLengthPixels pixels on the screen based on the current map settings.
+      * Calculates the distance in meter representing baseLengthPixels pixels on the screen based on the current map settings.
       */
     Q_INVOKABLE static double screenUnitsToMeters( QgsQuickMapSettings *mapSettings, int baseLengthPixels );
 

@@ -20,7 +20,11 @@ import QtGraphicalEffects 1.0
 import QgsQuick 0.1 as QgsQuick
 
 /**
- * \brief A marker refers to the current gps position according gps source is available. Along with longitude, latitude and radius.
+ * \brief Graphical representation of physical location on the map.
+ *
+ * Source position and accuracy taken from PositionKit is drawn as a marker on the map.
+ * Marker is grayed out when position is not available. When PositionKit support reading of the accuracy,
+ * the circle is drawn around the marker. PositionKit must be connected, for example GPS position source from QgsQuickPositionKit.
  */
 Item {
   id: positionMarker
@@ -32,16 +36,16 @@ Item {
   property QgsQuick.PositionKit positionKit
 
   /**
-   * Color of the marker when gps is active.
+   * Color of the marker when position is known.
    */
   property color baseColor: "darkblue"
   /**
-   * Color of the marker when gps signal is lost.
+   * Color of the marker when position is unknown (e.g. GPS signal lost).
    */
   property color unavailableColor: "gray"
 
   /**
-   * Accuracy radius is active.
+   * Whether circle representing accuracy of the position should be rendered.
    */
   property var withAccuracy: true
 
@@ -51,12 +55,11 @@ Item {
   property var markerIcon: QgsQuick.Utils.getThemeIcon("ic_navigation_black")
 
   /**
-   * GPS accuracy circle-shaped indicator around positionMarker.
+   * Source position accuracy circle-shaped indicator around positionMarker.
    */
   Rectangle {
     id: accuracyIndicator
-    visible: mapSettings &&
-             withAccuracy &&
+    visible: withAccuracy &&
              positionKit.hasPosition &&
              (positionKit.accuracy > 0) &&
              (accuracyIndicator.width > positionMarker.size / 2.0)
@@ -66,7 +69,7 @@ Item {
     height: accuracyIndicator.width
     color: baseColor
     border.color: "black"
-    border.width: 3
+    border.width: 3 * dp
     radius: width*0.5
     opacity: 0.1
   }
@@ -76,8 +79,8 @@ Item {
    */
   Rectangle {
     id: navigationMarker
-    property int borderWidth: 2
-    width: positionMarker.size + 20
+    property int borderWidth: 2 * dp
+    width: positionMarker.size + 20 * dp
     height: width
     color: "white"
     border.color: baseColor
@@ -98,16 +101,15 @@ Item {
     }
 
     /**
-     * Makes positionMarker (navigation) grey if gps signal is lost.
+     * Makes positionMarker (navigation) grey if position is unknown.
      */
     ColorOverlay {
       anchors.fill: navigation
       source: navigation
       color: positionKit.hasPosition ? baseColor : unavailableColor
       rotation: positionKit.direction
-      visible: !(positionKit.hasPosition && baseColor == "black")
+      visible: !(positionKit.hasPosition)
     }
   }
-
 }
 

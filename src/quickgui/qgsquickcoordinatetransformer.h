@@ -35,7 +35,7 @@ class QUICK_EXPORT QgsQuickCoordinateTransformer : public QObject
 {
     Q_OBJECT
 
-    //! projected (destination) position (in destination CRS)
+    //! Projected (destination) position (in destination CRS)
     Q_PROPERTY( QgsPoint projectedPosition READ projectedPosition NOTIFY projectedPositionChanged )
 
     //! Source position  (in source CRS)
@@ -51,7 +51,7 @@ class QUICK_EXPORT QgsQuickCoordinateTransformer : public QObject
     Q_PROPERTY( QgsQuickMapSettings *mapSettings MEMBER mMapSettings NOTIFY mapSettingsChanged )
 
   public:
-    //! create new coordinate transformer
+    //! Creates new coordinate transformer
     explicit QgsQuickCoordinateTransformer( QObject *parent = 0 );
 
     //!\copydoc QgsQuickCoordinateTransformer::projectedPosition
@@ -76,19 +76,19 @@ class QUICK_EXPORT QgsQuickCoordinateTransformer : public QObject
     void setSourceCrs( const QgsCoordinateReferenceSystem &sourceCrs );
 
   signals:
-    //! projected position changed
+    //! Projected position changed
     void projectedPositionChanged();
 
-    //! source position changed
+    //! Source position changed
     void sourcePositionChanged();
 
-    //! destination CRS changed
+    //! Destination CRS changed
     void destinationCrsChanged();
 
-    //! source CRS changed
+    //! Source CRS changed
     void sourceCrsChanged();
 
-    //! map settings changed
+    //! Map settings changed
     void mapSettingsChanged();
 
   private:

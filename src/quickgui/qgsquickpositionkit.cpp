@@ -43,9 +43,10 @@ QGeoPositionInfoSource  *QgsQuickPositionKit::gpsSource()
   // on Linux it comes from Geoclue library
   QGeoPositionInfoSource *source = QGeoPositionInfoSource::createDefaultSource( this );
   if ( source->error() != QGeoPositionInfoSource::NoError )
-  {
-    QgsMessageLog::logMessage( tr( "Unable to create default GPS Position Source" )
-                               + "(" + QString::number( ( long )source->error() ) + ")"
+  {    
+    QgsMessageLog::logMessage( QStringLiteral("%1 (%2)")
+                               .arg(tr( "Unable to create default GPS Position Source" ))
+                               .arg(QString::number( ( long )source->error() ))
                                , QStringLiteral( "QgsQuick" )
                                , Qgis::Warning );
     delete source;
@@ -183,7 +184,7 @@ void QgsQuickPositionKit::positionUpdated( const QGeoPositionInfo &info )
 }
 void QgsQuickPositionKit::onSimulatePositionLongLatRadChanged( QVector<double> simulatePositionLongLatRad )
 {
-  if ( !simulatePositionLongLatRad.isEmpty() )
+  if ( !simulatePositionLongLatRad.size() > 2 )
   {
     double longitude = simulatePositionLongLatRad[0];
     double latitude = simulatePositionLongLatRad[1];
@@ -193,6 +194,7 @@ void QgsQuickPositionKit::onSimulatePositionLongLatRadChanged( QVector<double> s
   }
   else
   {
+    QgsDebugMsg(QStringLiteral("Unable to set simulated position due to the input errors."));
     use_gps_location();
   }
 }
@@ -204,7 +206,7 @@ double QgsQuickPositionKit::calculateScreenAccuracy()
 
   if ( accuracy() > 0 )
   {
-    double scpm = QgsQuickUtils::screenUnitsToMeters( mMapSettings, 1 ); // scpm is how much meters is 1 pixel
+    double scpm = QgsQuickUtils::screenUnitsToMeters( mMapSettings, 1 );
     if ( scpm > 0 )
       return 2 * ( accuracy() / scpm );
     else

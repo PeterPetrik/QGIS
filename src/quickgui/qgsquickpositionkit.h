@@ -98,7 +98,7 @@ class QUICK_EXPORT QgsQuickPositionKit : public QObject
     Q_PROPERTY( QVector<double> simulatePositionLongLatRad READ simulatePositionLongLatRad WRITE setSimulatePositionLongLatRad NOTIFY simulatePositionLongLatRadChanged )
 
   public:
-    //! Create new position kit
+    //! Creates new position kit
     explicit QgsQuickPositionKit( QObject *parent = 0 );
 
     //! True if there is \copydoc QgsQuickPositionKit::position
@@ -134,9 +134,13 @@ class QUICK_EXPORT QgsQuickPositionKit : public QObject
     //! \copydoc QgsQuickPositionKit::mapSettings
     void setMapSettings( QgsQuickMapSettings *mapSettings );
 
+    //! \copydoc QgsQuickPositionKit::mapSettings
     QgsQuickMapSettings *mapSettings() const;
 
+    //! \copydoc QgsQuickPositionKit::simulatePositionLongLatRad
     QVector<double> simulatePositionLongLatRad() const;
+
+    //! \copydoc QgsQuickPositionKit::simulatePositionLongLatRad
     void setSimulatePositionLongLatRad( const QVector<double> &simulatePositionLongLatRad );
 
     /**
@@ -171,7 +175,7 @@ class QUICK_EXPORT QgsQuickPositionKit : public QObject
     Q_INVOKABLE void use_gps_location();
 
     /**
-     * Used for changing gps source when simulatePositionLongLatRad is un/set.
+     * Used for changing position source when simulatePositionLongLatRad is un/set.
      * \param simulatePositionLongLatRad Vector containing longitute, latitute and radius.
      */
     Q_INVOKABLE void onSimulatePositionLongLatRadChanged( QVector<double> simulatePositionLongLatRad );
@@ -191,7 +195,7 @@ class QUICK_EXPORT QgsQuickPositionKit : public QObject
     //! hasPosition changed
     void hasPositionChanged();
 
-    //! changed if GPS position is simulated or not
+    //! changed if source position is simulated or not
     void isSimulatedChanged();
 
     //! \copydoc QgsQuickPositionKit::mapSettings
@@ -226,9 +230,10 @@ class QUICK_EXPORT QgsQuickPositionKit : public QObject
     //! \copydoc QgsQuickPositionKit::position
     bool mHasPosition;
 
-    // Simulated source
+    //! \copydoc QgsQuickPositionKit::isSimulated
     bool mIsSimulated;
 
+    //! \copydoc QgsQuickPositionKit::simulatePositionLongLatRad
     QVector<double> mSimulatePositionLongLatRad;
 
     std::unique_ptr<QGeoPositionInfoSource> mSource;
