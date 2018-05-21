@@ -117,7 +117,7 @@ void QgsQuickPositionKit::replacePositionSource( QGeoPositionInfoSource *source 
 
   if ( mSource )
   {
-    disconnect( mSource.get(), nullptr, this, nullptr );
+    mSource->disconnect();
   }
 
   mSource.reset( source );
@@ -288,10 +288,9 @@ void QgsQuickPositionKit::setMapSettings( QgsQuickMapSettings *mapSettings )
   if ( mMapSettings == mapSettings )
     return;
 
-
   if ( mMapSettings )
   {
-    disconnect( mMapSettings, nullptr, this, nullptr );
+    mMapSettings->disconnect();
   }
 
   mMapSettings = mapSettings;
