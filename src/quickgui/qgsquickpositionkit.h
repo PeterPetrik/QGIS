@@ -155,18 +155,15 @@ class QUICK_EXPORT QgsQuickPositionKit : public QObject
     Q_INVOKABLE void use_simulated_location( double longitude, double latitude, double radius );
 
     /**
-     * Generates label for gps accuracy according set gps source.
-     * \param withAccuracy If False, returns empty string.
-     * \param altMsg If there is no position, returns altMsg.
+     * Generates label for gps accuracy according set gps source. If there is no accuracy, return empty string.
      */
-    Q_INVOKABLE QString sourceAccuracyLabel( bool withAccuracy, QString altMsg );
+    Q_INVOKABLE QString sourceAccuracyLabel();
 
     /**
-     * Generates label for gps position according set gps source.
+     * Generates label for gps position according set gps source. If has no position, return empty string.
      * \param precision Defines number of digits after comma.
-     * \param altMsg If there is no position, returns altMsg.
      */
-    Q_INVOKABLE QString sourcePositionLabel( int precision, QString altMsg );
+    Q_INVOKABLE QString sourcePositionLabel( int precision );
 
     /**
      * Use real GPS source (not simulated)

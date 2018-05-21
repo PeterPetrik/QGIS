@@ -79,18 +79,11 @@ void QgsQuickPositionKit::updateScreenPosition()
   emit screenPositionChanged();
 }
 
-QString QgsQuickPositionKit::sourceAccuracyLabel( bool withAccuracy, QString altMsg )
+QString QgsQuickPositionKit::sourceAccuracyLabel()
 {
-  if ( withAccuracy )
+  if ( hasPosition() && accuracy() > 0 )
   {
-    if ( hasPosition() && accuracy() > 0 )
-    {
-      return QgsQuickUtils::distanceToString( accuracy(), 0 ); // e.g 1 km or 15 m or 500 mm
-    }
-    else
-    {
-      return altMsg;
-    }
+    return QgsQuickUtils::distanceToString( accuracy(), 0 ); // e.g 1 km or 15 m or 500 mm
   }
   else
   {
@@ -98,7 +91,7 @@ QString QgsQuickPositionKit::sourceAccuracyLabel( bool withAccuracy, QString alt
   }
 }
 
-QString QgsQuickPositionKit::sourcePositionLabel( int precision, QString altMsg )
+QString QgsQuickPositionKit::sourcePositionLabel( int precision )
 {
   if ( hasPosition() )
   {
@@ -106,7 +99,7 @@ QString QgsQuickPositionKit::sourcePositionLabel( int precision, QString altMsg 
   }
   else
   {
-    return altMsg;
+    return QStringLiteral( "" );
   }
 }
 
