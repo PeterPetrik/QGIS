@@ -26,6 +26,9 @@
 #include "qgsquickmapsettings.h"
 #include "qgis_quick.h"
 
+
+class QgsFeature;
+class QgsVectorLayer;
 class QgsCoordinateReferenceSystem;
 
 /**
@@ -68,10 +71,10 @@ class QUICK_EXPORT QgsQuickUtils: public QObject
       */
     Q_INVOKABLE double screenUnitsToMeters( QgsQuickMapSettings *mapSettings, int baseLengthPixels ) const;
 
-    //! Log message in QgsMessageLog
-    Q_INVOKABLE void logMessage( const QString &message,
-                                 const QString &tag = QString( "QgsQuick" ),
-                                 Qgis::MessageLevel level = Qgis::Warning );
+    /**
+      * Has QgsFeature a geometry that can be added to the layer (non-empty, same geometry type)?
+      */
+    Q_INVOKABLE bool hasValidGeometry( QgsVectorLayer *layer, const QgsFeature &feat );
 
     /**
      * Returns a string with information about screen size and resolution

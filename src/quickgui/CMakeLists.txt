@@ -1,19 +1,31 @@
 ############################################################
 # sources
 SET(QGIS_QUICK_GUI_MOC_HDRS
+  qgsquickfeature.h
+  qgsquickfeaturemodel.h
+  qgsquickfeaturehighlight.h
+  qgsquickidentifykit.h
   qgsquickmapcanvasmap.h
   qgsquickmapsettings.h
+  qgsquickmaptransform.h
   qgsquickmessagelogmodel.h
   qgsquickscalebarkit.h
   qgsquickutils.h
 )
 
 SET(QGIS_QUICK_GUI_HDRS
+  qgsquickhighlightsgnode.h
 )
 
 SET(QGIS_QUICK_GUI_SRC
+  qgsquickfeature.cpp
+  qgsquickfeaturemodel.cpp
+  qgsquickfeaturehighlight.cpp
+  qgsquickhighlightsgnode.cpp
+  qgsquickidentifykit.cpp
   qgsquickmapcanvasmap.cpp
   qgsquickmapsettings.cpp
+  qgsquickmaptransform.cpp
   qgsquickmessagelogmodel.cpp
   qgsquickscalebarkit.cpp
   qgsquickutils.cpp
@@ -78,7 +90,7 @@ TARGET_LINK_LIBRARIES(qgis_quick Qt5::Quick Qt5::Qml Qt5::Xml Qt5::Concurrent Qt
 IF(CMAKE_SYSTEM_NAME STREQUAL "Android")
   TARGET_LINK_LIBRARIES(qgis_quick Qt5::AndroidExtras)
 ENDIF(CMAKE_SYSTEM_NAME STREQUAL "Android")
-TARGET_COMPILE_DEFINITIONS(qgis_quick PRIVATE "-DQT_NO_FOREACH")
+TARGET_COMPILE_DEFINITIONS(qgis_quick PRIVATE "-DDQT_NO_FOREACH")
 
 GENERATE_EXPORT_HEADER(
   qgis_quick

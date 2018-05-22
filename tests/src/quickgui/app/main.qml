@@ -32,10 +32,43 @@ ApplicationWindow {
     mapSettings.project: __project
     mapSettings.layers: __layers
 
+    QgsQuick.IdentifyKit {
+      id: identifyKit
+      mapSettings: mapCanvas.mapSettings
+    }
+
     onClicked: {
       var screenPoint = Qt.point(mouse.x, mouse.y)
       console.log("clicked:" + screenPoint)
+      var res = identifyKit.identifyOne(screenPoint);
+      if (QgsQuick.Utils.hasValidGeometry(res.layer, res.feature)) {
+        console.log("valid feature")
+        featureModel.layer = res.layer
+        featureModel.feature = res.feature
+      } else {
+        console.log("Invalid feature!!!!")
+      }
     }
+  }
+
+  QgsQuick.FeatureModel {
+    id: featureModel
+  }
+
+  Item {
+    anchors.fill: mapCanvas
+    transform: QgsQuick.MapTransform {
+      mapSettings: mapCanvas.mapSettings
+    }
+
+    QgsQuick.FeatureHighlight {
+      color: "red"
+      width: 20
+      model: featureModel
+      mapSettings: mapCanvas.mapSettings
+    }
+
+    z: 1   // make sure items from here are on top of the Z-order
   }
 
   Drawer {
