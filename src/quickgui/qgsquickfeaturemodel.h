@@ -35,11 +35,17 @@
 class QUICK_EXPORT QgsQuickFeatureModel : public QAbstractListModel
 {
     Q_OBJECT
-    //! feature
+    /**
+     * Instance of QgsFeature.
+     */
     Q_PROPERTY( QgsFeature feature READ feature WRITE setFeature NOTIFY featureChanged )
-    //! layer to which \a feature belogs
+    /**
+     * Vector layer to which the feature belongs.
+     */
     Q_PROPERTY( QgsVectorLayer *layer READ layer WRITE setLayer NOTIFY layerChanged )
-    //! feature roles
+    /**
+     * Feature roles enum.
+     */
     Q_ENUMS( FeatureRoles )
 
   public:
@@ -51,34 +57,47 @@ class QUICK_EXPORT QgsQuickFeatureModel : public QAbstractListModel
       RememberAttribute                  //!< Remember attribute value for next feature
     };
 
-    //! Create new feature model
+    //! Creatse new feature model
     explicit QgsQuickFeatureModel( QObject *parent = 0 );
 
-    //! Create new feature model
+    //! Creates new feature model
     explicit QgsQuickFeatureModel( const QgsFeature &feat, QObject *parent = 0 );
 
     //! Set feature to feature model
     void setFeature( const QgsFeature &feature );
 
-    /**
-     * Return the feature wrapped in a QVariant for passing it around in QML
-     */
+    //! \copydoc QgsQuickFeatureModel::feature
     QgsFeature feature() const;
 
-    //! Set feature model layer
+    //! \copydoc QgsQuickFeatureModel::layer
     void setLayer( QgsVectorLayer *layer );
 
-    //! Return feature model layer
+    //! \copydoc QgsQuickFeatureModel::layer
     QgsVectorLayer *layer() const;
 
 
+    //! List of all role names.
     QHash<int, QByteArray> roleNames() const override;
+    //! Equals to number of feature attributes.
     int rowCount( const QModelIndex &parent ) const override;
+
+    /**
+     * Returns model data according params
+     * \param index Index in the model
+     * \param role Feature role.
+     */
     QVariant data( const QModelIndex &index, int role ) const override;
+
+    /**
+     * Sets data to the model according params
+     * \param index Index in the model
+     * \param value QVariant value
+     * \param role Feature role.
+     */
     bool setData( const QModelIndex &index, const QVariant &value, int role = Qt::EditRole ) override;
 
     /**
-     * Will commit the edit buffer of this layer.
+     * Commits the edit buffer of this layer.
      * May change in the future to only commit the changes buffered in this model.
      *
      * @return Success of the operation
@@ -86,17 +105,17 @@ class QUICK_EXPORT QgsQuickFeatureModel : public QAbstractListModel
     Q_INVOKABLE bool save();
 
     /**
-     * Will delete the current feature from the layer and commit the changes.
+     * Deletes the current feature from the layer and commit the changes.
      * @return Success of the operation
      */
     Q_INVOKABLE bool deleteFeature();
 
     /**
-     * Will reset the feature to the original values and dismiss any buffered edits.
+     * Resets the feature to the original values and dismiss any buffered edits.
      */
     Q_INVOKABLE void reset();
 
-    //! Add mFeature to mLayer
+    //! Adds mFeature to mLayer
     Q_INVOKABLE void create();
 
     /**
@@ -106,10 +125,10 @@ class QUICK_EXPORT QgsQuickFeatureModel : public QAbstractListModel
      */
     Q_INVOKABLE bool suppressFeatureForm() const;
 
-    //! Reset remembered attributes
+    //! Resets remembered attributes
     Q_INVOKABLE virtual void resetAttributes();
 
-    //! Get remembered attributes
+    //! Gets remembered attributes
     QVector<bool> rememberedAttributes() const;
 
   public slots:

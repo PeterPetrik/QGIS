@@ -66,10 +66,10 @@ QgsFeature QgsQuickFeatureModel::feature() const
 QHash<int, QByteArray> QgsQuickFeatureModel::roleNames() const
 {
   QHash<int, QByteArray> roles = QAbstractListModel::roleNames();
-  roles[AttributeName]  = "AttributeName";
-  roles[AttributeValue] = "AttributeValue";
-  roles[Field] = "Field";
-  roles[RememberAttribute] = "RememberAttribute";
+  roles[AttributeName]  = QByteArrayLiteral( "AttributeName" );
+  roles[AttributeValue] = QByteArrayLiteral( "AttributeValue" );
+  roles[Field] = QByteArrayLiteral( "Field" );
+  roles[RememberAttribute] = QByteArrayLiteral( "RememberAttribute" );
 
   return roles;
 }
@@ -156,7 +156,7 @@ bool QgsQuickFeatureModel::save()
 
   QgsFeature feat = mFeature;
   if ( !mLayer->updateFeature( feat ) )
-    QgsMessageLog::logMessage( tr( "Cannot update feature" ), "QgsQuick", Qgis::Warning );
+    QgsMessageLog::logMessage( tr( "Cannot update feature" ), QStringLiteral( "QgsQuick" ), Qgis::Warning );
   rv = commit();
 
   if ( rv )
@@ -165,7 +165,7 @@ bool QgsQuickFeatureModel::save()
     if ( mLayer->getFeatures( QgsFeatureRequest().setFilterFid( mFeature.id() ) ).nextFeature( feat ) )
       setFeature( feat );
     else
-      QgsMessageLog::logMessage( tr( "Feature %1 could not be fetched after commit" ).arg( mFeature.id() ), "QgsQuick", Qgis::Warning );
+      QgsMessageLog::logMessage( tr( "Feature %1 could not be fetched after commit" ).arg( mFeature.id() ), QStringLiteral( "QgsQuick" ), Qgis::Warning );
   }
   return rv;
 }
@@ -183,7 +183,7 @@ bool QgsQuickFeatureModel::deleteFeature()
   }
 
   if ( !mLayer->deleteFeature( mFeature.id() ) )
-    QgsMessageLog::logMessage( tr( "Cannot delete feature" ), "QgsQuick", Qgis::Warning );
+    QgsMessageLog::logMessage( tr( "Cannot delete feature" ), QStringLiteral( "QgsQuick" ), Qgis::Warning );
   rv = commit();
 
   return rv;
@@ -251,7 +251,7 @@ void QgsQuickFeatureModel::create()
   startEditing();
   if ( !mLayer->addFeature( mFeature ) )
   {
-    QgsMessageLog::logMessage( tr( "Feature could not be added" ), "QgsQuick", Qgis::Critical );
+    QgsMessageLog::logMessage( tr( "Feature could not be added" ), QStringLiteral( "QgsQuick" ), Qgis::Critical );
   }
   commit();
 }
@@ -260,7 +260,7 @@ bool QgsQuickFeatureModel::commit()
 {
   if ( !mLayer->commitChanges() )
   {
-    QgsMessageLog::logMessage( tr( "Could not save changes. Rolling back." ), "QgsQuick", Qgis::Critical );
+    QgsMessageLog::logMessage( tr( "Could not save changes. Rolling back." ), QStringLiteral( "QgsQuick" ), Qgis::Critical );
     mLayer->rollBack();
     return false;
   }
@@ -278,7 +278,7 @@ bool QgsQuickFeatureModel::startEditing()
 
   if ( !mLayer->startEditing() )
   {
-    QgsMessageLog::logMessage( tr( "Cannot start editing" ), "QgsQuick", Qgis::Warning );
+    QgsMessageLog::logMessage( tr( "Cannot start editing" ), QStringLiteral( "QgsQuick" ), Qgis::Warning );
     return false;
   }
   else

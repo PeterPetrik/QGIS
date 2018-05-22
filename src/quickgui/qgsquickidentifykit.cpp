@@ -13,6 +13,7 @@
  *                                                                         *
  ***************************************************************************/
 
+#include "qgsmessagelog.h"
 #include "qgsproject.h"
 #include "qgslogger.h"
 #include "qgsrenderer.h"
@@ -49,7 +50,7 @@ QList<QgsQuickFeature> QgsQuickIdentifyKit::identify( const QPointF &point )
 
   if ( !mMapSettings )
   {
-    qWarning() << "Unable to use IdentifyKit without mapSettings property set.";
+    QgsMessageLog::logMessage( tr( "Unable to use IdentifyKit without mapSettings property set." ), QStringLiteral( "QgsQuick" ), Qgis::Warning );
     return results;
   }
 

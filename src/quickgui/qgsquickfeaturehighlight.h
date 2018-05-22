@@ -38,46 +38,56 @@ class QUICK_EXPORT QgsQuickFeatureHighlight : public QQuickItem
 {
     Q_OBJECT
 
-    //! map settings
+    /**
+     * Associated map settings. Should be initialized from QML component before the first use.
+     */
     Q_PROPERTY( QgsQuickMapSettings *mapSettings MEMBER mMapSettings NOTIFY mapSettingsChanged )
-    //! feature model (for geometry)
+
+    /**
+     * Feature model for geometry.
+     */
     Q_PROPERTY( QgsQuickFeatureModel *model MEMBER mModel NOTIFY modelChanged )
-    //! color of the highlighed geometry
+
+    /**
+     * Color of the highlighted geometry (feature).
+     */
     Q_PROPERTY( QColor color MEMBER mColor NOTIFY colorChanged )
-    //! pen width of the highlight
+
+    /**
+     * Pen width of the highlighted geometry (feature).
+     */
     Q_PROPERTY( unsigned int width MEMBER mWidth NOTIFY widthChanged )
 
   public:
-    //! create new feature highlight
+    //! Creates a new feature highlight
     explicit QgsQuickFeatureHighlight( QQuickItem *parent = 0 );
 
   signals:
-    //! model changed
+    //! \copydoc QgsQuickFeatureHighlight::model
     void modelChanged();
 
-    //! color changed
+    //! \copydoc QgsQuickFeatureHighlight::color
     void colorChanged();
 
-    //! map canvas changed
-    void mapCanvasChanged();
-
-    //! width changed
+    //! \copydoc QgsQuickFeatureHighlight::width
     void widthChanged();
 
-    //! map settings changed
+    //! \copydoc QgsQuickFeatureHighlight::mapSettings
     void mapSettingsChanged();
 
   private slots:
+    //! Connects new model to slots.
     void onDataChanged();
+    //! Updates feature highlight.
     void onModelDataChanged();
 
   private:
     virtual QSGNode *updatePaintNode( QSGNode *n, UpdatePaintNodeData * ) override;
 
     QColor mColor;
-    QgsQuickFeatureModel *mModel = nullptr;
     bool mDirty = false;
     unsigned int mWidth;
+    QgsQuickFeatureModel *mModel = nullptr;
     QgsQuickMapSettings *mMapSettings = nullptr;
 };
 

@@ -36,28 +36,38 @@ class QUICK_EXPORT QgsQuickFeature
 {
     Q_GADGET
 
-    //! feature
+    /**
+     * Vector layer to which the feature belongs. This is a readonly property.
+     */
     Q_PROPERTY( QgsVectorLayer *layer READ layer )
-    //! layer to which \a feature belogs
+    /**
+     * Feature instance itself. This is a readonly property.
+     */
     Q_PROPERTY( QgsFeature feature READ feature )
-    //! whether is feature valid
+    /**
+     * Whether the feature is valid. This is a readonly property.
+     */
     Q_PROPERTY( bool valid READ valid )
 
   public:
-    //! create new feature
+    //! Constructor of the new feature.
     QgsQuickFeature();
 
-    //! create new feature
+    /**
+     * Constructor of the new feature.
+     * \param feature New feature itself.
+     * \param layer Vector layer which the feature belongs to.
+     */
     QgsQuickFeature( const QgsFeature &feature,
                      QgsVectorLayer *layer );
 
-    //! Return layer
+    //! \copydoc QgsQuickFeature::layer
     QgsVectorLayer *layer() const;
 
-    //! Return feature
+    //! \copydoc QgsQuickFeature::feature
     QgsFeature feature() const;
 
-    //! Return whether is feature valid
+    //! \copydoc QgsQuickFeature::valid
     bool valid() const;
 
   private:

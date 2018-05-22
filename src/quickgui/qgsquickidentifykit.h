@@ -44,7 +44,9 @@ class QgsVectorLayer;
 class QUICK_EXPORT QgsQuickIdentifyKit : public QObject
 {
     Q_OBJECT
-    //! map settings. Set directly when creating QML object
+    /**
+      * Map settings. Set directly when creating QML object
+      */
     Q_PROPERTY( QgsQuickMapSettings *mapSettings READ mapSettings WRITE setMapSettings NOTIFY mapSettingsChanged )
 
     /**
@@ -58,37 +60,38 @@ class QUICK_EXPORT QgsQuickIdentifyKit : public QObject
     Q_PROPERTY( long featuresLimit MEMBER mFeaturesLimit NOTIFY featuresLimitChanged )
 
   public:
-    //! create new identify kit
+    //! Constructor of new identify kit
     explicit QgsQuickIdentifyKit( QObject *parent = 0 );
 
-    //! Getter for map settings
+    //! \copydoc QgsQuickIdentifyKit::mapSettings
     QgsQuickMapSettings *mapSettings() const;
 
-    //! Set map settings
+    //! \copydoc QgsQuickIdentifyKit::mapSettings
     void setMapSettings( QgsQuickMapSettings *mapSettings );
 
-    //! Return search radius for looking for features.
+    //! \copydoc QgsQuickIdentifyKit::searchRadiusMm
     double searchRadiusMm() const;
-    //! Set search radius
+
+    //! \copydoc QgsQuickIdentifyKit::searchRadiusMm
     void setSearchRadiusMm( double searchRadiusMm );
 
     /**
-      * Get the closest feature to the point from the layer in case it is identifiable layer
+      * Gets the closest feature to the point from the layer in case it is identifiable layer
       */
     Q_INVOKABLE QgsFeature identifyOne( QgsVectorLayer *layer, const QPointF &point );
 
     /**
-      * Get the closest feature to the point from any identifiable layer
+      * Gets the closest feature to the point from any identifiable layer
       */
     Q_INVOKABLE QgsQuickFeature identifyOne( const QPointF &point );
 
     /**
-      * Get all features interseting the point from the layer in case it is identifiable layer
+      * Gets all features interseting the point from the layer in case it is identifiable layer
       */
     Q_INVOKABLE QgsFeatureList identify( QgsVectorLayer *layer, const QPointF &point );
 
     /**
-      * Get all features interseting the point from any identifiable layer
+      * Gets all features interseting the point from any identifiable layer
       */
     Q_INVOKABLE QList<QgsQuickFeature> identify( const QPointF &point );
 

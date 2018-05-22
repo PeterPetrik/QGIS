@@ -77,7 +77,6 @@ QSGGeometryNode *QgsQuickHighlightSGNode::createLineGeometry( const QVector<QgsP
 QSGGeometryNode *QgsQuickHighlightSGNode::createPointGeometry( const QgsPoint &point, qreal width )
 {
   QSGGeometryNode *node = new QSGGeometryNode;
-
   QSGGeometry *sgGeom = new QSGGeometry( QSGGeometry::defaultAttributes_Point2D(), 1 );
 
   QSGGeometry::Point2D *vertices = sgGeom->vertexDataAsPoint2D();

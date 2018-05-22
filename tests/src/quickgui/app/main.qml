@@ -39,14 +39,10 @@ ApplicationWindow {
 
     onClicked: {
       var screenPoint = Qt.point(mouse.x, mouse.y)
-      console.log("clicked:" + screenPoint)
       var res = identifyKit.identifyOne(screenPoint);
       if (QgsQuick.Utils.hasValidGeometry(res.layer, res.feature)) {
-        console.log("valid feature")
         featureModel.layer = res.layer
         featureModel.feature = res.feature
-      } else {
-        console.log("Invalid feature!!!!")
       }
     }
   }
