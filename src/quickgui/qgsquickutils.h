@@ -76,6 +76,11 @@ class QUICK_EXPORT QgsQuickUtils: public QObject
       */
     Q_INVOKABLE bool hasValidGeometry( QgsVectorLayer *layer, const QgsFeature &feat );
 
+    //! Log message in QgsMessageLog
+    Q_INVOKABLE void logMessage( const QString &message,
+                                 const QString &tag = QString( "QgsQuick" ),
+                                 Qgis::MessageLevel level = Qgis::Warning );
+
     /**
      * Returns a string with information about screen size and resolution
      *

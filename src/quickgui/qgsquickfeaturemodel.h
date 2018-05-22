@@ -35,14 +35,17 @@
 class QUICK_EXPORT QgsQuickFeatureModel : public QAbstractListModel
 {
     Q_OBJECT
+
     /**
      * Instance of QgsFeature.
      */
     Q_PROPERTY( QgsFeature feature READ feature WRITE setFeature NOTIFY featureChanged )
+
     /**
      * Vector layer to which the feature belongs.
      */
     Q_PROPERTY( QgsVectorLayer *layer READ layer WRITE setLayer NOTIFY layerChanged )
+
     /**
      * Feature roles enum.
      */
@@ -57,13 +60,16 @@ class QUICK_EXPORT QgsQuickFeatureModel : public QAbstractListModel
       RememberAttribute                  //!< Remember attribute value for next feature
     };
 
-    //! Creatse new feature model
+    //! Creates a new feature model
     explicit QgsQuickFeatureModel( QObject *parent = 0 );
 
-    //! Creates new feature model
+    /**
+     * Creates a new feature model
+     * \param feat Feature set to model.
+     */
     explicit QgsQuickFeatureModel( const QgsFeature &feat, QObject *parent = 0 );
 
-    //! Set feature to feature model
+    //! \copydoc QgsQuickFeatureModel::feature
     void setFeature( const QgsFeature &feature );
 
     //! \copydoc QgsQuickFeatureModel::feature
@@ -82,14 +88,14 @@ class QUICK_EXPORT QgsQuickFeatureModel : public QAbstractListModel
     int rowCount( const QModelIndex &parent ) const override;
 
     /**
-     * Returns model data according params
+     * Returns model data according params.
      * \param index Index in the model
      * \param role Feature role.
      */
     QVariant data( const QModelIndex &index, int role ) const override;
 
     /**
-     * Sets data to the model according params
+     * Sets data to the model according params.
      * \param index Index in the model
      * \param value QVariant value
      * \param role Feature role.
@@ -100,13 +106,13 @@ class QUICK_EXPORT QgsQuickFeatureModel : public QAbstractListModel
      * Commits the edit buffer of this layer.
      * May change in the future to only commit the changes buffered in this model.
      *
-     * @return Success of the operation
+     * @return Success of the operation.
      */
     Q_INVOKABLE bool save();
 
     /**
      * Deletes the current feature from the layer and commit the changes.
-     * @return Success of the operation
+     * @return Success of the operation.
      */
     Q_INVOKABLE bool deleteFeature();
 
@@ -134,16 +140,16 @@ class QUICK_EXPORT QgsQuickFeatureModel : public QAbstractListModel
   public slots:
 
   signals:
-    //! feature changed
+    //! Feature changed
     void featureChanged();
 
-    //! layer changed
+    //! Layer changed
     void layerChanged();
 
   protected:
-    //! commit model changes
+    //! Commits model changes
     bool commit();
-    //! start editing model
+    //! Starts editing model
     bool startEditing();
 
     QgsVectorLayer *mLayer = nullptr;

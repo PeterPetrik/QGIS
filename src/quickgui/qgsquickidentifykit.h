@@ -35,7 +35,7 @@ class QgsVectorLayer;
  * \ingroup quick
  * Convenient set of tools to get a list of QgsFeatures in a defined radius from a point.
  * Also possible to get a feature with the closest distance to the point or feature(s) from
- * specified QgsVectorLayer
+ * specified QgsVectorLayer.
  *
  * \note QML Type: IdentifyKit
  *
@@ -44,23 +44,24 @@ class QgsVectorLayer;
 class QUICK_EXPORT QgsQuickIdentifyKit : public QObject
 {
     Q_OBJECT
+
     /**
-      * Map settings. Set directly when creating QML object
+      * Map settings. Set directly when creating QML object.
       */
     Q_PROPERTY( QgsQuickMapSettings *mapSettings READ mapSettings WRITE setMapSettings NOTIFY mapSettingsChanged )
 
     /**
-      * Search radius for the identify functions from the point. Default is 8
+      * Search radius for the identify functions from the point. Default is 8.
       */
     Q_PROPERTY( double searchRadiusMm READ searchRadiusMm WRITE setSearchRadiusMm NOTIFY searchRadiusMmChanged )
 
     /**
-      * Maximum number of feature returned from by the identify functions in QgsFeatureList. Default is 100
+      * Maximum number of feature returned from by the identify functions in QgsFeatureList. Default is 100.
       */
     Q_PROPERTY( long featuresLimit MEMBER mFeaturesLimit NOTIFY featuresLimitChanged )
 
   public:
-    //! Constructor of new identify kit
+    //! Constructor of new identify kit.
     explicit QgsQuickIdentifyKit( QObject *parent = 0 );
 
     //! \copydoc QgsQuickIdentifyKit::mapSettings
@@ -76,12 +77,12 @@ class QUICK_EXPORT QgsQuickIdentifyKit : public QObject
     void setSearchRadiusMm( double searchRadiusMm );
 
     /**
-      * Gets the closest feature to the point from the layer in case it is identifiable layer
+      * Gets the closest feature to the point from the layer in case it is identifiable layer.
       */
     Q_INVOKABLE QgsFeature identifyOne( QgsVectorLayer *layer, const QPointF &point );
 
     /**
-      * Gets the closest feature to the point from any identifiable layer
+      * Gets the closest feature to the point from any identifiable layer.
       */
     Q_INVOKABLE QgsQuickFeature identifyOne( const QPointF &point );
 
@@ -91,17 +92,17 @@ class QUICK_EXPORT QgsQuickIdentifyKit : public QObject
     Q_INVOKABLE QgsFeatureList identify( QgsVectorLayer *layer, const QPointF &point );
 
     /**
-      * Gets all features interseting the point from any identifiable layer
+      * Gets all features interseting the point from any identifiable layer.
       */
     Q_INVOKABLE QList<QgsQuickFeature> identify( const QPointF &point );
 
 
   signals:
-    //! map settings changed
+    //! Map settings changed
     void mapSettingsChanged();
-    //! search radius changed
+    //! Search radius changed
     void searchRadiusMmChanged();
-    //! features limit changed
+    //! Features limit changed
     void featuresLimitChanged();
 
   private:

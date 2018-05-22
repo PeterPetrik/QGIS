@@ -65,6 +65,11 @@ double QgsQuickUtils::screenUnitsToMeters( QgsQuickMapSettings *mapSettings, int
   return mDistanceArea.measureLine( p1, p2 );
 }
 
+void QgsQuickUtils::logMessage( const QString &message, const QString &tag, Qgis::MessageLevel level )
+{
+  QgsMessageLog::logMessage( message, tag, level );
+}
+
 QString QgsQuickUtils::dumpScreenInfo() const
 {
   QRect rec = QApplication::desktop()->screenGeometry();
