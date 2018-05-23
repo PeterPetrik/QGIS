@@ -62,7 +62,7 @@ QList<QgsQuickFeature> QgsQuickIdentifyKit::identify( const QPointF &point )
     noIdentifyLayerIdList = mMapSettings->project()->nonIdentifiableLayers();
   }
 
-  for( QgsMapLayer *layer: mMapSettings->mapSettings().layers() )
+  for ( QgsMapLayer *layer : mMapSettings->mapSettings().layers() )
   {
     if ( mMapSettings->project() && noIdentifyLayerIdList.contains( layer->id() ) )
       continue;
@@ -72,7 +72,7 @@ QList<QgsQuickFeature> QgsQuickIdentifyKit::identify( const QPointF &point )
     {
       QgsFeatureList featureList = identifyVectorLayer( vl, mapPoint );
 
-      for( const QgsFeature &feature: featureList )
+      for ( const QgsFeature &feature : featureList )
       {
         results.append( QgsQuickFeature( feature, vl ) );
       }
@@ -239,7 +239,7 @@ QgsFeatureList QgsQuickIdentifyKit::identifyVectorLayer( QgsVectorLayer *layer, 
     filter = renderer->capabilities() & QgsFeatureRenderer::Filter;
   }
 
-  for( const QgsFeature &feature: featureList )
+  for ( const QgsFeature &feature : featureList )
   {
     context.expressionContext().setFeature( feature );
 
