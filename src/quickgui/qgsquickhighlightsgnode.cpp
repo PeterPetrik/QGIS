@@ -60,7 +60,7 @@ QSGGeometryNode *QgsQuickHighlightSGNode::createLineGeometry( const QVector<QgsP
   QSGGeometry::Point2D *vertices = sgGeom->vertexDataAsPoint2D();
 
   int i = 0;
-  Q_FOREACH ( const QgsPoint &pt, points )
+  for( const QgsPoint &pt: points )
   {
     vertices[i++].set( pt.x(), pt.y() );
   }
