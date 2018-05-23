@@ -18,6 +18,7 @@
 #include "qgis.h"
 #include "qgsdistancearea.h"
 #include "qgslogger.h"
+#include "qgsvectorlayer.h"
 
 #include "qgsquickmapsettings.h"
 #include "qgsquickutils.h"
@@ -28,6 +29,23 @@ QgsQuickUtils::QgsQuickUtils( QObject *parent )
   : QObject( parent )
   , mScreenDensity( calculateScreenDensity() )
 {
+}
+
+bool QgsQuickUtils::hasValidGeometry( QgsVectorLayer *layer, const QgsFeature &feat )
+{
+  if ( !layer )
+    return false;
+
+  if ( !feat.hasGeometry() )
+    return false;
+
+  if ( feat.geometry().type() != layer->geometryType() )
+    return false;
+
+  if ( QgsWkbTypes::hasZ( layer->wkbType() ) != QgsWkbTypes::hasZ( feat.geometry().wkbType() ) )
+    return false;
+
+  return true;
 }
 
 double QgsQuickUtils::screenUnitsToMeters( QgsQuickMapSettings *mapSettings, int baseLengthPixels ) const
