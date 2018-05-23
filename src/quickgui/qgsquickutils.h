@@ -30,6 +30,7 @@
 #include "qgsunittypes.h"
 #include "qgsquickmapsettings.h"
 #include "qgis_quick.h"
+#include "qgscoordinateformatter.h"
 
 class QgsCoordinateReferenceSystem;
 
@@ -111,11 +112,12 @@ class QUICK_EXPORT QgsQuickUtils: public QObject
       */
     Q_INVOKABLE const QUrl getThemeIcon( const QString &name );
 
-    /**
-      * Converts point to string with given decimals (default decimals = 3),
-      * e.g. -2.234521, 34.4444421 -> -2.234, 34.444
-      */
-    Q_INVOKABLE static QString qgsPointToString( const QgsPoint &point, int decimals = 3 );
+    //! \copydoc QgsCoordinateFormatter::format()
+    Q_INVOKABLE static QString formatPoint(
+      const QgsPoint &point,
+      QgsCoordinateFormatter::Format format = QgsCoordinateFormatter::FormatPair,
+      int decimals = 3,
+      QgsCoordinateFormatter::FormatFlags flags = QgsCoordinateFormatter::FlagDegreesUseStringSuffix );
 
     /**
       * Converts distance in meters to human readable
@@ -128,7 +130,7 @@ class QUICK_EXPORT QgsQuickUtils: public QObject
       * \param decimals decimal to use
       * \returns string represetation of dist
       */
-    Q_INVOKABLE static QString distanceToString( double distance, QgsUnitTypes::DistanceUnit units, int decimals = 1 );
+    Q_INVOKABLE static QString formatDistance( double distance, QgsUnitTypes::DistanceUnit units, int decimals = 1 );
 
     //! Returns a string with information about screen size and resolution - useful for debugging
     QString dumpScreenInfo() const;

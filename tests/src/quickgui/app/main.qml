@@ -89,9 +89,9 @@ ApplicationWindow {
     text: {
       var label = "Signal Lost"
       if ( positionKit.hasPosition )
-        label = QgsQuick.Utils.qgsPointToString( positionKit.position, 3 )
+        label = QgsQuick.Utils.formatPoint( positionKit.position )
         if (positionKit.accuracy > 0)
-          label += " (" + QgsQuick.Utils.distanceToString( positionKit.accuracy, positionKit.accuracyUnits, 0 ) + ")"
+          label += " (" + QgsQuick.Utils.formatDistance( positionKit.accuracy, positionKit.accuracyUnits, 0 ) + ")"
       label;
     }
     height: scaleBar.height
@@ -115,7 +115,7 @@ ApplicationWindow {
     id: webPositionLabel
     text: {
       if ( positionKit.hasPosition )
-         QgsQuick.Utils.qgsPointToString( coordinateTransformer.projectedPosition, 3 ) + " (web mercator)"
+         QgsQuick.Utils.formatPoint( coordinateTransformer.projectedPosition ) + " (web mercator)"
     }
     height: scaleBar.height
     x: window.width - width
