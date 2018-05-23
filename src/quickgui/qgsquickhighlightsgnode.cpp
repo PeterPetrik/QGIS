@@ -55,8 +55,8 @@ QgsQuickHighlightSGNode::~QgsQuickHighlightSGNode()
 
 QSGGeometryNode *QgsQuickHighlightSGNode::createLineGeometry( const QVector<QgsPoint> &points, qreal width )
 {
-  QSGGeometryNode *node = new QSGGeometryNode;
-  QSGGeometry *sgGeom = new QSGGeometry( QSGGeometry::defaultAttributes_Point2D(), points.count() );
+  std::unique_ptr<QSGGeometryNode> node = qgis::make_unique< QSGGeometryNode>();
+  std::unique_ptr<QSGGeometry> sgGeom = qgis::make_unique< QSGGeometry>( QSGGeometry::defaultAttributes_Point2D(), points.count() );
   QSGGeometry::Point2D *vertices = sgGeom->vertexDataAsPoint2D();
 
   int i = 0;
@@ -67,11 +67,11 @@ QSGGeometryNode *QgsQuickHighlightSGNode::createLineGeometry( const QVector<QgsP
 
   sgGeom->setLineWidth( width );
   sgGeom->setDrawingMode( GL_LINE_STRIP );
-  node->setGeometry( sgGeom );
+  node->setGeometry( sgGeom.release() );
   node->setMaterial( &mMaterial );
   node->setFlag( QSGNode::OwnsGeometry );
   node->setFlag( QSGNode::OwnedByParent );
-  return node;
+  return node.release();
 }
 
 QSGGeometryNode *QgsQuickHighlightSGNode::createPointGeometry( const QgsPoint &point, qreal width )

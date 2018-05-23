@@ -52,7 +52,7 @@ class QUICK_EXPORT QgsQuickFeature
     Q_PROPERTY( bool valid READ valid )
 
   public:
-    //! Constructor of the new feature.
+    //! Constructor of a new feature.
     QgsQuickFeature();
 
     /**
