@@ -45,9 +45,9 @@ QgsPointXY QgsQuickUtils::pointXYFactory( double x, double y ) const
   return QgsPointXY( x, y );
 }
 
-QgsPoint QgsQuickUtils::pointFactory( double x, double y ) const
+QgsPoint QgsQuickUtils::pointFactory( double x, double y, double z, double m ) const
 {
-  return QgsPoint( x, y );
+  return QgsPoint( x, y, z, m );
 }
 
 QgsPoint QgsQuickUtils::coordinateToPoint( const QGeoCoordinate &coor ) const
@@ -87,7 +87,7 @@ void QgsQuickUtils::logMessage( const QString &message, const QString &tag, Qgis
   QgsMessageLog::logMessage( message, tag, level );
 }
 
-QUrl QgsQuickUtils::getThemeIcon( const QString &name )
+const QUrl QgsQuickUtils::getThemeIcon( const QString &name )
 {
   QString extension( ".svg" );
   QString path = QStringLiteral( "qrc:/%1%2" ).arg( name ).arg( extension );
@@ -100,8 +100,10 @@ QString QgsQuickUtils::qgsPointToString( const QgsPoint &point, int decimals )
   return QString( "%1, %2" ).arg( QString::number( point.x(), 'f', decimals ) ).arg( QString::number( point.y(), 'f', decimals ) );
 }
 
-QString QgsQuickUtils::distanceToString( qreal dist, int decimals )
+QString QgsQuickUtils::distanceToString( double distance, QgsUnitTypes::DistanceUnit units, int decimals )
 {
+  double dist = distance * QgsUnitTypes::fromUnitToUnitFactor( units, QgsUnitTypes::DistanceMeters );
+
   if ( dist < 0 )
   {
     return QStringLiteral( "0 %1" ).arg( QgsUnitTypes::toAbbreviatedString( QgsUnitTypes::DistanceMeters ) );
