@@ -28,7 +28,7 @@ class QgsVectorLayer;
  * \ingroup quick
  * Helper class for QgsFeature and QgsVectorLayer where it belongs.
  *
- * \note QML Type: IdentifyResult
+ * \note QML Type: QgsQuickFeature
  *
  * \since QGIS 3.2
  */
@@ -47,7 +47,7 @@ class QUICK_EXPORT QgsQuickFeature
     Q_PROPERTY( QgsFeature feature READ feature )
 
     /**
-     * Whether the feature is valid. This is a readonly property.
+     * Whether the feature is valid, linked vector assigned. This is a readonly property.
      */
     Q_PROPERTY( bool valid READ valid )
 
@@ -57,7 +57,7 @@ class QUICK_EXPORT QgsQuickFeature
 
     /**
      * Constructor of a new feature.
-     * \param feature New feature itself.
+     * \param feature QgsFeature associated.
      * \param layer Vector layer which the feature belongs to, if not defined, the feature is not valid.
      */
     QgsQuickFeature( const QgsFeature &feature,
@@ -73,7 +73,6 @@ class QUICK_EXPORT QgsQuickFeature
     bool valid() const;
 
     void setFeature( const QgsFeature &feature );
-
     void setLayer( QgsVectorLayer *layer );
 
   private:

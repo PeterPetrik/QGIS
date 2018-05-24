@@ -61,18 +61,8 @@ void QgsQuickFeatureModel::setLayer( QgsVectorLayer *layer )
     mRememberedAttributes.fill( false );
   }
 
-  emit layerChanged();
+  emit featureChanged();
 }
-
-//QgsVectorLayer *QgsQuickFeatureModel::layer() const
-//{
-//  return mFeature.layer();
-//}
-
-//QgsFeature QgsQuickFeatureModel::feature() const
-//{
-//  return mFeature;
-//}
 
 QHash<int, QByteArray> QgsQuickFeatureModel::roleNames() const
 {

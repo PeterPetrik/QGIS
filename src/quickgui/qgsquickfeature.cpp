@@ -22,10 +22,6 @@ QgsQuickFeature::QgsQuickFeature( const QgsFeature &feature, QgsVectorLayer *lay
   : mLayer( layer )
   , mFeature( feature )
 {
-  if ( !mLayer )
-  {
-    mFeature.setValid( false );
-  }
 }
 
 QgsQuickFeature::QgsQuickFeature()

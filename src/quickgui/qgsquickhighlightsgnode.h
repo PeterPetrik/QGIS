@@ -41,7 +41,7 @@ class QUICK_EXPORT QgsQuickHighlightSGNode : public QSGNode
     //! Constructor of new QT Quick scene node based on geometry
     QgsQuickHighlightSGNode( const QVector<QgsPoint> &points, QgsWkbTypes::GeometryType type, const QColor &color, qreal width );
     //! Destructor
-    virtual ~QgsQuickHighlightSGNode() = default;
+    ~QgsQuickHighlightSGNode() = default;
 
   protected:
     //! Constructs line geometry from points
