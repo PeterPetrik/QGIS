@@ -141,7 +141,7 @@ class QUICK_EXPORT QgsQuickFeatureModel : public QAbstractListModel
 
     QgsQuickFeature mFeature;
     QVector<bool> mRememberedAttributes;
-private:
+  private:
     void setFeatureOnly( const QgsFeature &feature );
     void setLayer( QgsVectorLayer *layer );
 };
