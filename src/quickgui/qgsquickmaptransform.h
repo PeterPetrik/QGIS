@@ -43,8 +43,8 @@ class QUICK_EXPORT QgsQuickMapTransform : public QQuickTransform
 
   public:
     //! create new map transform
-    QgsQuickMapTransform();
-    ~QgsQuickMapTransform();
+    QgsQuickMapTransform() = default;
+    ~QgsQuickMapTransform() = default;
 
     /**
      * Apply transformation based on current map settings to a matrix.
@@ -54,14 +54,14 @@ class QUICK_EXPORT QgsQuickMapTransform : public QQuickTransform
      */
     void applyTo( QMatrix4x4 *matrix ) const;
 
-    //! Return map settings
+    //! \copydoc QgsQuickMapTransform::mapSettings
     QgsQuickMapSettings *mapSettings() const;
 
-    //! Set map settings
+    //! \copydoc QgsQuickMapTransform::mapSettings
     void setMapSettings( QgsQuickMapSettings *mapSettings );
 
   signals:
-    //! Map settings changed
+    //! \copydoc QgsQuickMapTransform::mapSettings
     void mapSettingsChanged();
 
   private slots:

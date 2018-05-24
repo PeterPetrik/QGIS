@@ -79,7 +79,7 @@ class QUICK_EXPORT QgsQuickIdentifyKit : public QObject
     /**
       * Gets the closest feature to the point from the layer in case it is identifiable layer.
       */
-    Q_INVOKABLE QgsFeature identifyOne( QgsVectorLayer *layer, const QPointF &point );
+    Q_INVOKABLE QgsQuickFeature identifyOne( QgsVectorLayer *layer, const QPointF &point );
 
     /**
       * Gets the closest feature to the point from any identifiable layer.
@@ -89,24 +89,24 @@ class QUICK_EXPORT QgsQuickIdentifyKit : public QObject
     /**
       * Gets all features interseting the point from the layer in case it is identifiable layer
       */
-    Q_INVOKABLE QgsFeatureList identify( QgsVectorLayer *layer, const QPointF &point );
+    Q_INVOKABLE QgsQuickFeatureList identify( QgsVectorLayer *layer, const QPointF &point );
 
     /**
       * Gets all features interseting the point from any identifiable layer.
       */
-    Q_INVOKABLE QList<QgsQuickFeature> identify( const QPointF &point );
+    Q_INVOKABLE QgsQuickFeatureList identify( const QPointF &point );
 
 
   signals:
-    //! Map settings changed
+    //! \copydoc QgsQuickIdentifyKit::mapSettings
     void mapSettingsChanged();
-    //! Search radius changed
+    //! \copydoc QgsQuickIdentifyKit::searchRadiusMm
     void searchRadiusMmChanged();
-    //! Features limit changed
+    //! \copydoc QgsQuickIdentifyKit::featuresLimit
     void featuresLimitChanged();
 
   private:
-    QgsQuickMapSettings *mMapSettings = nullptr;
+    QgsQuickMapSettings *mMapSettings = nullptr; // not owned
 
     double searchRadiusMU( const QgsRenderContext &context ) const;
     double searchRadiusMU() const;
@@ -114,8 +114,8 @@ class QUICK_EXPORT QgsQuickIdentifyKit : public QObject
     QgsRectangle toLayerCoordinates( QgsMapLayer *layer, const QgsRectangle &rect ) const;
     QgsFeatureList identifyVectorLayer( QgsVectorLayer *layer, const QgsPointXY &point ) const;
 
-    double mSearchRadiusMm;
-    int mFeaturesLimit;
+    double mSearchRadiusMm = 8;
+    int mFeaturesLimit = 100;
 };
 
 #endif // QGSQUICKIDENTIFYKIT_H

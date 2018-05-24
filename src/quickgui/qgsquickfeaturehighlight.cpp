@@ -58,12 +58,12 @@ QSGNode *QgsQuickFeatureHighlight::updatePaintNode( QSGNode *n, QQuickItem::Upda
   if ( !mModel )
     return n;
 
-  QgsVectorLayer *layer = mModel->layer();
+  QgsVectorLayer *layer = mModel->feature().layer();
   if ( layer )
   {
     QgsCoordinateTransform transf( layer->crs(), mMapSettings->destinationCrs(), mMapSettings->transformContext() );
 
-    QgsFeature feature = mModel->feature();
+    QgsFeature feature = mModel->feature().feature();
     QgsGeometry geom( feature.geometry() );
     geom.transform( transf );
 

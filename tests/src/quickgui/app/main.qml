@@ -41,8 +41,7 @@ ApplicationWindow {
       var screenPoint = Qt.point(mouse.x, mouse.y)
       var res = identifyKit.identifyOne(screenPoint);
       if (QgsQuick.Utils.hasValidGeometry(res.layer, res.feature)) {
-        featureModel.layer = res.layer
-        featureModel.feature = res.feature
+        featureModel.feature = res
       }
     }
   }

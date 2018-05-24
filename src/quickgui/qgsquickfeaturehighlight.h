@@ -54,7 +54,7 @@ class QUICK_EXPORT QgsQuickFeatureHighlight : public QQuickItem
     Q_PROPERTY( QColor color MEMBER mColor NOTIFY colorChanged )
 
     /**
-     * Pen width of the highlighted geometry (feature).
+     * Pen width of the highlighted geometry (feature). Default is 20.
      */
     Q_PROPERTY( unsigned int width MEMBER mWidth NOTIFY widthChanged )
 
@@ -76,19 +76,17 @@ class QUICK_EXPORT QgsQuickFeatureHighlight : public QQuickItem
     void mapSettingsChanged();
 
   private slots:
-    //! Connects new model to slots.
     void onDataChanged();
-    //! Updates feature highlight.
     void onModelDataChanged();
 
   private:
-    virtual QSGNode *updatePaintNode( QSGNode *n, UpdatePaintNodeData * ) override;
+    QSGNode *updatePaintNode( QSGNode *n, UpdatePaintNodeData * ) override;
 
-    QColor mColor;
+    QColor mColor = QColor().yellow();
     bool mDirty = false;
-    unsigned int mWidth;
-    QgsQuickFeatureModel *mModel = nullptr;
-    QgsQuickMapSettings *mMapSettings = nullptr;
+    unsigned int mWidth = 20;
+    QgsQuickFeatureModel *mModel = nullptr; // not owned
+    QgsQuickMapSettings *mMapSettings = nullptr; // not owned
 };
 
 #endif // QGSQUICKFEATUREHIGHLIGHT_H

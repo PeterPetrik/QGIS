@@ -25,26 +25,37 @@ QgsQuickFeatureModel::QgsQuickFeatureModel( QObject *parent )
   connect( this, &QgsQuickFeatureModel::modelReset, this, &QgsQuickFeatureModel::featureChanged );
 }
 
-void QgsQuickFeatureModel::setFeature( const QgsFeature &feature )
+QgsQuickFeature QgsQuickFeatureModel::feature() const
 {
-  if ( mFeature == feature )
+    return mFeature;
+}
+
+void QgsQuickFeatureModel::setFeature(const QgsQuickFeature &feature)
+{
+    setFeatureOnly(feature.feature());
+    setLayer(feature.layer());
+}
+
+void QgsQuickFeatureModel::setFeatureOnly( const QgsFeature &feature )
+{
+  if ( mFeature.feature() == feature )
     return;
 
   beginResetModel();
-  mFeature = feature;
+  mFeature.setFeature(feature);
   endResetModel();
   emit featureChanged();
 }
 
 void QgsQuickFeatureModel::setLayer( QgsVectorLayer *layer )
 {
-  if ( layer == mLayer )
+  if ( layer == mFeature.layer() )
     return;
 
-  mLayer = layer;
-  if ( mLayer )
+  mFeature.setLayer(layer);
+  if ( mFeature.layer() )
   {
-    mFeature = QgsFeature( mLayer->fields() );
+    mFeature.setFeature( QgsFeature( mFeature.layer()->fields() ));
 
     mRememberedAttributes.resize( layer->fields().size() );
     mRememberedAttributes.fill( false );
@@ -53,15 +64,15 @@ void QgsQuickFeatureModel::setLayer( QgsVectorLayer *layer )
   emit layerChanged();
 }
 
-QgsVectorLayer *QgsQuickFeatureModel::layer() const
-{
-  return mLayer;
-}
+//QgsVectorLayer *QgsQuickFeatureModel::layer() const
+//{
+//  return mFeature.layer();
+//}
 
-QgsFeature QgsQuickFeatureModel::feature() const
-{
-  return mFeature;
-}
+//QgsFeature QgsQuickFeatureModel::feature() const
+//{
+//  return mFeature;
+//}
 
 QHash<int, QByteArray> QgsQuickFeatureModel::roleNames() const
 {
@@ -80,7 +91,7 @@ int QgsQuickFeatureModel::rowCount( const QModelIndex &parent ) const
   if ( parent.isValid() )
     return 0;
   else
-    return mFeature.attributes().count();
+    return mFeature.feature().attributes().count();
 }
 
 QVariant QgsQuickFeatureModel::data( const QModelIndex &index, int role ) const
@@ -88,15 +99,15 @@ QVariant QgsQuickFeatureModel::data( const QModelIndex &index, int role ) const
   switch ( role )
   {
     case AttributeName:
-      return mLayer->attributeDisplayName( index.row() );
+      return mFeature.layer()->attributeDisplayName( index.row() );
       break;
 
     case AttributeValue:
-      return mFeature.attribute( index.row() );
+      return mFeature.feature().attribute( index.row() );
       break;
 
     case Field:
-      return mLayer->fields().at( index.row() );
+      return mFeature.layer()->fields().at( index.row() );
       break;
 
     case RememberAttribute:
@@ -117,14 +128,14 @@ bool QgsQuickFeatureModel::setData( const QModelIndex &index, const QVariant &va
     case AttributeValue:
     {
       QVariant val( value );
-      QgsField fld = mFeature.fields().at( index.row() );
+      QgsField fld = mFeature.feature().fields().at( index.row() );
 
       if ( !fld.convertCompatible( val ) )
       {
         QgsMessageLog::logMessage( tr( "Value \"%1\" %4 could not be converted to a compatible value for field %2(%3)." ).arg( value.toString(), fld.name(), fld.typeName(), value.isNull() ? "NULL" : "NOT NULL" ) );
         return false;
       }
-      bool success = mFeature.setAttribute( index.row(), val );
+      bool success = mFeature.feature().setAttribute( index.row(), val );
       if ( success )
         emit dataChanged( index, index, QVector<int>() << role );
       return success;
@@ -144,7 +155,7 @@ bool QgsQuickFeatureModel::setData( const QModelIndex &index, const QVariant &va
 
 bool QgsQuickFeatureModel::save()
 {
-  if ( !mLayer )
+  if ( !mFeature.layer() )
     return false;
 
   bool rv = true;
@@ -154,25 +165,27 @@ bool QgsQuickFeatureModel::save()
     rv = false;
   }
 
-  QgsFeature feat = mFeature;
-  if ( !mLayer->updateFeature( feat ) )
+  QgsFeature feat = mFeature.feature();
+  if ( !mFeature.layer()->updateFeature( feat ) )
     QgsMessageLog::logMessage( tr( "Cannot update feature" ), QStringLiteral( "QgsQuick" ), Qgis::Warning );
   rv = commit();
 
   if ( rv )
   {
     QgsFeature feat;
-    if ( mLayer->getFeatures( QgsFeatureRequest().setFilterFid( mFeature.id() ) ).nextFeature( feat ) )
-      setFeature( feat );
+    if ( mFeature.layer()->getFeatures( QgsFeatureRequest().setFilterFid( mFeature.feature().id() ) ).nextFeature( feat ) )
+      setFeatureOnly( feat );
     else
-      QgsMessageLog::logMessage( tr( "Feature %1 could not be fetched after commit" ).arg( mFeature.id() ), QStringLiteral( "QgsQuick" ), Qgis::Warning );
+      QgsMessageLog::logMessage( tr( "Feature %1 could not be fetched after commit" ).arg( mFeature.feature().id() ),
+                                 QStringLiteral( "QgsQuick" ),
+                                 Qgis::Warning );
   }
   return rv;
 }
 
 bool QgsQuickFeatureModel::deleteFeature()
 {
-  if ( !mLayer )
+  if ( !mFeature.layer() )
     return false;
 
   bool rv = true;
@@ -182,7 +195,7 @@ bool QgsQuickFeatureModel::deleteFeature()
     rv = false;
   }
 
-  if ( !mLayer->deleteFeature( mFeature.id() ) )
+  if ( !mFeature.layer()->deleteFeature( mFeature.feature().id() ) )
     QgsMessageLog::logMessage( tr( "Cannot delete feature" ), QStringLiteral( "QgsQuick" ), Qgis::Warning );
   rv = commit();
 
@@ -191,29 +204,29 @@ bool QgsQuickFeatureModel::deleteFeature()
 
 void QgsQuickFeatureModel::reset()
 {
-  if ( !mLayer )
+  if ( !mFeature.layer() )
     return;
 
-  mLayer->rollBack();
+  mFeature.layer()->rollBack();
 }
 
 bool QgsQuickFeatureModel::suppressFeatureForm() const
 {
-  if ( !mLayer )
+  if ( !mFeature.layer() )
     return false;
 
-  return mLayer->editFormConfig().suppress();
+  return mFeature.layer()->editFormConfig().suppress();
 }
 
 void QgsQuickFeatureModel::resetAttributes()
 {
-  if ( !mLayer )
+  if ( !mFeature.layer() )
     return;
 
-  QgsExpressionContext expressionContext = mLayer->createExpressionContext();
-  expressionContext.setFeature( mFeature );
+  QgsExpressionContext expressionContext = mFeature.layer()->createExpressionContext();
+  expressionContext.setFeature( mFeature.feature() );
 
-  QgsFields fields = mLayer->fields();
+  QgsFields fields = mFeature.layer()->fields();
 
   beginResetModel();
   for ( int i = 0; i < fields.count(); ++i )
@@ -225,18 +238,23 @@ void QgsQuickFeatureModel::resetAttributes()
         QgsExpression exp( fields.at( i ).defaultValueDefinition().expression() );
         exp.prepare( &expressionContext );
         if ( exp.hasParserError() )
-          QgsMessageLog::logMessage( tr( "Default value expression for %1:%2 has parser error: %3" ).arg( mLayer->name(), fields.at( i ).name(), exp.parserErrorString() ), QStringLiteral( "QgsQuick" ), Qgis::Warning );
+          QgsMessageLog::logMessage( tr( "Default value expression for %1:%2 has parser error: %3" ).arg( mFeature.layer()->name(),
+                                     fields.at( i ).name(), exp.parserErrorString() ), QStringLiteral( "QgsQuick" ),
+                                     Qgis::Warning );
 
         QVariant value = exp.evaluate( &expressionContext );
 
         if ( exp.hasEvalError() )
-          QgsMessageLog::logMessage( tr( "Default value expression for %1:%2 has evaluation error: %3" ).arg( mLayer->name(), fields.at( i ).name(), exp.evalErrorString() ), QStringLiteral( "QgsQuick" ), Qgis::Warning );
+          QgsMessageLog::logMessage( tr( "Default value expression for %1:%2 has evaluation error: %3" ).arg( mFeature.layer()->name(),
+                                     fields.at( i ).name(), exp.evalErrorString() ),
+                                     QStringLiteral( "QgsQuick" ),
+                                     Qgis::Warning );
 
-        mFeature.setAttribute( i, value );
+        mFeature.feature().setAttribute( i, value );
       }
       else
       {
-        mFeature.setAttribute( i, QVariant() );
+        mFeature.feature().setAttribute( i, QVariant() );
       }
     }
   }
@@ -245,11 +263,12 @@ void QgsQuickFeatureModel::resetAttributes()
 
 void QgsQuickFeatureModel::create()
 {
-  if ( !mLayer )
+  if ( !mFeature.layer() )
     return;
 
   startEditing();
-  if ( !mLayer->addFeature( mFeature ) )
+  QgsFeature feat = mFeature.feature();
+  if ( !mFeature.layer()->addFeature( feat ) )
   {
     QgsMessageLog::logMessage( tr( "Feature could not be added" ), QStringLiteral( "QgsQuick" ), Qgis::Critical );
   }
@@ -258,10 +277,10 @@ void QgsQuickFeatureModel::create()
 
 bool QgsQuickFeatureModel::commit()
 {
-  if ( !mLayer->commitChanges() )
+  if ( !mFeature.layer()->commitChanges() )
   {
     QgsMessageLog::logMessage( tr( "Could not save changes. Rolling back." ), QStringLiteral( "QgsQuick" ), Qgis::Critical );
-    mLayer->rollBack();
+    mFeature.layer()->rollBack();
     return false;
   }
   else
@@ -273,10 +292,10 @@ bool QgsQuickFeatureModel::commit()
 bool QgsQuickFeatureModel::startEditing()
 {
   // Already an edit session active
-  if ( mLayer->editBuffer() )
+  if ( mFeature.layer()->editBuffer() )
     return true;
 
-  if ( !mLayer->startEditing() )
+  if ( !mFeature.layer()->startEditing() )
   {
     QgsMessageLog::logMessage( tr( "Cannot start editing" ), QStringLiteral( "QgsQuick" ), Qgis::Warning );
     return false;
@@ -289,5 +308,5 @@ bool QgsQuickFeatureModel::startEditing()
 
 QVector<bool> QgsQuickFeatureModel::rememberedAttributes() const
 {
-  return mRememberedAttributes;
+    return mRememberedAttributes;
 }

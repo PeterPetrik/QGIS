@@ -72,10 +72,16 @@ class QUICK_EXPORT QgsQuickFeature
     //! \copydoc QgsQuickFeature::valid
     bool valid() const;
 
-  private:
-    QgsVectorLayer *mLayer;
+    void setFeature(const QgsFeature &feature);
+
+    void setLayer(QgsVectorLayer *layer);
+
+private:
+    QgsVectorLayer *mLayer = nullptr; // not owned
     QgsFeature mFeature;
 };
+
+typedef QList<QgsQuickFeature> QgsQuickFeatureList;
 
 Q_DECLARE_METATYPE( QgsQuickFeature )
 

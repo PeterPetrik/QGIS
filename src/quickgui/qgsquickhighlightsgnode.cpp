@@ -16,8 +16,9 @@
 #include "qgsquickhighlightsgnode.h"
 
 
-QgsQuickHighlightSGNode::QgsQuickHighlightSGNode( const QVector<QgsPoint> &points, QgsWkbTypes::GeometryType type, const QColor &color, qreal width )
-  : QSGNode()
+QgsQuickHighlightSGNode::QgsQuickHighlightSGNode( const QVector<QgsPoint> &points,
+    QgsWkbTypes::GeometryType type,
+    const QColor &color, qreal width ) : QSGNode()
 {
   mMaterial.setColor( color );
 
@@ -47,10 +48,6 @@ QgsQuickHighlightSGNode::QgsQuickHighlightSGNode( const QVector<QgsPoint> &point
     case QgsWkbTypes::NullGeometry:
       break;
   }
-}
-
-QgsQuickHighlightSGNode::~QgsQuickHighlightSGNode()
-{
 }
 
 QSGGeometryNode *QgsQuickHighlightSGNode::createLineGeometry( const QVector<QgsPoint> &points, qreal width )

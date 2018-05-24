@@ -23,6 +23,7 @@
 #include "qgsvectorlayer.h"
 
 #include "qgis_quick.h"
+#include "qgsquickfeature.h"
 
 /**
  * \ingroup quick
@@ -39,12 +40,17 @@ class QUICK_EXPORT QgsQuickFeatureModel : public QAbstractListModel
     /**
      * Instance of QgsFeature.
      */
-    Q_PROPERTY( QgsFeature feature READ feature WRITE setFeature NOTIFY featureChanged )
+    Q_PROPERTY( QgsQuickFeature feature READ feature WRITE setFeatureOnly NOTIFY featureChanged )
 
-    /**
-     * Vector layer to which the feature belongs.
-     */
-    Q_PROPERTY( QgsVectorLayer *layer READ layer WRITE setLayer NOTIFY layerChanged )
+//    /**
+//     * Instance of QgsFeature.
+//     */
+//    Q_PROPERTY( QgsFeature feature READ feature WRITE setFeature NOTIFY featureChanged )
+
+//    /**
+//     * Vector layer to which the feature belongs.
+//     */
+//    Q_PROPERTY( QgsVectorLayer *layer READ layer WRITE setLayer NOTIFY layerChanged )
 
     /**
      * Feature roles enum.
@@ -65,22 +71,29 @@ class QUICK_EXPORT QgsQuickFeatureModel : public QAbstractListModel
 
     /**
      * Creates a new feature model
-     * \param feat Feature set to model.
+     * \param feat Feature set to model,
+     * \param parent Parent object.
      */
     explicit QgsQuickFeatureModel( const QgsFeature &feat, QObject *parent = 0 );
 
-    //! \copydoc QgsQuickFeatureModel::feature
-    void setFeature( const QgsFeature &feature );
 
     //! \copydoc QgsQuickFeatureModel::feature
-    QgsFeature feature() const;
+    void setFeatureOnly( const QgsFeature &feature );
 
     //! \copydoc QgsQuickFeatureModel::layer
     void setLayer( QgsVectorLayer *layer );
 
-    //! \copydoc QgsQuickFeatureModel::layer
-    QgsVectorLayer *layer() const;
+    //    //! \copydoc QgsQuickFeatureModel::feature
+    //    void setFeature( const QgsFeature &feature );
 
+//    //! \copydoc QgsQuickFeatureModel::feature
+//    QgsFeature feature() const;
+
+//    //! \copydoc QgsQuickFeatureModel::layer
+//    void setLayer( QgsVectorLayer *layer );
+
+//    //! \copydoc QgsQuickFeatureModel::layer
+//    QgsVectorLayer *layer() const;
 
     //! List of all role names.
     QHash<int, QByteArray> roleNames() const override;
@@ -137,6 +150,9 @@ class QUICK_EXPORT QgsQuickFeatureModel : public QAbstractListModel
     //! Gets remembered attributes
     QVector<bool> rememberedAttributes() const;
 
+    QgsQuickFeature feature() const;
+    void setFeature(const QgsQuickFeature &feature);
+
   public slots:
 
   signals:
@@ -152,8 +168,9 @@ class QUICK_EXPORT QgsQuickFeatureModel : public QAbstractListModel
     //! Starts editing model
     bool startEditing();
 
-    QgsVectorLayer *mLayer = nullptr;
-    QgsFeature mFeature;
+//    QgsVectorLayer *mLayer = nullptr;
+//    QgsFeature mFeature;
+    QgsQuickFeature mFeature;
     QVector<bool> mRememberedAttributes;
 };
 

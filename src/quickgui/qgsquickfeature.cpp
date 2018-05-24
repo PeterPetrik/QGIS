@@ -28,7 +28,7 @@ QgsQuickFeature::QgsQuickFeature( const QgsFeature &feature, QgsVectorLayer *lay
   }
 }
 
-QgsQuickFeature::QgsQuickFeature(): mLayer( 0 )
+QgsQuickFeature::QgsQuickFeature()
 {
   mFeature.setValid( false );
 }
@@ -46,4 +46,14 @@ QgsFeature QgsQuickFeature::feature() const
 bool QgsQuickFeature::valid() const
 {
   return ( mLayer && mFeature.isValid() );
+}
+
+void QgsQuickFeature::setFeature(const QgsFeature &feature)
+{
+    mFeature = feature;
+}
+
+void QgsQuickFeature::setLayer(QgsVectorLayer *layer)
+{
+    mLayer = layer;
 }
