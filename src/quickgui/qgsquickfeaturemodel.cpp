@@ -27,13 +27,13 @@ QgsQuickFeatureModel::QgsQuickFeatureModel( QObject *parent )
 
 QgsQuickFeature QgsQuickFeatureModel::feature() const
 {
-    return mFeature;
+  return mFeature;
 }
 
-void QgsQuickFeatureModel::setFeature(const QgsQuickFeature &feature)
+void QgsQuickFeatureModel::setFeature( const QgsQuickFeature &feature )
 {
-    setFeatureOnly(feature.feature());
-    setLayer(feature.layer());
+  setFeatureOnly( feature.feature() );
+  setLayer( feature.layer() );
 }
 
 void QgsQuickFeatureModel::setFeatureOnly( const QgsFeature &feature )
@@ -42,7 +42,7 @@ void QgsQuickFeatureModel::setFeatureOnly( const QgsFeature &feature )
     return;
 
   beginResetModel();
-  mFeature.setFeature(feature);
+  mFeature.setFeature( feature );
   endResetModel();
   emit featureChanged();
 }
@@ -52,10 +52,10 @@ void QgsQuickFeatureModel::setLayer( QgsVectorLayer *layer )
   if ( layer == mFeature.layer() )
     return;
 
-  mFeature.setLayer(layer);
+  mFeature.setLayer( layer );
   if ( mFeature.layer() )
   {
-    mFeature.setFeature( QgsFeature( mFeature.layer()->fields() ));
+    mFeature.setFeature( QgsFeature( mFeature.layer()->fields() ) );
 
     mRememberedAttributes.resize( layer->fields().size() );
     mRememberedAttributes.fill( false );
@@ -308,5 +308,5 @@ bool QgsQuickFeatureModel::startEditing()
 
 QVector<bool> QgsQuickFeatureModel::rememberedAttributes() const
 {
-    return mRememberedAttributes;
+  return mRememberedAttributes;
 }

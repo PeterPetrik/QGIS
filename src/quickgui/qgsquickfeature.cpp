@@ -48,12 +48,12 @@ bool QgsQuickFeature::valid() const
   return ( mLayer && mFeature.isValid() );
 }
 
-void QgsQuickFeature::setFeature(const QgsFeature &feature)
+void QgsQuickFeature::setFeature( const QgsFeature &feature )
 {
-    mFeature = feature;
+  mFeature = feature;
 }
 
-void QgsQuickFeature::setLayer(QgsVectorLayer *layer)
+void QgsQuickFeature::setLayer( QgsVectorLayer *layer )
 {
-    mLayer = layer;
+  mLayer = layer;
 }

@@ -84,9 +84,11 @@ class QUICK_EXPORT QgsQuickUtils: public QObject
                                  Qgis::MessageLevel level = Qgis::Warning );
 
     /**
-      *
+      * QgsQuickFeature factory for tuple of QgsFeature and QgsVectorLayer usud in QgsQUick library.
+      * \param feature QgsFeature linked to new QgsQuickFeature instance.
+      * \param layer QgsVectorLayer which the feature belongs to, optional.
       */
-    Q_INVOKABLE QgsQuickFeature featureFactory(const QgsFeature &feature, QgsVectorLayer *layer = nullptr) const;
+    Q_INVOKABLE QgsQuickFeature featureFactory( const QgsFeature &feature, QgsVectorLayer *layer = nullptr ) const;
 
     /**
      * Returns a string with information about screen size and resolution

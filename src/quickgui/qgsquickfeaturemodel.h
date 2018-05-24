@@ -151,7 +151,7 @@ class QUICK_EXPORT QgsQuickFeatureModel : public QAbstractListModel
     QVector<bool> rememberedAttributes() const;
 
     QgsQuickFeature feature() const;
-    void setFeature(const QgsQuickFeature &feature);
+    void setFeature( const QgsQuickFeature &feature );
 
   public slots:
 

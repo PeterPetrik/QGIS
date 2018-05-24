@@ -77,25 +77,21 @@ class QUICK_EXPORT QgsQuickIdentifyKit : public QObject
     void setSearchRadiusMm( double searchRadiusMm );
 
     /**
-      * Gets the closest feature to the point from the layer in case it is identifiable layer.
+      * Gets the closest feature to the point. If given layer is defined, identifies only features from it,
+      * otherwise searches among identifiable layers.
+      * If a layer param is undefined, identify feature from any identifiable layer.
+      * \param point QPointF position
+      * \param layer QgsVectorLayer used for identifying if is defined, otherwise identifiable layer.
       */
-    Q_INVOKABLE QgsQuickFeature identifyOne( QgsVectorLayer *layer, const QPointF &point );
+    Q_INVOKABLE QgsQuickFeature identifyOne( const QPointF &point, QgsVectorLayer *layer = nullptr );
 
     /**
-      * Gets the closest feature to the point from any identifiable layer.
+      * Gets all features interseting the point. If layer is defined, identifies only features from given layer,
+      * otherwise searches among identifiable layers.
+      * \param point QPointF used for identifying.
+      * \param layer QgsVectorLayer used for identifying if is defined, otherwise identifiable layer.
       */
-    Q_INVOKABLE QgsQuickFeature identifyOne( const QPointF &point );
-
-    /**
-      * Gets all features interseting the point from the layer in case it is identifiable layer
-      */
-    Q_INVOKABLE QgsQuickFeatureList identify( QgsVectorLayer *layer, const QPointF &point );
-
-    /**
-      * Gets all features interseting the point from any identifiable layer.
-      */
-    Q_INVOKABLE QgsQuickFeatureList identify( const QPointF &point );
-
+    Q_INVOKABLE QgsQuickFeatureList identify( const QPointF &point, QgsVectorLayer *layer = nullptr );
 
   signals:
     //! \copydoc QgsQuickIdentifyKit::mapSettings

@@ -68,12 +68,12 @@ double QgsQuickUtils::screenUnitsToMeters( QgsQuickMapSettings *mapSettings, int
 
 void QgsQuickUtils::logMessage( const QString &message, const QString &tag, Qgis::MessageLevel level )
 {
-    QgsMessageLog::logMessage( message, tag, level );
+  QgsMessageLog::logMessage( message, tag, level );
 }
 
-QgsQuickFeature QgsQuickUtils::featureFactory(const QgsFeature &feature, QgsVectorLayer *layer) const
+QgsQuickFeature QgsQuickUtils::featureFactory( const QgsFeature &feature, QgsVectorLayer *layer ) const
 {
-    return QgsQuickFeature(feature, layer);
+  return QgsQuickFeature( feature, layer );
 }
 
 QString QgsQuickUtils::dumpScreenInfo() const

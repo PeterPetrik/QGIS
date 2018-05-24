@@ -58,7 +58,7 @@ class QUICK_EXPORT QgsQuickFeature
     /**
      * Constructor of a new feature.
      * \param feature New feature itself.
-     * \param layer Vector layer which the feature belongs to.
+     * \param layer Vector layer which the feature belongs to, if not defined, the feature is not valid.
      */
     QgsQuickFeature( const QgsFeature &feature,
                      QgsVectorLayer *layer );
@@ -72,11 +72,11 @@ class QUICK_EXPORT QgsQuickFeature
     //! \copydoc QgsQuickFeature::valid
     bool valid() const;
 
-    void setFeature(const QgsFeature &feature);
+    void setFeature( const QgsFeature &feature );
 
-    void setLayer(QgsVectorLayer *layer);
+    void setLayer( QgsVectorLayer *layer );
 
-private:
+  private:
     QgsVectorLayer *mLayer = nullptr; // not owned
     QgsFeature mFeature;
 };
