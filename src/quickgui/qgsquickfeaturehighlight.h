@@ -60,7 +60,7 @@ class QUICK_EXPORT QgsQuickFeatureHighlight : public QQuickItem
 
   public:
     //! Creates a new feature highlight
-    explicit QgsQuickFeatureHighlight( QQuickItem *parent = 0 );
+    explicit QgsQuickFeatureHighlight( QQuickItem *parent = nullptr );
 
   signals:
     //! \copydoc QgsQuickFeatureHighlight::model
@@ -82,7 +82,7 @@ class QUICK_EXPORT QgsQuickFeatureHighlight : public QQuickItem
   private:
     QSGNode *updatePaintNode( QSGNode *n, UpdatePaintNodeData * ) override;
 
-    QColor mColor = QColor().yellow();
+    QColor mColor = Qt::yellow;
     bool mDirty = false;
     unsigned int mWidth = 20;
     QgsQuickFeatureModel *mModel = nullptr; // not owned

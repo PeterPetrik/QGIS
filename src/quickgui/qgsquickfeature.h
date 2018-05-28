@@ -26,7 +26,13 @@ class QgsVectorLayer;
 
 /**
  * \ingroup quick
- * Helper class for QgsFeature and QgsVectorLayer where it belongs.
+ * Pair of QgsFeature and QgsVectorLayer
+ *
+ * Vector layer is commonly used to gather geometry type or CRS
+ * for the feature.
+ *
+ * Note that the feature may or may not be part of the vector layer's
+ * associated features
  *
  * \note QML Type: QgsQuickFeature
  *
@@ -37,17 +43,23 @@ class QUICK_EXPORT QgsQuickFeature
     Q_GADGET
 
     /**
-     * Vector layer to which the feature belongs. This is a readonly property.
+     * Vector layer to which the feature belongs.
+     *
+     * This is a readonly property.
      */
     Q_PROPERTY( QgsVectorLayer *layer READ layer )
 
     /**
-     * Feature instance itself. This is a readonly property.
+     * Feature instance itself.
+     *
+     * This is a readonly property.
      */
     Q_PROPERTY( QgsFeature feature READ feature )
 
     /**
-     * Whether the feature is valid, linked vector assigned. This is a readonly property.
+     * Whether the feature is valid and vector layer assigned.
+     *
+     * This is a readonly property.
      */
     Q_PROPERTY( bool valid READ valid )
 
@@ -72,7 +84,10 @@ class QUICK_EXPORT QgsQuickFeature
     //! \copydoc QgsQuickFeature::valid
     bool valid() const;
 
+    //! \copydoc QgsQuickFeature::feature
     void setFeature( const QgsFeature &feature );
+
+    //! \copydoc QgsQuickFeature::layer
     void setLayer( QgsVectorLayer *layer );
 
   private:

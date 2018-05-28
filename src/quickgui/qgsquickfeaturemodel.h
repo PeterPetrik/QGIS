@@ -57,46 +57,22 @@ class QUICK_EXPORT QgsQuickFeatureModel : public QAbstractListModel
     };
 
     //! Creates a new feature model
-    explicit QgsQuickFeatureModel( QObject *parent = 0 );
+    explicit QgsQuickFeatureModel( QObject *parent = nullptr );
 
-    /**
-     * Creates a new feature model
-     * \param feat Feature set to model,
-     * \param parent Parent object.
-     */
-    explicit QgsQuickFeatureModel( const QgsFeature &feat, QObject *parent = 0 );
-
-    //! List of all role names.
     QHash<int, QByteArray> roleNames() const override;
-    //! Equals to number of feature attributes.
     int rowCount( const QModelIndex &parent ) const override;
-
-    /**
-     * Returns model data according params.
-     * \param index Index in the model
-     * \param role Feature role.
-     */
     QVariant data( const QModelIndex &index, int role ) const override;
-
-    /**
-     * Sets data to the model according params.
-     * \param index Index in the model
-     * \param value QVariant value
-     * \param role Feature role.
-     */
     bool setData( const QModelIndex &index, const QVariant &value, int role = Qt::EditRole ) override;
 
     /**
      * Commits the edit buffer of this layer.
-     * May change in the future to only commit the changes buffered in this model.
-     *
-     * @return Success of the operation.
+     * \returns Success of the operation.
      */
     Q_INVOKABLE bool save();
 
     /**
      * Deletes the current feature from the layer and commit the changes.
-     * @return Success of the operation.
+     * \returns Success of the operation.
      */
     Q_INVOKABLE bool deleteFeature();
 
@@ -105,7 +81,7 @@ class QUICK_EXPORT QgsQuickFeatureModel : public QAbstractListModel
      */
     Q_INVOKABLE void reset();
 
-    //! Adds mFeature to mLayer
+    //! Adds feature to the vector layer
     Q_INVOKABLE void create();
 
     /**
@@ -127,10 +103,8 @@ class QUICK_EXPORT QgsQuickFeatureModel : public QAbstractListModel
     //!\copydoc QgsQuickFeatureModel::feature
     void setFeature( const QgsQuickFeature &feature );
 
-  public slots:
-
   signals:
-    //! Feature changed
+    //!\copydoc QgsQuickFeatureModel::feature
     void featureChanged();
 
   protected:
@@ -139,11 +113,12 @@ class QUICK_EXPORT QgsQuickFeatureModel : public QAbstractListModel
     //! Starts editing model
     bool startEditing();
 
-    QgsQuickFeature mFeature;
-    QVector<bool> mRememberedAttributes;
   private:
     void setFeatureOnly( const QgsFeature &feature );
     void setLayer( QgsVectorLayer *layer );
+
+    QgsQuickFeature mFeature;
+    QVector<bool> mRememberedAttributes;
 };
 
 #endif // QGSQUICKFEATUREMODEL_H
