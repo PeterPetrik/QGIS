@@ -133,8 +133,10 @@ QSGGeometryNode *QgsQuickHighlightSGNode::createPointGeometry( const QgsPoint &p
 
 QSGGeometryNode *QgsQuickHighlightSGNode::createPolygonGeometry( const QgsPolygon &polygon )
 {
-  QgsTessellator tes( 0.0, 0.0, false, false, false );
-  tes.addPolygon( polygon, 0.0 );
+  QgsRectangle bounds = polygon.boundingBox();
+  QgsTessellator tes( bounds.xMinimum(), bounds.yMinimum(), false, false, false );
+  std::unique_ptr< QgsPolygon > p( qgsgeometry_cast< QgsPolygon * >( polygon.segmentize() ) );
+  tes.addPolygon( *p.get(), 0.0 );
 
   std::unique_ptr<QgsMultiPolygon> triangles = tes.asMultiPolygon();
   int ntris = triangles->numGeometries();
@@ -152,12 +154,11 @@ QSGGeometryNode *QgsQuickHighlightSGNode::createPolygonGeometry( const QgsPolygo
       for ( int v = 0; v < 3; ++v )
       {
         const QgsPoint vertex = triangle->vertexAt( v );
-        vertices[j].x = static_cast< float >( vertex.x() );
-        vertices[j].y = static_cast< float >( vertex.y() );
+        vertices[3 * j + v].x = static_cast< float >( vertex.x()  + bounds.xMinimum() ) ;
+        vertices[3 * j + v].y = static_cast< float >( vertex.y()  + bounds.yMinimum() );
       }
     }
   }
-
   sgGeom->setDrawingMode( GL_TRIANGLES );
   node->setGeometry( sgGeom );
   node->setMaterial( &mMaterial );
