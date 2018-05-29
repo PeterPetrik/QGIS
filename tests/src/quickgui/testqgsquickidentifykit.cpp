@@ -83,8 +83,7 @@ void TestQgsQuickScaleBarKit::identifyOne()
   QgsPointXY screenPoint( 1954.0, 554.0 );
   QgsQuickFeatureLayerPair identifiedFeature = kit.identifyOne( screenPoint.toQPointF() );
   QVERIFY( identifiedFeature.isValid() );
-  QVERIFY( identifiedFeature.feature().geometry().asPoint().x() == pointX );
-
+  QVERIFY( identifiedFeature.feature().geometry().asPoint() == point );
 }
 
 void TestQgsQuickScaleBarKit::identifyOneDefinedVector()
@@ -132,7 +131,7 @@ void TestQgsQuickScaleBarKit::identifyOneDefinedVector()
   QgsPointXY screenPoint( 1954.0, 554.0 );
   QgsQuickFeatureLayerPair identifiedFeature = kit.identifyOne( screenPoint.toQPointF(), tempLayer2 );
   QVERIFY( identifiedFeature.isValid() );
-  QVERIFY( identifiedFeature.feature().geometry().asPoint().x() == pointX2 );
+  QVERIFY( identifiedFeature.feature().geometry().asPoint() == point2 );
 
 }
 

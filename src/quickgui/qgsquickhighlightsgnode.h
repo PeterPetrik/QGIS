@@ -39,6 +39,7 @@ class QUICK_EXPORT QgsQuickHighlightSGNode : public QSGNode
 
     /**
      * Constructor of new QT Quick scene node based on geometry
+     *
      * \param geom Geometry to render in the map coordinates
      * \param color color used to render geom
      * \param width width of pen, see QSGGeometry::setLineWidth()

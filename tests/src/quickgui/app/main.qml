@@ -53,7 +53,6 @@ ApplicationWindow {
     QgsQuick.FeatureHighlight {
       id: highlight
       color: "red"
-      width: 20
       mapSettings: mapCanvas.mapSettings
     }
 
