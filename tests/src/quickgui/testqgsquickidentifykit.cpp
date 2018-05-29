@@ -81,8 +81,8 @@ void TestQgsQuickScaleBarKit::identifyOne()
 
   // exactly matches f1 point
   QgsPointXY screenPoint( 1954.0, 554.0 );
-  QgsQuickFeature identifiedFeature = kit.identifyOne( screenPoint.toQPointF() );
-  QVERIFY( identifiedFeature.valid() );
+  QgsQuickFeatureLayerPair identifiedFeature = kit.identifyOne( screenPoint.toQPointF() );
+  QVERIFY( identifiedFeature.isValid() );
   QVERIFY( identifiedFeature.feature().geometry().asPoint().x() == pointX );
 
 }
@@ -130,8 +130,8 @@ void TestQgsQuickScaleBarKit::identifyOneDefinedVector()
   tempLayer2->dataProvider()->addFeatures( QgsFeatureList() << f2 );
 
   QgsPointXY screenPoint( 1954.0, 554.0 );
-  QgsQuickFeature identifiedFeature = kit.identifyOne( screenPoint.toQPointF(), tempLayer2 );
-  QVERIFY( identifiedFeature.valid() );
+  QgsQuickFeatureLayerPair identifiedFeature = kit.identifyOne( screenPoint.toQPointF(), tempLayer2 );
+  QVERIFY( identifiedFeature.isValid() );
   QVERIFY( identifiedFeature.feature().geometry().asPoint().x() == pointX2 );
 
 }
@@ -174,7 +174,7 @@ void TestQgsQuickScaleBarKit::identifyInRadius()
 
   kit.setSearchRadiusMm( 1.0 );
   QgsPointXY screenPoint( 1954.0, 554.0 );
-  QList<QgsQuickFeature> res = kit.identify( screenPoint.toQPointF() );
+  QgsQuickFeatureLayerPairs res = kit.identify( screenPoint.toQPointF() );
   QVERIFY( res.size() == 1 );
 
   kit.setSearchRadiusMm( 100.0 );

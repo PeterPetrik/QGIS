@@ -25,7 +25,7 @@
 #include "qgsrendercontext.h"
 
 #include "qgis_quick.h"
-#include "qgsquickfeature.h"
+#include "qgsquickfeaturelayerpair.h"
 
 class QgsMapLayer;
 class QgsQuickMapSettings;
@@ -83,7 +83,7 @@ class QUICK_EXPORT QgsQuickIdentifyKit : public QObject
       * \param point QPointF position
       * \param layer QgsVectorLayer used for identifying if is defined, otherwise identifiable layer.
       */
-    Q_INVOKABLE QgsQuickFeature identifyOne( const QPointF &point, QgsVectorLayer *layer = nullptr );
+    Q_INVOKABLE QgsQuickFeatureLayerPair identifyOne( const QPointF &point, QgsVectorLayer *layer = nullptr );
 
     /**
       * Gets all features interseting the point. If layer is defined, identifies only features from given layer,
@@ -91,7 +91,7 @@ class QUICK_EXPORT QgsQuickIdentifyKit : public QObject
       * \param point QPointF used for identifying.
       * \param layer QgsVectorLayer used for identifying if is defined, otherwise identifiable layer.
       */
-    Q_INVOKABLE QgsQuickFeatureList identify( const QPointF &point, QgsVectorLayer *layer = nullptr );
+    Q_INVOKABLE QgsQuickFeatureLayerPairs identify( const QPointF &point, QgsVectorLayer *layer = nullptr );
 
   signals:
     //! \copydoc QgsQuickIdentifyKit::mapSettings

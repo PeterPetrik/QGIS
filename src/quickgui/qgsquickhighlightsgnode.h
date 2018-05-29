@@ -56,7 +56,7 @@ class QUICK_EXPORT QgsQuickHighlightSGNode : public QSGNode
     QSGGeometryNode *createPolygonGeometry( const QgsPolygon &polygon );
 
     QSGFlatColorMaterial mMaterial;
-    float mWidth;
+    float mWidth  = 20;
 };
 
 #endif // QGSQUICKHIGHLIGHTSGNODE
