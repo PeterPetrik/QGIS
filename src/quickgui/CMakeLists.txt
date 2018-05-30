@@ -1,6 +1,7 @@
 ############################################################
 # sources
 SET(QGIS_QUICK_GUI_MOC_HDRS
+  qgsquickcoordinatetransformer.h
   qgsquickfeaturelayerpair.h
   qgsquickfeaturehighlight.h
   qgsquickidentifykit.h
@@ -8,7 +9,9 @@ SET(QGIS_QUICK_GUI_MOC_HDRS
   qgsquickmapsettings.h
   qgsquickmaptransform.h
   qgsquickmessagelogmodel.h
+  qgsquickpositionkit.h
   qgsquickscalebarkit.h
+  qgsquicksimulatedpositionsource.h
   qgsquickutils.h
 )
 
@@ -17,6 +20,7 @@ SET(QGIS_QUICK_GUI_HDRS
 )
 
 SET(QGIS_QUICK_GUI_SRC
+  qgsquickcoordinatetransformer.cpp
   qgsquickfeaturelayerpair.cpp
   qgsquickfeaturehighlight.cpp
   qgsquickhighlightsgnode.cpp
@@ -25,7 +29,9 @@ SET(QGIS_QUICK_GUI_SRC
   qgsquickmapsettings.cpp
   qgsquickmaptransform.cpp
   qgsquickmessagelogmodel.cpp
+  qgsquickpositionkit.cpp
   qgsquickscalebarkit.cpp
+  qgsquicksimulatedpositionsource.cpp
   qgsquickutils.cpp
 )
 
@@ -68,6 +74,10 @@ INCLUDE_DIRECTORIES(SYSTEM
 )
 
 ADD_DEFINITIONS(-DCORE_EXPORT=)
+
+
+SET(QGIS_QUICK_GUI_IMAGE_RCCS ./images/images.qrc)
+QT5_ADD_RESOURCES(QGIS_QUICK_GUI_IMAGE_RCC_SRCS ${QGIS_QUICK_GUI_IMAGE_RCCS})
 
 ############################################################
 # qgis_quick shared library

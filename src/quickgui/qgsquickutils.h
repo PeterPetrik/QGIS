@@ -19,14 +19,20 @@
 
 #include <QObject>
 #include <QString>
+#include <QtPositioning/QGeoCoordinate>
+
+#include <limits>
 
 #include "qgis.h"
 #include "qgsmessagelog.h"
-
+#include "qgspoint.h"
+#include "qgspointxy.h"
+#include "qgsunittypes.h"
 #include "qgsquickmapsettings.h"
 #include "qgsquickfeaturelayerpair.h"
 #include "qgis_quick.h"
 #include "qgsfeature.h"
+#include "qgscoordinateformatter.h"
 
 class QgsVectorLayer;
 class QgsCoordinateReferenceSystem;
@@ -60,16 +66,54 @@ class QUICK_EXPORT QgsQuickUtils: public QObject
   public:
     //! Create new utilities
     QgsQuickUtils( QObject *parent = nullptr );
-    //! dtor
+    //! Destructor
     ~QgsQuickUtils() = default;
 
     //! \copydoc QgsQuickUtils::dp
     qreal screenDensity() const;
 
     /**
-      * Calculate the distance in meter representing baseLengthPixels pixels on the screen based on the current map settings.
+      * Creates crs from epsg code in QML
+      *
+      * \since QGIS 3.4
       */
-    Q_INVOKABLE double screenUnitsToMeters( QgsQuickMapSettings *mapSettings, int baseLengthPixels ) const;
+    Q_INVOKABLE static QgsCoordinateReferenceSystem coordinateReferenceSystemFromEpsgId( long epsg );
+
+    /**
+      * Creates QgsPointXY in QML
+      *
+      * \since QGIS 3.4
+      */
+    Q_INVOKABLE QgsPointXY pointXYFactory( double x, double y ) const;
+
+    /**
+      * Creates QgsPoint in QML
+      *
+      * \since QGIS 3.4
+      */
+    Q_INVOKABLE QgsPoint pointFactory( double x, double y, double z = std::numeric_limits<double>::quiet_NaN(), double m = std::numeric_limits<double>::quiet_NaN() ) const;
+
+    /**
+      * Converts QGeoCoordinate to QgsPoint
+      *
+      * \since QGIS 3.4
+      */
+    Q_INVOKABLE QgsPoint coordinateToPoint( const QGeoCoordinate &coor ) const;
+
+    /**
+      * Transforms point between different crs from QML
+      *
+      * \since QGIS 3.4
+      */
+    Q_INVOKABLE static QgsPointXY transformPoint( const QgsCoordinateReferenceSystem &srcCrs,
+        const QgsCoordinateReferenceSystem &destCrs,
+        const QgsCoordinateTransformContext &context,
+        const QgsPointXY &srcPoint );
+
+    /**
+      * Calculates the distance in meter representing baseLengthPixels pixels on the screen based on the current map settings.
+      */
+    Q_INVOKABLE static double screenUnitsToMeters( QgsQuickMapSettings *mapSettings, int baseLengthPixels );
 
     //! Log message in QgsMessageLog
     Q_INVOKABLE void logMessage( const QString &message,
@@ -86,10 +130,39 @@ class QUICK_EXPORT QgsQuickUtils: public QObject
     Q_INVOKABLE QgsQuickFeatureLayerPair featureFactory( const QgsFeature &feature, QgsVectorLayer *layer = nullptr ) const;
 
     /**
-     * Returns a string with information about screen size and resolution
+      * Returns QUrl to image from library's /images folder.
+      *
+      * \since QGIS 3.4
+      */
+    Q_INVOKABLE const QUrl getThemeIcon( const QString &name );
+
+    /**
+     * \copydoc QgsCoordinateFormatter::format()
      *
-     * Useful to log for debugging of graphical problems on various display sizes
+     * \since QGIS 3.4
      */
+    Q_INVOKABLE static QString formatPoint(
+      const QgsPoint &point,
+      QgsCoordinateFormatter::Format format = QgsCoordinateFormatter::FormatPair,
+      int decimals = 3,
+      QgsCoordinateFormatter::FormatFlags flags = QgsCoordinateFormatter::FlagDegreesUseStringSuffix );
+
+    /**
+      * Converts distance in meters to human readable
+      *
+      * The resulting units is determined automatically
+      * e.g. 1222.234 m is converted to 1.2 km
+      *
+      * \param distance distance in units
+      * \param units units of dist
+      * \param decimals decimal to use
+      * \returns string represetation of dist
+      *
+      * \since QGIS 3.4
+      */
+    Q_INVOKABLE static QString formatDistance( double distance, QgsUnitTypes::DistanceUnit units, int decimals = 1 );
+
+    //! Returns a string with information about screen size and resolution - useful for debugging
     QString dumpScreenInfo() const;
 
   private:
