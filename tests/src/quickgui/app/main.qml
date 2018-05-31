@@ -23,6 +23,20 @@ ApplicationWindow {
   visibility: "Maximized"
   title: qsTr("QGIS Quick Test App")
 
+    // Some info
+    Button {
+        id: logbutton
+        text: "Log"
+        onClicked: logPanel.visible = true
+        z: 1
+    }
+
+    Label {
+        text: positionMarker.gpsPositionLabel
+        z: 1
+        x: logbutton.width + 10
+    }
+
   QgsQuick.MapCanvas {
     id: mapCanvas
 
@@ -38,9 +52,19 @@ ApplicationWindow {
     }
 
     onClicked: {
-      var screenPoint = Qt.point(mouse.x, mouse.y)
-      var res = identifyKit.identifyOne(screenPoint);
-      highlight.featureLayerPair = res
+//      var screenPoint = Qt.point(mouse.x, mouse.y)
+//      var res = identifyKit.identifyOne(screenPoint);
+//      highlight.featureLayerPair = res
+
+      var screenPoint = Qt.point( mouse.x, mouse.y );
+                 var res = identifyKit.identifyOne(screenPoint);
+                 if (res.valid)
+                 {
+                     featurePanel.show_panel(
+                                 res.layer,
+                                 res.feature,
+                                 "Edit" )
+                 }
     }
   }
 
@@ -55,7 +79,7 @@ ApplicationWindow {
   /** Message Log */
   Drawer {
     id: logPanel
-    visible: true
+    visible: false
     modal: true
     interactive: true
     height: window.height
@@ -139,5 +163,15 @@ ApplicationWindow {
     font.italic: true
     color: "steelblue"
     z: 1
+  }
+
+  FeaturePanel {
+      id: featurePanel
+      height: window.height
+      width: QgsQuick.Utils.dp * 700
+      edge: Qt.RightEdge
+      mapSettings: mapCanvas.mapSettings
+      project: __project
+      visible: true
   }
 }

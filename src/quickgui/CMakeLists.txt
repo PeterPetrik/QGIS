@@ -1,8 +1,11 @@
 ############################################################
 # sources
 SET(QGIS_QUICK_GUI_MOC_HDRS
+  qgsquickattributeformmodel.h
+  qgsquickattributeformmodelbase.h
   qgsquickcoordinatetransformer.h
   qgsquickfeaturelayerpair.h
+  qgsquickfeaturemodel.h
   qgsquickfeaturehighlight.h
   qgsquickidentifykit.h
   qgsquickmapcanvasmap.h
@@ -12,6 +15,7 @@ SET(QGIS_QUICK_GUI_MOC_HDRS
   qgsquickpositionkit.h
   qgsquickscalebarkit.h
   qgsquicksimulatedpositionsource.h
+  qgsquicksubmodel.h
   qgsquickutils.h
 )
 
@@ -20,8 +24,11 @@ SET(QGIS_QUICK_GUI_HDRS
 )
 
 SET(QGIS_QUICK_GUI_SRC
+  qgsquickattributeformmodel.cpp
+  qgsquickattributeformmodelbase.cpp
   qgsquickcoordinatetransformer.cpp
   qgsquickfeaturelayerpair.cpp
+  qgsquickfeaturemodel.cpp
   qgsquickfeaturehighlight.cpp
   qgsquickhighlightsgnode.cpp
   qgsquickidentifykit.cpp
@@ -32,6 +39,7 @@ SET(QGIS_QUICK_GUI_SRC
   qgsquickpositionkit.cpp
   qgsquickscalebarkit.cpp
   qgsquicksimulatedpositionsource.cpp
+  qgsquicksubmodel.cpp
   qgsquickutils.cpp
 )
 
