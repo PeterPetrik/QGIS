@@ -30,6 +30,9 @@
 #include "qgsvectorlayer.h"
 #include "qgsunittypes.h"
 
+#include "qgsquickattributeformmodel.h"
+#include "qgsquickattributeformmodelbase.h"
+#include "qgsquickattributemodel.h"
 #include "qgsquickcoordinatetransformer.h"
 #include "qgsquickfeaturehighlight.h"
 #include "qgsquickidentifykit.h"
@@ -41,6 +44,7 @@
 #include "qgsquickplugin.h"
 #include "qgsquickpositionkit.h"
 #include "qgsquickscalebarkit.h"
+#include "qgsquicksubmodel.h"
 #include "qgsquickutils.h"
 
 static QObject *_utilsProvider( QQmlEngine *engine, QJSEngine *scriptEngine )
@@ -66,6 +70,8 @@ void QgsQuickPlugin::registerTypes( const char *uri )
   qRegisterMetaType< QgsCoordinateFormatter::Format >( "QgsCoordinateFormatter::Format" );
 
   qmlRegisterType< QgsProject >( uri, 0, 1, "Project" );
+  qmlRegisterType< QgsQuickAttributeFormModel >( uri, 0, 1, "AttributeFormModel" );
+  qmlRegisterType< QgsQuickAttributeModel >( uri, 0, 1, "AttributeModel" );
   qmlRegisterType< QgsQuickFeatureHighlight >( uri, 0, 1, "FeatureHighlight" );
   qmlRegisterType< QgsQuickCoordinateTransformer >( uri, 0, 1, "CoordinateTransformer" );
   qmlRegisterType< QgsQuickIdentifyKit >( uri, 0, 1, "IdentifyKit" );
@@ -75,6 +81,7 @@ void QgsQuickPlugin::registerTypes( const char *uri )
   qmlRegisterType< QgsQuickMessageLogModel >( uri, 0, 1, "MessageLogModel" );
   qmlRegisterType< QgsQuickPositionKit >( uri, 0, 1, "PositionKit" );
   qmlRegisterType< QgsQuickScaleBarKit >( uri, 0, 1, "ScaleBarKit" );
+  qmlRegisterType< QgsQuickSubModel >( uri, 0, 1, "SubModel" );
   qmlRegisterType< QgsVectorLayer >( uri, 0, 1, "VectorLayer" );
 
   qmlRegisterSingletonType< QgsQuickUtils >( uri, 0, 1, "Utils", _utilsProvider );
