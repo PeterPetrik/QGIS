@@ -18,10 +18,11 @@ import QtQuick.Controls 2.2
 import QtQuick 2.5
 import QgsQuick 0.1 as QgsQuick
 
-// Text Edit for QGIS Attribute Form
-// Requires various global properties set to function, see qgsquickfeatureform Loader section
-// Do not use directly from Application QML
-
+/**
+ * Text Edit for QGIS Attribute Form
+ * Requires various global properties set to function, see qgsquickfeatureform Loader section
+ * Do not use directly from Application QML
+ */
 Item {
   signal valueChanged(var value, bool isNull)
 

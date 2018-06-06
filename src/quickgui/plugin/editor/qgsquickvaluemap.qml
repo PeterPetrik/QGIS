@@ -16,12 +16,13 @@
 import QtQuick 2.0
 import QtQuick.Controls 2.2
 import QtGraphicalEffects 1.0
-import QgisQuick 0.1 as QgsQuick
+import QgsQuick 0.1 as QgsQuick
 
-// Value Map for QGIS Attribute Form
-// Requires various global properties set to function, see qgsquickfeatureform Loader section
-// Do not use directly from Application QML
-
+/**
+ * Value Map for QGIS Attribute Form
+ * Requires various global properties set to function, see qgsquickfeatureform Loader section
+ * Do not use directly from Application QML
+ */
 Item {
   signal valueChanged(var value, bool isNull)
 
@@ -33,7 +34,9 @@ Item {
 
   height: childrenRect.height + 10 * QgsQuick.Utils.dp
 
-
+  property var pushChanges: {
+    console.log("push changes")
+  }
 
   ComboBox {
     id: comboBox

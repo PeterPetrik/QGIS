@@ -17,10 +17,11 @@ import QtQuick 2.5
 import QtQuick.Controls 2.0
 import QgisQuick 0.1 as QgsQuick
 
-// External Resource (Photo capture) for QGIS Attribute Form
-// Requires various global properties set to function, see qgsquickfeatureform Loader section
-// Do not use directly from Application QML
-
+/**
+ * External Resource (Photo capture) for QGIS Attribute Form
+ * Requires various global properties set to function, see qgsquickfeatureform Loader section
+ * Do not use directly from Application QML
+ */
 Item {
   signal valueChanged(var value, bool isNull)
 

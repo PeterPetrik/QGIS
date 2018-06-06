@@ -272,6 +272,10 @@ Item {
           source: 'qgsquick' + widget.toLowerCase() + '.qml'
 
           onStatusChanged: {
+            console.log("onStatus changed !!!!!! " + attributeEditorLoader.status)
+            console.log("error no. " + Loader.Error)
+            console.log("is enabled: " + enabled)
+            console.log(widget + ", homePath: " + homePath)
             if ( attributeEditorLoader.status === Loader.Error )
             {
               console.warn( "Editor widget type '" + EditorWidget + "' is not supported" );
@@ -284,10 +288,17 @@ Item {
           target: form
           onAboutToSave: {
             try {
+              console.log("onAboutToSave")
+              console.log(attributeEditorLoader.widget)
+              console.log(attributeEditorLoader.config)
+              console.log(attributeEditorLoader.constraintValid)
+              console.log(attributeEditorLoader.field)
+              console.log(attributeEditorLoader.value)
+              console.log(attributeEditorLoader.item)
               attributeEditorLoader.item.pushChanges()
             }
             catch ( err )
-            {}
+             {console.log("ERROR: saving item crashed! " + err)}
           }
         }
 
@@ -401,9 +412,9 @@ Item {
 
         text:
         {
-          var currentLayer = model.featureModel.layer
+          var currentLayer = model.featureModel.feature.layer
           var layerName = 'N/A'
-          if (currentLayer !== null)
+          if (!!currentLayer)
             layerName = currentLayer.name
 
           if ( form.state === 'Add' )

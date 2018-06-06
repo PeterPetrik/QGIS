@@ -22,6 +22,7 @@
 
 class QgsQuickAttributeFormModelBase;
 class QgsQuickFeatureModel;
+class QVariant;
 
 /**
  * \ingroup quick
@@ -36,7 +37,7 @@ class QgsQuickFeatureModel;
  *
  * \note QML Type: AttributeFormModel
  *
- * \since QGIS 3.2
+ * \since QGIS 3.4
  */
 class QUICK_EXPORT QgsQuickAttributeFormModel : public QSortFilterProxyModel
 {
@@ -44,6 +45,7 @@ class QUICK_EXPORT QgsQuickAttributeFormModel : public QSortFilterProxyModel
 
     //! Feature model with attributes
     Q_PROPERTY( QgsQuickFeatureModel *featureModel READ featureModel WRITE setFeatureModel NOTIFY featureModelChanged )
+
     //! Whether use tabs layout
     Q_PROPERTY( bool hasTabs READ hasTabs WRITE setHasTabs NOTIFY hasTabsChanged )
 
@@ -76,48 +78,48 @@ class QUICK_EXPORT QgsQuickAttributeFormModel : public QSortFilterProxyModel
     //! Create new attribute form model
     QgsQuickAttributeFormModel( QObject *parent = nullptr );
 
-    //! Return whether model has tabs layout
+    //! \copydoc QgsQuickAttributeFormModel::hasTabs
     bool hasTabs() const;
 
-    //! Set tabs layout
+    //! \copydoc QgsQuickAttributeFormModel::hasTabs
     void setHasTabs( bool hasTabs );
 
-    //! Return feature model associated
+    //! \copydoc QgsQuickAttributeFormModel::featureModel
     QgsQuickFeatureModel *featureModel() const;
 
-    //! Set feature model
+    //! \copydoc QgsQuickAttributeFormModel::featureModel
     void setFeatureModel( QgsQuickFeatureModel *featureModel );
 
-    //! Whether all constraints are valid for feature model
+    //! \copydoc QgsQuickAttributeFormModel::constraintsValid
     bool constraintsValid() const;
 
-    //! Update QgsFeature based on changes
+    //! Updates QgsFeature based on changes
     Q_INVOKABLE void save();
 
-    //! Create new QgsFeature
+    //! Creates new QgsFeature
     Q_INVOKABLE void create();
 
-    //! Return attribute value with name
+    //! Returns attribute value with name
     Q_INVOKABLE QVariant attribute( const QString &name ) const;
 
   signals:
-    //! feature model changed
+    //! \copydoc QgsQuickAttributeFormModel::featureModel
     void featureModelChanged();
 
-    //! has tabs changed
+    //! \copydoc QgsQuickAttributeFormModel::hasTabs
     void hasTabsChanged();
 
-    //! feature changed
+    //! Feature changed
     void featureChanged();
 
-    //! constraints valid changed
+    //! \copydoc QgsQuickAttributeFormModel::constraintsValid
     void constraintsValidChanged();
 
   protected:
     virtual bool filterAcceptsRow( int source_row, const QModelIndex &source_parent ) const override;
 
   private:
-    QgsQuickAttributeFormModelBase *mSourceModel;
+    QgsQuickAttributeFormModelBase *mSourceModel; //not owned
 };
 
 #endif // QGSQUICKATTRIBUTEFORMMODEL_H

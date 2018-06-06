@@ -19,10 +19,11 @@ import QtQuick.Layouts 1.1
 import QtQuick.Controls 1.4 as Controls1
 import QgisQuick 0.1 as QgsQuick
 
-// Calendar for QGIS Attribute Form
-// Requires various global properties set to function, see qgsquickfeatureform Loader section
-// Do not use directly from Application QML
-
+/**
+ * Calendar for QGIS Attribute Form
+ * Requires various global properties set to function, see qgsquickfeatureform Loader section
+ * Do not use directly from Application QML
+ */
 Item {
   signal valueChanged(var value, bool isNull)
 

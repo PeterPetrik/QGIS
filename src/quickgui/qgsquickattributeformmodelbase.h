@@ -36,13 +36,15 @@
 #include "qgis_quick.h"
 #include "qgsquickfeaturemodel.h"
 
+class QVariant;
+
 /**
  * \ingroup quick
  * This is an internal (implementation) class used as the source model for QgsQuickAttributeFormModel.
  *
  * \sa QgsQuickAttributeFormModel
  *
- * \since QGIS 3.2
+ * \since QGIS 3.4
  */
 class QgsQuickAttributeFormModelBase : public QStandardItemModel
 {

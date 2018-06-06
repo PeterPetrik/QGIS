@@ -87,5 +87,7 @@ void QgsQuickPlugin::registerTypes( const char *uri )
   qmlRegisterType< QgsVectorLayer >( uri, 0, 1, "VectorLayer" );
 
   qmlRegisterSingletonType< QgsQuickUtils >( uri, 0, 1, "Utils", _utilsProvider );
+
+  qmlRegisterUncreatableType< QgsMessageLog >( uri, 0, 1, "QgsMessageLog", "Expose MessageLevel" );
 }
 

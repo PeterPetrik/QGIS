@@ -23,7 +23,7 @@ Drawer {
     property var project
 
     property alias state: featureForm.state
-    property alias layer: featureModel.layer
+    //property alias layer: featureModel.layer
     property alias feature: featureModel.feature
     property alias currentFeatureModel: featureModel
 
@@ -38,10 +38,9 @@ Drawer {
         opacity: 0.5
     }
 
-    function show_panel(layer, feature, state) {
+    function show_panel(feature, state) {
         //if (QgsQuick.Utils.hasValidGeometry(layer, feature)) {
             // layer needs to be set before the feature otherwise the panel ends up empty on layer change
-            featurePanel.layer = layer
             featurePanel.feature = feature
             featurePanel.state = state
 

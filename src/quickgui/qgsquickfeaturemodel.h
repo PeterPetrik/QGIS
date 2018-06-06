@@ -23,6 +23,7 @@
 #include "qgsvectorlayer.h"
 
 #include "qgis_quick.h"
+#include "qgsquickfeaturelayerpair.h"
 
 /**
  * \ingroup quick
@@ -30,16 +31,20 @@
  *
  * \note QML Type: FeatureModel
  *
- * \since QGIS 3.2
+ * \since QGIS 3.4
  */
 class QUICK_EXPORT QgsQuickFeatureModel : public QAbstractListModel
 {
     Q_OBJECT
-    //! feature
-    Q_PROPERTY( QgsFeature feature READ feature WRITE setFeature NOTIFY featureChanged )
-    //! layer to which \a feature belogs
-    Q_PROPERTY( QgsVectorLayer *layer READ layer WRITE setLayer NOTIFY layerChanged )
-    //! feature roles
+
+    /**
+     * QgsQuickFeature in the model.
+     */
+    Q_PROPERTY( QgsQuickFeatureLayerPair feature READ feature WRITE setFeature NOTIFY featureChanged )
+
+    /**
+     * Feature roles enum.
+     */
     Q_ENUMS( FeatureRoles )
 
   public:
@@ -51,52 +56,57 @@ class QUICK_EXPORT QgsQuickFeatureModel : public QAbstractListModel
       RememberAttribute                  //!< Remember attribute value for next feature
     };
 
-    //! Create new feature model
+    //! Creates a new feature model
     explicit QgsQuickFeatureModel( QObject *parent = 0 );
 
-    //! Create new feature model
+    /**
+     * Creates a new feature model
+     * \param feat Feature set to model,
+     * \param parent Parent object.
+     */
     explicit QgsQuickFeatureModel( const QgsFeature &feat, QObject *parent = 0 );
 
-    //! Set feature to feature model
-    void setFeature( const QgsFeature &feature );
+    //! List of all role names.
+    QHash<int, QByteArray> roleNames() const override;
+
+    //! Equals to number of feature attributes.
+    int rowCount( const QModelIndex &parent ) const override;
 
     /**
-     * Return the feature wrapped in a QVariant for passing it around in QML
+     * Returns model data according params.
+     * \param index Index in the model
+     * \param role Feature role.
      */
-    QgsFeature feature() const;
-
-    //! Set feature model layer
-    void setLayer( QgsVectorLayer *layer );
-
-    //! Return feature model layer
-    QgsVectorLayer *layer() const;
-
-
-    QHash<int, QByteArray> roleNames() const override;
-    int rowCount( const QModelIndex &parent ) const override;
     QVariant data( const QModelIndex &index, int role ) const override;
+
+    /**
+     * Sets data to the model according params.
+     * \param index Index in the model
+     * \param value QVariant value
+     * \param role Feature role.
+     */
     bool setData( const QModelIndex &index, const QVariant &value, int role = Qt::EditRole ) override;
 
     /**
-     * Will commit the edit buffer of this layer.
+     * Commits the edit buffer of this layer.
      * May change in the future to only commit the changes buffered in this model.
      *
-     * @return Success of the operation
+     * @return Success of the operation.
      */
     Q_INVOKABLE bool save();
 
     /**
-     * Will delete the current feature from the layer and commit the changes.
-     * @return Success of the operation
+     * Deletes the current feature from the layer and commit the changes.
+     * @return Success of the operation.
      */
     Q_INVOKABLE bool deleteFeature();
 
     /**
-     * Will reset the feature to the original values and dismiss any buffered edits.
+     * Resets the feature to the original values and dismiss any buffered edits.
      */
     Q_INVOKABLE void reset();
 
-    //! Add mFeature to mLayer
+    //! Adds mFeature to mLayer
     Q_INVOKABLE void create();
 
     /**
@@ -106,30 +116,36 @@ class QUICK_EXPORT QgsQuickFeatureModel : public QAbstractListModel
      */
     Q_INVOKABLE bool suppressFeatureForm() const;
 
-    //! Reset remembered attributes
+    //! Resets remembered attributes
     Q_INVOKABLE virtual void resetAttributes();
 
-    //! Get remembered attributes
+    //! Gets remembered attributes
     QVector<bool> rememberedAttributes() const;
+
+    //!\copydoc QgsQuickFeatureModel::feature
+    QgsQuickFeatureLayerPair feature() const;
+
+    //!\copydoc QgsQuickFeatureModel::feature
+    void setFeature( const QgsQuickFeatureLayerPair &feature );
 
   public slots:
 
   signals:
-    //! feature changed
+    //! Feature changed
     void featureChanged();
-
-    //! layer changed
     void layerChanged();
 
   protected:
-    //! commit model changes
+    //! Commits model changes
     bool commit();
-    //! start editing model
+    //! Starts editing model
     bool startEditing();
 
-    QgsVectorLayer *mLayer = nullptr;
-    QgsFeature mFeature;
+    QgsQuickFeatureLayerPair mFeature;
     QVector<bool> mRememberedAttributes;
+  private:
+    void setFeatureOnly( const QgsFeature &feature );
+    void setLayer( QgsVectorLayer *layer );
 };
 
 #endif // QGSQUICKFEATUREMODEL_H

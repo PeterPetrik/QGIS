@@ -22,26 +22,26 @@
 /**
  * \ingroup quick
  *
- * Helper class for submodels (e.g. tabs within feature model)
+ * Helper class for submodels (e.g. tabs within feature model).
  *
- * It uses internal mapping from internal indexes to indexes in the parent model
+ * It uses internal mapping from internal indexes to indexes in the parent model.
  *
  * \note QML Type: SubModel
  *
- * \since QGIS 3.2
+ * \since QGIS 3.4
  */
 class QUICK_EXPORT QgsQuickSubModel : public QAbstractItemModel
 {
     Q_OBJECT
 
-    //! parent model (e.g QgsQuickAttributeFormModel)
+    //! Parent model (e.g QgsQuickAttributeFormModel)
     Q_PROPERTY( QAbstractItemModel *model READ model WRITE setModel NOTIFY modelChanged )
 
-    //! root index of parent model
+    //! Root index of parent model
     Q_PROPERTY( QModelIndex rootIndex READ rootIndex WRITE setRootIndex NOTIFY rootIndexChanged )
 
   public:
-    //! Create new sub model
+    //! Creates new sub model
     QgsQuickSubModel( QObject *parent = nullptr );
 
     //! Returns the index of the item in the model specified by the given row, column and parent index.
@@ -65,23 +65,23 @@ class QUICK_EXPORT QgsQuickSubModel : public QAbstractItemModel
     //! Returns the mModel's role names. Returns empty QHash on invalid mModel
     QHash<int, QByteArray> roleNames() const override;
 
-    //! Return root index
-    QModelIndex rootIndex() const;
-
-    //! Set root index
-    void setRootIndex( const QModelIndex &rootIndex );
-
-    //! Return model
+    //! \copydoc QgsQuickSubModel::model
     QAbstractItemModel *model() const;
 
-    //! Set model
+    //! \copydoc QgsQuickSubModel::model
     void setModel( QAbstractItemModel *model );
 
+    //! \copydoc QgsQuickSubModel::rootIndex
+    QModelIndex rootIndex() const;
+
+    //! \copydoc QgsQuickSubModel::rootIndex
+    void setRootIndex( const QModelIndex &rootIndex );
+
   signals:
-    //! mModel is changed
+    //! \copydoc QgsQuickSubModel::model
     void modelChanged();
 
-    //! mRootIndex is changed
+    //! \copydoc QgsQuickSubModel::rootIndex
     void rootIndexChanged();
 
   private slots:
@@ -96,7 +96,7 @@ class QUICK_EXPORT QgsQuickSubModel : public QAbstractItemModel
     QModelIndex mapFromSource( const QModelIndex &sourceIndex ) const;
     QModelIndex mapToSource( const QModelIndex &index ) const;
 
-    QAbstractItemModel *mModel = nullptr;
+    QAbstractItemModel *mModel = nullptr; // not owned
     QPersistentModelIndex mRootIndex;
 
     // Map internal id to parent index
