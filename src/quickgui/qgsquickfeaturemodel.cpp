@@ -42,8 +42,8 @@ void QgsQuickFeatureModel::setFeature( const QgsQuickFeatureLayerPair &feature )
     mRememberedAttributes.resize( mFeature.layer()->fields().size() );
     mRememberedAttributes.fill( false );
   }
-  emit layerChanged();
   emit featureChanged();
+  emit layerChanged();
 }
 
 void QgsQuickFeatureModel::setFeatureOnly( const QgsFeature &feature )
@@ -136,7 +136,7 @@ bool QgsQuickFeatureModel::setData( const QModelIndex &index, const QVariant &va
         QgsMessageLog::logMessage( tr( "Value \"%1\" %4 could not be converted to a compatible value for field %2(%3)." ).arg( value.toString(), fld.name(), fld.typeName(), value.isNull() ? "NULL" : "NOT NULL" ) );
         return false;
       }
-      bool success = mFeature.feature().setAttribute( index.row(), val );
+      bool success = mFeature.setAttributeToFeature( index.row(), val );
       if ( success )
         emit dataChanged( index, index, QVector<int>() << role );
       return success;

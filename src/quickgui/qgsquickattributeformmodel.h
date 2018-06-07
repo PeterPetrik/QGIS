@@ -109,7 +109,7 @@ class QUICK_EXPORT QgsQuickAttributeFormModel : public QSortFilterProxyModel
     //! \copydoc QgsQuickAttributeFormModel::hasTabs
     void hasTabsChanged();
 
-    //! Feature changed
+    //! Feature changed TODO @vsklencar DELETE
     void featureChanged();
 
     //! \copydoc QgsQuickAttributeFormModel::constraintsValid

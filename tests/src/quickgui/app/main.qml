@@ -32,7 +32,7 @@ ApplicationWindow {
     }
 
     Label {
-        //text: positionMarker.gpsPositionLabel
+        text: positionMarker.gpsPositionLabel
         z: 1
         x: logbutton.width + 10
     }
@@ -52,10 +52,6 @@ ApplicationWindow {
     }
 
     onClicked: {
-//      var screenPoint = Qt.point(mouse.x, mouse.y)
-//      var res = identifyKit.identifyOne(screenPoint);
-//      highlight.featureLayerPair = res
-
       var screenPoint = Qt.point( mouse.x, mouse.y );
 
       var res = identifyKit.identifyOne(screenPoint);
@@ -111,60 +107,60 @@ ApplicationWindow {
     z: 1
   }
 
-//  /** Position Kit and Marker */
-//  QgsQuick.PositionKit {
-//    id: positionKit
-//    mapSettings: mapCanvas.mapSettings
-//    simulatePositionLongLatRad: __use_simulated_position ? [-97.36, 36.93, 2] : undefined
-//  }
+  /** Position Kit and Marker */
+  QgsQuick.PositionKit {
+    id: positionKit
+    mapSettings: mapCanvas.mapSettings
+    simulatePositionLongLatRad: __use_simulated_position ? [-97.36, 36.93, 2] : undefined
+  }
 
-//  QgsQuick.PositionMarker {
-//    id: positionMarker
-//    positionKit: positionKit
-//    z: 2
-//  }
+  QgsQuick.PositionMarker {
+    id: positionMarker
+    positionKit: positionKit
+    z: 2
+  }
 
-//  Label {
-//    id: gpsPositionLabel
-//    text: {
-//      var label = "Signal Lost"
-//      if ( positionKit.hasPosition )
-//        label = QgsQuick.Utils.formatPoint( positionKit.position )
-//        if (positionKit.accuracy > 0)
-//          label += " (" + QgsQuick.Utils.formatDistance( positionKit.accuracy, positionKit.accuracyUnits, 0 ) + ")"
-//      label;
-//    }
-//    height: scaleBar.height
-//    x: window.width - width
-//    font.pixelSize: 22 * QgsQuick.Utils.dp
-//    font.italic: true
-//    color: "steelblue"
-//    z: 1
-//  }
+  Label {
+    id: gpsPositionLabel
+    text: {
+      var label = "Signal Lost"
+      if ( positionKit.hasPosition )
+        label = QgsQuick.Utils.formatPoint( positionKit.position )
+        if (positionKit.accuracy > 0)
+          label += " (" + QgsQuick.Utils.formatDistance( positionKit.accuracy, positionKit.accuracyUnits, 0 ) + ")"
+      label;
+    }
+    height: scaleBar.height
+    x: window.width - width
+    font.pixelSize: 22 * QgsQuick.Utils.dp
+    font.italic: true
+    color: "steelblue"
+    z: 1
+  }
 
-//  /** Coordinate transformater */
-//  QgsQuick.CoordinateTransformer {
-//    id: coordinateTransformer
-//    sourcePosition: positionKit.position
-//    sourceCrs: positionKit.positionCRS()
-//    destinationCrs: QgsQuick.Utils.coordinateReferenceSystemFromEpsgId( 3857 ) //web mercator
-//    transformContext: mapCanvas.mapSettings.transformContext()
-//  }
+  /** Coordinate transformater */
+  QgsQuick.CoordinateTransformer {
+    id: coordinateTransformer
+    sourcePosition: positionKit.position
+    sourceCrs: positionKit.positionCRS()
+    destinationCrs: QgsQuick.Utils.coordinateReferenceSystemFromEpsgId( 3857 ) //web mercator
+    transformContext: mapCanvas.mapSettings.transformContext()
+  }
 
-//  Label {
-//    id: webPositionLabel
-//    text: {
-//      if ( positionKit.hasPosition )
-//         QgsQuick.Utils.formatPoint( coordinateTransformer.projectedPosition ) + " (web mercator)"
-//    }
-//    height: scaleBar.height
-//    x: window.width - width
-//    y: gpsPositionLabel.height + 2 * QgsQuick.Utils.dp
-//    font.pixelSize: 22 * QgsQuick.Utils.dp
-//    font.italic: true
-//    color: "steelblue"
-//    z: 1
-//  }
+  Label {
+    id: webPositionLabel
+    text: {
+      if ( positionKit.hasPosition )
+         QgsQuick.Utils.formatPoint( coordinateTransformer.projectedPosition ) + " (web mercator)"
+    }
+    height: scaleBar.height
+    x: window.width - width
+    y: gpsPositionLabel.height + 2 * QgsQuick.Utils.dp
+    font.pixelSize: 22 * QgsQuick.Utils.dp
+    font.italic: true
+    color: "steelblue"
+    z: 1
+  }
 
   FeaturePanel {
       id: featurePanel

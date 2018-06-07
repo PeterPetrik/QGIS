@@ -272,33 +272,11 @@ Item {
           source: 'qgsquick' + widget.toLowerCase() + '.qml'
 
           onStatusChanged: {
-            console.log("onStatus changed !!!!!! " + attributeEditorLoader.status)
-            console.log("error no. " + Loader.Error)
-            console.log("is enabled: " + enabled)
-            console.log(widget + ", homePath: " + homePath)
             if ( attributeEditorLoader.status === Loader.Error )
             {
               console.warn( "Editor widget type '" + EditorWidget + "' is not supported" );
               source = 'qgsquicktextedit.qml';
             }
-          }
-        }
-
-        Connections {
-          target: form
-          onAboutToSave: {
-            try {
-              console.log("onAboutToSave")
-              console.log(attributeEditorLoader.widget)
-              console.log(attributeEditorLoader.config)
-              console.log(attributeEditorLoader.constraintValid)
-              console.log(attributeEditorLoader.field)
-              console.log(attributeEditorLoader.value)
-              console.log(attributeEditorLoader.item)
-              attributeEditorLoader.item.pushChanges()
-            }
-            catch ( err )
-             {console.log("ERROR: saving item crashed! " + err)}
           }
         }
 
@@ -328,8 +306,6 @@ Item {
 
   function save() {
     parent.focus = true
-    aboutToSave()
-
     if ( form.state === "Add" ) {
       model.create()
       state = "Edit"
@@ -451,8 +427,8 @@ Item {
 
         onClicked: {
           Qt.inputMethod.hide()
-
-          canceled()
+          console.log("!!!!!!inner on clicked close")
+          form.canceled()
         }
       }
     }
@@ -471,7 +447,7 @@ Item {
       model.featureModel.deleteFeature()
       visible = false
 
-      canceled()
+      form.canceled()
     }
     onRejected: {
       visible = false

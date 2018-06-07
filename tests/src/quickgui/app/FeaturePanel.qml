@@ -19,60 +19,63 @@ import QgsQuick 0.1 as QgsQuick
 
 Drawer {
 
-    property var mapSettings
-    property var project
+  property var mapSettings
+  property var project
 
-    property alias state: featureForm.state
-    //property alias layer: featureModel.layer
-    property alias feature: featureModel.feature
-    property alias currentFeatureModel: featureModel
+  property alias state: featureForm.state
+  property alias feature: featureModel.feature
+  property alias currentFeatureModel: featureModel
 
-    id: featurePanel
-    visible: false
-    modal: true
-    interactive: true
-    dragMargin: 0 // prevents opening the drawer by dragging.
+  id: featurePanel
+  visible: false
+  modal: true
+  interactive: true
+  dragMargin: 0 // prevents opening the drawer by dragging.
 
-    background: Rectangle {
-        color: "white"
-        opacity: 0.5
-    }
+  background: Rectangle {
+    color: "white"
+    opacity: 0.5
+  }
 
-    function show_panel(feature, state) {
-        //if (QgsQuick.Utils.hasValidGeometry(layer, feature)) {
-            // layer needs to be set before the feature otherwise the panel ends up empty on layer change
-            featurePanel.feature = feature
-            featurePanel.state = state
+  function show_panel(feature, state) {
+    //if (QgsQuick.Utils.hasValidGeometry(layer, feature)) {
+    // layer needs to be set before the feature otherwise the panel ends up empty on layer change
+    featurePanel.feature = feature
+    featurePanel.state = state
 
-            // visible needs to be after setting correct layer&feature,
-            // so currentFeatureModel is already up to date (required for feature highlight)
-            featurePanel.visible = true
-//        } else {
-//            QgsQuick.Utils.logMessage("The feature " + layer.name + " has a wrong geometry." , "Qgis test app")
-//        }
-    }
+    // visible needs to be after setting correct layer&feature,
+    // so currentFeatureModel is already up to date (required for feature highlight)
+    featurePanel.visible = true
+    //        } else {
+    //            QgsQuick.Utils.logMessage("The feature " + layer.name + " has a wrong geometry." , "Qgis test app")
+    //        }
+  }
 
-    QgsQuick.FeatureForm {
-      id: featureForm
+  QgsQuick.FeatureForm {
+    id: featureForm
 
-      // using anchors here is not working well as
-      width: featurePanel.width
-      height: featurePanel.height
+    // using anchors here is not working well as
+    width: featurePanel.width
+    height: featurePanel.height
 
-      model: QgsQuick.AttributeFormModel {
-        featureModel: QgsQuick.FeatureModel {
-            id: featureModel
-        }
+    model: QgsQuick.AttributeFormModel {
+      featureModel: QgsQuick.FeatureModel {
+        id: featureModel
       }
-
-      project: featurePanel.project
-
-      toolbarVisible: true
-
-      onSaved: {
-        featurePanel.visible = false
-      }
-      onCanceled: featurePanel.visible = false
     }
+
+    project: featurePanel.project
+
+    toolbarVisible: true
+
+    onSaved: {
+      featurePanel.visible = false
+    }
+    onCanceled:
+    {
+      console.log("feature form closing")
+      featurePanel.visible = false
+    }
+  }
 
 }
