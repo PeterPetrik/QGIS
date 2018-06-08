@@ -23,7 +23,7 @@ Drawer {
   property var project
 
   property alias state: featureForm.state
-  property alias feature: featureModel.feature
+  property alias feature: featureModel.featureLayerPair
   property alias currentFeatureModel: featureModel
 
   id: featurePanel
@@ -73,7 +73,6 @@ Drawer {
     }
     onCanceled:
     {
-      console.log("feature form closing")
       featurePanel.visible = false
     }
   }

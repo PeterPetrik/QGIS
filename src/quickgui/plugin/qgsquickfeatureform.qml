@@ -21,31 +21,65 @@ import QtGraphicalEffects 1.0
 import QtQml.Models 2.2
 import QtQml 2.2
 
-// We use calendar in datetime widget that is not
-// yet implemented in Controls 2.2
+// We use calendar in datetime widget that is not yet implemented in Controls 2.2
 import QtQuick.Controls 1.4 as Controls1
 
 import QgsQuick 0.1 as QgsQuick
 
 Item {
+  /**
+   * Save form signal
+   */
   signal saved
+  /**
+   * Close/cancel form signal
+   */
   signal canceled
-  signal aboutToSave
 
+  /**
+   * AttributeFormModel
+   */
   property QgsQuick.AttributeFormModel model
+  /**
+   * AttributeFormModel
+   */
   property alias toolbarVisible: toolbar.visible
-  property bool allowRememberAttribute: false // when adding new feature, add checkbox to be able to save the same value for the next feature as default
+  // when adding new feature, add checkbox to be able to save the same value for the next feature as default
+  property bool allowRememberAttribute: false
+
+  /**
+   * Active project
+   */
   property QgsQuick.Project project
 
+  property var editWidgetsComps: {
+                                  "default": "qgsquickedittext.qml",
+                                  "textedit": "qgsquickedittext.qml",
+                                  "valuemap": "qgsquickvaluemap.qml",
+                                  "checkbox": "qgsquickcheckbox.qml",
+                                  "externalresources": "qgsquickexternalresource.qml",
+                                  "datetime": "qgsquickdatetime.qml"
+                                  };
+
+  property var loadWidgetFn: QgsQuick.Utils.getEditorComponentSource
+
+  /**
+   * Icon path for save button
+   */
   property var saveButtonIcon: QgsQuick.Utils.getThemeIcon( "ic_save_white" )
+  /**
+   * Icon path for delete button
+   */
   property var deleteButtonIcon: QgsQuick.Utils.getThemeIcon( "ic_delete_forever_white" )
+  /**
+   * Icon path for close button
+   */
   property var closeButtonIcon: QgsQuick.Utils.getThemeIcon( "ic_clear_white" )
 
+  /**
+   * Predefined form styling
+   */
   property FeatureFormStyling style: FeatureFormStyling {}
-
-  function reset() {
-    master.reset()
-  }
 
   id: form
 
@@ -60,6 +94,25 @@ Item {
       name: "Add"
     }
   ]
+
+  function reset() {
+    console.log("!!!!!!!RESET FUNCTION")
+    master.reset()
+  }
+
+  function save() {
+    parent.focus = true
+    if ( form.state === "Add" ) {
+      model.create()
+      state = "Edit"
+    }
+    else
+    {
+      model.save()
+    }
+
+    saved()
+  }
 
   /**
    * This is a relay to forward private signals to internal components.
@@ -269,15 +322,8 @@ Item {
           property var homePath: form.project ? form.project.homePath : ""
 
           active: widget !== 'Hidden'
-          source: 'qgsquick' + widget.toLowerCase() + '.qml'
 
-          onStatusChanged: {
-            if ( attributeEditorLoader.status === Loader.Error )
-            {
-              console.warn( "Editor widget type '" + EditorWidget + "' is not supported" );
-              source = 'qgsquicktextedit.qml';
-            }
-          }
+          source: form.loadWidgetFn(widget.toLowerCase())
         }
 
         Connections {
@@ -304,20 +350,6 @@ Item {
     }
   }
 
-  function save() {
-    parent.focus = true
-    if ( form.state === "Add" ) {
-      model.create()
-      state = "Edit"
-    }
-    else
-    {
-      model.save()
-    }
-
-    saved()
-  }
-
   Connections {
     target: Qt.inputMethod
     onVisibleChanged: {
@@ -325,7 +357,7 @@ Item {
     }
   }
 
-  /** The title toolbar **/
+  /** The form toolbar **/
   Item {
     id: toolbar
     height: visible ? 48 * QgsQuick.Utils.dp : 0
@@ -359,7 +391,7 @@ Item {
         enabled: model.constraintsValid
 
         onClicked: {
-          save()
+          form.save()
         }
       }
 
@@ -427,7 +459,6 @@ Item {
 
         onClicked: {
           Qt.inputMethod.hide()
-          console.log("!!!!!!inner on clicked close")
           form.canceled()
         }
       }

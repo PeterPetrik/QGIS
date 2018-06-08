@@ -33,12 +33,12 @@ QgsVectorLayer *QgsQuickFeatureLayerPair::layer() const
 
 QgsFeature QgsQuickFeatureLayerPair::feature() const
 {
-  return mFeature;
+    return mFeature;
 }
 
-bool QgsQuickFeatureLayerPair::setAttributeToFeature(int idx, const QVariant &value)
+QgsFeature& QgsQuickFeatureLayerPair::featureRef()
 {
-  return mFeature.setAttribute(idx, value);
+    return mFeature;
 }
 
 bool QgsQuickFeatureLayerPair::isValid() const

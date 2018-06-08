@@ -82,12 +82,8 @@ class QUICK_EXPORT QgsQuickFeatureLayerPair
     //! \copydoc QgsQuickFeatureLayerPair::feature
     QgsFeature feature() const;
 
-    /**
-     * Sets attribute to the feature.
-     * \param idx Index of attribute among features attributes.
-     * \param value A new QVariant value as replacement for the current value.
-     */
-    bool setAttributeToFeature(int idx, const QVariant &value);
+    //! Reference to \copydoc QgsQuickFeatureLayerPair::feature
+    QgsFeature& featureRef();
 
     //! \copydoc QgsQuickFeatureLayerPair::valid
     bool isValid() const;

@@ -40,7 +40,7 @@ class QUICK_EXPORT QgsQuickFeatureModel : public QAbstractListModel
     /**
      * QgsQuickFeature in the model.
      */
-    Q_PROPERTY( QgsQuickFeatureLayerPair feature READ feature WRITE setFeature NOTIFY featureChanged )
+    Q_PROPERTY( QgsQuickFeatureLayerPair featureLayerPair READ featureLayerPair WRITE setFeatureLayerPair NOTIFY featureLayerPairChanged )
 
     /**
      * Feature roles enum.
@@ -74,7 +74,7 @@ class QUICK_EXPORT QgsQuickFeatureModel : public QAbstractListModel
 
     /**
      * Returns model data according params.
-     * \param index Index in the model
+     * \param index Index in the model.
      * \param role Feature role.
      */
     QVariant data( const QModelIndex &index, int role ) const override;
@@ -122,17 +122,17 @@ class QUICK_EXPORT QgsQuickFeatureModel : public QAbstractListModel
     //! Gets remembered attributes
     QVector<bool> rememberedAttributes() const;
 
-    //!\copydoc QgsQuickFeatureModel::feature
-    QgsQuickFeatureLayerPair feature() const;
+    //!\copydoc QgsQuickFeatureModel::featureLayerPair
+    QgsQuickFeatureLayerPair featureLayerPair() const;
 
-    //!\copydoc QgsQuickFeatureModel::feature
-    void setFeature( const QgsQuickFeatureLayerPair &feature );
+    //!\copydoc QgsQuickFeatureModel::featureLayerPair
+    void setFeatureLayerPair( const QgsQuickFeatureLayerPair &pair );
 
   public slots:
 
   signals:
     //! Feature changed
-    void featureChanged();
+    void featureLayerPairChanged();
     void layerChanged();
 
   protected:
@@ -141,10 +141,10 @@ class QUICK_EXPORT QgsQuickFeatureModel : public QAbstractListModel
     //! Starts editing model
     bool startEditing();
 
-    QgsQuickFeatureLayerPair mFeature;
+    QgsQuickFeatureLayerPair mFeatureLayerPair;
     QVector<bool> mRememberedAttributes;
   private:
-    void setFeatureOnly( const QgsFeature &feature );
+    void setFeatureOnly( const QgsFeature &featureLayerPair );
     void setLayer( QgsVectorLayer *layer );
 };
 

@@ -84,6 +84,53 @@ double QgsQuickUtils::screenUnitsToMeters( QgsQuickMapSettings *mapSettings, int
   return mDistanceArea.measureLine( p1, p2 );
 }
 
+bool QgsQuickUtils::fileExists( QString path )
+{
+  QFileInfo check_file( path );
+  // check if file exists and if yes: Is it really a file and no directory?
+  return ( check_file.exists() && check_file.isFile() );
+}
+
+void QgsQuickUtils::copyFile( QString sourcePath, QString targetPath )
+{
+  if ( !fileExists( sourcePath ) )
+  {
+    QgsDebugMsg( QStringLiteral( "Source file does not exist! %1" ).arg( sourcePath ) );
+    return;
+  }
+
+  if ( !QDir::root().mkpath( targetPath ) )
+  {
+    QgsApplication::messageLog()->logMessage( tr( "Could not create folder %1" ).arg( targetPath ), "QgsQuick", Qgis::Critical );
+    return;
+  }
+
+  QDir dir( targetPath );
+  QString filename( QFile( sourcePath ).fileName() );
+
+  if ( !QFile( sourcePath ).rename( dir.absoluteFilePath( filename ) ) )
+  {
+    QgsDebugMsg( QStringLiteral( "Couldn't rename file! Trying to copy instead! %1" ).arg( filename ) );
+    if ( !QFile( sourcePath ).copy( dir.absoluteFilePath( filename ) ) )
+    {
+      QgsApplication::messageLog()->logMessage( tr( "File %1 could not be copied to folder %2.", "QgsQuick", Qgis::Critical ).arg( sourcePath, targetPath ) );
+      return;
+    }
+  }
+}
+
+void QgsQuickUtils::remove( QString path )
+{
+  QFile::remove( path );
+}
+
+QString QgsQuickUtils::getFileName( QString path )
+{
+  QFileInfo fileInfo( path );
+  QString filename( fileInfo.fileName() );
+  return filename;
+}
+
 void QgsQuickUtils::logMessage( const QString &message, const QString &tag, Qgis::MessageLevel level )
 {
   QgsMessageLog::logMessage( message, tag, level );
@@ -100,6 +147,21 @@ const QUrl QgsQuickUtils::getThemeIcon( const QString &name )
   QString path = QStringLiteral( "qrc:/%1%2" ).arg( name ).arg( extension );
   QgsDebugMsg( QStringLiteral( "Using icon %1 from %2" ).arg( name, path ) );
   return QUrl( path );
+}
+
+const QUrl QgsQuickUtils::getEditorComponentSource(const QString &widgetName)
+{
+    QString path( "qgsquick%1.qml" );
+    QStringList supportedWidget = { "textedit",
+                                    "valuemap",
+                                    "checkbox",
+                                    "externalresource",
+                                    "datetime"};
+    if (supportedWidget.contains(widgetName)) {
+        return QUrl( path.arg(widgetName) );
+    } else {
+        return QUrl( path.arg("textedit") );
+    }
 }
 
 QString QgsQuickUtils::formatPoint(

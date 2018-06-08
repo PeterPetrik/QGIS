@@ -93,7 +93,7 @@ void QgsQuickAttributeFormModelBase::setFeatureModel( QgsQuickFeatureModel *feat
   if ( mFeatureModel )
   {
     disconnect( mFeatureModel, &QgsQuickFeatureModel::layerChanged, this, &QgsQuickAttributeFormModelBase::onLayerChanged );
-    disconnect( mFeatureModel, &QgsQuickFeatureModel::featureChanged, this, &QgsQuickAttributeFormModelBase::onFeatureChanged );
+    disconnect( mFeatureModel, &QgsQuickFeatureModel::featureLayerPairChanged, this, &QgsQuickAttributeFormModelBase::onFeatureChanged );
     disconnect( mFeatureModel, &QgsQuickFeatureModel::modelReset, this, &QgsQuickAttributeFormModelBase::onFeatureChanged );
   }
 
@@ -102,7 +102,7 @@ void QgsQuickAttributeFormModelBase::setFeatureModel( QgsQuickFeatureModel *feat
   if ( mFeatureModel )
   {
     connect( mFeatureModel, &QgsQuickFeatureModel::layerChanged, this, &QgsQuickAttributeFormModelBase::onLayerChanged );
-    connect( mFeatureModel, &QgsQuickFeatureModel::featureChanged, this, &QgsQuickAttributeFormModelBase::onFeatureChanged );
+    connect( mFeatureModel, &QgsQuickFeatureModel::featureLayerPairChanged, this, &QgsQuickAttributeFormModelBase::onFeatureChanged );
     connect( mFeatureModel, &QgsQuickFeatureModel::modelReset, this, &QgsQuickAttributeFormModelBase::onFeatureChanged );
   }
 
@@ -113,7 +113,7 @@ void QgsQuickAttributeFormModelBase::onLayerChanged()
 {
   clear();
 
-  mLayer = mFeatureModel->feature().layer();
+  mLayer = mFeatureModel->featureLayerPair().layer();
   mVisibilityExpressions.clear();
   mConstraints.clear();
 
@@ -203,7 +203,7 @@ void QgsQuickAttributeFormModelBase::updateAttributeValue( QStandardItem *item )
 {
   if ( item->data( QgsQuickAttributeFormModel::ElementType ) == QStringLiteral( "field" ) )
   {
-    item->setData( mFeatureModel->feature().feature().attribute( item->data( QgsQuickAttributeFormModel::FieldIndex ).toInt() ), QgsQuickAttributeFormModel::AttributeValue );
+    item->setData( mFeatureModel->featureLayerPair().feature().attribute( item->data( QgsQuickAttributeFormModel::FieldIndex ).toInt() ), QgsQuickAttributeFormModel::AttributeValue );
   }
   else
   {
@@ -252,7 +252,7 @@ void QgsQuickAttributeFormModelBase::flatten( QgsAttributeEditorContainer *conta
 
 
         item->setData( mLayer->attributeDisplayName( fieldIndex ), QgsQuickAttributeFormModel::Name );
-        item->setData( mFeatureModel->feature().feature().attribute( fieldIndex ), QgsQuickAttributeFormModel::AttributeValue );
+        item->setData( mFeatureModel->featureLayerPair().feature().attribute( fieldIndex ), QgsQuickAttributeFormModel::AttributeValue );
         item->setData( !mLayer->editFormConfig().readOnly( fieldIndex ), QgsQuickAttributeFormModel::AttributeEditable );
         QgsEditorWidgetSetup setup = mLayer->editorWidgetSetup( fieldIndex );
         item->setData( setup.type(), QgsQuickAttributeFormModel::EditorWidget );
@@ -290,9 +290,9 @@ void QgsQuickAttributeFormModelBase::flatten( QgsAttributeEditorContainer *conta
 
 void QgsQuickAttributeFormModelBase::updateVisibility( int fieldIndex )
 {
-  QgsFields fields = mFeatureModel->feature().feature().fields();
+  QgsFields fields = mFeatureModel->featureLayerPair().feature().fields();
   mExpressionContext.setFields( fields );
-  mExpressionContext.setFeature( mFeatureModel->feature().feature() );
+  mExpressionContext.setFeature( mFeatureModel->featureLayerPair().feature() );
 
   for ( const VisibilityExpression &it : mVisibilityExpressions )
   {
@@ -346,7 +346,7 @@ QVariant QgsQuickAttributeFormModelBase::attribute( const QString &name ) const
     return QVariant();
 
   int idx = mLayer->fields().indexOf( name );
-  return mFeatureModel->feature().feature().attribute( idx );
+  return mFeatureModel->featureLayerPair().feature().attribute( idx );
 }
 
 void QgsQuickAttributeFormModelBase::setConstraintsValid( bool constraintsValid )

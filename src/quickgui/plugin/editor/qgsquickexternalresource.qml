@@ -15,7 +15,7 @@
 
 import QtQuick 2.5
 import QtQuick.Controls 2.0
-import QgisQuick 0.1 as QgsQuick
+import QgsQuick 0.1 as QgsQuick
 
 /**
  * External Resource (Photo capture) for QGIS Attribute Form

@@ -19,11 +19,13 @@
 
 #include <QObject>
 #include <QString>
+#include <QUrl>
 #include <QtPositioning/QGeoCoordinate>
 
 #include <limits>
 
 #include "qgis.h"
+#include "qgsfeature.h"
 #include "qgsmessagelog.h"
 #include "qgspoint.h"
 #include "qgspointxy.h"
@@ -34,6 +36,8 @@
 #include "qgsfeature.h"
 #include "qgscoordinateformatter.h"
 
+
+class QgsFeature;
 class QgsVectorLayer;
 class QgsCoordinateReferenceSystem;
 
@@ -115,6 +119,18 @@ class QUICK_EXPORT QgsQuickUtils: public QObject
       */
     Q_INVOKABLE static double screenUnitsToMeters( QgsQuickMapSettings *mapSettings, int baseLengthPixels );
 
+    //! Check if file on path exists
+    Q_INVOKABLE bool fileExists( QString path );
+
+    //! Copy file from sourcePath to targetPath
+    Q_INVOKABLE void copyFile( QString sourcePath, QString targetPath );
+
+    //! Delete file on path from disk
+    Q_INVOKABLE void remove( QString path );
+
+    //! Extract filename from path
+    Q_INVOKABLE QString getFileName( QString path );
+
     //! Log message in QgsMessageLog
     Q_INVOKABLE void logMessage( const QString &message,
                                  const QString &tag = QString( "QgsQuick" ),
@@ -135,6 +151,9 @@ class QUICK_EXPORT QgsQuickUtils: public QObject
       * \since QGIS 3.4
       */
     Q_INVOKABLE const QUrl getThemeIcon( const QString &name );
+
+
+     Q_INVOKABLE const QUrl getEditorComponentSource( const QString &widgetName );
 
     /**
      * \copydoc QgsCoordinateFormatter::format()
