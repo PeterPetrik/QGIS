@@ -28,11 +28,18 @@
 #include "qgsrelationmanager.h"
 #include "qgscoordinatetransformcontext.h"
 #include "qgsvectorlayer.h"
+#include "qgsunittypes.h"
 
+#include "qgsquickcoordinatetransformer.h"
+#include "qgsquickfeaturehighlight.h"
+#include "qgsquickidentifykit.h"
+#include "qgsquickfeaturelayerpair.h"
 #include "qgsquickmapcanvasmap.h"
 #include "qgsquickmapsettings.h"
+#include "qgsquickmaptransform.h"
 #include "qgsquickmessagelogmodel.h"
 #include "qgsquickplugin.h"
+#include "qgsquickpositionkit.h"
 #include "qgsquickscalebarkit.h"
 #include "qgsquickutils.h"
 
@@ -53,11 +60,20 @@ void QgsQuickPlugin::registerTypes( const char *uri )
   qRegisterMetaType< QgsFeatureId > ( "QgsFeatureId" );
   qRegisterMetaType< QgsPoint >( "QgsPoint" );
   qRegisterMetaType< QgsPointXY >( "QgsPointXY" );
+  qRegisterMetaType< QgsQuickFeatureLayerPair >( "QgsQuickFeatureLayerPair" );
+  qRegisterMetaType< QgsUnitTypes::DistanceUnit >( "QgsUnitTypes::DistanceUnit" );
+  qRegisterMetaType< QgsCoordinateFormatter::FormatFlags >( "QgsCoordinateFormatter::FormatFlags" );
+  qRegisterMetaType< QgsCoordinateFormatter::Format >( "QgsCoordinateFormatter::Format" );
 
   qmlRegisterType< QgsProject >( uri, 0, 1, "Project" );
+  qmlRegisterType< QgsQuickFeatureHighlight >( uri, 0, 1, "FeatureHighlight" );
+  qmlRegisterType< QgsQuickCoordinateTransformer >( uri, 0, 1, "CoordinateTransformer" );
+  qmlRegisterType< QgsQuickIdentifyKit >( uri, 0, 1, "IdentifyKit" );
   qmlRegisterType< QgsQuickMapCanvasMap >( uri, 0, 1, "MapCanvasMap" );
   qmlRegisterType< QgsQuickMapSettings >( uri, 0, 1, "MapSettings" );
+  qmlRegisterType< QgsQuickMapTransform >( uri, 0, 1, "MapTransform" );
   qmlRegisterType< QgsQuickMessageLogModel >( uri, 0, 1, "MessageLogModel" );
+  qmlRegisterType< QgsQuickPositionKit >( uri, 0, 1, "PositionKit" );
   qmlRegisterType< QgsQuickScaleBarKit >( uri, 0, 1, "ScaleBarKit" );
   qmlRegisterType< QgsVectorLayer >( uri, 0, 1, "VectorLayer" );
 
