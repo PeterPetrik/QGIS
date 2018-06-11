@@ -54,12 +54,10 @@ Item {
     function getSource() {
       if (image.status === Image.Error)
         return QgsQuick.Utils.getThemeIcon("ic_broken_image_black")
-      else if (image.currentValue && QgsQuick.Utils.fileExists(homePath + "/" + image.currentValue)) {
+      else if (image.currentValue && QgsQuick.Utils.fileExists(homePath + "/" + image.currentValue))
         return homePath + "/" + image.currentValue
-      }
-      else       {
+      else
         return QgsQuick.Utils.getThemeIcon("ic_photo_notavailable_white")
-      }
     }
   }
 

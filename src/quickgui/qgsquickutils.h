@@ -33,7 +33,6 @@
 #include "qgsquickmapsettings.h"
 #include "qgsquickfeaturelayerpair.h"
 #include "qgis_quick.h"
-#include "qgsfeature.h"
 #include "qgscoordinateformatter.h"
 
 
@@ -153,7 +152,7 @@ class QUICK_EXPORT QgsQuickUtils: public QObject
     Q_INVOKABLE const QUrl getThemeIcon( const QString &name );
 
 
-     Q_INVOKABLE const QUrl getEditorComponentSource( const QString &widgetName );
+    Q_INVOKABLE const QUrl getEditorComponentSource( const QString &widgetName );
 
     /**
      * \copydoc QgsCoordinateFormatter::format()

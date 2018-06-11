@@ -52,15 +52,9 @@ Item {
    */
   property QgsQuick.Project project
 
-  property var editWidgetsComps: {
-                                  "default": "qgsquickedittext.qml",
-                                  "textedit": "qgsquickedittext.qml",
-                                  "valuemap": "qgsquickvaluemap.qml",
-                                  "checkbox": "qgsquickcheckbox.qml",
-                                  "externalresources": "qgsquickexternalresource.qml",
-                                  "datetime": "qgsquickdatetime.qml"
-                                  };
-
+  /**
+   * The function used for a component loader to find qml edit widget componets used in form.
+   */
   property var loadWidgetFn: QgsQuick.Utils.getEditorComponentSource
 
   /**
@@ -96,7 +90,6 @@ Item {
   ]
 
   function reset() {
-    console.log("!!!!!!!RESET FUNCTION")
     master.reset()
   }
 
@@ -281,7 +274,7 @@ Item {
       Label {
         id: fieldLabel
 
-        text: Name || ''
+        text: qsTr(Name) || ''
         font.bold: true
         color: ConstraintValid ? form.style.constraint.validColor : form.style.constraint.invalidColor
       }
@@ -294,7 +287,7 @@ Item {
           top: fieldLabel.bottom
         }
 
-        text: ConstraintDescription
+        text: qsTr(ConstraintDescription)
         height: ConstraintValid ? 0 : undefined
         visible: !ConstraintValid
 
@@ -380,8 +373,8 @@ Item {
         visible: form.state !== "ReadOnly"
 
         contentItem: Image {
-            source: form.saveButtonIcon
-            sourceSize: Qt.size(width, height)
+          source: form.saveButtonIcon
+          sourceSize: Qt.size(width, height)
         }
 
         background: Rectangle {
@@ -404,8 +397,8 @@ Item {
         visible: form.state === "Edit"
 
         contentItem: Image {
-            source: form.deleteButtonIcon
-            sourceSize: Qt.size(width, height)
+          source: form.deleteButtonIcon
+          sourceSize: Qt.size(width, height)
         }
 
         background: Rectangle {
@@ -449,8 +442,8 @@ Item {
         Layout.preferredHeight: form.style.toolbutton.size
 
         contentItem: Image {
-            source: form.closeButtonIcon
-            sourceSize: Qt.size(width, height)
+          source: form.closeButtonIcon
+          sourceSize: Qt.size(width, height)
         }
 
         background: Rectangle {

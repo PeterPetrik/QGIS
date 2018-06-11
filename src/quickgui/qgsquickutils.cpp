@@ -149,19 +149,24 @@ const QUrl QgsQuickUtils::getThemeIcon( const QString &name )
   return QUrl( path );
 }
 
-const QUrl QgsQuickUtils::getEditorComponentSource(const QString &widgetName)
+// TODO @vsklencar
+const QUrl QgsQuickUtils::getEditorComponentSource( const QString &widgetName )
 {
-    QString path( "qgsquick%1.qml" );
-    QStringList supportedWidget = { "textedit",
-                                    "valuemap",
-                                    "checkbox",
-                                    "externalresource",
-                                    "datetime"};
-    if (supportedWidget.contains(widgetName)) {
-        return QUrl( path.arg(widgetName) );
-    } else {
-        return QUrl( path.arg("textedit") );
-    }
+  QString path( "qgsquick%1.qml" );
+  QStringList supportedWidget = { "textedit",
+                                  "valuemap",
+                                  "checkbox",
+                                  "externalresource",
+                                  "datetime"
+                                };
+  if ( supportedWidget.contains( widgetName ) )
+  {
+    return QUrl( path.arg( widgetName ) );
+  }
+  else
+  {
+    return QUrl( path.arg( "textedit" ) );
+  }
 }
 
 QString QgsQuickUtils::formatPoint(

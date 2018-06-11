@@ -50,27 +50,9 @@ void QgsQuickFeatureModel::setFeatureOnly( const QgsFeature &feature )
     return;
 
   beginResetModel();
-  // updates only feature TODO @vsklencar
   mFeatureLayerPair = QgsQuickFeatureLayerPair( feature, mFeatureLayerPair.layer() );
   endResetModel();
   emit featureLayerPairChanged();
-}
-
-void QgsQuickFeatureModel::setLayer( QgsVectorLayer *layer )
-{
-  if ( layer == mFeatureLayerPair.layer() )
-    return;
-
-  //mFeature.setLayer( layer );
-  if ( mFeatureLayerPair.layer() )
-  {
-    //mFeature.setFeature( QgsFeature( mFeature.layer()->fields() ) );
-
-    mRememberedAttributes.resize( layer->fields().size() );
-    mRememberedAttributes.fill( false );
-  }
-
-  emit layerChanged();
 }
 
 QHash<int, QByteArray> QgsQuickFeatureModel::roleNames() const
@@ -166,7 +148,9 @@ bool QgsQuickFeatureModel::save()
 
   QgsFeature feat = mFeatureLayerPair.feature();
   if ( !mFeatureLayerPair.layer()->updateFeature( feat ) )
-    QgsMessageLog::logMessage( tr( "Cannot update feature" ), QStringLiteral( "QgsQuick" ), Qgis::Warning );
+    QgsMessageLog::logMessage( tr( "Cannot update feature" ),
+                               QStringLiteral( "QgsQuick" ),
+                               Qgis::Warning );
   rv = commit();
 
   if ( rv )
@@ -195,7 +179,9 @@ bool QgsQuickFeatureModel::deleteFeature()
   }
 
   if ( !mFeatureLayerPair.layer()->deleteFeature( mFeatureLayerPair.feature().id() ) )
-    QgsMessageLog::logMessage( tr( "Cannot delete feature" ), QStringLiteral( "QgsQuick" ), Qgis::Warning );
+    QgsMessageLog::logMessage( tr( "Cannot delete feature" ),
+                               QStringLiteral( "QgsQuick" ),
+                               Qgis::Warning );
   rv = commit();
 
   return rv;
@@ -237,15 +223,20 @@ void QgsQuickFeatureModel::resetAttributes()
         QgsExpression exp( fields.at( i ).defaultValueDefinition().expression() );
         exp.prepare( &expressionContext );
         if ( exp.hasParserError() )
-          QgsMessageLog::logMessage( tr( "Default value expression for %1:%2 has parser error: %3" ).arg( mFeatureLayerPair.layer()->name(),
-                                     fields.at( i ).name(), exp.parserErrorString() ), QStringLiteral( "QgsQuick" ),
+          QgsMessageLog::logMessage( tr( "Default value expression for %1:%2 has parser error: %3" ).arg(
+                                       mFeatureLayerPair.layer()->name(),
+                                       fields.at( i ).name(),
+                                       exp.parserErrorString() ),
+                                     QStringLiteral( "QgsQuick" ),
                                      Qgis::Warning );
 
         QVariant value = exp.evaluate( &expressionContext );
 
         if ( exp.hasEvalError() )
-          QgsMessageLog::logMessage( tr( "Default value expression for %1:%2 has evaluation error: %3" ).arg( mFeatureLayerPair.layer()->name(),
-                                     fields.at( i ).name(), exp.evalErrorString() ),
+          QgsMessageLog::logMessage( tr( "Default value expression for %1:%2 has evaluation error: %3" ).arg(
+                                       mFeatureLayerPair.layer()->name(),
+                                       fields.at( i ).name(),
+                                       exp.evalErrorString() ),
                                      QStringLiteral( "QgsQuick" ),
                                      Qgis::Warning );
 
@@ -269,7 +260,9 @@ void QgsQuickFeatureModel::create()
   QgsFeature feat = mFeatureLayerPair.feature();
   if ( !mFeatureLayerPair.layer()->addFeature( feat ) )
   {
-    QgsMessageLog::logMessage( tr( "Feature could not be added" ), QStringLiteral( "QgsQuick" ), Qgis::Critical );
+    QgsMessageLog::logMessage( tr( "Feature could not be added" ),
+                               QStringLiteral( "QgsQuick" ),
+                               Qgis::Critical );
   }
   commit();
 }
@@ -278,7 +271,9 @@ bool QgsQuickFeatureModel::commit()
 {
   if ( !mFeatureLayerPair.layer()->commitChanges() )
   {
-    QgsMessageLog::logMessage( tr( "Could not save changes. Rolling back." ), QStringLiteral( "QgsQuick" ), Qgis::Critical );
+    QgsMessageLog::logMessage( tr( "Could not save changes. Rolling back." ),
+                               QStringLiteral( "QgsQuick" ),
+                               Qgis::Critical );
     mFeatureLayerPair.layer()->rollBack();
     return false;
   }
@@ -296,7 +291,9 @@ bool QgsQuickFeatureModel::startEditing()
 
   if ( !mFeatureLayerPair.layer()->startEditing() )
   {
-    QgsMessageLog::logMessage( tr( "Cannot start editing" ), QStringLiteral( "QgsQuick" ), Qgis::Warning );
+    QgsMessageLog::logMessage( tr( "Cannot start editing" ),
+                               QStringLiteral( "QgsQuick" ),
+                               Qgis::Warning );
     return false;
   }
   else

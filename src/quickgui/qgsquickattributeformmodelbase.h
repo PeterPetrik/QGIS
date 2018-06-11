@@ -105,8 +105,8 @@ class QgsQuickAttributeFormModelBase : public QStandardItemModel
 
     void setConstraintsValid( bool constraintsValid );
 
-    QgsQuickFeatureModel *mFeatureModel = nullptr;
-    QgsVectorLayer *mLayer = nullptr;
+    QgsQuickFeatureModel *mFeatureModel = nullptr; // not owned
+    QgsVectorLayer *mLayer = nullptr; // not owned
     std::unique_ptr<QgsAttributeEditorContainer> mTemporaryContainer;
     bool mHasTabs;
 

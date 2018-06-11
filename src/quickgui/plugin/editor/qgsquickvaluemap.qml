@@ -34,10 +34,6 @@ Item {
 
   height: childrenRect.height + 10 * QgsQuick.Utils.dp
 
-  property var pushChanges: {
-    console.log("push changes")
-  }
-
   ComboBox {
     id: comboBox
 

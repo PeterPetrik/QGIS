@@ -111,6 +111,9 @@ void QgsQuickAttributeFormModelBase::setFeatureModel( QgsQuickFeatureModel *feat
 
 void QgsQuickAttributeFormModelBase::onLayerChanged()
 {
+//  if (mLayer == mFeatureModel->featureLayerPair().layer())
+//      return;
+
   clear();
 
   mLayer = mFeatureModel->featureLayerPair().layer();
@@ -249,8 +252,6 @@ void QgsQuickAttributeFormModelBase::flatten( QgsAttributeEditorContainer *conta
         QgsField field = mLayer->fields().at( fieldIndex );
 
         QStandardItem *item = new QStandardItem();
-
-
         item->setData( mLayer->attributeDisplayName( fieldIndex ), QgsQuickAttributeFormModel::Name );
         item->setData( mFeatureModel->featureLayerPair().feature().attribute( fieldIndex ), QgsQuickAttributeFormModel::AttributeValue );
         item->setData( !mLayer->editFormConfig().readOnly( fieldIndex ), QgsQuickAttributeFormModel::AttributeEditable );

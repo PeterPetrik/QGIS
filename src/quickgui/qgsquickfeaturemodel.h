@@ -131,8 +131,13 @@ class QUICK_EXPORT QgsQuickFeatureModel : public QAbstractListModel
   public slots:
 
   signals:
-    //! Feature changed
+    //!\copydoc QgsQuickFeatureModel::featureLayerPair
     void featureLayerPairChanged();
+
+    /**
+     * Linked with \copydoc QgsQuickFeatureModel::featureLayerPair
+     * omitted only when a new pair with the same layer as previous is assigned to the model.
+     */
     void layerChanged();
 
   protected:
@@ -145,7 +150,6 @@ class QUICK_EXPORT QgsQuickFeatureModel : public QAbstractListModel
     QVector<bool> mRememberedAttributes;
   private:
     void setFeatureOnly( const QgsFeature &featureLayerPair );
-    void setLayer( QgsVectorLayer *layer );
 };
 
 #endif // QGSQUICKFEATUREMODEL_H
