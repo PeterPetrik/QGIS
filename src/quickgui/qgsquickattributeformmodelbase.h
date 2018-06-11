@@ -60,31 +60,55 @@ class QgsQuickAttributeFormModelBase : public QStandardItemModel
     Q_PROPERTY( bool constraintsValid READ constraintsValid NOTIFY constraintsValidChanged )
 
   public:
+    //! Constructor
     explicit QgsQuickAttributeFormModelBase( QObject *parent = nullptr );
+    //! Destructor
     ~QgsQuickAttributeFormModelBase() = default;
 
+    //! Returns the model's role names
     QHash<int, QByteArray> roleNames() const override;
 
+    /**
+     * Sets data to the model.
+     *
+     * \param index QModelIndex indexing position in model.
+     * \param value QVariant a new value
+     * \param role model's role for setData
+     */
     bool setData( const QModelIndex &index, const QVariant &value, int role = Qt::EditRole ) override;
 
+    //! \copydoc QgsQuickAttributeFormModelBase::featureModel
     QgsQuickFeatureModel *featureModel() const;
+    //! \copydoc QgsQuickAttributeFormModelBase::featureModel
     void setFeatureModel( QgsQuickFeatureModel *featureModel );
 
+    //! \copydoc QgsQuickAttributeFormModelBase::hasTabs
     bool hasTabs() const;
+    //! \copydoc QgsQuickAttributeFormModelBase::hasTabs
     void setHasTabs( bool hasTabs );
 
+    //! Saves changes.
     void save();
 
+    //! Creates a new feature.
     void create();
 
+    //! \copydoc QgsQuickAttributeFormModelBase::constraintsValid
     bool constraintsValid() const;
 
+    /**
+     * Gets the value of attribute of the feature in the model.
+     *
+     * \param name QString name of the wanted attribute
+     */
     QVariant attribute( const QString &name ) const;
 
   signals:
+    //! \copydoc QgsQuickAttributeFormModelBase::featureModel
     void featureModelChanged();
+    //! \copydoc QgsQuickAttributeFormModelBase::hasTabs
     void hasTabsChanged();
-    void featureChanged();
+    //! \copydoc QgsQuickAttributeFormModelBase::constraintsValid
     void constraintsValidChanged();
 
   private slots:

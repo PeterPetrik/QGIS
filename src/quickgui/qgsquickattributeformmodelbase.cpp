@@ -111,8 +111,6 @@ void QgsQuickAttributeFormModelBase::setFeatureModel( QgsQuickFeatureModel *feat
 
 void QgsQuickAttributeFormModelBase::onLayerChanged()
 {
-//  if (mLayer == mFeatureModel->featureLayerPair().layer())
-//      return;
 
   clear();
 
