@@ -78,6 +78,9 @@ class CORE_EXPORT QgsColorRampShader : public QgsRasterShaderFunction
      */
     QgsColorRampShader &operator=( const QgsColorRampShader &other );
 
+    //! Clones this shader, return new instance
+    QgsColorRampShader *clone() const SIP_FACTORY;
+
     //An entry for classification based upon value.
     //Such a classification is typically used for
     //single band layers where a pixel value represents

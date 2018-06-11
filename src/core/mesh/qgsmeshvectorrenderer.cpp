@@ -56,11 +56,11 @@ QgsMeshVectorRenderer::QgsMeshVectorRenderer( const QgsTriangularMesh &m,
   , mOutputSize( size )
 {
   auto bounds = std::minmax_element( mDatasetValuesX.constBegin(), mDatasetValuesX.constEnd() );
-  mMinX = *bounds.first;
+  mMinX = *bounds.first; //TODO del
   mMaxX = *bounds.second;
 
   bounds = std::minmax_element( mDatasetValuesY.constBegin(), mDatasetValuesY.constEnd() );
-  mMinY = *bounds.first;
+  mMinY = *bounds.first; //TODO del
   mMaxY = *bounds.second;
 
   bounds = std::minmax_element( mDatasetValuesMag.constBegin(), mDatasetValuesMag.constEnd() );

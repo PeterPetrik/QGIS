@@ -607,6 +607,7 @@ INCLUDE_DIRECTORIES(
   ${CMAKE_SOURCE_DIR}/src/gui/ogr
   ${CMAKE_SOURCE_DIR}/src/gui/processing
   ${CMAKE_SOURCE_DIR}/src/gui/raster
+  ${CMAKE_SOURCE_DIR}/src/gui/mesh
   ${CMAKE_SOURCE_DIR}/src/gui/editorwidgets
   ${CMAKE_SOURCE_DIR}/src/gui/editorwidgets/core
   ${CMAKE_SOURCE_DIR}/src/gui/layertree
@@ -658,6 +659,7 @@ INCLUDE_DIRECTORIES(
   ../core/processing
   ../core/providers/memory
   ../core/raster
+  ../core/mesh
   ../core/scalebar
   ../core/symbology
   ../gui
@@ -666,6 +668,7 @@ INCLUDE_DIRECTORIES(
   ../gui/auth
   ../gui/ogr
   ../gui/raster
+  ../gui/mesh
   ../gui/editorwidgets
   ../gui/editorwidgets/core
   ../gui/layertree

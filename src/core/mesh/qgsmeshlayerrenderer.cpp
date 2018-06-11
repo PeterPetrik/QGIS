@@ -203,29 +203,33 @@ void QgsMeshLayerRenderer::renderMesh( const std::unique_ptr<QgsSymbol> &symbol,
 void QgsMeshLayerRenderer::renderScalarDataset()
 {
   if ( mScalarDatasetValues.isEmpty() )
-    return;
+    return; // activeScalarDataset == NO_ACTIVE_MESH_DATASET
 
-  // do not render if magnitude is outside of the filtered range (if filtering is enabled)
-  double vMin = mRendererScalarSettings.minValue();
-  if ( std::isnan( vMin ) )
-    vMin = *std::min_element( mScalarDatasetValues.constBegin(), mScalarDatasetValues.constEnd() );
+  QgsColorRampShader *fcn;
+  if ( mRendererScalarSettings.colorRampShader() )
+    fcn = mRendererScalarSettings.colorRampShader()->clone();
+  else
+  {
+    double vMin = *std::min_element( mScalarDatasetValues.constBegin(), mScalarDatasetValues.constEnd() );
+    double vMax = *std::max_element( mScalarDatasetValues.constBegin(), mScalarDatasetValues.constEnd() );
 
+    QList<QgsColorRampShader::ColorRampItem> lst;
+    lst << QgsColorRampShader::ColorRampItem( vMin, Qt::blue, QString::number( vMin ) );
+    lst << QgsColorRampShader::ColorRampItem( vMax, Qt::red, QString::number( vMax ) );
 
-  double vMax = mRendererScalarSettings.maxValue();
-  if ( std::isnan( vMax ) )
-    vMax = *std::max_element( mScalarDatasetValues.constBegin(), mScalarDatasetValues.constEnd() );
+    fcn = new QgsColorRampShader( vMin, vMax );
+    fcn->setColorRampItemList( lst );
+  }
 
-  QList<QgsColorRampShader::ColorRampItem> lst;
-  lst << QgsColorRampShader::ColorRampItem( vMin, mRendererScalarSettings.minColor(), QString::number( vMin ) );
-  lst << QgsColorRampShader::ColorRampItem( vMax, mRendererScalarSettings.maxColor(), QString::number( vMax ) );
-
-  QgsColorRampShader *fcn = new QgsColorRampShader( vMin, vMax );
-  fcn->setColorRampItemList( lst );
-  QgsRasterShader *sh = new QgsRasterShader( vMin, vMax );
+  QgsRasterShader *sh = new QgsRasterShader();
   sh->setRasterShaderFunction( fcn );  // takes ownership of fcn
   QgsMeshLayerInterpolator interpolator( mTriangularMesh, mScalarDatasetValues, mScalarDataOnVertices, mContext, mOutputSize );
-  QgsSingleBandPseudoColorRenderer r( &interpolator, 0, sh );  // takes ownership of sh
-  std::unique_ptr<QgsRasterBlock> bl( r.block( 0, mContext.extent(), mOutputSize.width(), mOutputSize.height(), mFeedback.get() ) );
+  QgsSingleBandPseudoColorRenderer renderer( &interpolator, 0, sh );  // takes ownership of sh
+  renderer.setClassificationMin( fcn->minimumValue() );
+  renderer.setClassificationMax( fcn->maximumValue() );
+  renderer.setMinMaxOrigin( mRendererScalarSettings.minMaxOrigin() );
+
+  std::unique_ptr<QgsRasterBlock> bl( renderer.block( 0, mContext.extent(), mOutputSize.width(), mOutputSize.height(), mFeedback.get() ) );
   QImage img = bl->image();
 
   mContext.painter()->drawImage( 0, 0, img );

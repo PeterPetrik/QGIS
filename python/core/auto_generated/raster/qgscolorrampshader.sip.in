@@ -54,6 +54,11 @@ Copy constructor
 %End
 
 
+    QgsColorRampShader *clone() const /Factory/;
+%Docstring
+Clones this shader, return new instance
+%End
+
     struct ColorRampItem
     {
       ColorRampItem();

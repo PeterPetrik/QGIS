@@ -1,7 +1,7 @@
 /***************************************************************************
-                         qgssinglebandpseudocolorrendererwidget.h
-                         ----------------------------------------
-    begin                : February 2012
+                         qgscolorrampshaderwidget.h
+                         --------------------------
+    begin                : Jun 2018 by Peter Petrik
     copyright            : (C) 2012 by Marco Hugentobler
     email                : marco at sourcepole dot ch
  ***************************************************************************/
@@ -15,55 +15,63 @@
  *                                                                         *
  ***************************************************************************/
 
-#ifndef QGSSINGLEBANDCOLORRENDERERWIDGET_H
-#define QGSSINGLEBANDCOLORRENDERERWIDGET_H
+#ifndef QGSCOLORRAMPSHADERWIDGET_H
+#define QGSCOLORRAMPSHADERWIDGET_H
 
-#include "qgsrasterrendererwidget.h"
 #include "qgis_sip.h"
 #include "qgscolorrampshader.h"
 #include "qgsrasterrenderer.h"
-#include "ui_qgssinglebandpseudocolorrendererwidgetbase.h"
+#include "ui_qgscolorrampshaderwidgetbase.h"
 #include "qgis_gui.h"
+#include "qgsrasterrendererwidget.h"
 
-class QgsRasterMinMaxWidget;
+class QgsRasterDataProvider;
 
 /**
  * \ingroup gui
- * \class QgsSingleBandPseudoColorRendererWidget
+ * \class QgsColorRampShaderWidget
+ *
+ * It has 2 ways how to use it. For raster layers, raster data provider and band is assigned and
+ * the Quantile classification mode can be used and the LoadFromBandButton is visible.
+ *
+ * The other mode is used to style mesh layer contours (scalar datasets)
  */
-class GUI_EXPORT QgsSingleBandPseudoColorRendererWidget: public QgsRasterRendererWidget, private Ui::QgsSingleBandPseudoColorRendererWidgetBase
+class GUI_EXPORT QgsColorRampShaderWidget: public QWidget, protected Ui::QgsColorRampShaderWidgetBase
 {
 
     Q_OBJECT
 
   public:
 
-    QgsSingleBandPseudoColorRendererWidget( QgsRasterLayer *layer, const QgsRectangle &extent = QgsRectangle() );
+    QgsColorRampShaderWidget( QWidget *parent = nullptr );
 
-    static QgsRasterRendererWidget *create( QgsRasterLayer *layer, const QgsRectangle &extent ) SIP_FACTORY { return new QgsSingleBandPseudoColorRendererWidget( layer, extent ); }
-    QgsRasterRenderer *renderer() override;
+    void initForUseWithRasterLayer();
+
+    void setRasterBand( QgsRasterDataProvider *dp, int band, const QgsRectangle &extent );
+    void setMinMaxAndClassify( double min, double max );
+    void setMinMax( double min, double max );
 
     //! Returns shared function used in the renderer. Caller takes ownership and deletes it.
-    QgsColorRampShader *shaderFunction() const;
-    void setMapCanvas( QgsMapCanvas *canvas ) override;
-    void doComputations() override;
-    QgsRasterMinMaxWidget *minMaxWidget() override { return mMinMaxWidget; }
+    QgsColorRampShader *shader() const;
+    void setFromShader( const QgsColorRampShader *colorRampShader );
 
-    //! Returns the current raster band number
-    int currentBand() const;
-
-    void setFromRenderer( const QgsRasterRenderer *r );
+  signals:
+    void minMaxChangedFromTree( double min, double max );
+    void widgetChanged();
+    void classificationModeChanged( QgsColorRampShader::ClassificationMode mode );
 
   public slots:
 
     /**
-     * Executes the single band pseudo raster classficiation
+     * Executes the single band pseudo raster classification
      */
     void classify();
-    //! called when new min/max values are loaded
-    void loadMinMax( int bandNo, double min, double max );
+
     //! called when the color ramp tree has changed
     void loadMinMaxFromTree();
+
+  protected:
+    void populateColormapTreeWidget( const QList<QgsColorRampShader::ColorRampItem> &colorRampItems );
 
   private:
 
@@ -73,8 +81,6 @@ class GUI_EXPORT QgsSingleBandPseudoColorRendererWidget: public QgsRasterRendere
       ColorColumn = 1,
       LabelColumn = 2,
     };
-
-    void populateColormapTreeWidget( const QList<QgsColorRampShader::ColorRampItem> &colorRampItems );
 
     /**
      * Generate labels from the values in the color map.
@@ -99,12 +105,12 @@ class GUI_EXPORT QgsSingleBandPseudoColorRendererWidget: public QgsRasterRendere
     void mUnitLineEdit_textEdited( const QString &text ) { Q_UNUSED( text ); autoLabel(); }
     void mColormapTreeWidget_itemDoubleClicked( QTreeWidgetItem *item, int column );
     void mColormapTreeWidget_itemEdited( QTreeWidgetItem *item, int column );
-    void bandChanged();
+    //void bandChanged();
     void mColorInterpolationComboBox_currentIndexChanged( int index );
-    void mMinLineEdit_textChanged( const QString & ) { resetClassifyButton(); }
-    void mMaxLineEdit_textChanged( const QString & ) { resetClassifyButton(); }
-    void mMinLineEdit_textEdited( const QString &text );
-    void mMaxLineEdit_textEdited( const QString &text );
+    //void mMinLineEdit_textChanged( const QString & ) { resetClassifyButton(); }
+    //void mMaxLineEdit_textChanged( const QString & ) { resetClassifyButton(); }
+    //void mMinLineEdit_textEdited( const QString &text );
+    //void mMaxLineEdit_textEdited( const QString &text );
     void mClassificationModeComboBox_currentIndexChanged( int index );
     void changeColor();
     void changeOpacity();
@@ -114,11 +120,15 @@ class GUI_EXPORT QgsSingleBandPseudoColorRendererWidget: public QgsRasterRendere
     void setLineEditValue( QLineEdit *lineEdit, double value );
     double lineEditValue( const QLineEdit *lineEdit ) const;
     void resetClassifyButton();
-    QgsRasterMinMaxWidget *mMinMaxWidget = nullptr;
-    int mMinMaxOrigin;
 
-    void minMaxModified();
+    double mMin = std::numeric_limits<double>::quiet_NaN();
+    double mMax = std::numeric_limits<double>::quiet_NaN();
+
+    // For mode with raster layer
+    QgsRasterDataProvider *mRasterDataProvider = nullptr;
+    int mBand = -1;
+    QgsRectangle mExtent;
+
 };
 
-
-#endif // QGSSINGLEBANDCOLORRENDERERWIDGET_H
+#endif // QGSCOLORRAMPSHADERWIDGET_H
