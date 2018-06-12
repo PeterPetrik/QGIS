@@ -27,8 +27,9 @@ text. See also QgsQuickScaleBarKit.
 A simple panel which can be used for publishing logs messages to a user such as basic information about the application or its status.
 See also QgsQuickMessageLogModel.
 \subsubsection qgsquick_overview_widgets_photocapture PhotoCapture
-The PhotoCapture component is a panel shown while attempting to set external resource attribute for a feature. It activates a camera if is available
-which can be used for capturing a photo and assign it to linked external resource field.
+The PhotoCapture component is a panel shown while attempting to set external resource attribute for a feature in a FeatureForm.
+It activates a camera if is available which can be used for capturing a photo and assign it to linked external resource field.
+Since it is linked with edit field, it should be initialize only within FeatureForm.
 
 \section qgsquick_styling Styling
 

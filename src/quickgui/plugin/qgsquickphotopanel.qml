@@ -28,6 +28,7 @@ Drawer {
   property var fieldItem
 
   property color bgColor: "white"
+  property real bgOpacity: 0.8
   property color borderColor: "black"
 
   // icons:
@@ -46,7 +47,7 @@ Drawer {
 
   background: Rectangle {
     color: photoPanel.bgColor
-    opacity: 0.8
+    opacity: photoPanel.bgOpacity
   }
 
   onVisibleChanged: {

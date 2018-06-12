@@ -28,7 +28,7 @@ import QgsQuick 0.1 as QgsQuick
 
 Item {
   /**
-   * Save form signal
+   * Save form signal.
    */
   signal saved
   /**
@@ -37,18 +37,22 @@ Item {
   signal canceled
 
   /**
-   * AttributeFormModel
+   * AttributeFormModel.
    */
   property QgsQuick.AttributeFormModel model
+
   /**
-   * AttributeFormModel
+   * AttributeFormModel.
    */
   property alias toolbarVisible: toolbar.visible
-  // when adding new feature, add checkbox to be able to save the same value for the next feature as default
+
+  /**
+   * When adding a new feature, add checkbox to be able to save the same value for the next feature as default.
+   */
   property bool allowRememberAttribute: false
 
   /**
-   * Active project
+   * Active project.
    */
   property QgsQuick.Project project
 
@@ -58,17 +62,17 @@ Item {
   property var loadWidgetFn: QgsQuick.Utils.getEditorComponentSource
 
   /**
-   * Icon path for save button
+   * Icon path for save button.
    */
-  property var saveButtonIcon: QgsQuick.Utils.getThemeIcon( "ic_save_white" )
+  property String saveButtonIcon: QgsQuick.Utils.getThemeIcon( "ic_save_white" )
   /**
-   * Icon path for delete button
+   * Icon path for delete button.
    */
-  property var deleteButtonIcon: QgsQuick.Utils.getThemeIcon( "ic_delete_forever_white" )
+  property String deleteButtonIcon: QgsQuick.Utils.getThemeIcon( "ic_delete_forever_white" )
   /**
    * Icon path for close button
    */
-  property var closeButtonIcon: QgsQuick.Utils.getThemeIcon( "ic_clear_white" )
+  property String closeButtonIcon: QgsQuick.Utils.getThemeIcon( "ic_clear_white" )
 
   /**
    * Predefined form styling
@@ -199,7 +203,9 @@ Item {
       }
 
       Repeater {
-        // One page per tab in tabbed forms, 1 page in auto forms
+        /**
+         * One page per tab in tabbed forms, 1 page in auto forms
+         */
         model: form.model.hasTabs ? form.model : 1
 
         Item {
@@ -478,3 +484,4 @@ Item {
     }
   }
 }
+

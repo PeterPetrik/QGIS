@@ -79,7 +79,7 @@ Item {
       height: 36 * QgsQuick.Utils.dp
       text: modelData
       font.weight: comboBox.currentIndex === index ? Font.DemiBold : Font.Normal
-      font.pointSize: 12
+      font.pointSize: 12 * QgsQuick.Utils.dp
       highlighted: comboBox.highlightedIndex == index
     }
 

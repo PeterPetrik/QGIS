@@ -21,7 +21,7 @@
 #include "qgis_quick.h"
 
 class QgsQuickAttributeFormModelBase;
-class QgsQuickFeatureModel;
+class QgsQuickAttributeModel;
 class QVariant;
 
 /**
@@ -44,7 +44,7 @@ class QUICK_EXPORT QgsQuickAttributeFormModel : public QSortFilterProxyModel
     Q_OBJECT
 
     //! Feature model with attributes
-    Q_PROPERTY( QgsQuickFeatureModel *featureModel READ featureModel WRITE setFeatureModel NOTIFY featureModelChanged )
+    Q_PROPERTY( QgsQuickAttributeModel *attributeModel READ attributeModel WRITE setAttributeModel NOTIFY attributeModelChanged )
 
     //! Whether use tabs layout
     Q_PROPERTY( bool hasTabs READ hasTabs WRITE setHasTabs NOTIFY hasTabsChanged )
@@ -84,11 +84,11 @@ class QUICK_EXPORT QgsQuickAttributeFormModel : public QSortFilterProxyModel
     //! \copydoc QgsQuickAttributeFormModel::hasTabs
     void setHasTabs( bool hasTabs );
 
-    //! \copydoc QgsQuickAttributeFormModel::featureModel
-    QgsQuickFeatureModel *featureModel() const;
+    //! \copydoc QgsQuickAttributeFormModel::attributeModel
+    QgsQuickAttributeModel *attributeModel() const;
 
-    //! \copydoc QgsQuickAttributeFormModel::featureModel
-    void setFeatureModel( QgsQuickFeatureModel *featureModel );
+    //! \copydoc QgsQuickAttributeFormModel::attributeModel
+    void setAttributeModel( QgsQuickAttributeModel *attributeModel );
 
     //! \copydoc QgsQuickAttributeFormModel::constraintsValid
     bool constraintsValid() const;
@@ -103,8 +103,8 @@ class QUICK_EXPORT QgsQuickAttributeFormModel : public QSortFilterProxyModel
     Q_INVOKABLE QVariant attribute( const QString &name ) const;
 
   signals:
-    //! \copydoc QgsQuickAttributeFormModel::featureModel
-    void featureModelChanged();
+    //! \copydoc QgsQuickAttributeFormModel::attributeModel
+    void attributeModelChanged();
 
     //! \copydoc QgsQuickAttributeFormModel::hasTabs
     void hasTabsChanged();

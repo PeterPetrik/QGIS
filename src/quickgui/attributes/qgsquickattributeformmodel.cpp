@@ -22,7 +22,7 @@ QgsQuickAttributeFormModel::QgsQuickAttributeFormModel( QObject *parent )
 {
   setSourceModel( mSourceModel );
   connect( mSourceModel, &QgsQuickAttributeFormModelBase::hasTabsChanged, this, &QgsQuickAttributeFormModel::hasTabsChanged );
-  connect( mSourceModel, &QgsQuickAttributeFormModelBase::featureModelChanged, this, &QgsQuickAttributeFormModel::featureModelChanged );
+  connect( mSourceModel, &QgsQuickAttributeFormModelBase::featureModelChanged, this, &QgsQuickAttributeFormModel::attributeModelChanged );
   connect( mSourceModel, &QgsQuickAttributeFormModelBase::constraintsValidChanged, this, &QgsQuickAttributeFormModel::constraintsValidChanged );
 }
 
@@ -36,12 +36,12 @@ void QgsQuickAttributeFormModel::setHasTabs( bool hasTabs )
   mSourceModel->setHasTabs( hasTabs );
 }
 
-QgsQuickFeatureModel *QgsQuickAttributeFormModel::featureModel() const
+QgsQuickAttributeModel *QgsQuickAttributeFormModel::attributeModel() const
 {
   return mSourceModel->featureModel();
 }
 
-void QgsQuickAttributeFormModel::setFeatureModel( QgsQuickFeatureModel *featureModel )
+void QgsQuickAttributeFormModel::setAttributeModel( QgsQuickAttributeModel *featureModel )
 {
   mSourceModel->setFeatureModel( featureModel );
 }

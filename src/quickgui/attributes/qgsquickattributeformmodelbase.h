@@ -34,7 +34,7 @@
 #include "qgsexpressioncontext.h"
 
 #include "qgis_quick.h"
-#include "qgsquickfeaturemodel.h"
+#include "qgsquickattributemodel.h"
 
 class QVariant;
 
@@ -51,7 +51,7 @@ class QgsQuickAttributeFormModelBase : public QStandardItemModel
     Q_OBJECT
 
     //! Feature model with attributes
-    Q_PROPERTY( QgsQuickFeatureModel *featureModel READ featureModel WRITE setFeatureModel NOTIFY featureModelChanged )
+    Q_PROPERTY( QgsQuickAttributeModel *featureModel READ featureModel WRITE setFeatureModel NOTIFY featureModelChanged )
 
     //! Whether use tabs layout
     Q_PROPERTY( bool hasTabs READ hasTabs WRITE setHasTabs NOTIFY hasTabsChanged )
@@ -78,9 +78,9 @@ class QgsQuickAttributeFormModelBase : public QStandardItemModel
     bool setData( const QModelIndex &index, const QVariant &value, int role = Qt::EditRole ) override;
 
     //! \copydoc QgsQuickAttributeFormModelBase::featureModel
-    QgsQuickFeatureModel *featureModel() const;
+    QgsQuickAttributeModel *featureModel() const;
     //! \copydoc QgsQuickAttributeFormModelBase::featureModel
-    void setFeatureModel( QgsQuickFeatureModel *featureModel );
+    void setFeatureModel( QgsQuickAttributeModel *featureModel );
 
     //! \copydoc QgsQuickAttributeFormModelBase::hasTabs
     bool hasTabs() const;
@@ -129,7 +129,7 @@ class QgsQuickAttributeFormModelBase : public QStandardItemModel
 
     void setConstraintsValid( bool constraintsValid );
 
-    QgsQuickFeatureModel *mFeatureModel = nullptr; // not owned
+    QgsQuickAttributeModel *mFeatureModel = nullptr; // not owned
     QgsVectorLayer *mLayer = nullptr; // not owned
     std::unique_ptr<QgsAttributeEditorContainer> mTemporaryContainer;
     bool mHasTabs;

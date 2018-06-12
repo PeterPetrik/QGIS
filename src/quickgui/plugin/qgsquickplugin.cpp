@@ -32,8 +32,8 @@
 
 #include "qgsquickattributeformmodel.h"
 #include "qgsquickattributeformmodelbase.h"
+#include "qgsquickattributemodel.h"
 #include "qgsquickcoordinatetransformer.h"
-#include "qgsquickfeaturemodel.h"
 #include "qgsquickfeaturehighlight.h"
 #include "qgsquickidentifykit.h"
 #include "qgsquickfeaturelayerpair.h"
@@ -72,7 +72,7 @@ void QgsQuickPlugin::registerTypes( const char *uri )
   qmlRegisterType< QgsProject >( uri, 0, 1, "Project" );
   qmlRegisterType< QgsQuickAttributeFormModel >( uri, 0, 1, "AttributeFormModel" );
   qmlRegisterType< QgsQuickCoordinateTransformer >( uri, 0, 1, "CoordinateTransformer" );
-  qmlRegisterType< QgsQuickFeatureModel >( uri, 0, 1, "FeatureModel" );
+  qmlRegisterType< QgsQuickAttributeModel >( uri, 0, 1, "AttributeModel" );
   qmlRegisterType< QgsQuickFeatureHighlight >( uri, 0, 1, "FeatureHighlight" );
   qmlRegisterType< QgsQuickCoordinateTransformer >( uri, 0, 1, "CoordinateTransformer" );
   qmlRegisterType< QgsQuickIdentifyKit >( uri, 0, 1, "IdentifyKit" );

@@ -31,7 +31,7 @@
 #include "qgspointxy.h"
 #include "qgsunittypes.h"
 #include "qgsquickmapsettings.h"
-#include "qgsquickfeaturelayerpair.h"
+#include "attributes/qgsquickfeaturelayerpair.h"
 #include "qgis_quick.h"
 #include "qgscoordinateformatter.h"
 
@@ -152,6 +152,13 @@ class QUICK_EXPORT QgsQuickUtils: public QObject
     Q_INVOKABLE const QUrl getThemeIcon( const QString &name );
 
 
+    /**
+      * Returns QUrl to QML editor component for a feature form.
+      * \param widgetName QString should match of of the supported widgets
+      * otherwise a default textedit edit widget is used.
+      *
+      * \since QGIS 3.4
+      */
     Q_INVOKABLE const QUrl getEditorComponentSource( const QString &widgetName );
 
     /**

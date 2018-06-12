@@ -17,20 +17,20 @@
 #include "qgsmessagelog.h"
 #include "qgsvectorlayer.h"
 
-#include "qgsquickfeaturemodel.h"
+#include "qgsquickattributemodel.h"
 
-QgsQuickFeatureModel::QgsQuickFeatureModel( QObject *parent )
+QgsQuickAttributeModel::QgsQuickAttributeModel( QObject *parent )
   : QAbstractListModel( parent )
 {
-  connect( this, &QgsQuickFeatureModel::modelReset, this, &QgsQuickFeatureModel::featureLayerPairChanged );
+  connect( this, &QgsQuickAttributeModel::modelReset, this, &QgsQuickAttributeModel::featureLayerPairChanged );
 }
 
-QgsQuickFeatureLayerPair QgsQuickFeatureModel::featureLayerPair() const
+QgsQuickFeatureLayerPair QgsQuickAttributeModel::featureLayerPair() const
 {
   return mFeatureLayerPair;
 }
 
-void QgsQuickFeatureModel::setFeatureLayerPair( const QgsQuickFeatureLayerPair &pair )
+void QgsQuickAttributeModel::setFeatureLayerPair( const QgsQuickFeatureLayerPair &pair )
 {
   beginResetModel();
   mFeatureLayerPair = pair;
@@ -44,7 +44,7 @@ void QgsQuickFeatureModel::setFeatureLayerPair( const QgsQuickFeatureLayerPair &
   emit layerChanged();
 }
 
-void QgsQuickFeatureModel::setFeatureOnly( const QgsFeature &feature )
+void QgsQuickAttributeModel::setFeatureOnly( const QgsFeature &feature )
 {
   if ( mFeatureLayerPair.feature() == feature )
     return;
@@ -55,7 +55,7 @@ void QgsQuickFeatureModel::setFeatureOnly( const QgsFeature &feature )
   emit featureLayerPairChanged();
 }
 
-QHash<int, QByteArray> QgsQuickFeatureModel::roleNames() const
+QHash<int, QByteArray> QgsQuickAttributeModel::roleNames() const
 {
   QHash<int, QByteArray> roles = QAbstractListModel::roleNames();
   roles[AttributeName]  = QByteArrayLiteral( "AttributeName" );
@@ -67,7 +67,7 @@ QHash<int, QByteArray> QgsQuickFeatureModel::roleNames() const
 }
 
 
-int QgsQuickFeatureModel::rowCount( const QModelIndex &parent ) const
+int QgsQuickAttributeModel::rowCount( const QModelIndex &parent ) const
 {
   if ( parent.isValid() )
     return 0;
@@ -75,7 +75,7 @@ int QgsQuickFeatureModel::rowCount( const QModelIndex &parent ) const
     return mFeatureLayerPair.feature().attributes().count();
 }
 
-QVariant QgsQuickFeatureModel::data( const QModelIndex &index, int role ) const
+QVariant QgsQuickAttributeModel::data( const QModelIndex &index, int role ) const
 {
   switch ( role )
   {
@@ -99,7 +99,7 @@ QVariant QgsQuickFeatureModel::data( const QModelIndex &index, int role ) const
   return QVariant();
 }
 
-bool QgsQuickFeatureModel::setData( const QModelIndex &index, const QVariant &value, int role )
+bool QgsQuickAttributeModel::setData( const QModelIndex &index, const QVariant &value, int role )
 {
   if ( data( index, role ) == value )
     return true;
@@ -134,7 +134,7 @@ bool QgsQuickFeatureModel::setData( const QModelIndex &index, const QVariant &va
   return false;
 }
 
-bool QgsQuickFeatureModel::save()
+bool QgsQuickAttributeModel::save()
 {
   if ( !mFeatureLayerPair.layer() )
     return false;
@@ -166,7 +166,7 @@ bool QgsQuickFeatureModel::save()
   return rv;
 }
 
-bool QgsQuickFeatureModel::deleteFeature()
+bool QgsQuickAttributeModel::deleteFeature()
 {
   if ( !mFeatureLayerPair.layer() )
     return false;
@@ -187,7 +187,7 @@ bool QgsQuickFeatureModel::deleteFeature()
   return rv;
 }
 
-void QgsQuickFeatureModel::reset()
+void QgsQuickAttributeModel::reset()
 {
   if ( !mFeatureLayerPair.layer() )
     return;
@@ -195,7 +195,7 @@ void QgsQuickFeatureModel::reset()
   mFeatureLayerPair.layer()->rollBack();
 }
 
-bool QgsQuickFeatureModel::suppressFeatureForm() const
+bool QgsQuickAttributeModel::suppressFeatureForm() const
 {
   if ( !mFeatureLayerPair.layer() )
     return false;
@@ -203,7 +203,7 @@ bool QgsQuickFeatureModel::suppressFeatureForm() const
   return mFeatureLayerPair.layer()->editFormConfig().suppress();
 }
 
-void QgsQuickFeatureModel::resetAttributes()
+void QgsQuickAttributeModel::resetAttributes()
 {
   if ( !mFeatureLayerPair.layer() )
     return;
@@ -251,7 +251,7 @@ void QgsQuickFeatureModel::resetAttributes()
   endResetModel();
 }
 
-void QgsQuickFeatureModel::create()
+void QgsQuickAttributeModel::create()
 {
   if ( !mFeatureLayerPair.layer() )
     return;
@@ -267,7 +267,7 @@ void QgsQuickFeatureModel::create()
   commit();
 }
 
-bool QgsQuickFeatureModel::commit()
+bool QgsQuickAttributeModel::commit()
 {
   if ( !mFeatureLayerPair.layer()->commitChanges() )
   {
@@ -283,7 +283,7 @@ bool QgsQuickFeatureModel::commit()
   }
 }
 
-bool QgsQuickFeatureModel::startEditing()
+bool QgsQuickAttributeModel::startEditing()
 {
   // Already an edit session active
   if ( mFeatureLayerPair.layer()->editBuffer() )
@@ -302,7 +302,7 @@ bool QgsQuickFeatureModel::startEditing()
   }
 }
 
-QVector<bool> QgsQuickFeatureModel::rememberedAttributes() const
+QVector<bool> QgsQuickAttributeModel::rememberedAttributes() const
 {
   return mRememberedAttributes;
 }

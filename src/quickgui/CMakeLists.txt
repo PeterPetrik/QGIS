@@ -1,11 +1,11 @@
 ############################################################
 # sources
 SET(QGIS_QUICK_GUI_MOC_HDRS
-  qgsquickattributeformmodel.h
-  qgsquickattributeformmodelbase.h
+  attributes/qgsquickattributeformmodel.h
+  attributes/qgsquickattributeformmodelbase.h
   qgsquickcoordinatetransformer.h
-  qgsquickfeaturelayerpair.h
-  qgsquickfeaturemodel.h
+  attributes/qgsquickfeaturelayerpair.h
+  attributes/qgsquickattributemodel.h
   qgsquickfeaturehighlight.h
   qgsquickidentifykit.h
   qgsquickmapcanvasmap.h
@@ -15,20 +15,21 @@ SET(QGIS_QUICK_GUI_MOC_HDRS
   qgsquickpositionkit.h
   qgsquickscalebarkit.h
   qgsquicksimulatedpositionsource.h
-  qgsquicksubmodel.h
+  attributes/qgsquicksubmodel.h
   qgsquickutils.h
 )
 
 SET(QGIS_QUICK_GUI_HDRS
   qgsquickhighlightsgnode.h
+  attributes/qgsquickfeaturelayerpair.cpp
 )
 
 SET(QGIS_QUICK_GUI_SRC
-  qgsquickattributeformmodel.cpp
-  qgsquickattributeformmodelbase.cpp
+  attributes/qgsquickattributeformmodel.cpp
+  attributes/qgsquickattributeformmodelbase.cpp
   qgsquickcoordinatetransformer.cpp
-  qgsquickfeaturelayerpair.cpp
-  qgsquickfeaturemodel.cpp
+  attributes/qgsquickfeaturelayerpair.cpp
+  attributes/qgsquickattributemodel.cpp
   qgsquickfeaturehighlight.cpp
   qgsquickhighlightsgnode.cpp
   qgsquickidentifykit.cpp
@@ -39,12 +40,14 @@ SET(QGIS_QUICK_GUI_SRC
   qgsquickpositionkit.cpp
   qgsquickscalebarkit.cpp
   qgsquicksimulatedpositionsource.cpp
-  qgsquicksubmodel.cpp
+  attributes/qgsquicksubmodel.cpp
   qgsquickutils.cpp
 )
 
 INCLUDE_DIRECTORIES(
   ${CMAKE_CURRENT_SOURCE_DIR}
+  ${CMAKE_SOURCE_DIR}/src/quickgui/attributes
+
   ${CMAKE_CURRENT_BINARY_DIR}
 
   ${CMAKE_SOURCE_DIR}/src/core

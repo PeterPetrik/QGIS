@@ -149,7 +149,6 @@ const QUrl QgsQuickUtils::getThemeIcon( const QString &name )
   return QUrl( path );
 }
 
-// TODO @vsklencar
 const QUrl QgsQuickUtils::getEditorComponentSource( const QString &widgetName )
 {
   QString path( "qgsquick%1.qml" );

@@ -1,5 +1,5 @@
 /***************************************************************************
- qgsquickfeaturemodel.h
+ QgsQuickAttributeModel.h
   --------------------------------------
   Date                 : 10.12.2014
   Copyright            : (C) 2014 by Matthias Kuhn
@@ -13,8 +13,8 @@
  *                                                                         *
  ***************************************************************************/
 
-#ifndef QGSQUICKFEATUREMODEL_H
-#define QGSQUICKFEATUREMODEL_H
+#ifndef QGSQUICKATTRIBUTEMODEL_H
+#define QGSQUICKATTRIBUTEMODEL_H
 
 #include <QAbstractListModel>
 #include <QVector>
@@ -33,7 +33,7 @@
  *
  * \since QGIS 3.4
  */
-class QUICK_EXPORT QgsQuickFeatureModel : public QAbstractListModel
+class QUICK_EXPORT QgsQuickAttributeModel : public QAbstractListModel
 {
     Q_OBJECT
 
@@ -57,14 +57,14 @@ class QUICK_EXPORT QgsQuickFeatureModel : public QAbstractListModel
     };
 
     //! Creates a new feature model
-    explicit QgsQuickFeatureModel( QObject *parent = 0 );
+    explicit QgsQuickAttributeModel( QObject *parent = 0 );
 
     /**
      * Creates a new feature model
      * \param feat Feature set to model,
      * \param parent Parent object.
      */
-    explicit QgsQuickFeatureModel( const QgsFeature &feat, QObject *parent = 0 );
+    explicit QgsQuickAttributeModel( const QgsFeature &feat, QObject *parent = 0 );
 
     //! List of all role names.
     QHash<int, QByteArray> roleNames() const override;
@@ -122,20 +122,20 @@ class QUICK_EXPORT QgsQuickFeatureModel : public QAbstractListModel
     //! Gets remembered attributes
     QVector<bool> rememberedAttributes() const;
 
-    //!\copydoc QgsQuickFeatureModel::featureLayerPair
+    //!\copydoc QgsQuickAttributeModel::featureLayerPair
     QgsQuickFeatureLayerPair featureLayerPair() const;
 
-    //!\copydoc QgsQuickFeatureModel::featureLayerPair
+    //!\copydoc QgsQuickAttributeModel::featureLayerPair
     void setFeatureLayerPair( const QgsQuickFeatureLayerPair &pair );
 
   public slots:
 
   signals:
-    //!\copydoc QgsQuickFeatureModel::featureLayerPair
+    //!\copydoc QgsQuickAttributeModel::featureLayerPair
     void featureLayerPairChanged();
 
     /**
-     * Linked with \copydoc QgsQuickFeatureModel::featureLayerPair
+     * Linked with \copydoc QgsQuickAttributeModel::featureLayerPair
      * omitted only when a new pair with the same layer as previous is assigned to the model.
      */
     void layerChanged();
@@ -152,4 +152,4 @@ class QUICK_EXPORT QgsQuickFeatureModel : public QAbstractListModel
     void setFeatureOnly( const QgsFeature &featureLayerPair );
 };
 
-#endif // QGSQUICKFEATUREMODEL_H
+#endif // QGSQUICKATTRIBUTEMODEL_H

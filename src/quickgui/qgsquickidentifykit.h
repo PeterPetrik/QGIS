@@ -25,7 +25,7 @@
 #include "qgsrendercontext.h"
 
 #include "qgis_quick.h"
-#include "qgsquickfeaturelayerpair.h"
+#include "attributes/qgsquickfeaturelayerpair.h"
 
 class QgsMapLayer;
 class QgsQuickMapSettings;

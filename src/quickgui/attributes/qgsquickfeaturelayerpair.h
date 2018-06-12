@@ -82,7 +82,7 @@ class QUICK_EXPORT QgsQuickFeatureLayerPair
     //! \copydoc QgsQuickFeatureLayerPair::feature
     QgsFeature feature() const;
 
-    //! Reference to \copydoc QgsQuickFeatureLayerPair::feature
+    //! \copydoc QgsQuickFeatureLayerPair::feature
     QgsFeature &featureRef();
 
     //! \copydoc QgsQuickFeatureLayerPair::valid
