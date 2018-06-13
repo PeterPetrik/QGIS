@@ -40,6 +40,8 @@ class TestQgsQuickUtils: public QObject
     void transformedPoint();
     void formatPoint();
     void formatDistance();
+    void loadIcon();
+    void loadQmlComponent();
 
   private:
     QgsQuickUtils utils;
@@ -123,6 +125,24 @@ void TestQgsQuickUtils::formatDistance()
 
   dist2str = utils.formatDistance( 1.222234, QgsUnitTypes::DistanceKilometers,  2 );
   QVERIFY( dist2str == "1.22 km" );
+}
+
+void TestQgsQuickUtils::loadIcon()
+{
+  QUrl url = utils.getThemeIcon( "ic_save_white" );
+  Q_ASSERT( url.toString() == QStringLiteral( "qrc:/ic_save_white.svg" ) );
+
+  QString fileName = utils.getFileName( url.toString() );
+  Q_ASSERT( fileName == QStringLiteral( "ic_save_white.svg" ) );
+}
+
+void TestQgsQuickUtils::loadQmlComponent()
+{
+  QUrl dummy = utils.getEditorComponentSource( "dummy" );
+  Q_ASSERT( dummy.path() == QStringLiteral( "qgsquicktextedit.qml" ) );
+
+  QUrl valuemap = utils.getEditorComponentSource( "valuemap" );
+  Q_ASSERT( valuemap.path() == QStringLiteral( "qgsquickvaluemap.qml" ) );
 }
 
 QGSTEST_MAIN( TestQgsQuickUtils )

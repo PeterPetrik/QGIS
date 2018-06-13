@@ -28,21 +28,21 @@ import QgsQuick 0.1 as QgsQuick
 
 Item {
   /**
-   * Save form signal.
+   * When feature in the form is saved.
    */
   signal saved
   /**
-   * Close/cancel form signal
+   * When the form is about to be closed by closeButton or deleting a feature.
    */
   signal canceled
 
   /**
-   * AttributeFormModel.
+   * AttributeFormModel binded on a feature supporting auto-generated editor layouts and "tab" layout.
    */
   property QgsQuick.AttributeFormModel model
 
   /**
-   * AttributeFormModel.
+   * Visibility of toolbar.
    */
   property alias toolbarVisible: toolbar.visible
 
@@ -64,15 +64,15 @@ Item {
   /**
    * Icon path for save button.
    */
-  property String saveButtonIcon: QgsQuick.Utils.getThemeIcon( "ic_save_white" )
+  property string saveButtonIcon: QgsQuick.Utils.getThemeIcon( "ic_save_white" )
   /**
    * Icon path for delete button.
    */
-  property String deleteButtonIcon: QgsQuick.Utils.getThemeIcon( "ic_delete_forever_white" )
+  property string deleteButtonIcon: QgsQuick.Utils.getThemeIcon( "ic_delete_forever_white" )
   /**
    * Icon path for close button
    */
-  property String closeButtonIcon: QgsQuick.Utils.getThemeIcon( "ic_clear_white" )
+  property string closeButtonIcon: QgsQuick.Utils.getThemeIcon( "ic_clear_white" )
 
   /**
    * Predefined form styling

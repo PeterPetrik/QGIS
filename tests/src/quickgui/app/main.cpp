@@ -75,6 +75,7 @@ int main( int argc, char *argv[] )
     const QList<QQmlError> errors = component.errors();
     for ( const QQmlError &error : errors )
     {
+      Q_UNUSED( error );
       QgsDebugMsg( error.toString() );
     }
     QgsDebugMsg( QStringLiteral( "****************************************" ) );

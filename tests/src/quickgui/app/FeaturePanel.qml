@@ -23,8 +23,8 @@ Drawer {
   property var project
 
   property alias state: featureForm.state
-  property alias feature: featureModel.featureLayerPair
-  property alias currentFeatureModel: featureModel
+  property alias feature: attributeModel.featureLayerPair
+  property alias currentAttributeModel: attributeModel
 
   id: featurePanel
   visible: false
@@ -44,11 +44,8 @@ Drawer {
     featurePanel.state = state
 
     // visible needs to be after setting correct layer&feature,
-    // so currentFeatureModel is already up to date (required for feature highlight)
+    // so currentAttributeModel is already up to date (required for feature highlight)
     featurePanel.visible = true
-    //        } else {
-    //            QgsQuick.Utils.logMessage("The feature " + layer.name + " has a wrong geometry." , "Qgis test app")
-    //        }
   }
 
   QgsQuick.FeatureForm {
@@ -59,8 +56,8 @@ Drawer {
     height: featurePanel.height
 
     model: QgsQuick.AttributeFormModel {
-      featureModel: QgsQuick.FeatureModel {
-        id: featureModel
+      attributeModel: QgsQuick.AttributeModel {
+        id: attributeModel
       }
     }
 
@@ -78,3 +75,4 @@ Drawer {
   }
 
 }
+
