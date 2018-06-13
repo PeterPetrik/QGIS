@@ -93,7 +93,7 @@ ApplicationWindow {
       width: parent.width
       height: parent.height
       model: QgsQuick.MessageLogModel {}
-      visible: true
+      visible: false
     }
   }
 
@@ -169,6 +169,6 @@ ApplicationWindow {
       edge: Qt.RightEdge
       mapSettings: mapCanvas.mapSettings
       project: __project
-      visible: true
+      visible: false
   }
 }

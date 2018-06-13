@@ -131,9 +131,6 @@ void TestQgsQuickUtils::loadIcon()
 {
   QUrl url = utils.getThemeIcon( "ic_save_white" );
   Q_ASSERT( url.toString() == QStringLiteral( "qrc:/ic_save_white.svg" ) );
-
-  QString fileName = utils.getFileName( url.toString() );
-  Q_ASSERT( fileName == QStringLiteral( "ic_save_white.svg" ) );
 }
 
 void TestQgsQuickUtils::loadQmlComponent()
