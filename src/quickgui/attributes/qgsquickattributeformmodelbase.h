@@ -1,5 +1,5 @@
 /***************************************************************************
- qgsquickfeaturemodelbase.h
+ qgsquickattributemodelbase.h
   --------------------------------------
   Date                 : 16.8.2016
   Copyright            : (C) 2016 by Matthias Kuhn
@@ -51,7 +51,7 @@ class QgsQuickAttributeFormModelBase : public QStandardItemModel
     Q_OBJECT
 
     //! Feature model with attributes
-    Q_PROPERTY( QgsQuickAttributeModel *featureModel READ featureModel WRITE setFeatureModel NOTIFY featureModelChanged )
+    Q_PROPERTY( QgsQuickAttributeModel *attributeModel READ attributeModel WRITE setAttributeModel NOTIFY attributeModelChanged )
 
     //! Whether use tabs layout
     Q_PROPERTY( bool hasTabs READ hasTabs WRITE setHasTabs NOTIFY hasTabsChanged )
@@ -77,10 +77,10 @@ class QgsQuickAttributeFormModelBase : public QStandardItemModel
      */
     bool setData( const QModelIndex &index, const QVariant &value, int role = Qt::EditRole ) override;
 
-    //! \copydoc QgsQuickAttributeFormModelBase::featureModel
-    QgsQuickAttributeModel *featureModel() const;
-    //! \copydoc QgsQuickAttributeFormModelBase::featureModel
-    void setFeatureModel( QgsQuickAttributeModel *featureModel );
+    //! \copydoc QgsQuickAttributeFormModelBase::attributeModel
+    QgsQuickAttributeModel *attributeModel() const;
+    //! \copydoc QgsQuickAttributeFormModelBase::attributeModel
+    void setAttributeModel( QgsQuickAttributeModel *attributeModel );
 
     //! \copydoc QgsQuickAttributeFormModelBase::hasTabs
     bool hasTabs() const;
@@ -104,8 +104,8 @@ class QgsQuickAttributeFormModelBase : public QStandardItemModel
     QVariant attribute( const QString &name ) const;
 
   signals:
-    //! \copydoc QgsQuickAttributeFormModelBase::featureModel
-    void featureModelChanged();
+    //! \copydoc QgsQuickAttributeFormModelBase::attributeModel
+    void attributeModelChanged();
     //! \copydoc QgsQuickAttributeFormModelBase::hasTabs
     void hasTabsChanged();
     //! \copydoc QgsQuickAttributeFormModelBase::constraintsValid
@@ -129,7 +129,7 @@ class QgsQuickAttributeFormModelBase : public QStandardItemModel
 
     void setConstraintsValid( bool constraintsValid );
 
-    QgsQuickAttributeModel *mFeatureModel = nullptr; // not owned
+    QgsQuickAttributeModel *mAttributeModel = nullptr; // not owned
     QgsVectorLayer *mLayer = nullptr; // not owned
     std::unique_ptr<QgsAttributeEditorContainer> mTemporaryContainer;
     bool mHasTabs;

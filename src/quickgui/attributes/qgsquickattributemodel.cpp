@@ -1,5 +1,5 @@
 /***************************************************************************
- qgsquickfeaturemodel.cpp
+ qgsquickattributemodel.cpp
   --------------------------------------
   Date                 : 10.12.2014
   Copyright            : (C) 2014 by Matthias Kuhn

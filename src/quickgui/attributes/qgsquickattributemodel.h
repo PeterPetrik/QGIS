@@ -29,7 +29,7 @@
  * \ingroup quick
  * Item model implementation for attributes of QgsFeature: each attribute gets a row in the model.
  *
- * \note QML Type: FeatureModel
+ * \note QML Type: AttributeModel
  *
  * \since QGIS 3.4
  */

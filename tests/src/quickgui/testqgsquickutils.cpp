@@ -41,6 +41,7 @@ class TestQgsQuickUtils: public QObject
     void formatPoint();
     void formatDistance();
     void loadIcon();
+    void fileExists();
     void loadQmlComponent();
 
   private:
@@ -131,7 +132,17 @@ void TestQgsQuickUtils::loadIcon()
 {
   QUrl url = utils.getThemeIcon( "ic_save_white" );
   Q_ASSERT( url.toString() == QStringLiteral( "qrc:/ic_save_white.svg" ) );
+
+  QString fileName = utils.getFileName( url.toString() );
+  Q_ASSERT( fileName == QStringLiteral( "ic_save_white.svg" ) );
 }
+
+void TestQgsQuickUtils::fileExists()
+{
+    QString path = QStringLiteral( TEST_DATA_DIR ) + "/quickapp_project.qgs";
+    Q_ASSERT(utils.fileExists(path));
+}
+
 
 void TestQgsQuickUtils::loadQmlComponent()
 {

@@ -84,6 +84,20 @@ double QgsQuickUtils::screenUnitsToMeters( QgsQuickMapSettings *mapSettings, int
   return mDistanceArea.measureLine( p1, p2 );
 }
 
+bool QgsQuickUtils::fileExists( QString path )
+{
+  QFileInfo check_file( path );
+  // check if file exists and if yes: Is it really a file and no directory?
+  return ( check_file.exists() && check_file.isFile() );
+}
+
+QString QgsQuickUtils::getFileName( QString path )
+{
+  QFileInfo fileInfo( path );
+  QString filename( fileInfo.fileName() );
+  return filename;
+}
+
 void QgsQuickUtils::logMessage( const QString &message, const QString &tag, Qgis::MessageLevel level )
 {
   QgsMessageLog::logMessage( message, tag, level );

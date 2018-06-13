@@ -419,7 +419,7 @@ Item {
 
         text:
         {
-          var currentLayer = model.featureModel.feature.layer
+          var currentLayer = model.attributeModel.feature.layer
           var layerName = 'N/A'
           if (!!currentLayer)
             layerName = currentLayer.name
@@ -474,7 +474,7 @@ Item {
     icon: StandardIcon.Warning
     standardButtons: StandardButton.Ok | StandardButton.Cancel
     onAccepted: {
-      model.featureModel.deleteFeature()
+      model.attributeModel.deleteFeature()
       visible = false
 
       form.canceled()

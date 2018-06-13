@@ -31,7 +31,7 @@
 #include "qgspointxy.h"
 #include "qgsunittypes.h"
 #include "qgsquickmapsettings.h"
-#include "attributes/qgsquickfeaturelayerpair.h"
+#include "qgsquickfeaturelayerpair.h"
 #include "qgis_quick.h"
 #include "qgscoordinateformatter.h"
 
@@ -117,6 +117,12 @@ class QUICK_EXPORT QgsQuickUtils: public QObject
       * Calculates the distance in meter representing baseLengthPixels pixels on the screen based on the current map settings.
       */
     Q_INVOKABLE static double screenUnitsToMeters( QgsQuickMapSettings *mapSettings, int baseLengthPixels );
+
+    //! Check if file on path exists
+    Q_INVOKABLE bool fileExists( QString path );
+
+    //! Extract filename from path
+    Q_INVOKABLE QString getFileName( QString path );
 
     /**
       * Log message in QgsMessageLog
