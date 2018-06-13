@@ -139,8 +139,8 @@ void TestQgsQuickUtils::loadIcon()
 
 void TestQgsQuickUtils::fileExists()
 {
-    QString path = QStringLiteral( TEST_DATA_DIR ) + "/quickapp_project.qgs";
-    Q_ASSERT(utils.fileExists(path));
+  QString path = QStringLiteral( TEST_DATA_DIR ) + "/quickapp_project.qgs";
+  Q_ASSERT( utils.fileExists( path ) );
 }
 
 
