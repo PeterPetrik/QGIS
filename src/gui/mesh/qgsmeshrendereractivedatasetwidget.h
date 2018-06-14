@@ -1,5 +1,5 @@
 /***************************************************************************
-    qgsmeshrendererscalarsettingswidget.h
+    qgsmeshrendereractivedatasetwidget.h
     -------------------------------------
     begin                : June 2018
     copyright            : (C) 2018 by Peter Petrik
@@ -13,10 +13,10 @@
  *                                                                         *
  ***************************************************************************/
 
-#ifndef QGSMESHRENDERERSCALARSETTINGSWIDGET_H
-#define QGSMESHRENDERERSCALARSETTINGSWIDGET_H
+#ifndef QGSMESHRENDERERACTIVEDATASETWIDGET_H
+#define QGSMESHRENDERERACTIVEDATASETWIDGET_H
 
-#include "ui_qgsmeshrendererscalarsettingswidgetbase.h"
+#include "ui_qgsmeshrendereractivedatasetwidgetbase.h"
 
 #include <QObject>
 #include <QDialog>
@@ -31,7 +31,7 @@ class QgsMeshLayer;
  * \ingroup gui
  * \class QgsMeshRendererScalarSettingsWidget
  */
-class GUI_EXPORT QgsMeshRendererScalarSettingsWidget : public QWidget, private Ui::QgsMeshRendererScalarSettingsWidgetBase
+class GUI_EXPORT QgsMeshRendererActiveDatasetWidget : public QWidget, private Ui::QgsMeshRendererActiveDatasetWidgetBase
 {
     Q_OBJECT
 
@@ -41,34 +41,38 @@ class GUI_EXPORT QgsMeshRendererScalarSettingsWidget : public QWidget, private U
      * A widget to hold the renderer scalar settings for a mesh layer.
      * \param parent Parent object
      */
-    QgsMeshRendererScalarSettingsWidget( QWidget *parent = nullptr );
-    ~QgsMeshRendererScalarSettingsWidget();
+    QgsMeshRendererActiveDatasetWidget( QWidget *parent = nullptr );
+    ~QgsMeshRendererActiveDatasetWidget();
 
     void setLayer( QgsMeshLayer *layer );
-
-    QgsMeshRendererScalarSettings settings() const;
+    int activeScalarDataset() const;
+    int activeVectorDataset() const;
+    bool meshRenderingOn() const;
+    bool triangularMeshRenderingOn() const;
 
   signals:
+    void activeScalarDatasetChanged( int index );
+    void activeVectorDatasetChanged( int index );
+    void meshRenderingOnChanged( bool on );
+    void triangularMeshRenderingOnChange( bool on );
+
     void widgetChanged();
 
-  public slots:
-    void setActiveDataset( int activeDataset );
-
   private slots:
-    void refreshAfterStyleChanged();
-    void syncToLayer();
+    void onActiveGroupChanged();
+    void onActiveDatasetChanged( int value );
+    void onScalarChecked( int toggle );
+    void onVectorChecked( int toggle );
+    void onMeshChecked( int toggle );
+    void onTringularMeshChecked( int toggle );
 
-    void minMaxChanged();
-    void minMaxEdited();
-    void recalculateMinMaxButtonClicked();
+    void updateMetadata( int datasetIndex );
 
   private:
-    double lineEditValue( const QLineEdit *lineEdit ) const;
-    void calcMinMax( int datasetIndex, double &min, double &max ) const;
+    int datasetIndex() const;
+    void syncToLayer();
 
     QgsMeshLayer *mMeshLayer = nullptr;
-
-    int mActiveDataset = -1;
 };
 
 #endif // QGSMESHRENDERERSCALARSETTINGSWIDGET_H

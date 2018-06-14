@@ -29,15 +29,6 @@ QgsMeshRendererScalarSettingsWidget::QgsMeshRendererScalarSettingsWidget( QWidge
   : QWidget( parent )
 
 {
-  /*
-  mMeshLayer = qobject_cast<QgsMeshLayer *>( layer );
-  if ( !mMeshLayer )
-    return;
-
-  if ( !mMapCanvas )
-    return;
-  */
-
   setupUi( this );
 
   connect( mScalarRecalculateMinMaxButton, &QPushButton::clicked, this, &QgsMeshRendererScalarSettingsWidget::recalculateMinMaxButtonClicked );
@@ -50,9 +41,9 @@ QgsMeshRendererScalarSettingsWidget::QgsMeshRendererScalarSettingsWidget( QWidge
 
 }
 
-void QgsMeshRendererScalarSettingsWidget::setLayer(QgsMeshLayer *layer)
+void QgsMeshRendererScalarSettingsWidget::setLayer( QgsMeshLayer *layer )
 {
-  if (layer != mMeshLayer)
+  if ( layer != mMeshLayer )
   {
     mMeshLayer = layer;
     syncToLayer();
@@ -67,15 +58,6 @@ QgsMeshRendererScalarSettings QgsMeshRendererScalarSettingsWidget::settings() co
   return settings;
 }
 
-int QgsMeshRendererScalarSettingsWidget::currentDataset() const
-{
-  if ( mScalarDatasetNoLineEdit->text().isEmpty() )
-  {
-    return -1;
-  }
-
-  return mScalarDatasetNoLineEdit->text().toInt();
-}
 
 QgsMeshRendererScalarSettingsWidget::~QgsMeshRendererScalarSettingsWidget() = default;
 
@@ -84,7 +66,6 @@ void QgsMeshRendererScalarSettingsWidget::syncToLayer( )
   if ( !mMeshLayer )
     return;
 
-  whileBlocking( mScalarDatasetNoLineEdit )->setText( QString::number( mMeshLayer->activeScalarDataset() ) );
   if ( mMeshLayer->rendererScalarSettings().colorRampShader() )
   {
     whileBlocking( mScalarMinLineEdit )->setText( QString::number( mMeshLayer->rendererScalarSettings().colorRampShader()->minimumValue() ) );
@@ -120,10 +101,15 @@ void QgsMeshRendererScalarSettingsWidget::minMaxEdited()
 void QgsMeshRendererScalarSettingsWidget::recalculateMinMaxButtonClicked()
 {
   double min, max;
-  calcMinMax( currentDataset(), min, max );
+  calcMinMax( mActiveDataset, min, max );
   whileBlocking( mScalarMinLineEdit )->setText( QString::number( min ) );
   whileBlocking( mScalarMaxLineEdit )->setText( QString::number( max ) );
   mScalarColorRampShaderWidget->setMinMaxAndClassify( min, max );
+}
+
+void QgsMeshRendererScalarSettingsWidget::setActiveDataset( int activeDataset )
+{
+  mActiveDataset = activeDataset;
 }
 
 void QgsMeshRendererScalarSettingsWidget::calcMinMax( int datasetIndex, double &min, double &max ) const

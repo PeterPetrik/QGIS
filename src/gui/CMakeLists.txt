@@ -1,6 +1,8 @@
 SET(QGIS_GUI_SRCS
   mesh/qgsrenderermeshpropertieswidget.cpp
   mesh/qgsmeshrendererscalarsettingswidget.cpp
+  mesh/qgsmeshrendereractivedatasetwidget.cpp
+  mesh/qgsmeshdatasetgrouptree.cpp
 
   raster/qgscolorrampshaderwidget.cpp
   raster/qgsmultibandcolorrendererwidget.cpp
@@ -547,6 +549,8 @@ SET(QGIS_GUI_MOC_HDRS
 
   mesh/qgsrenderermeshpropertieswidget.h
   mesh/qgsmeshrendererscalarsettingswidget.h
+  mesh/qgsmeshrendereractivedatasetwidget.h
+  mesh/qgsmeshdatasetgrouptree.h
 
   raster/qgscolorrampshaderwidget.h
   raster/qgsmultibandcolorrendererwidget.h

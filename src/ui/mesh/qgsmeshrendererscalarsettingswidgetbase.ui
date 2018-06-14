@@ -15,31 +15,6 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_3">
-     <item>
-      <widget class="QLabel" name="mScalarDatasetNoLabel">
-       <property name="text">
-        <string>Scalar Dataset #</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLineEdit" name="mScalarDatasetNoLineEdit">
-       <property name="text">
-        <string>0</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLabel" name="mDatasetNameLabel">
-       <property name="text">
-        <string/>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
-   <item>
     <layout class="QHBoxLayout" name="horizontalLayout_2">
      <item>
       <widget class="QLabel" name="mScalarMinLabel">
@@ -49,9 +24,9 @@
       </widget>
      </item>
      <item>
-      <widget class="QLineEdit" name="mScalarMaxLineEdit">
+      <widget class="QLineEdit" name="mScalarMinLineEdit">
        <property name="text">
-        <string>1</string>
+        <string>0</string>
        </property>
       </widget>
      </item>
@@ -63,9 +38,9 @@
       </widget>
      </item>
      <item>
-      <widget class="QLineEdit" name="mScalarMinLineEdit">
+      <widget class="QLineEdit" name="mScalarMaxLineEdit">
        <property name="text">
-        <string>0</string>
+        <string>1</string>
        </property>
       </widget>
      </item>

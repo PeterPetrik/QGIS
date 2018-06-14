@@ -1,6 +1,6 @@
 /***************************************************************************
-    qgsmeshrendererscalarsettingswidget.h
-    -------------------------------------
+    qgsmeshdatasetgrouptree.h
+    -------------------------
     begin                : June 2018
     copyright            : (C) 2018 by Peter Petrik
     email                : zilolv at gmail dot com
@@ -13,25 +13,22 @@
  *                                                                         *
  ***************************************************************************/
 
-#ifndef QGSMESHRENDERERSCALARSETTINGSWIDGET_H
-#define QGSMESHRENDERERSCALARSETTINGSWIDGET_H
-
-#include "ui_qgsmeshrendererscalarsettingswidgetbase.h"
+#ifndef QGSMESHDATASETGROUPTREE_H
+#define QGSMESHDATASETGROUPTREE_H
 
 #include <QObject>
-#include <QDialog>
-#include <QLineEdit>
+#include <QTreeWidget>
 #include "qgis_gui.h"
-#include <memory>
-#include "qgsmeshrenderersettings.h"
+#include <QMap>
+#include <QVector>
 
 class QgsMeshLayer;
 
 /**
  * \ingroup gui
- * \class QgsMeshRendererScalarSettingsWidget
+ * \class QgsMeshDatasetGroupTree
  */
-class GUI_EXPORT QgsMeshRendererScalarSettingsWidget : public QWidget, private Ui::QgsMeshRendererScalarSettingsWidgetBase
+class GUI_EXPORT QgsMeshDatasetGroupTree : public QTreeWidget
 {
     Q_OBJECT
 
@@ -41,34 +38,26 @@ class GUI_EXPORT QgsMeshRendererScalarSettingsWidget : public QWidget, private U
      * A widget to hold the renderer scalar settings for a mesh layer.
      * \param parent Parent object
      */
-    QgsMeshRendererScalarSettingsWidget( QWidget *parent = nullptr );
-    ~QgsMeshRendererScalarSettingsWidget();
+    QgsMeshDatasetGroupTree( QWidget *parent = nullptr );
+    ~QgsMeshDatasetGroupTree();
 
     void setLayer( QgsMeshLayer *layer );
 
-    QgsMeshRendererScalarSettings settings() const;
+    QVector<int> datasetsInActiveGroup() const;
 
   signals:
-    void widgetChanged();
-
-  public slots:
-    void setActiveDataset( int activeDataset );
+    //! Datasets in active/selected group changed
+    void activeGroupChanged();
 
   private slots:
-    void refreshAfterStyleChanged();
-    void syncToLayer();
-
-    void minMaxChanged();
-    void minMaxEdited();
-    void recalculateMinMaxButtonClicked();
+    void onSelectionChanged( QTreeWidgetItem *current, QTreeWidgetItem *previous );
 
   private:
-    double lineEditValue( const QLineEdit *lineEdit ) const;
-    void calcMinMax( int datasetIndex, double &min, double &max ) const;
+    void repopulateTree();
 
     QgsMeshLayer *mMeshLayer = nullptr;
-
-    int mActiveDataset = -1;
+    QMap<QString, QVector<int>> mGroups; // value-> dataset numbers
+    QString mActiveGroup = QString();
 };
 
 #endif // QGSMESHRENDERERSCALARSETTINGSWIDGET_H

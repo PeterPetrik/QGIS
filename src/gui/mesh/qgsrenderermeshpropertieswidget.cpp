@@ -25,6 +25,9 @@
 #include "qgsmessagelog.h"
 #include "qgsmeshrendererscalarsettingswidget.h"
 
+#include "qgsmeshdatasetgrouptree.h"
+#include "qgsmeshrendereractivedatasetwidget.h"
+
 QgsRendererMeshPropertiesWidget::QgsRendererMeshPropertiesWidget( QgsMapLayer *layer, QgsMapCanvas *canvas, QWidget *parent )
   : QgsMapLayerConfigWidget( layer, canvas, parent )
 
@@ -37,8 +40,15 @@ QgsRendererMeshPropertiesWidget::QgsRendererMeshPropertiesWidget( QgsMapLayer *l
     return;
 
   setupUi( this );
+
+  mMeshRendererActiveDatasetWidget->setLayer( mMeshLayer );
   mMeshRendererScalarSettingsWidget->setLayer( mMeshLayer );
+
+  connect( mMeshRendererActiveDatasetWidget, &QgsMeshRendererActiveDatasetWidget::widgetChanged, this, &QgsPanelWidget::widgetChanged );
   connect( mMeshRendererScalarSettingsWidget, &QgsMeshRendererScalarSettingsWidget::widgetChanged, this, &QgsPanelWidget::widgetChanged );
+
+  connect( mMeshRendererActiveDatasetWidget, &QgsMeshRendererActiveDatasetWidget::activeScalarDatasetChanged,
+           mMeshRendererScalarSettingsWidget, &QgsMeshRendererScalarSettingsWidget::setActiveDataset );
 }
 
 QgsRendererMeshPropertiesWidget::~QgsRendererMeshPropertiesWidget() = default;
@@ -48,7 +58,34 @@ void QgsRendererMeshPropertiesWidget::apply()
   if ( !mMeshLayer )
     return;
 
-  QgsMeshRendererScalarSettings settings = mMeshRendererScalarSettingsWidget->settings();
-  mMeshLayer->setActiveScalarDataset( mMeshRendererScalarSettingsWidget->currentDataset() ); // bands are numbered from 1, datasets from 0
-  mMeshLayer->setRendererScalarSettings( settings );
+  // MESH
+  bool meshRenderingIsEnabled = mMeshRendererActiveDatasetWidget->meshRenderingOn();
+  QgsMeshRendererMeshSettings meshSettings = mMeshLayer->rendererNativeMeshSettings();
+  meshSettings.setEnabled( meshRenderingIsEnabled );
+  whileBlocking( mMeshLayer )->setRendererNativeMeshSettings( meshSettings );
+
+  // TRIANGULAR MESH
+  bool triangularMeshRenderingIsEnabled = mMeshRendererActiveDatasetWidget->triangularMeshRenderingOn();
+  QgsMeshRendererMeshSettings triangularMeshSettings = mMeshLayer->rendererTriangularMeshSettings();
+  triangularMeshSettings.setEnabled( triangularMeshRenderingIsEnabled );
+  whileBlocking( mMeshLayer )->setRendererTriangularMeshSettings( triangularMeshSettings );
+
+  // SCALAR
+  int activeScalarDatasetIndex = mMeshRendererActiveDatasetWidget->activeScalarDataset();
+  whileBlocking( mMeshLayer )->setActiveScalarDataset( activeScalarDatasetIndex );
+  if ( activeScalarDatasetIndex != -1 )
+  {
+    QgsMeshRendererScalarSettings settings = mMeshRendererScalarSettingsWidget->settings();
+    whileBlocking( mMeshLayer )->setRendererScalarSettings( settings );
+  }
+
+  // VECTOR
+  int activeVectorDatasetIndex = mMeshRendererActiveDatasetWidget->activeVectorDataset();
+  whileBlocking( mMeshLayer )->setActiveVectorDataset( activeVectorDatasetIndex );
+  if ( activeVectorDatasetIndex != -1 )
+  {
+    //TODO take settings from widget
+  }
+
+  mMeshLayer->triggerRepaint();
 }
