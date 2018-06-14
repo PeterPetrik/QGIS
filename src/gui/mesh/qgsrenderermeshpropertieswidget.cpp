@@ -43,12 +43,20 @@ QgsRendererMeshPropertiesWidget::QgsRendererMeshPropertiesWidget( QgsMapLayer *l
 
   mMeshRendererActiveDatasetWidget->setLayer( mMeshLayer );
   mMeshRendererScalarSettingsWidget->setLayer( mMeshLayer );
+  mNativeMeshSettingsWidget->setLayer( mMeshLayer, false );
+  mTriangularMeshSettingsWidget->setLayer( mMeshLayer, true );
 
   connect( mMeshRendererActiveDatasetWidget, &QgsMeshRendererActiveDatasetWidget::widgetChanged, this, &QgsPanelWidget::widgetChanged );
   connect( mMeshRendererScalarSettingsWidget, &QgsMeshRendererScalarSettingsWidget::widgetChanged, this, &QgsPanelWidget::widgetChanged );
 
   connect( mMeshRendererActiveDatasetWidget, &QgsMeshRendererActiveDatasetWidget::activeScalarDatasetChanged,
            mMeshRendererScalarSettingsWidget, &QgsMeshRendererScalarSettingsWidget::setActiveDataset );
+
+  connect( mNativeMeshSettingsWidget, &QgsMeshRendererMeshSettingsWidget::widgetChanged,
+           this, &QgsPanelWidget::widgetChanged );
+
+  connect( mTriangularMeshSettingsWidget, &QgsMeshRendererMeshSettingsWidget::widgetChanged,
+           this, &QgsPanelWidget::widgetChanged );
 }
 
 QgsRendererMeshPropertiesWidget::~QgsRendererMeshPropertiesWidget() = default;
@@ -60,13 +68,13 @@ void QgsRendererMeshPropertiesWidget::apply()
 
   // MESH
   bool meshRenderingIsEnabled = mMeshRendererActiveDatasetWidget->meshRenderingOn();
-  QgsMeshRendererMeshSettings meshSettings = mMeshLayer->rendererNativeMeshSettings();
+  QgsMeshRendererMeshSettings meshSettings = mNativeMeshSettingsWidget->settings();
   meshSettings.setEnabled( meshRenderingIsEnabled );
   whileBlocking( mMeshLayer )->setRendererNativeMeshSettings( meshSettings );
 
   // TRIANGULAR MESH
   bool triangularMeshRenderingIsEnabled = mMeshRendererActiveDatasetWidget->triangularMeshRenderingOn();
-  QgsMeshRendererMeshSettings triangularMeshSettings = mMeshLayer->rendererTriangularMeshSettings();
+  QgsMeshRendererMeshSettings triangularMeshSettings = mTriangularMeshSettingsWidget->settings();
   triangularMeshSettings.setEnabled( triangularMeshRenderingIsEnabled );
   whileBlocking( mMeshLayer )->setRendererTriangularMeshSettings( triangularMeshSettings );
 

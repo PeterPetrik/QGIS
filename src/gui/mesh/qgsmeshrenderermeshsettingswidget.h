@@ -1,5 +1,5 @@
 /***************************************************************************
-    qgsmeshrendererscalarsettingswidget.h
+    qgsmeshrenderermeshsettingswidget.h
     -------------------------------------
     begin                : June 2018
     copyright            : (C) 2018 by Peter Petrik
@@ -13,10 +13,10 @@
  *                                                                         *
  ***************************************************************************/
 
-#ifndef QGSMESHRENDERERSCALARSETTINGSWIDGET_H
-#define QGSMESHRENDERERSCALARSETTINGSWIDGET_H
+#ifndef QGSMESHRENDERERMESHSETTINGSWIDGET_H
+#define QGSMESHRENDERERMESHSETTINGSWIDGET_H
 
-#include "ui_qgsmeshrendererscalarsettingswidgetbase.h"
+#include "ui_qgsmeshrenderermeshsettingswidgetbase.h"
 
 #include <QObject>
 #include <QDialog>
@@ -29,46 +29,37 @@ class QgsMeshLayer;
 
 /**
  * \ingroup gui
- * \class QgsMeshRendererScalarSettingsWidget
+ * \class QgsMeshRendererMeshSettingsWidget
  */
-class GUI_EXPORT QgsMeshRendererScalarSettingsWidget : public QWidget, private Ui::QgsMeshRendererScalarSettingsWidgetBase
+class GUI_EXPORT QgsMeshRendererMeshSettingsWidget : public QWidget, private Ui::QgsMeshRendererMeshSettingsWidgetBase
 {
     Q_OBJECT
 
   public:
 
     /**
-     * A widget to hold the renderer scalar settings for a mesh layer.
+     * A widget to hold the renderer Mesh settings for a mesh layer.
      * \param parent Parent object
      */
-    QgsMeshRendererScalarSettingsWidget( QWidget *parent = nullptr );
-    ~QgsMeshRendererScalarSettingsWidget();
+    QgsMeshRendererMeshSettingsWidget( QWidget *parent = nullptr );
+    ~QgsMeshRendererMeshSettingsWidget();
 
-    void setLayer( QgsMeshLayer *layer );
+    void setLayer( QgsMeshLayer *layer, bool isTriangularMesh );
 
-    QgsMeshRendererScalarSettings settings() const;
+    QgsMeshRendererMeshSettings settings() const;
 
   signals:
     void widgetChanged();
-
-  public slots:
-    void setActiveDataset( int activeDatase );
 
   private slots:
     void refreshAfterStyleChanged();
     void syncToLayer();
 
-    void minMaxChanged();
-    void minMaxEdited();
-    void recalculateMinMaxButtonClicked();
+    void onWidthChanged( double value );
 
   private:
-    double lineEditValue( const QLineEdit *lineEdit ) const;
-    void calcMinMax( int datasetIndex, double &min, double &max ) const;
-
     QgsMeshLayer *mMeshLayer = nullptr;
-
-    int mActiveDataset = -1;
+    bool mIsTriangularMesh = true;
 };
 
-#endif // QGSMESHRENDERERSCALARSETTINGSWIDGET_H
+#endif // QGSMESHRENDERERMESHSETTINGSWIDGET_H

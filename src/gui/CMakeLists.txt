@@ -1,6 +1,8 @@
 SET(QGIS_GUI_SRCS
   mesh/qgsrenderermeshpropertieswidget.cpp
+  mesh/qgsmeshrenderermeshsettingswidget.cpp
   mesh/qgsmeshrendererscalarsettingswidget.cpp
+  mesh/qgsmeshrenderervectorsettingswidget.cpp
   mesh/qgsmeshrendereractivedatasetwidget.cpp
   mesh/qgsmeshdatasetgrouptree.cpp
 
@@ -548,7 +550,9 @@ SET(QGIS_GUI_MOC_HDRS
   ogr/qgsvectorlayersaveasdialog.h
 
   mesh/qgsrenderermeshpropertieswidget.h
+  mesh/qgsmeshrenderermeshsettingswidget.h
   mesh/qgsmeshrendererscalarsettingswidget.h
+  mesh/qgsmeshrenderervectorsettingswidget.h
   mesh/qgsmeshrendereractivedatasetwidget.h
   mesh/qgsmeshdatasetgrouptree.h
 

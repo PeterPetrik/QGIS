@@ -1,5 +1,5 @@
 /***************************************************************************
-    qgsmeshrendererscalarsettingswidget.h
+    qgsmeshrenderervectorsettingswidget.h
     -------------------------------------
     begin                : June 2018
     copyright            : (C) 2018 by Peter Petrik
@@ -13,10 +13,10 @@
  *                                                                         *
  ***************************************************************************/
 
-#ifndef QGSMESHRENDERERSCALARSETTINGSWIDGET_H
-#define QGSMESHRENDERERSCALARSETTINGSWIDGET_H
+#ifndef QGSMESHRENDERERVECTORSETTINGSWIDGET_H
+#define QGSMESHRENDERERVECTORSETTINGSWIDGET_H
 
-#include "ui_qgsmeshrendererscalarsettingswidgetbase.h"
+#include "ui_qgsmeshrenderervectorsettingswidgetbase.h"
 
 #include <QObject>
 #include <QDialog>
@@ -29,46 +29,39 @@ class QgsMeshLayer;
 
 /**
  * \ingroup gui
- * \class QgsMeshRendererScalarSettingsWidget
+ * \class QgsMeshRendererVectorSettingsWidget
  */
-class GUI_EXPORT QgsMeshRendererScalarSettingsWidget : public QWidget, private Ui::QgsMeshRendererScalarSettingsWidgetBase
+class GUI_EXPORT QgsMeshRendererVectorSettingsWidget : public QWidget, private Ui::QgsMeshRendererVectorSettingsWidgetBase
 {
     Q_OBJECT
 
   public:
 
     /**
-     * A widget to hold the renderer scalar settings for a mesh layer.
+     * A widget to hold the renderer Vector settings for a mesh layer.
      * \param parent Parent object
      */
-    QgsMeshRendererScalarSettingsWidget( QWidget *parent = nullptr );
-    ~QgsMeshRendererScalarSettingsWidget();
+    QgsMeshRendererVectorSettingsWidget( QWidget *parent = nullptr );
+    ~QgsMeshRendererVectorSettingsWidget();
 
     void setLayer( QgsMeshLayer *layer );
 
-    QgsMeshRendererScalarSettings settings() const;
+    QgsMeshRendererVectorSettings settings() const;
 
   signals:
     void widgetChanged();
 
   public slots:
-    void setActiveDataset( int activeDatase );
+    void setActiveDataset( int activeDataset );
 
   private slots:
     void refreshAfterStyleChanged();
     void syncToLayer();
 
-    void minMaxChanged();
-    void minMaxEdited();
-    void recalculateMinMaxButtonClicked();
-
   private:
-    double lineEditValue( const QLineEdit *lineEdit ) const;
-    void calcMinMax( int datasetIndex, double &min, double &max ) const;
-
     QgsMeshLayer *mMeshLayer = nullptr;
 
     int mActiveDataset = -1;
 };
 
-#endif // QGSMESHRENDERERSCALARSETTINGSWIDGET_H
+#endif // QGSMESHRENDERERVECTORSETTINGSWIDGET_H
