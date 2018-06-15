@@ -1,6 +1,6 @@
 /***************************************************************************
   main.qml
-  --------------------------------------
+  --------
   Date                 : Nov 2017
   Copyright            : (C) 2017 by Peter Petrik
   Email                : zilolv at gmail dot com
@@ -21,21 +21,15 @@ ApplicationWindow {
   id: window
   visible: true
   visibility: "Maximized"
-  title: qsTr("QGIS Quick Test App")
+  title: "QGIS Quick Test App"
 
-    // Some info
-    Button {
-        id: logbutton
-        text: "Log"
-        onClicked: logPanel.visible = true
-        z: 1
-    }
-
-    Label {
-        text: positionMarker.gpsPositionLabel
-        z: 1
-        x: logbutton.width + 10
-    }
+  // Some info
+  Button {
+    id: logbutton
+    text: "Log"
+    onClicked: logPanel.visible = true
+    z: 1
+  }
 
   QgsQuick.MapCanvas {
     id: mapCanvas
@@ -57,11 +51,7 @@ ApplicationWindow {
       var res = identifyKit.identifyOne(screenPoint);
       highlight.featureLayerPair = res
       if (res.valid)
-      {
-        featurePanel.show_panel(
-              res,
-              "Edit" )
-      }
+        featurePanel.show_panel(res, "Edit" )
     }
   }
 
@@ -80,7 +70,7 @@ ApplicationWindow {
     modal: true
     interactive: true
     height: window.height
-    width: QgsQuick.Utils.dp * 700
+    width: 700 * QgsQuick.Utils.dp
     edge: Qt.RightEdge
     z: 2 // make sure items from here are on top of the Z-order
 
@@ -93,7 +83,6 @@ ApplicationWindow {
       width: parent.width
       height: parent.height
       model: QgsQuick.MessageLogModel {}
-      visible: false
     }
   }
 
@@ -163,12 +152,12 @@ ApplicationWindow {
   }
 
   FeaturePanel {
-      id: featurePanel
-      height: window.height
-      width: QgsQuick.Utils.dp * 700
-      edge: Qt.RightEdge
-      mapSettings: mapCanvas.mapSettings
-      project: __project
-      visible: false
+    id: featurePanel
+    height: window.height
+    width: 700 * QgsQuick.Utils.dp
+    edge: Qt.RightEdge
+    mapSettings: mapCanvas.mapSettings
+    project: __project
+    visible: false
   }
 }

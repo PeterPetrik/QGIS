@@ -57,13 +57,13 @@ class QUICK_EXPORT QgsQuickAttributeFormModel : public QSortFilterProxyModel
     //! Feature fields's roles
     enum FeatureRoles
     {
-      ElementType = Qt::UserRole + 1, //!< Element type
+      ElementType = Qt::UserRole + 1, //!< User role used to identify either "field" or "container" type of item
       Name, //!< Field Name
       AttributeValue, //!< Field Value
-      AttributeEditable,  //!< Field editable
-      EditorWidget, //!< Widget
-      EditorWidgetConfig, //!< Config
-      RememberValue, //!< Remember value
+      AttributeEditable,  //!< Whether is field editable
+      EditorWidget, //!< Widget type to represent the data (text field, value map, ...)
+      EditorWidgetConfig, //!< Widget configuration
+      RememberValue, //!< Remember value (default value for next feature)
       Field, //!< Field
       FieldIndex, //!< Index
       Group, //!< Group

@@ -147,10 +147,10 @@ void TestQgsQuickUtils::fileExists()
 void TestQgsQuickUtils::loadQmlComponent()
 {
   QUrl dummy = utils.getEditorComponentSource( "dummy" );
-  Q_ASSERT( dummy.path() == QStringLiteral( "qgsquicktextedit.qml" ) );
+  Q_ASSERT( dummy.path() == QString( "qgsquicktextedit.qml" ) );
 
   QUrl valuemap = utils.getEditorComponentSource( "valuemap" );
-  Q_ASSERT( valuemap.path() == QStringLiteral( "qgsquickvaluemap.qml" ) );
+  Q_ASSERT( valuemap.path() == QString( "qgsquickvaluemap.qml" ) );
 }
 
 QGSTEST_MAIN( TestQgsQuickUtils )

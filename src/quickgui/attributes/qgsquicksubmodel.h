@@ -16,8 +16,8 @@
 #define QGSQUICKSUBMODEL_H
 
 #include "qgis_quick.h"
-#include <QAbstractItemModel>
 #include "qgsquickattributeformmodel.h"
+#include <QAbstractItemModel>
 
 /**
  * \ingroup quick
@@ -44,25 +44,12 @@ class QUICK_EXPORT QgsQuickSubModel : public QAbstractItemModel
     //! Creates new sub model
     QgsQuickSubModel( QObject *parent = nullptr );
 
-    //! Returns the index of the item in the model specified by the given row, column and parent index.
     QModelIndex index( int row, int column, const QModelIndex &parent ) const override;
-
-    //! Returns the parent of the model item with the given index. If the item has no parent, an invalid QModelIndex is returned.
     QModelIndex parent( const QModelIndex &child ) const override;
-
-    //! Returns the number of rows under the given parent. Returns 0 on invalid mModel
     int rowCount( const QModelIndex &parent ) const override;
-
-    //! Returns the number of columns under the given parent. Returns 0 on invalid mModel
     int columnCount( const QModelIndex &parent ) const override;
-
-    //! Returns the data stored under the given role for the item referred to by the index. Returns empty QVariant on invalid mModel
     QVariant data( const QModelIndex &index, int role ) const override;
-
-    //! Sets the role data for the item at index to value.
     bool setData( const QModelIndex &index, const QVariant &value, int role = Qt::EditRole ) override;
-
-    //! Returns the mModel's role names. Returns empty QHash on invalid mModel
     QHash<int, QByteArray> roleNames() const override;
 
     //! \copydoc QgsQuickSubModel::model

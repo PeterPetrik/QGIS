@@ -32,16 +32,30 @@ QgsQuickFeatureLayerPair QgsQuickAttributeModel::featureLayerPair() const
 
 void QgsQuickAttributeModel::setFeatureLayerPair( const QgsQuickFeatureLayerPair &pair )
 {
+  bool fChanged = mFeatureLayerPair.feature() != pair.feature();
+  bool lChanged = mFeatureLayerPair.layer() != pair.layer();
+
+  if ( !fChanged &&  lChanged )
+    return;
+
   beginResetModel();
   mFeatureLayerPair = pair;
-  endResetModel();
-  if ( mFeatureLayerPair.layer() )
+
+  if ( lChanged )
   {
-    mRememberedAttributes.resize( mFeatureLayerPair.layer()->fields().size() );
-    mRememberedAttributes.fill( false );
+    if ( mFeatureLayerPair.layer() )
+    {
+      mRememberedAttributes.resize( mFeatureLayerPair.layer()->fields().size() );
+      mRememberedAttributes.fill( false );
+    }
+    else
+    {
+      mRememberedAttributes.clear();
+    }
   }
+  endResetModel();
+
   emit featureLayerPairChanged();
-  emit layerChanged();
 }
 
 void QgsQuickAttributeModel::setFeatureOnly( const QgsFeature &feature )
@@ -52,6 +66,7 @@ void QgsQuickAttributeModel::setFeatureOnly( const QgsFeature &feature )
   beginResetModel();
   mFeatureLayerPair = QgsQuickFeatureLayerPair( feature, mFeatureLayerPair.layer() );
   endResetModel();
+
   emit featureLayerPairChanged();
 }
 

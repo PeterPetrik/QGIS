@@ -92,26 +92,23 @@ void QgsQuickAttributeFormModelBase::setAttributeModel( QgsQuickAttributeModel *
 
   if ( mAttributeModel )
   {
-    disconnect( mAttributeModel, &QgsQuickAttributeModel::layerChanged, this, &QgsQuickAttributeFormModelBase::onLayerChanged );
-    disconnect( mAttributeModel, &QgsQuickAttributeModel::featureLayerPairChanged, this, &QgsQuickAttributeFormModelBase::onFeatureChanged );
-    disconnect( mAttributeModel, &QgsQuickAttributeModel::modelReset, this, &QgsQuickAttributeFormModelBase::onFeatureChanged );
+    disconnect( mAttributeModel, &QgsQuickAttributeModel::featureLayerPairChanged, this, &QgsQuickAttributeFormModelBase::onFeatureLayerChanged );
+    disconnect( mAttributeModel, &QgsQuickAttributeModel::modelReset, this, &QgsQuickAttributeFormModelBase::onFeatureLayerChanged );
   }
 
   mAttributeModel = attributeModel;
 
   if ( mAttributeModel )
   {
-    connect( mAttributeModel, &QgsQuickAttributeModel::layerChanged, this, &QgsQuickAttributeFormModelBase::onLayerChanged );
-    connect( mAttributeModel, &QgsQuickAttributeModel::featureLayerPairChanged, this, &QgsQuickAttributeFormModelBase::onFeatureChanged );
-    connect( mAttributeModel, &QgsQuickAttributeModel::modelReset, this, &QgsQuickAttributeFormModelBase::onFeatureChanged );
+    connect( mAttributeModel, &QgsQuickAttributeModel::featureLayerPairChanged, this, &QgsQuickAttributeFormModelBase::onFeatureLayerChanged );
+    connect( mAttributeModel, &QgsQuickAttributeModel::modelReset, this, &QgsQuickAttributeFormModelBase::onFeatureLayerChanged );
   }
 
   emit attributeModelChanged();
 }
 
-void QgsQuickAttributeFormModelBase::onLayerChanged()
+void QgsQuickAttributeFormModelBase::onFeatureLayerChanged()
 {
-
   clear();
 
   mLayer = mAttributeModel->featureLayerPair().layer();
@@ -168,10 +165,8 @@ void QgsQuickAttributeFormModelBase::onLayerChanged()
 
     mExpressionContext = mLayer->createExpressionContext();
   }
-}
 
-void QgsQuickAttributeFormModelBase::onFeatureChanged()
-{
+  //now update feature
   for ( int i = 0 ; i < invisibleRootItem()->rowCount(); ++i )
   {
     updateAttributeValue( invisibleRootItem()->child( i ) );

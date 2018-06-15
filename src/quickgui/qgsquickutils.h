@@ -118,10 +118,16 @@ class QUICK_EXPORT QgsQuickUtils: public QObject
       */
     Q_INVOKABLE static double screenUnitsToMeters( QgsQuickMapSettings *mapSettings, int baseLengthPixels );
 
-    //! Check if file on path exists
+    /**
+      * Returns whether file on path exists
+      * \since QGIS 3.4
+      */
     Q_INVOKABLE bool fileExists( QString path );
 
-    //! Extract filename from path
+    /**
+     * Extracts filename from path
+     * \since QGIS 3.4
+     */
     Q_INVOKABLE QString getFileName( QString path );
 
     /**
@@ -148,9 +154,9 @@ class QUICK_EXPORT QgsQuickUtils: public QObject
     Q_INVOKABLE const QUrl getThemeIcon( const QString &name );
 
     /**
-      * Returns QUrl to QML editor component for a feature form.
-      * \param widgetName QString should match of of the supported widgets
-      * otherwise a default textedit edit widget is used.
+      * Returns url to field editor component for a feature form.
+      * If the widgetName does not match any supported widget, text edit is returned.
+      * \param widgetName name of the attribute field widget
       *
       * \since QGIS 3.4
       */

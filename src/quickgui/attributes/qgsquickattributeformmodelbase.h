@@ -64,17 +64,7 @@ class QgsQuickAttributeFormModelBase : public QStandardItemModel
     explicit QgsQuickAttributeFormModelBase( QObject *parent = nullptr );
     //! Destructor
     ~QgsQuickAttributeFormModelBase() = default;
-
-    //! Returns the model's role names
     QHash<int, QByteArray> roleNames() const override;
-
-    /**
-     * Sets data to the model.
-     *
-     * \param index QModelIndex indexing position in model.
-     * \param value QVariant a new value
-     * \param role model's role for setData
-     */
     bool setData( const QModelIndex &index, const QVariant &value, int role = Qt::EditRole ) override;
 
     //! \copydoc QgsQuickAttributeFormModelBase::attributeModel
@@ -87,17 +77,17 @@ class QgsQuickAttributeFormModelBase : public QStandardItemModel
     //! \copydoc QgsQuickAttributeFormModelBase::hasTabs
     void setHasTabs( bool hasTabs );
 
-    //! Saves changes.
+    //! Saves changes
     void save();
 
-    //! Creates a new feature.
+    //! Creates a new feature
     void create();
 
     //! \copydoc QgsQuickAttributeFormModelBase::constraintsValid
     bool constraintsValid() const;
 
     /**
-     * Gets the value of attribute of the feature in the model.
+     * Gets the value of attribute of the feature in the model
      *
      * \param name QString name of the wanted attribute
      */
@@ -112,34 +102,28 @@ class QgsQuickAttributeFormModelBase : public QStandardItemModel
     void constraintsValidChanged();
 
   private slots:
-    void onLayerChanged();
-    void onFeatureChanged();
+    void onFeatureLayerChanged();
 
   private:
 
     QgsAttributeEditorContainer *generateRootContainer() const;  //#spellok
-
     QgsAttributeEditorContainer *invisibleRootContainer() const;
-
     void updateAttributeValue( QStandardItem *item );
-
     void flatten( QgsAttributeEditorContainer *container, QStandardItem *parent, const QString &parentVisibilityExpressions, QVector<QStandardItem *> &items );
-
     void updateVisibility( int fieldIndex = -1 );
-
     void setConstraintsValid( bool constraintsValid );
 
     QgsQuickAttributeModel *mAttributeModel = nullptr; // not owned
     QgsVectorLayer *mLayer = nullptr; // not owned
     std::unique_ptr<QgsAttributeEditorContainer> mTemporaryContainer;
-    bool mHasTabs;
+    bool mHasTabs = false;
 
     typedef QPair<QgsExpression, QVector<QStandardItem *> > VisibilityExpression;
     QList<VisibilityExpression> mVisibilityExpressions;
     QMap<QStandardItem *, QgsExpression> mConstraints;
 
     QgsExpressionContext mExpressionContext;
-    bool mConstraintsValid;
+    bool mConstraintsValid = false;
 };
 
 /// @endcond

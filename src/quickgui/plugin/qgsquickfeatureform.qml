@@ -419,7 +419,7 @@ Item {
 
         text:
         {
-          var currentLayer = model.attributeModel.feature.layer
+          var currentLayer = model.attributeModel.featureLayerPair.layer
           var layerName = 'N/A'
           if (!!currentLayer)
             layerName = currentLayer.name

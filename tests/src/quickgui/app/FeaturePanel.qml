@@ -1,6 +1,6 @@
 /***************************************************************************
   FeaturePanel.qml
-  --------------------------------------
+  ----------------
   Date                 : Nov 2017
   Copyright            : (C) 2017 by Peter Petrik
   Email                : zilolv at gmail dot com
@@ -38,13 +38,8 @@ Drawer {
   }
 
   function show_panel(feature, state) {
-    //if (QgsQuick.Utils.hasValidGeometry(layer, feature)) {
-    // layer needs to be set before the feature otherwise the panel ends up empty on layer change
     featurePanel.feature = feature
     featurePanel.state = state
-
-    // visible needs to be after setting correct layer&feature,
-    // so currentAttributeModel is already up to date (required for feature highlight)
     featurePanel.visible = true
   }
 

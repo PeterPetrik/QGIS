@@ -71,7 +71,6 @@ void QgsQuickPlugin::registerTypes( const char *uri )
 
   qmlRegisterType< QgsProject >( uri, 0, 1, "Project" );
   qmlRegisterType< QgsQuickAttributeFormModel >( uri, 0, 1, "AttributeFormModel" );
-  qmlRegisterType< QgsQuickCoordinateTransformer >( uri, 0, 1, "CoordinateTransformer" );
   qmlRegisterType< QgsQuickAttributeModel >( uri, 0, 1, "AttributeModel" );
   qmlRegisterType< QgsQuickFeatureHighlight >( uri, 0, 1, "FeatureHighlight" );
   qmlRegisterType< QgsQuickCoordinateTransformer >( uri, 0, 1, "CoordinateTransformer" );
@@ -83,11 +82,8 @@ void QgsQuickPlugin::registerTypes( const char *uri )
   qmlRegisterType< QgsQuickPositionKit >( uri, 0, 1, "PositionKit" );
   qmlRegisterType< QgsQuickScaleBarKit >( uri, 0, 1, "ScaleBarKit" );
   qmlRegisterType< QgsQuickSubModel >( uri, 0, 1, "SubModel" );
-  qmlRegisterType< QgsRelationManager >( uri, 0, 1, "RelationManager" );
   qmlRegisterType< QgsVectorLayer >( uri, 0, 1, "VectorLayer" );
 
   qmlRegisterSingletonType< QgsQuickUtils >( uri, 0, 1, "Utils", _utilsProvider );
-
-  qmlRegisterUncreatableType< QgsMessageLog >( uri, 0, 1, "QgsMessageLog", "Expose MessageLevel" );
 }
 

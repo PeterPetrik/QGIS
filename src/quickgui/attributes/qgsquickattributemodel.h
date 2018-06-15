@@ -27,7 +27,18 @@
 
 /**
  * \ingroup quick
- * Item model implementation for attributes of QgsFeature: each attribute gets a row in the model.
+ *
+ * Basic item model for attributes of QgsFeature associated
+ * from feature layer pair. Each attribute of the feature
+ * gets a row in the model. Also supports CRUD operations
+ * related to layer and feature pair.
+ *
+ * On top of the QgsFeature attibutes, support for "remember"
+ * attribute is added. Remember attribute is used for
+ * quick addition of the multiple features to the same layer.
+ * A new feature can use "remembered" attribute values from
+ * the last feature added.
+ *
  *
  * \note QML Type: AttributeModel
  *
@@ -38,7 +49,7 @@ class QUICK_EXPORT QgsQuickAttributeModel : public QAbstractListModel
     Q_OBJECT
 
     /**
-     * QgsQuickFeature in the model.
+     * QgsQuickFeatureLayerPair for the model. Input for attributes model.
      */
     Q_PROPERTY( QgsQuickFeatureLayerPair featureLayerPair READ featureLayerPair WRITE setFeatureLayerPair NOTIFY featureLayerPairChanged )
 
@@ -56,35 +67,20 @@ class QUICK_EXPORT QgsQuickAttributeModel : public QAbstractListModel
       RememberAttribute                  //!< Remember attribute value for next feature
     };
 
-    //! Creates a new feature model
-    explicit QgsQuickAttributeModel( QObject *parent = 0 );
+    //! Creates a new feature attribute model
+    explicit QgsQuickAttributeModel( QObject *parent = nullptr );
 
     /**
-     * Creates a new feature model
-     * \param feat Feature set to model,
+     * Creates a new feature attribute model
+     * \param feat Feature set to model
      * \param parent Parent object.
      */
-    explicit QgsQuickAttributeModel( const QgsFeature &feat, QObject *parent = 0 );
+    explicit QgsQuickAttributeModel( const QgsFeature &feat, QObject *parent = nullptr );
 
-    //! List of all role names.
+
     QHash<int, QByteArray> roleNames() const override;
-
-    //! Equals to number of feature attributes.
     int rowCount( const QModelIndex &parent ) const override;
-
-    /**
-     * Returns model data according params.
-     * \param index Index in the model.
-     * \param role Feature role.
-     */
     QVariant data( const QModelIndex &index, int role ) const override;
-
-    /**
-     * Sets data to the model according params.
-     * \param index Index in the model
-     * \param value QVariant value
-     * \param role Feature role.
-     */
     bool setData( const QModelIndex &index, const QVariant &value, int role = Qt::EditRole ) override;
 
     /**
@@ -106,7 +102,7 @@ class QUICK_EXPORT QgsQuickAttributeModel : public QAbstractListModel
      */
     Q_INVOKABLE void reset();
 
-    //! Adds mFeature to mLayer
+    //! Adds feature from featureLayerPair to the layer
     Q_INVOKABLE void create();
 
     /**
@@ -133,12 +129,6 @@ class QUICK_EXPORT QgsQuickAttributeModel : public QAbstractListModel
   signals:
     //!\copydoc QgsQuickAttributeModel::featureLayerPair
     void featureLayerPairChanged();
-
-    /**
-     * Linked with \copydoc QgsQuickAttributeModel::featureLayerPair
-     * omitted only when a new pair with the same layer as previous is assigned to the model.
-     */
-    void layerChanged();
 
   protected:
     //! Commits model changes
