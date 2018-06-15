@@ -47,13 +47,14 @@ class GUI_EXPORT QgsMeshRendererMeshSettingsWidget : public QWidget, private Ui:
     void setLayer( QgsMeshLayer *layer, bool isTriangularMesh );
 
     QgsMeshRendererMeshSettings settings() const;
+    void syncToLayer();
 
   signals:
     void widgetChanged();
 
   private slots:
     void refreshAfterStyleChanged();
-    void syncToLayer();
+
 
     void onWidthChanged( double value );
 

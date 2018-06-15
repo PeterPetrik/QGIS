@@ -49,6 +49,7 @@ class GUI_EXPORT QgsMeshRendererActiveDatasetWidget : public QWidget, private Ui
     int activeVectorDataset() const;
     bool meshRenderingOn() const;
     bool triangularMeshRenderingOn() const;
+    void syncToLayer();
 
   signals:
     void activeScalarDatasetChanged( int index );
@@ -70,7 +71,7 @@ class GUI_EXPORT QgsMeshRendererActiveDatasetWidget : public QWidget, private Ui
 
   private:
     int datasetIndex() const;
-    void syncToLayer();
+
 
     QgsMeshLayer *mMeshLayer = nullptr;
 };

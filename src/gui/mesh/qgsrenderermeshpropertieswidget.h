@@ -48,6 +48,7 @@ class GUI_EXPORT QgsRendererMeshPropertiesWidget : public QgsMapLayerConfigWidge
 
   public slots:
     void apply() override;
+    void syncToLayer();
 
   private:
     QgsMeshLayer *mMeshLayer = nullptr;

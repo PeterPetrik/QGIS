@@ -48,6 +48,8 @@ class GUI_EXPORT QgsMeshRendererScalarSettingsWidget : public QWidget, private U
 
     QgsMeshRendererScalarSettings settings() const;
 
+    void syncToLayer();
+
   signals:
     void widgetChanged();
 
@@ -56,7 +58,7 @@ class GUI_EXPORT QgsMeshRendererScalarSettingsWidget : public QWidget, private U
 
   private slots:
     void refreshAfterStyleChanged();
-    void syncToLayer();
+
 
     void minMaxChanged();
     void minMaxEdited();

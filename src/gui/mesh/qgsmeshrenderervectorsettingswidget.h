@@ -48,6 +48,8 @@ class GUI_EXPORT QgsMeshRendererVectorSettingsWidget : public QWidget, private U
 
     QgsMeshRendererVectorSettings settings() const;
 
+    void syncToLayer();
+
   signals:
     void widgetChanged();
 
@@ -56,7 +58,7 @@ class GUI_EXPORT QgsMeshRendererVectorSettingsWidget : public QWidget, private U
 
   private slots:
     void refreshAfterStyleChanged();
-    void syncToLayer();
+
 
   private:
 

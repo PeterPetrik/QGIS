@@ -100,3 +100,12 @@ void QgsRendererMeshPropertiesWidget::apply()
 
   mMeshLayer->triggerRepaint();
 }
+
+void QgsRendererMeshPropertiesWidget::syncToLayer()
+{
+  mMeshRendererActiveDatasetWidget->syncToLayer();
+  mMeshRendererScalarSettingsWidget->syncToLayer();
+  mNativeMeshSettingsWidget->syncToLayer();
+  mTriangularMeshSettingsWidget->syncToLayer();
+  mMeshRendererVectorSettingsWidget->syncToLayer();
+}

@@ -230,6 +230,7 @@ Q_GUI_EXPORT extern int qt_defaultDpiX();
 #include "qgsmessagebar.h"
 #include "qgsmessagebaritem.h"
 #include "qgsmeshlayer.h"
+#include "qgsmeshlayerproperties.h"
 #include "qgsmemoryproviderutils.h"
 #include "qgsmimedatautils.h"
 #include "qgsmessagelog.h"
@@ -13036,6 +13037,19 @@ void QgisApp::showLayerProperties( QgsMapLayer *mapLayer )
     {
       rasterLayerPropertiesDialog->deleteLater();
     } );
+  }
+  else if ( mapLayer->type() == QgsMapLayer::MeshLayer )
+  {
+    QgsMeshLayerProperties *meshLayerPropertiesDialog = new QgsMeshLayerProperties( mapLayer, mMapCanvas, this );
+    mMapStyleWidget->blockUpdates( true );
+    if ( meshLayerPropertiesDialog->exec() )
+    {
+      activateDeactivateLayerRelatedActions( mapLayer );
+      mMapStyleWidget->updateCurrentWidgetLayer();
+    }
+    mMapStyleWidget->blockUpdates( false );
+
+    delete meshLayerPropertiesDialog; // delete since dialog cannot be reused without updating code
   }
   else if ( mapLayer->type() == QgsMapLayer::VectorLayer ) // VECTOR
   {

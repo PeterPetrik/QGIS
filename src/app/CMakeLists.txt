@@ -209,6 +209,8 @@ SET(QGIS_APP_SRCS
   qgssettingstree.cpp
   qgsvariantdelegate.cpp
   qgscrashhandler.cpp
+
+  mesh/qgsmeshlayerproperties.cpp
 )
 
 SET (QGIS_APP_MOC_HDRS
@@ -408,6 +410,8 @@ SET (QGIS_APP_MOC_HDRS
 
   qgssettingstree.h
   qgsvariantdelegate.h
+
+  mesh/qgsmeshlayerproperties.h
   )
 
 
@@ -582,6 +586,7 @@ INCLUDE_DIRECTORIES(
   ${CMAKE_SOURCE_DIR}/src/app/pluginmanager
   ${CMAKE_SOURCE_DIR}/src/app/gps
   ${CMAKE_SOURCE_DIR}/src/app/dwg
+  ${CMAKE_SOURCE_DIR}/src/app/mesh
   ${CMAKE_SOURCE_DIR}/src/app/locator
   ${CMAKE_SOURCE_DIR}/src/analysis/raster
   ${CMAKE_SOURCE_DIR}/src/core
