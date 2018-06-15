@@ -88,9 +88,6 @@ void QgsMeshRendererActiveDatasetWidget::onActiveGroupChanged()
   mDatasetSlider->setMinimum( 0 );
   mDatasetSlider->setMaximum( datasets.size() - 1 );
   mDatasetSlider->setValue( 0 );
-
-  qDebug() << "Size" << datasets.size() - 1;
-
 }
 
 void QgsMeshRendererActiveDatasetWidget::onActiveDatasetChanged( int value )

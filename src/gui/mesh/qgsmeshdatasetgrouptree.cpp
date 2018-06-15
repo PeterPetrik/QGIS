@@ -22,6 +22,7 @@ QgsMeshDatasetGroupTree::QgsMeshDatasetGroupTree( QWidget *parent )
   : QTreeWidget( parent )
 
 {
+  setHeaderLabel( tr( "Datasets" ) );
   setColumnCount( 1 );
   connect( this, &QTreeWidget::currentItemChanged, this, &QgsMeshDatasetGroupTree::onSelectionChanged );
 }

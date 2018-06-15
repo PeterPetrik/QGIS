@@ -45,16 +45,18 @@ QgsRendererMeshPropertiesWidget::QgsRendererMeshPropertiesWidget( QgsMapLayer *l
   mMeshRendererScalarSettingsWidget->setLayer( mMeshLayer );
   mNativeMeshSettingsWidget->setLayer( mMeshLayer, false );
   mTriangularMeshSettingsWidget->setLayer( mMeshLayer, true );
-
-  connect( mMeshRendererActiveDatasetWidget, &QgsMeshRendererActiveDatasetWidget::widgetChanged, this, &QgsPanelWidget::widgetChanged );
-  connect( mMeshRendererScalarSettingsWidget, &QgsMeshRendererScalarSettingsWidget::widgetChanged, this, &QgsPanelWidget::widgetChanged );
+  mMeshRendererVectorSettingsWidget->setLayer( mMeshLayer );
 
   connect( mMeshRendererActiveDatasetWidget, &QgsMeshRendererActiveDatasetWidget::activeScalarDatasetChanged,
            mMeshRendererScalarSettingsWidget, &QgsMeshRendererScalarSettingsWidget::setActiveDataset );
+  connect( mMeshRendererActiveDatasetWidget, &QgsMeshRendererActiveDatasetWidget::activeVectorDatasetChanged,
+           mMeshRendererVectorSettingsWidget, &QgsMeshRendererVectorSettingsWidget::setActiveDataset );
 
+  connect( mMeshRendererActiveDatasetWidget, &QgsMeshRendererActiveDatasetWidget::widgetChanged, this, &QgsPanelWidget::widgetChanged );
+  connect( mMeshRendererScalarSettingsWidget, &QgsMeshRendererScalarSettingsWidget::widgetChanged, this, &QgsPanelWidget::widgetChanged );
+  connect( mMeshRendererVectorSettingsWidget, &QgsMeshRendererVectorSettingsWidget::widgetChanged, this, &QgsPanelWidget::widgetChanged );
   connect( mNativeMeshSettingsWidget, &QgsMeshRendererMeshSettingsWidget::widgetChanged,
            this, &QgsPanelWidget::widgetChanged );
-
   connect( mTriangularMeshSettingsWidget, &QgsMeshRendererMeshSettingsWidget::widgetChanged,
            this, &QgsPanelWidget::widgetChanged );
 }
@@ -83,7 +85,7 @@ void QgsRendererMeshPropertiesWidget::apply()
   whileBlocking( mMeshLayer )->setActiveScalarDataset( activeScalarDatasetIndex );
   if ( activeScalarDatasetIndex != -1 )
   {
-    QgsMeshRendererScalarSettings settings = mMeshRendererScalarSettingsWidget->settings();
+    const  QgsMeshRendererScalarSettings settings = mMeshRendererScalarSettingsWidget->settings();
     whileBlocking( mMeshLayer )->setRendererScalarSettings( settings );
   }
 
@@ -92,7 +94,8 @@ void QgsRendererMeshPropertiesWidget::apply()
   whileBlocking( mMeshLayer )->setActiveVectorDataset( activeVectorDatasetIndex );
   if ( activeVectorDatasetIndex != -1 )
   {
-    //TODO take settings from widget
+    const QgsMeshRendererVectorSettings settings = mMeshRendererVectorSettingsWidget->settings();
+    whileBlocking( mMeshLayer )->setRendererVectorSettings( settings );
   }
 
   mMeshLayer->triggerRepaint();

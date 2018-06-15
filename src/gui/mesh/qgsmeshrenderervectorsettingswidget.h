@@ -59,6 +59,13 @@ class GUI_EXPORT QgsMeshRendererVectorSettingsWidget : public QWidget, private U
     void syncToLayer();
 
   private:
+
+    /**
+     * convert text to double, return err_val if there is a problem
+     * problem is also when the value is negative
+     */
+    double filterValue( const QString &text, double err_val ) const;
+
     QgsMeshLayer *mMeshLayer = nullptr;
 
     int mActiveDataset = -1;

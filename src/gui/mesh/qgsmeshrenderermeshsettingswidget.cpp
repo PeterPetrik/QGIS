@@ -77,6 +77,7 @@ void QgsMeshRendererMeshSettingsWidget::syncToLayer( )
 
 void QgsMeshRendererMeshSettingsWidget::onWidthChanged( double value )
 {
+  Q_UNUSED( value );
   emit widgetChanged();
 }
 

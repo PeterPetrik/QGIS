@@ -55,7 +55,7 @@
      </property>
      <layout class="QGridLayout" name="gridLayout2">
       <item row="0" column="0">
-       <widget class="QWidget" name="widget" native="true"/>
+       <widget class="QgsMeshRendererVectorSettingsWidget" name="mMeshRendererVectorSettingsWidget" native="true"/>
       </item>
      </layout>
     </widget>
@@ -130,6 +130,12 @@
    <class>QgsMeshRendererMeshSettingsWidget</class>
    <extends>QWidget</extends>
    <header>mesh/qgsmeshrenderermeshsettingswidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>QgsMeshRendererVectorSettingsWidget</class>
+   <extends>QWidget</extends>
+   <header>mesh/qgsmeshrenderervectorsettingswidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
