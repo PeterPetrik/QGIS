@@ -20,36 +20,19 @@
 
 #include "qgisapp.h"
 #include "qgsapplication.h"
-#include "qgscontrastenhancement.h"
 #include "qgscoordinatetransform.h"
-#include "qgscubicrasterresampler.h"
-#include "qgsprojectionselectiondialog.h"
+#include "qgshelp.h"
 #include "qgslogger.h"
 #include "qgsmapcanvas.h"
-#include "qgsmaplayerstyleguiutils.h"
-#include "qgsmaptoolemitpoint.h"
-#include "qgsmaptopixel.h"
-#include "qgsmetadatawidget.h"
-#include "qgsproject.h"
+#include "qgsmaplayerstylemanager.h"
 #include "qgsmeshlayer.h"
 #include "qgsmeshlayerproperties.h"
-#include "qgssettings.h"
+#include "qgsproject.h"
+#include "qgsprojectionselectiondialog.h"
 #include "qgsrenderermeshpropertieswidget.h"
+#include "qgssettings.h"
 
-#include <QTableWidgetItem>
-#include <QHeaderView>
-#include <QTextStream>
 #include <QFileDialog>
-#include <QMessageBox>
-#include <QPainter>
-#include <QLinearGradient>
-#include <QPainterPath>
-#include <QPolygonF>
-#include <QColorDialog>
-#include <QList>
-#include <QMouseEvent>
-#include <QVector>
-
 
 QgsMeshLayerProperties::QgsMeshLayerProperties( QgsMapLayer *lyr, QgsMapCanvas *canvas, QWidget *parent, Qt::WindowFlags fl )
   : QgsOptionsDialogBase( QStringLiteral( "MeshLayerProperties" ), parent, fl )
@@ -59,10 +42,9 @@ QgsMeshLayerProperties::QgsMeshLayerProperties( QgsMapLayer *lyr, QgsMapCanvas *
   mRendererMeshPropertiesWidget = new QgsRendererMeshPropertiesWidget( lyr, canvas, this );
   mOptsPage_StyleContent->layout()->addWidget( mRendererMeshPropertiesWidget );
 
-
-  connect( mLayerOrigNameLineEd, &QLineEdit::textEdited, this, &QgsMeshLayerProperties::mLayerOrigNameLineEd_textEdited );
-  connect( mCrsSelector, &QgsProjectionSelectionWidget::crsChanged, this, &QgsMeshLayerProperties::mCrsSelector_crsChanged );
-  connect( mAddDatasetButton, &QPushButton::clicked, this, &QgsMeshLayerProperties::mAddDatasetButton_clicked );
+  connect( mLayerOrigNameLineEd, &QLineEdit::textEdited, this, &QgsMeshLayerProperties::updateLayerName );
+  connect( mCrsSelector, &QgsProjectionSelectionWidget::crsChanged, this, &QgsMeshLayerProperties::changeCrs );
+  connect( mAddDatasetButton, &QPushButton::clicked, this, &QgsMeshLayerProperties::addDataset );
 
   // QgsOptionsDialogBase handles saving/restoring of geometry, splitter and current tab states,
   // switching vertical tabs between icon/text to icon-only modes (splitter collapsed to left),
@@ -70,7 +52,7 @@ QgsMeshLayerProperties::QgsMeshLayerProperties( QgsMapLayer *lyr, QgsMapCanvas *
   initOptionsBase( false );
 
   connect( buttonBox, &QDialogButtonBox::helpRequested, this, &QgsMeshLayerProperties::showHelp );
-  connect( lyr->styleManager(), &QgsMapLayerStyleManager::currentStyleChanged, this, &QgsMeshLayerProperties::syncToLayer );
+  connect( lyr->styleManager(), &QgsMapLayerStyleManager::currentStyleChanged, this, &QgsMeshLayerProperties::syncAndRepaint );
 
   connect( this, &QDialog::accepted, this, &QgsMeshLayerProperties::apply );
   connect( this, &QDialog::rejected, this, &QgsMeshLayerProperties::onCancel );
@@ -83,7 +65,7 @@ QgsMeshLayerProperties::QgsMeshLayerProperties( QgsMapLayer *lyr, QgsMapCanvas *
   }
 
   // update based on lyr's current state
-  sync();
+  syncToLayer();
 
   QgsSettings settings;
   // if dialog hasn't been opened/closed yet, default to Styles tab, which is used most often
@@ -101,20 +83,9 @@ QgsMeshLayerProperties::QgsMeshLayerProperties( QgsMapLayer *lyr, QgsMapCanvas *
   restoreOptionsBaseUi( title );
 }
 
-/**
-  \note moved from ctor
-
-  Previously this dialog was created anew with each right-click pop-up menu
-  invocation.  Changed so that the dialog always exists after first
-  invocation, and is just re-synchronized with its layer's state when
-  re-shown.
-
-*/
-void QgsMeshLayerProperties::sync()
+void QgsMeshLayerProperties::syncToLayer()
 {
   Q_ASSERT( mRendererMeshPropertiesWidget );
-
-  QgsSettings myQSettings;
 
   QgsDebugMsg( "populate general information tab" );
   /*
@@ -130,7 +101,10 @@ void QgsMeshLayerProperties::sync()
     info += QStringLiteral( "<tr><td>%1</td><td>%2</td><tr>" ).arg( tr( "Dataset count" ) ).arg( mMeshLayer->dataProvider()->datasetCount() );
     info += QStringLiteral( "</table>" );
   }
-
+  else
+  {
+    info += tr( "Invalid data provider" );
+  }
   mInformationTextBrowser->setText( info );
 
   QgsDebugMsg( "populate source tab" );
@@ -155,14 +129,9 @@ void QgsMeshLayerProperties::sync()
    */
   mRendererMeshPropertiesWidget->syncToLayer();
 
-} // QgsMeshLayerProperties::sync()
+}
 
-/*
- *
- * PUBLIC AND PRIVATE SLOTS
- *
- */
-void QgsMeshLayerProperties::mAddDatasetButton_clicked()
+void QgsMeshLayerProperties::addDataset()
 {
   if ( !mMeshLayer || !mMeshLayer->dataProvider() )
     return;
@@ -173,7 +142,7 @@ void QgsMeshLayerProperties::mAddDatasetButton_clicked()
     bool ok = mMeshLayer->dataProvider()->addDataset( fileName );
     QgsDebugMsg( QStringLiteral( "Dataset added %1, %2" ).arg( fileName ).arg( ok ) );
     if ( ok )
-      sync();
+      syncToLayer();
   }
 }
 
@@ -205,20 +174,20 @@ void QgsMeshLayerProperties::onCancel()
 
 }
 
-void QgsMeshLayerProperties::mCrsSelector_crsChanged( const QgsCoordinateReferenceSystem &crs )
+void QgsMeshLayerProperties::changeCrs( const QgsCoordinateReferenceSystem &crs )
 {
   if ( mMeshLayer )
     mMeshLayer->setCrs( crs );
 }
 
-void QgsMeshLayerProperties::mLayerOrigNameLineEd_textEdited( const QString &text )
+void QgsMeshLayerProperties::updateLayerName( const QString &text )
 {
   leDisplayName->setText( mMeshLayer->formatLayerName( text ) );
 }
 
-void QgsMeshLayerProperties::syncToLayer()
+void QgsMeshLayerProperties::syncAndRepaint()
 {
-  sync();
+  syncToLayer();
   mMeshLayer->triggerRepaint();
 }
 

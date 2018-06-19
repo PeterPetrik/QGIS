@@ -16,12 +16,7 @@
 #include "qgsmeshrendererscalarsettingswidget.h"
 
 #include "qgis.h"
-#include "qgsmapcanvas.h"
 #include "qgsmeshlayer.h"
-#include "qgsrasterlayer.h"
-#include "raster/qgscolorrampshaderwidget.h"
-#include "raster/qgsrasterminmaxwidget.h"
-#include "qgsrasterminmaxorigin.h"
 #include "qgsmessagelog.h"
 
 
@@ -36,7 +31,6 @@ QgsMeshRendererScalarSettingsWidget::QgsMeshRendererScalarSettingsWidget( QWidge
   connect( mScalarMaxLineEdit, &QLineEdit::textChanged, this, &QgsMeshRendererScalarSettingsWidget::minMaxChanged );
   connect( mScalarMinLineEdit, &QLineEdit::textEdited, this, &QgsMeshRendererScalarSettingsWidget::minMaxEdited );
   connect( mScalarMaxLineEdit, &QLineEdit::textEdited, this, &QgsMeshRendererScalarSettingsWidget::minMaxEdited );
-
   connect( mScalarColorRampShaderWidget, &QgsColorRampShaderWidget::widgetChanged, this, &QgsMeshRendererScalarSettingsWidget::widgetChanged );
 
 }
@@ -47,7 +41,6 @@ void QgsMeshRendererScalarSettingsWidget::setLayer( QgsMeshLayer *layer )
   {
     mMeshLayer = layer;
     syncToLayer();
-    connect( mMeshLayer, &QgsMapLayer::styleChanged, this, &QgsMeshRendererScalarSettingsWidget::refreshAfterStyleChanged );
   }
 }
 
@@ -57,9 +50,6 @@ QgsMeshRendererScalarSettings QgsMeshRendererScalarSettingsWidget::settings() co
   settings.setColorRampShader( mScalarColorRampShaderWidget->shader() );
   return settings;
 }
-
-
-QgsMeshRendererScalarSettingsWidget::~QgsMeshRendererScalarSettingsWidget() = default;
 
 void QgsMeshRendererScalarSettingsWidget::syncToLayer( )
 {
@@ -152,9 +142,3 @@ void QgsMeshRendererScalarSettingsWidget::calcMinMax( int datasetIndex, double &
     }
   }
 }
-
-void QgsMeshRendererScalarSettingsWidget::refreshAfterStyleChanged()
-{
-}
-
-

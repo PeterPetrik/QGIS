@@ -17,19 +17,22 @@
 #define QGSMESHRENDERERSCALARSETTINGSWIDGET_H
 
 #include "ui_qgsmeshrendererscalarsettingswidgetbase.h"
-
-#include <QObject>
-#include <QDialog>
-#include <QLineEdit>
 #include "qgis_gui.h"
-#include <memory>
 #include "qgsmeshrenderersettings.h"
+
+#include <QWidget>
 
 class QgsMeshLayer;
 
 /**
  * \ingroup gui
  * \class QgsMeshRendererScalarSettingsWidget
+ *
+ * A widget for setup of the scalar dataset renderer settings of
+ * a mesh layer. The layer must be connected and an active dataset
+ * must be selected.
+ *
+ * \since QGIS 3.4
  */
 class GUI_EXPORT QgsMeshRendererScalarSettingsWidget : public QWidget, private Ui::QgsMeshRendererScalarSettingsWidgetBase
 {
@@ -42,24 +45,26 @@ class GUI_EXPORT QgsMeshRendererScalarSettingsWidget : public QWidget, private U
      * \param parent Parent object
      */
     QgsMeshRendererScalarSettingsWidget( QWidget *parent = nullptr );
-    ~QgsMeshRendererScalarSettingsWidget();
+    ~QgsMeshRendererScalarSettingsWidget() = default;
 
+    //! Associates mesh layer with the widget
     void setLayer( QgsMeshLayer *layer );
 
+    //! Returns scalar settings
     QgsMeshRendererScalarSettings settings() const;
 
+    //! Synchronizes widgets state with associated mesh layer
     void syncToLayer();
 
   signals:
+    //! Mesh rendering settings changed
     void widgetChanged();
 
   public slots:
+    //! Set active scalar dataset to be used
     void setActiveDataset( int activeDatase );
 
   private slots:
-    void refreshAfterStyleChanged();
-
-
     void minMaxChanged();
     void minMaxEdited();
     void recalculateMinMaxButtonClicked();
@@ -68,8 +73,7 @@ class GUI_EXPORT QgsMeshRendererScalarSettingsWidget : public QWidget, private U
     double lineEditValue( const QLineEdit *lineEdit ) const;
     void calcMinMax( int datasetIndex, double &min, double &max ) const;
 
-    QgsMeshLayer *mMeshLayer = nullptr;
-
+    QgsMeshLayer *mMeshLayer = nullptr; // not owned
     int mActiveDataset = -1;
 };
 

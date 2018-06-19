@@ -17,19 +17,22 @@
 #define QGSMESHRENDERERMESHSETTINGSWIDGET_H
 
 #include "ui_qgsmeshrenderermeshsettingswidgetbase.h"
-
-#include <QObject>
-#include <QDialog>
-#include <QLineEdit>
-#include "qgis_gui.h"
-#include <memory>
 #include "qgsmeshrenderersettings.h"
+#include "qgis_gui.h"
+
+#include <QWidget>
 
 class QgsMeshLayer;
 
 /**
  * \ingroup gui
  * \class QgsMeshRendererMeshSettingsWidget
+ *
+ * A widget for setup of the mesh frame settings of
+ * the mesh layer. Can be used for both native and
+ * triangular mesh renderer settings.
+ *
+ * \since QGIS 3.4
  */
 class GUI_EXPORT QgsMeshRendererMeshSettingsWidget : public QWidget, private Ui::QgsMeshRendererMeshSettingsWidgetBase
 {
@@ -38,28 +41,36 @@ class GUI_EXPORT QgsMeshRendererMeshSettingsWidget : public QWidget, private Ui:
   public:
 
     /**
-     * A widget to hold the renderer Mesh settings for a mesh layer.
+     * A widget to hold the renderer mesh settings for a mesh layer.
      * \param parent Parent object
      */
     QgsMeshRendererMeshSettingsWidget( QWidget *parent = nullptr );
-    ~QgsMeshRendererMeshSettingsWidget();
+    ~QgsMeshRendererMeshSettingsWidget() = default;
 
+    /**
+     * Associates mesh layer with the widget
+     * \param layer mesh layer that contains mesh frame
+     * \param isTriangularMesh whether use settings for triangular mesh or native mesh
+     */
     void setLayer( QgsMeshLayer *layer, bool isTriangularMesh );
 
+    //! Returns the mesh rendering settings (native or triangular)
     QgsMeshRendererMeshSettings settings() const;
+
+    //! Synchronizes widgets state with associated mesh layer
     void syncToLayer();
 
   signals:
+    //! Mesh rendering settings changed
     void widgetChanged();
 
-  private slots:
-    void refreshAfterStyleChanged();
-
-
-    void onWidthChanged( double value );
-
   private:
-    QgsMeshLayer *mMeshLayer = nullptr;
+    QgsMeshLayer *mMeshLayer = nullptr; // not owned
+
+    /**
+     * If true, the widget works for triangular (derived) mesh
+     * If false, the widget works for native mesh
+     */
     bool mIsTriangularMesh = true;
 };
 

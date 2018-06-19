@@ -18,13 +18,8 @@
 #include "qgis.h"
 #include "qgsmapcanvas.h"
 #include "qgsmeshlayer.h"
-#include "qgsrasterlayer.h"
-#include "raster/qgscolorrampshaderwidget.h"
-#include "raster/qgsrasterminmaxwidget.h"
-#include "qgsrasterminmaxorigin.h"
 #include "qgsmessagelog.h"
 #include "qgsmeshrendererscalarsettingswidget.h"
-
 #include "qgsmeshdatasetgrouptree.h"
 #include "qgsmeshrendereractivedatasetwidget.h"
 
@@ -34,9 +29,6 @@ QgsRendererMeshPropertiesWidget::QgsRendererMeshPropertiesWidget( QgsMapLayer *l
 {
   mMeshLayer = qobject_cast<QgsMeshLayer *>( layer );
   if ( !mMeshLayer )
-    return;
-
-  if ( !mMapCanvas )
     return;
 
   setupUi( this );
@@ -61,21 +53,19 @@ QgsRendererMeshPropertiesWidget::QgsRendererMeshPropertiesWidget( QgsMapLayer *l
            this, &QgsPanelWidget::widgetChanged );
 }
 
-QgsRendererMeshPropertiesWidget::~QgsRendererMeshPropertiesWidget() = default;
-
 void QgsRendererMeshPropertiesWidget::apply()
 {
   if ( !mMeshLayer )
     return;
 
   // MESH
-  bool meshRenderingIsEnabled = mMeshRendererActiveDatasetWidget->meshRenderingOn();
+  bool meshRenderingIsEnabled = mMeshRendererActiveDatasetWidget->isNativeMeshEnabled();
   QgsMeshRendererMeshSettings meshSettings = mNativeMeshSettingsWidget->settings();
   meshSettings.setEnabled( meshRenderingIsEnabled );
   whileBlocking( mMeshLayer )->setRendererNativeMeshSettings( meshSettings );
 
   // TRIANGULAR MESH
-  bool triangularMeshRenderingIsEnabled = mMeshRendererActiveDatasetWidget->triangularMeshRenderingOn();
+  bool triangularMeshRenderingIsEnabled = mMeshRendererActiveDatasetWidget->isTriangularMeshEnabled();
   QgsMeshRendererMeshSettings triangularMeshSettings = mTriangularMeshSettingsWidget->settings();
   triangularMeshSettings.setEnabled( triangularMeshRenderingIsEnabled );
   whileBlocking( mMeshLayer )->setRendererTriangularMeshSettings( triangularMeshSettings );

@@ -16,12 +16,7 @@
 #include "qgsmeshrenderervectorsettingswidget.h"
 
 #include "qgis.h"
-#include "qgsmapcanvas.h"
 #include "qgsmeshlayer.h"
-#include "qgsrasterlayer.h"
-#include "raster/qgscolorrampshaderwidget.h"
-#include "raster/qgsrasterminmaxwidget.h"
-#include "qgsrasterminmaxorigin.h"
 #include "qgsmessagelog.h"
 
 
@@ -53,8 +48,6 @@ QgsMeshRendererVectorSettingsWidget::QgsMeshRendererVectorSettingsWidget( QWidge
     connect( widget, &QLineEdit::textEdited, this, &QgsMeshRendererVectorSettingsWidget::widgetChanged );
   }
 }
-
-QgsMeshRendererVectorSettingsWidget::~QgsMeshRendererVectorSettingsWidget() = default;
 
 void QgsMeshRendererVectorSettingsWidget::setLayer( QgsMeshLayer *layer )
 {
@@ -161,9 +154,3 @@ double QgsMeshRendererVectorSettingsWidget::filterValue( const QString &text, do
 
   return val;
 }
-
-void QgsMeshRendererVectorSettingsWidget::refreshAfterStyleChanged()
-{
-}
-
-

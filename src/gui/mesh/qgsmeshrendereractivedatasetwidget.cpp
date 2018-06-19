@@ -16,29 +16,21 @@
 #include "qgsmeshrendereractivedatasetwidget.h"
 
 #include "qgis.h"
-#include "qgsmapcanvas.h"
 #include "qgsmeshlayer.h"
-#include "qgsrasterlayer.h"
-#include "raster/qgscolorrampshaderwidget.h"
-#include "raster/qgsrasterminmaxwidget.h"
-#include "qgsrasterminmaxorigin.h"
 #include "qgsmessagelog.h"
-
+#include "qgsmeshrenderersettings.h"
 
 QgsMeshRendererActiveDatasetWidget::QgsMeshRendererActiveDatasetWidget( QWidget *parent )
   : QWidget( parent )
-
 {
   setupUi( this );
   connect( mDatasetGroupTree, &QgsMeshDatasetGroupTree::activeGroupChanged, this, &QgsMeshRendererActiveDatasetWidget::onActiveGroupChanged );
   connect( mDatasetSlider, &QSlider::valueChanged, this, &QgsMeshRendererActiveDatasetWidget::onActiveDatasetChanged );
   connect( mDisplayScalarsCheckBox, &QCheckBox::stateChanged, this, &QgsMeshRendererActiveDatasetWidget::onScalarChecked );
   connect( mDisplayVectorsCheckBox, &QCheckBox::stateChanged, this, &QgsMeshRendererActiveDatasetWidget::onVectorChecked );
-  connect( mDisplayNativeMeshCheckBox, &QCheckBox::stateChanged, this, &QgsMeshRendererActiveDatasetWidget::onMeshChecked );
+  connect( mDisplayNativeMeshCheckBox, &QCheckBox::stateChanged, this, &QgsMeshRendererActiveDatasetWidget::onNativeMeshChecked );
   connect( mDisplayTriangularMeshCheckBox, &QCheckBox::stateChanged, this, &QgsMeshRendererActiveDatasetWidget::onTringularMeshChecked );
 }
-
-QgsMeshRendererActiveDatasetWidget::~QgsMeshRendererActiveDatasetWidget() = default;
 
 void QgsMeshRendererActiveDatasetWidget::setLayer( QgsMeshLayer *layer )
 {
@@ -55,28 +47,30 @@ void QgsMeshRendererActiveDatasetWidget::setLayer( QgsMeshLayer *layer )
 
 int QgsMeshRendererActiveDatasetWidget::activeScalarDataset() const
 {
-  if ( !isEnabled() ||
-       !mDisplayScalarsCheckBox->isEnabled() ||
-       !mDisplayScalarsCheckBox->isChecked() )
+  if ( isEnabled() &&
+       mDisplayScalarsCheckBox->isEnabled() &&
+       mDisplayScalarsCheckBox->isChecked() )
+    return datasetIndex();
+  else
     return -1;
-  return  datasetIndex();
 }
 
 int QgsMeshRendererActiveDatasetWidget::activeVectorDataset() const
 {
-  if ( !isEnabled() ||
-       !mDisplayVectorsCheckBox->isEnabled() ||
-       !mDisplayVectorsCheckBox->isChecked() )
+  if ( isEnabled() &&
+       mDisplayVectorsCheckBox->isEnabled() &&
+       mDisplayVectorsCheckBox->isChecked() )
+    return  datasetIndex();
+  else
     return -1;
-  return  datasetIndex();
 }
 
-bool QgsMeshRendererActiveDatasetWidget::meshRenderingOn() const
+bool QgsMeshRendererActiveDatasetWidget::isNativeMeshEnabled() const
 {
   return isEnabled() && mDisplayNativeMeshCheckBox->isChecked();
 }
 
-bool QgsMeshRendererActiveDatasetWidget::triangularMeshRenderingOn() const
+bool QgsMeshRendererActiveDatasetWidget::isTriangularMeshEnabled() const
 {
   return isEnabled() && mDisplayTriangularMeshCheckBox->isChecked();
 }
@@ -129,17 +123,17 @@ void QgsMeshRendererActiveDatasetWidget::onVectorChecked( int toggle )
   emit widgetChanged();
 }
 
-void QgsMeshRendererActiveDatasetWidget::onMeshChecked( int toggle )
+void QgsMeshRendererActiveDatasetWidget::onNativeMeshChecked( int toggle )
 {
   Q_UNUSED( toggle );
-  emit meshRenderingOnChanged( meshRenderingOn() );
+  emit nativeMeshEnabledChanged( isNativeMeshEnabled() );
   emit widgetChanged();
 }
 
 void QgsMeshRendererActiveDatasetWidget::onTringularMeshChecked( int toggle )
 {
   Q_UNUSED( toggle );
-  emit triangularMeshRenderingOnChange( triangularMeshRenderingOn() );
+  emit triangularMeshRenderingOnChange( isTriangularMeshEnabled() );
   emit widgetChanged();
 }
 

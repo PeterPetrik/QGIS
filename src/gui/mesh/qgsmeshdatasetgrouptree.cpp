@@ -27,8 +27,6 @@ QgsMeshDatasetGroupTree::QgsMeshDatasetGroupTree( QWidget *parent )
   connect( this, &QTreeWidget::currentItemChanged, this, &QgsMeshDatasetGroupTree::onSelectionChanged );
 }
 
-QgsMeshDatasetGroupTree::~QgsMeshDatasetGroupTree() = default;
-
 void QgsMeshDatasetGroupTree::setLayer( QgsMeshLayer *layer )
 {
   if ( layer != mMeshLayer )
@@ -98,10 +96,12 @@ void QgsMeshDatasetGroupTree::repopulateTree()
     QVector<int> datasets = mGroups[groupName];
     qSort( datasets );
     mGroups[groupName] = datasets;
-    QTreeWidgetItem *item = new QTreeWidgetItem( ( QTreeWidget * )0, QStringList( QString( "%1" ).arg( groupName ) ) );
-    // item->setData(0, Qt::UserRole, i);
+    QTreeWidgetItem *item = new QTreeWidgetItem( QStringList( QString( "%1" ).arg( groupName ) ) ) ;
     items.append( item );
   }
   insertTopLevelItems( 0, items );
+
+  if ( topLevelItem( 0 ) )
+    setCurrentItem( topLevelItem( 0 ), 0, QItemSelectionModel::Select );
 }
 

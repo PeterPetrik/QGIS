@@ -35,7 +35,7 @@ QgsMeshRendererMeshSettingsWidget::QgsMeshRendererMeshSettingsWidget( QWidget *p
 
   connect( mColorWidget, &QgsColorButton::colorChanged, this, &QgsMeshRendererMeshSettingsWidget::widgetChanged );
   connect( mLineWidthSpinBox, QOverload<double>::of( &QgsDoubleSpinBox::valueChanged ),
-           this, &QgsMeshRendererMeshSettingsWidget::onWidthChanged );
+           this, &QgsMeshRendererMeshSettingsWidget::widgetChanged );
 }
 
 void QgsMeshRendererMeshSettingsWidget::setLayer( QgsMeshLayer *layer, bool isTriangularMesh )
@@ -57,9 +57,6 @@ QgsMeshRendererMeshSettings QgsMeshRendererMeshSettingsWidget::settings() const
   return settings;
 }
 
-
-QgsMeshRendererMeshSettingsWidget::~QgsMeshRendererMeshSettingsWidget() = default;
-
 void QgsMeshRendererMeshSettingsWidget::syncToLayer( )
 {
   if ( !mMeshLayer )
@@ -74,15 +71,3 @@ void QgsMeshRendererMeshSettingsWidget::syncToLayer( )
   mColorWidget->setColor( settings.color() );
   mLineWidthSpinBox->setValue( settings.lineWidth() );
 }
-
-void QgsMeshRendererMeshSettingsWidget::onWidthChanged( double value )
-{
-  Q_UNUSED( value );
-  emit widgetChanged();
-}
-
-void QgsMeshRendererMeshSettingsWidget::refreshAfterStyleChanged()
-{
-}
-
-

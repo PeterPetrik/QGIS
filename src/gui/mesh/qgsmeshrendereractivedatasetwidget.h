@@ -17,19 +17,19 @@
 #define QGSMESHRENDERERACTIVEDATASETWIDGET_H
 
 #include "ui_qgsmeshrendereractivedatasetwidgetbase.h"
-
-#include <QObject>
-#include <QDialog>
-#include <QLineEdit>
 #include "qgis_gui.h"
-#include <memory>
-#include "qgsmeshrenderersettings.h"
+
+#include <QWidget>
 
 class QgsMeshLayer;
 
 /**
  * \ingroup gui
  * \class QgsMeshRendererScalarSettingsWidget
+ *
+ *
+ *
+ * \since QGIS 3.4
  */
 class GUI_EXPORT QgsMeshRendererActiveDatasetWidget : public QWidget, private Ui::QgsMeshRendererActiveDatasetWidgetBase
 {
@@ -42,21 +42,41 @@ class GUI_EXPORT QgsMeshRendererActiveDatasetWidget : public QWidget, private Ui
      * \param parent Parent object
      */
     QgsMeshRendererActiveDatasetWidget( QWidget *parent = nullptr );
-    ~QgsMeshRendererActiveDatasetWidget();
+    ~QgsMeshRendererActiveDatasetWidget() = default;
 
+    //! Associates mesh layer with the widget
     void setLayer( QgsMeshLayer *layer );
+
+    //! Gets index of the selected/active scalar dataset
     int activeScalarDataset() const;
+
+    //! Gets index of the selected/active vector dataset
     int activeVectorDataset() const;
-    bool meshRenderingOn() const;
-    bool triangularMeshRenderingOn() const;
+
+    //! Returns whether rendering of the native mesh is enabled
+    bool isNativeMeshEnabled() const;
+
+    //! Returns whether rendering of the triangular mesh is enabled
+    bool isTriangularMeshEnabled() const;
+
+    //! Synchronizes widgets state with associated mesh layer
     void syncToLayer();
 
   signals:
+
+    //! Emitted when active scalar dataset changed
     void activeScalarDatasetChanged( int index );
+
+    //! Emitted when active vector dataset changed
     void activeVectorDatasetChanged( int index );
-    void meshRenderingOnChanged( bool on );
+
+    //! Emitted when rendering of the native mesh changed
+    void nativeMeshEnabledChanged( bool on );
+
+    //! Emitted when rendering of the triangular mesh changed
     void triangularMeshRenderingOnChange( bool on );
 
+    //! Emitted when any settings related to rendering changed
     void widgetChanged();
 
   private slots:
@@ -64,16 +84,14 @@ class GUI_EXPORT QgsMeshRendererActiveDatasetWidget : public QWidget, private Ui
     void onActiveDatasetChanged( int value );
     void onScalarChecked( int toggle );
     void onVectorChecked( int toggle );
-    void onMeshChecked( int toggle );
+    void onNativeMeshChecked( int toggle );
     void onTringularMeshChecked( int toggle );
-
     void updateMetadata( int datasetIndex );
 
   private:
     int datasetIndex() const;
 
-
-    QgsMeshLayer *mMeshLayer = nullptr;
+    QgsMeshLayer *mMeshLayer = nullptr; // not owned
 };
 
 #endif // QGSMESHRENDERERSCALARSETTINGSWIDGET_H

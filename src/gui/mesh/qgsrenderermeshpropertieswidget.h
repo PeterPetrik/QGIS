@@ -30,6 +30,11 @@ class QgsMapCanvas;
 /**
  * \ingroup gui
  * \class QgsRendererMeshPropertiesWidget
+ *
+ * Widget for renderer properties of the mesh, countours (scalars)
+ * and vectors data associated with the mesh layer
+ *
+ * \since QGIS 3.4
  */
 class GUI_EXPORT QgsRendererMeshPropertiesWidget : public QgsMapLayerConfigWidget, private Ui::QgsRendererMeshPropsWidgetBase
 {
@@ -38,20 +43,23 @@ class GUI_EXPORT QgsRendererMeshPropertiesWidget : public QgsMapLayerConfigWidge
   public:
 
     /**
-     * A widget to hold the renderer properties for a raster layer.
+     * A widget to hold the renderer properties for a mesh layer.
      * \param layer The mesh layer to style
-     * \param canvas The canvas object used to calculate the max and min values from the extent.
+     * \param canvas The canvas object used
      * \param parent Parent object
      */
     QgsRendererMeshPropertiesWidget( QgsMapLayer *layer, QgsMapCanvas *canvas, QWidget *parent = nullptr );
-    ~QgsRendererMeshPropertiesWidget();
+    ~QgsRendererMeshPropertiesWidget()  = default;
 
   public slots:
+    //! Applies the settings made in the dialog
     void apply() override;
+
+    //! Synchronize widgets state with associated mesh layer
     void syncToLayer();
 
   private:
-    QgsMeshLayer *mMeshLayer = nullptr;
+    QgsMeshLayer *mMeshLayer = nullptr; //not owned
 };
 
 #endif // QGSRENDERERMESHPROPERTIESDIALOG_H

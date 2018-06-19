@@ -17,19 +17,23 @@
 #define QGSMESHRENDERERVECTORSETTINGSWIDGET_H
 
 #include "ui_qgsmeshrenderervectorsettingswidgetbase.h"
-
-#include <QObject>
-#include <QDialog>
-#include <QLineEdit>
 #include "qgis_gui.h"
-#include <memory>
 #include "qgsmeshrenderersettings.h"
+
+#include <memory>
+#include <QWidget>
 
 class QgsMeshLayer;
 
 /**
  * \ingroup gui
  * \class QgsMeshRendererVectorSettingsWidget
+ *
+ * A widget for setup of the vector dataset renderer settings of
+ * a mesh layer. The layer must be connected and an active dataset
+ * must be selected.
+ *
+ * \since QGIS 3.4
  */
 class GUI_EXPORT QgsMeshRendererVectorSettingsWidget : public QWidget, private Ui::QgsMeshRendererVectorSettingsWidgetBase
 {
@@ -42,34 +46,34 @@ class GUI_EXPORT QgsMeshRendererVectorSettingsWidget : public QWidget, private U
      * \param parent Parent object
      */
     QgsMeshRendererVectorSettingsWidget( QWidget *parent = nullptr );
-    ~QgsMeshRendererVectorSettingsWidget();
+    ~QgsMeshRendererVectorSettingsWidget() = default;
 
+    //! Associates mesh layer with the widget
     void setLayer( QgsMeshLayer *layer );
 
+    //! Returns vector settings
     QgsMeshRendererVectorSettings settings() const;
 
+    //! Synchronizes widgets state with associated mesh layer
     void syncToLayer();
 
   signals:
+    //! Mesh rendering settings changed
     void widgetChanged();
 
   public slots:
+    //! Set active vector dataset to be used
     void setActiveDataset( int activeDataset );
-
-  private slots:
-    void refreshAfterStyleChanged();
-
 
   private:
 
     /**
-     * convert text to double, return err_val if there is a problem
-     * problem is also when the value is negative
+     * convert text to double, return err_val if
+     * text is not possible to convert or the value is negative
      */
     double filterValue( const QString &text, double err_val ) const;
 
-    QgsMeshLayer *mMeshLayer = nullptr;
-
+    QgsMeshLayer *mMeshLayer = nullptr; //not owned
     int mActiveDataset = -1;
 };
 

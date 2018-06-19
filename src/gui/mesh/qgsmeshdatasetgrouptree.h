@@ -16,9 +16,10 @@
 #ifndef QGSMESHDATASETGROUPTREE_H
 #define QGSMESHDATASETGROUPTREE_H
 
+#include "qgis_gui.h"
+
 #include <QObject>
 #include <QTreeWidget>
-#include "qgis_gui.h"
 #include <QMap>
 #include <QVector>
 
@@ -27,36 +28,42 @@ class QgsMeshLayer;
 /**
  * \ingroup gui
  * \class QgsMeshDatasetGroupTree
+ *
+ * Tree widget for display of the mesh dataset groups.
+ * Dataset group is set of datasets with the same name,
+ * but different control variable (e.g. time)
+ *
+ * One dataset group is selected (active)
+ *
+ * \since QGIS 3.4
  */
 class GUI_EXPORT QgsMeshDatasetGroupTree : public QTreeWidget
 {
     Q_OBJECT
 
   public:
-
-    /**
-     * A widget to hold the renderer scalar settings for a mesh layer.
-     * \param parent Parent object
-     */
     QgsMeshDatasetGroupTree( QWidget *parent = nullptr );
-    ~QgsMeshDatasetGroupTree();
+    ~QgsMeshDatasetGroupTree() = default;
 
+    //! Associates mesh layer with the widget
     void setLayer( QgsMeshLayer *layer );
 
+    //! Returns all the dataset indexes in the active group
     QVector<int> datasetsInActiveGroup() const;
 
   signals:
-    //! Datasets in active/selected group changed
+    //! Selected dataset group changed
     void activeGroupChanged();
 
   private slots:
-    void onSelectionChanged( QTreeWidgetItem *current, QTreeWidgetItem *previous );
+    void onSelectionChanged( QTreeWidgetItem *current,
+                             QTreeWidgetItem *previous );
 
   private:
     void repopulateTree();
 
-    QgsMeshLayer *mMeshLayer = nullptr;
-    QMap<QString, QVector<int>> mGroups; // value-> dataset numbers
+    QgsMeshLayer *mMeshLayer = nullptr; // not owned
+    QMap<QString, QVector<int>> mGroups; // group name -> dataset indices
     QString mActiveGroup = QString();
 };
 
