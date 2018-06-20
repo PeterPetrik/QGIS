@@ -1,11 +1,4 @@
 SET(QGIS_GUI_SRCS
-  mesh/qgsrenderermeshpropertieswidget.cpp
-  mesh/qgsmeshrenderermeshsettingswidget.cpp
-  mesh/qgsmeshrendererscalarsettingswidget.cpp
-  mesh/qgsmeshrenderervectorsettingswidget.cpp
-  mesh/qgsmeshrendereractivedatasetwidget.cpp
-  mesh/qgsmeshdatasetgrouptree.cpp
-
   raster/qgscolorrampshaderwidget.cpp
   raster/qgsmultibandcolorrendererwidget.cpp
   raster/qgspalettedrendererwidget.cpp
@@ -549,13 +542,6 @@ SET(QGIS_GUI_MOC_HDRS
   ogr/qgsnewogrconnection.h
   ogr/qgsvectorlayersaveasdialog.h
 
-  mesh/qgsrenderermeshpropertieswidget.h
-  mesh/qgsmeshrenderermeshsettingswidget.h
-  mesh/qgsmeshrendererscalarsettingswidget.h
-  mesh/qgsmeshrenderervectorsettingswidget.h
-  mesh/qgsmeshrendereractivedatasetwidget.h
-  mesh/qgsmeshdatasetgrouptree.h
-
   raster/qgscolorrampshaderwidget.h
   raster/qgsmultibandcolorrendererwidget.h
   raster/qgspalettedrendererwidget.h
@@ -894,7 +880,6 @@ INCLUDE_DIRECTORIES(
   ${CMAKE_SOURCE_DIR}/src/gui/effects
   ${CMAKE_SOURCE_DIR}/src/gui/layertree
   ${CMAKE_SOURCE_DIR}/src/gui/layout
-  ${CMAKE_SOURCE_DIR}/src/gui/mesh
   ${CMAKE_SOURCE_DIR}/src/gui/ogr
   ${CMAKE_SOURCE_DIR}/src/gui/processing
   ${CMAKE_SOURCE_DIR}/src/core

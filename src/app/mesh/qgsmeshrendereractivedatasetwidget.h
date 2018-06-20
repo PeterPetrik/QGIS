@@ -17,7 +17,7 @@
 #define QGSMESHRENDERERACTIVEDATASETWIDGET_H
 
 #include "ui_qgsmeshrendereractivedatasetwidgetbase.h"
-#include "qgis_gui.h"
+#include "qgis_app.h"
 
 #include <QWidget>
 
@@ -31,7 +31,7 @@ class QgsMeshLayer;
  *
  * \since QGIS 3.4
  */
-class GUI_EXPORT QgsMeshRendererActiveDatasetWidget : public QWidget, private Ui::QgsMeshRendererActiveDatasetWidgetBase
+class APP_EXPORT QgsMeshRendererActiveDatasetWidget : public QWidget, private Ui::QgsMeshRendererActiveDatasetWidgetBase
 {
     Q_OBJECT
 

@@ -18,23 +18,20 @@
 
 #include "ui_qgsmeshrenderermeshsettingswidgetbase.h"
 #include "qgsmeshrenderersettings.h"
-#include "qgis_gui.h"
+#include "qgis_app.h"
 
 #include <QWidget>
 
 class QgsMeshLayer;
 
 /**
- * \ingroup gui
- * \class QgsMeshRendererMeshSettingsWidget
- *
  * A widget for setup of the mesh frame settings of
  * the mesh layer. Can be used for both native and
  * triangular mesh renderer settings.
  *
  * \since QGIS 3.4
  */
-class GUI_EXPORT QgsMeshRendererMeshSettingsWidget : public QWidget, private Ui::QgsMeshRendererMeshSettingsWidgetBase
+class APP_EXPORT QgsMeshRendererMeshSettingsWidget : public QWidget, private Ui::QgsMeshRendererMeshSettingsWidgetBase
 {
     Q_OBJECT
 

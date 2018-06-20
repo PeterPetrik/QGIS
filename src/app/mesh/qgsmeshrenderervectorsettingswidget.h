@@ -17,7 +17,7 @@
 #define QGSMESHRENDERERVECTORSETTINGSWIDGET_H
 
 #include "ui_qgsmeshrenderervectorsettingswidgetbase.h"
-#include "qgis_gui.h"
+#include "qgis_app.h"
 #include "qgsmeshrenderersettings.h"
 
 #include <memory>
@@ -26,16 +26,13 @@
 class QgsMeshLayer;
 
 /**
- * \ingroup gui
- * \class QgsMeshRendererVectorSettingsWidget
- *
  * A widget for setup of the vector dataset renderer settings of
  * a mesh layer. The layer must be connected and an active dataset
  * must be selected.
  *
  * \since QGIS 3.4
  */
-class GUI_EXPORT QgsMeshRendererVectorSettingsWidget : public QWidget, private Ui::QgsMeshRendererVectorSettingsWidgetBase
+class APP_EXPORT QgsMeshRendererVectorSettingsWidget : public QWidget, private Ui::QgsMeshRendererVectorSettingsWidgetBase
 {
     Q_OBJECT
 

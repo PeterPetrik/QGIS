@@ -21,22 +21,19 @@
 #include "ui_qgsrenderermeshpropswidgetbase.h"
 
 #include "qgsmaplayerconfigwidget.h"
-#include "qgis_gui.h"
+#include "qgis_app.h"
 #include <memory>
 
 class QgsMeshLayer;
 class QgsMapCanvas;
 
 /**
- * \ingroup gui
- * \class QgsRendererMeshPropertiesWidget
- *
  * Widget for renderer properties of the mesh, countours (scalars)
  * and vectors data associated with the mesh layer
  *
  * \since QGIS 3.4
  */
-class GUI_EXPORT QgsRendererMeshPropertiesWidget : public QgsMapLayerConfigWidget, private Ui::QgsRendererMeshPropsWidgetBase
+class APP_EXPORT QgsRendererMeshPropertiesWidget : public QgsMapLayerConfigWidget, private Ui::QgsRendererMeshPropsWidgetBase
 {
     Q_OBJECT
 

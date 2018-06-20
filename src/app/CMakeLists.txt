@@ -211,6 +211,12 @@ SET(QGIS_APP_SRCS
   qgscrashhandler.cpp
 
   mesh/qgsmeshlayerproperties.cpp
+  mesh/qgsrenderermeshpropertieswidget.cpp
+  mesh/qgsmeshrenderermeshsettingswidget.cpp
+  mesh/qgsmeshrendererscalarsettingswidget.cpp
+  mesh/qgsmeshrenderervectorsettingswidget.cpp
+  mesh/qgsmeshrendereractivedatasetwidget.cpp
+  mesh/qgsmeshdatasetgrouptree.cpp
 )
 
 SET (QGIS_APP_MOC_HDRS
@@ -412,6 +418,12 @@ SET (QGIS_APP_MOC_HDRS
   qgsvariantdelegate.h
 
   mesh/qgsmeshlayerproperties.h
+  mesh/qgsrenderermeshpropertieswidget.h
+  mesh/qgsmeshrenderermeshsettingswidget.h
+  mesh/qgsmeshrendererscalarsettingswidget.h
+  mesh/qgsmeshrenderervectorsettingswidget.h
+  mesh/qgsmeshrendereractivedatasetwidget.h
+  mesh/qgsmeshdatasetgrouptree.h
   )
 
 
@@ -612,7 +624,6 @@ INCLUDE_DIRECTORIES(
   ${CMAKE_SOURCE_DIR}/src/gui/ogr
   ${CMAKE_SOURCE_DIR}/src/gui/processing
   ${CMAKE_SOURCE_DIR}/src/gui/raster
-  ${CMAKE_SOURCE_DIR}/src/gui/mesh
   ${CMAKE_SOURCE_DIR}/src/gui/editorwidgets
   ${CMAKE_SOURCE_DIR}/src/gui/editorwidgets/core
   ${CMAKE_SOURCE_DIR}/src/gui/layertree
@@ -673,7 +684,6 @@ INCLUDE_DIRECTORIES(
   ../gui/auth
   ../gui/ogr
   ../gui/raster
-  ../gui/mesh
   ../gui/editorwidgets
   ../gui/editorwidgets/core
   ../gui/layertree

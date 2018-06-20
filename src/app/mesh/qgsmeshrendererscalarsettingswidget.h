@@ -17,24 +17,21 @@
 #define QGSMESHRENDERERSCALARSETTINGSWIDGET_H
 
 #include "ui_qgsmeshrendererscalarsettingswidgetbase.h"
-#include "qgis_gui.h"
+#include "qgis_app.h"
 #include "qgsmeshrenderersettings.h"
 
 #include <QWidget>
 
 class QgsMeshLayer;
 
-/**
- * \ingroup gui
- * \class QgsMeshRendererScalarSettingsWidget
- *
+/*!
  * A widget for setup of the scalar dataset renderer settings of
  * a mesh layer. The layer must be connected and an active dataset
  * must be selected.
  *
  * \since QGIS 3.4
  */
-class GUI_EXPORT QgsMeshRendererScalarSettingsWidget : public QWidget, private Ui::QgsMeshRendererScalarSettingsWidgetBase
+class APP_EXPORT QgsMeshRendererScalarSettingsWidget : public QWidget, private Ui::QgsMeshRendererScalarSettingsWidgetBase
 {
     Q_OBJECT
 

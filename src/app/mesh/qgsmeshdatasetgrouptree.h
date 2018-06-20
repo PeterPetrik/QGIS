@@ -16,7 +16,7 @@
 #ifndef QGSMESHDATASETGROUPTREE_H
 #define QGSMESHDATASETGROUPTREE_H
 
-#include "qgis_gui.h"
+#include "qgis_app.h"
 
 #include <QObject>
 #include <QTreeWidget>
@@ -26,9 +26,6 @@
 class QgsMeshLayer;
 
 /**
- * \ingroup gui
- * \class QgsMeshDatasetGroupTree
- *
  * Tree widget for display of the mesh dataset groups.
  * Dataset group is set of datasets with the same name,
  * but different control variable (e.g. time)
@@ -37,7 +34,7 @@ class QgsMeshLayer;
  *
  * \since QGIS 3.4
  */
-class GUI_EXPORT QgsMeshDatasetGroupTree : public QTreeWidget
+class APP_EXPORT QgsMeshDatasetGroupTree : public QTreeWidget
 {
     Q_OBJECT
 
