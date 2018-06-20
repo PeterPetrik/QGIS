@@ -1,6 +1,6 @@
 /***************************************************************************
-    qgsmeshdatasetgrouptree.cpp
-    ---------------------------
+    qgsmeshdatasetgrouptreeview.cpp
+    -------------------------------
     begin                : June 2018
     copyright            : (C) 2018 by Peter Petrik
     email                : zilolv at gmail dot com
@@ -13,21 +13,33 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "qgsmeshdatasetgrouptree.h"
+#include "qgsmeshdatasetgrouptreeview.h"
 
 #include "qgis.h"
 #include "qgsmeshlayer.h"
 
-QgsMeshDatasetGroupTree::QgsMeshDatasetGroupTree( QWidget *parent )
-  : QTreeWidget( parent )
+#include <QList>
+#include <QItemSelectionModel>
 
+static QList<QStandardItem *> prepareRow(const QString &str)
 {
-  setHeaderLabel( tr( "Datasets" ) );
-  setColumnCount( 1 );
-  connect( this, &QTreeWidget::currentItemChanged, this, &QgsMeshDatasetGroupTree::onSelectionChanged );
+    QList<QStandardItem *> rowItems;
+    rowItems << new QStandardItem(str);
+    return rowItems;
 }
 
-void QgsMeshDatasetGroupTree::setLayer( QgsMeshLayer *layer )
+QgsMeshDatasetGroupTreeView::QgsMeshDatasetGroupTreeView( QWidget *parent )
+  : QTreeView( parent )
+{
+  setSelectionMode(QAbstractItemView::SingleSelection) ;
+  connect( selectionModel(),
+           &QItemSelectionModel::selectionChanged,
+           this,
+           &QgsMeshDatasetGroupTreeView::onSelectionChanged
+           );
+}
+
+void QgsMeshDatasetGroupTreeView::setLayer( QgsMeshLayer *layer )
 {
   if ( layer != mMeshLayer )
   {
@@ -36,7 +48,7 @@ void QgsMeshDatasetGroupTree::setLayer( QgsMeshLayer *layer )
   }
 }
 
-QVector<int> QgsMeshDatasetGroupTree::datasetsInActiveGroup() const
+QVector<int> QgsMeshDatasetGroupTreeView::datasetsInActiveGroup() const
 {
   if ( mGroups.constFind( mActiveGroup ) == mGroups.constEnd() )
     return QVector<int>();
@@ -44,27 +56,33 @@ QVector<int> QgsMeshDatasetGroupTree::datasetsInActiveGroup() const
     return mGroups[mActiveGroup];
 }
 
-void QgsMeshDatasetGroupTree::onSelectionChanged( QTreeWidgetItem *current, QTreeWidgetItem *previous )
+void QgsMeshDatasetGroupTreeView::onSelectionChanged( const QItemSelection &selected, const QItemSelection &deselected )
 {
-  Q_UNUSED( previous );
+  Q_UNUSED( deselected );
 
-  if ( current )
-  {
-    mActiveGroup = current->text( 0 );
-  }
-  else
-  {
+  if ( selected.isEmpty() ) {
     mActiveGroup = QString();
+    return;
   }
+
+  if ( selected.first().indexes().isEmpty() ) {
+    mActiveGroup = QString();
+    return;
+  }
+
+  QModelIndex index = selected.first().indexes().first(); //single selection only
+  QStandardItem* item = mModel.itemFromIndex(index);
+  QString name = item->text();
+  mActiveGroup = name;
 
   emit activeGroupChanged();
 }
 
-void QgsMeshDatasetGroupTree::repopulateTree()
+void QgsMeshDatasetGroupTreeView::repopulateTree()
 {
   mGroups.clear();
   mActiveGroup.clear();
-  clear();
+  mModel.clear();
 
   if ( !mMeshLayer || !mMeshLayer->dataProvider() )
     return;
@@ -89,19 +107,18 @@ void QgsMeshDatasetGroupTree::repopulateTree()
   QStringList groupsSorted = mGroups.keys();
   qSort( groupsSorted.begin(), groupsSorted.end() );
 
-  QList<QTreeWidgetItem *> items;
   for ( int i = 0; i < groupsSorted.size(); ++i )
   {
     QString groupName = groupsSorted[i];
     QVector<int> datasets = mGroups[groupName];
     qSort( datasets );
     mGroups[groupName] = datasets;
-    QTreeWidgetItem *item = new QTreeWidgetItem( QStringList( QString( "%1" ).arg( groupName ) ) ) ;
-    items.append( item );
+    QString name = QString( "%1" ).arg( groupName );
+    QStandardItem *root = mModel.invisibleRootItem();
+    root->appendRow(prepareRow(name));
   }
-  insertTopLevelItems( 0, items );
 
-  if ( topLevelItem( 0 ) )
-    setCurrentItem( topLevelItem( 0 ), 0, QItemSelectionModel::Select );
+  if (groupsSorted.size() > 0)
+    setCurrentIndex(mModel.index(0, 0));
 }
 

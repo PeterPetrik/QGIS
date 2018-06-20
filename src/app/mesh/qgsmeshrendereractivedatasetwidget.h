@@ -24,12 +24,9 @@
 class QgsMeshLayer;
 
 /**
- * \ingroup gui
- * \class QgsMeshRendererScalarSettingsWidget
- *
- *
- *
- * \since QGIS 3.4
+ * Widget for selection of active dataset group from tree view.
+ * Also selects the active scalar and vector dataset by slider
+ * and whether mesh rendering is enabled by checkboxes.
  */
 class APP_EXPORT QgsMeshRendererActiveDatasetWidget : public QWidget, private Ui::QgsMeshRendererActiveDatasetWidgetBase
 {

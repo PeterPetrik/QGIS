@@ -28,8 +28,6 @@ class QgsMeshLayer;
  * A widget for setup of the scalar dataset renderer settings of
  * a mesh layer. The layer must be connected and an active dataset
  * must be selected.
- *
- * \since QGIS 3.4
  */
 class APP_EXPORT QgsMeshRendererScalarSettingsWidget : public QWidget, private Ui::QgsMeshRendererScalarSettingsWidgetBase
 {

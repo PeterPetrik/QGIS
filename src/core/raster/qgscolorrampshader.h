@@ -78,9 +78,6 @@ class CORE_EXPORT QgsColorRampShader : public QgsRasterShaderFunction
      */
     QgsColorRampShader &operator=( const QgsColorRampShader &other );
 
-    //! Clones this shader, return new instance
-    QgsColorRampShader *clone() const SIP_FACTORY;
-
     //An entry for classification based upon value.
     //Such a classification is typically used for
     //single band layers where a pixel value represents
@@ -118,6 +115,12 @@ class CORE_EXPORT QgsColorRampShader : public QgsRasterShaderFunction
 
     //! Sets the color ramp type
     void setColorRampType( QgsColorRampShader::Type colorRampType );
+
+    /**
+     * Whether the color ramp contains any items
+     * \since QGIS 3.4
+     */
+    bool isEmpty() const;
 
     /**
      * Gets the source color ramp

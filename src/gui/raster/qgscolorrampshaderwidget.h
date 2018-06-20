@@ -35,6 +35,8 @@ class QgsRasterDataProvider;
  * the Quantile classification mode can be used and the LoadFromBandButton is visible.
  *
  * The other mode is used to style mesh layer contours (scalar datasets)
+ *
+ * \since QGIS 3.4
  */
 class GUI_EXPORT QgsColorRampShaderWidget: public QWidget, protected Ui::QgsColorRampShaderWidgetBase
 {
@@ -52,8 +54,8 @@ class GUI_EXPORT QgsColorRampShaderWidget: public QWidget, protected Ui::QgsColo
     void setMinMax( double min, double max );
 
     //! Returns shared function used in the renderer. Caller takes ownership and deletes it.
-    QgsColorRampShader *shader() const;
-    void setFromShader( const QgsColorRampShader *colorRampShader );
+    QgsColorRampShader shader() const;
+    void setFromShader( const QgsColorRampShader &colorRampShader );
 
   signals:
     void minMaxChangedFromTree( double min, double max );
@@ -105,18 +107,12 @@ class GUI_EXPORT QgsColorRampShaderWidget: public QWidget, protected Ui::QgsColo
     void mUnitLineEdit_textEdited( const QString &text ) { Q_UNUSED( text ); autoLabel(); }
     void mColormapTreeWidget_itemDoubleClicked( QTreeWidgetItem *item, int column );
     void mColormapTreeWidget_itemEdited( QTreeWidgetItem *item, int column );
-    //void bandChanged();
     void mColorInterpolationComboBox_currentIndexChanged( int index );
-    //void mMinLineEdit_textChanged( const QString & ) { resetClassifyButton(); }
-    //void mMaxLineEdit_textChanged( const QString & ) { resetClassifyButton(); }
-    //void mMinLineEdit_textEdited( const QString &text );
-    //void mMaxLineEdit_textEdited( const QString &text );
     void mClassificationModeComboBox_currentIndexChanged( int index );
     void changeColor();
     void changeOpacity();
 
   private:
-
     void setLineEditValue( QLineEdit *lineEdit, double value );
     double lineEditValue( const QLineEdit *lineEdit ) const;
     void resetClassifyButton();

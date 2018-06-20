@@ -216,7 +216,7 @@ SET(QGIS_APP_SRCS
   mesh/qgsmeshrendererscalarsettingswidget.cpp
   mesh/qgsmeshrenderervectorsettingswidget.cpp
   mesh/qgsmeshrendereractivedatasetwidget.cpp
-  mesh/qgsmeshdatasetgrouptree.cpp
+  mesh/qgsmeshdatasetgrouptreeview.cpp
 )
 
 SET (QGIS_APP_MOC_HDRS
@@ -423,7 +423,7 @@ SET (QGIS_APP_MOC_HDRS
   mesh/qgsmeshrendererscalarsettingswidget.h
   mesh/qgsmeshrenderervectorsettingswidget.h
   mesh/qgsmeshrendereractivedatasetwidget.h
-  mesh/qgsmeshdatasetgrouptree.h
+  mesh/qgsmeshdatasetgrouptreeview.h
   )
 
 

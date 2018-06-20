@@ -13040,16 +13040,14 @@ void QgisApp::showLayerProperties( QgsMapLayer *mapLayer )
   }
   else if ( mapLayer->type() == QgsMapLayer::MeshLayer )
   {
-    QgsMeshLayerProperties *meshLayerPropertiesDialog = new QgsMeshLayerProperties( mapLayer, mMapCanvas, this );
+    QgsMeshLayerProperties meshLayerPropertiesDialog( mapLayer, mMapCanvas, this );
     mMapStyleWidget->blockUpdates( true );
-    if ( meshLayerPropertiesDialog->exec() )
+    if ( meshLayerPropertiesDialog.exec() )
     {
       activateDeactivateLayerRelatedActions( mapLayer );
       mMapStyleWidget->updateCurrentWidgetLayer();
     }
-    mMapStyleWidget->blockUpdates( false );
-
-    delete meshLayerPropertiesDialog; // delete since dialog cannot be reused without updating code
+    mMapStyleWidget->blockUpdates( false ); // delete since dialog cannot be reused without updating code
   }
   else if ( mapLayer->type() == QgsMapLayer::VectorLayer ) // VECTOR
   {

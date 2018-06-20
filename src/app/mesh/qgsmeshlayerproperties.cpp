@@ -38,6 +38,8 @@ QgsMeshLayerProperties::QgsMeshLayerProperties( QgsMapLayer *lyr, QgsMapCanvas *
   : QgsOptionsDialogBase( QStringLiteral( "MeshLayerProperties" ), parent, fl )
   , mMeshLayer( qobject_cast<QgsMeshLayer *>( lyr ) )
 {
+  Q_ASSERT( mMeshLayer );
+
   setupUi( this );
   mRendererMeshPropertiesWidget = new QgsRendererMeshPropertiesWidget( lyr, canvas, this );
   mOptsPage_StyleContent->layout()->addWidget( mRendererMeshPropertiesWidget );
@@ -50,19 +52,10 @@ QgsMeshLayerProperties::QgsMeshLayerProperties( QgsMapLayer *lyr, QgsMapCanvas *
   // switching vertical tabs between icon/text to icon-only modes (splitter collapsed to left),
   // and connecting QDialogButtonBox's accepted/rejected signals to dialog's accept/reject slots
   initOptionsBase( false );
-
-  connect( buttonBox, &QDialogButtonBox::helpRequested, this, &QgsMeshLayerProperties::showHelp );
   connect( lyr->styleManager(), &QgsMapLayerStyleManager::currentStyleChanged, this, &QgsMeshLayerProperties::syncAndRepaint );
 
   connect( this, &QDialog::accepted, this, &QgsMeshLayerProperties::apply );
-  connect( this, &QDialog::rejected, this, &QgsMeshLayerProperties::onCancel );
-
   connect( buttonBox->button( QDialogButtonBox::Apply ), &QAbstractButton::clicked, this, &QgsMeshLayerProperties::apply );
-
-  if ( !mMeshLayer )
-  {
-    return;
-  }
 
   // update based on lyr's current state
   syncToLayer();
@@ -92,7 +85,7 @@ void QgsMeshLayerProperties::syncToLayer()
    * Information Tab
    */
   QString info;
-  if ( mMeshLayer && mMeshLayer->dataProvider() )
+  if ( mMeshLayer->dataProvider() )
   {
     info += QStringLiteral( "<table>" );
     info += QStringLiteral( "<tr><td>%1</td><td>%2</td><tr>" ).arg( tr( "Uri" ) ).arg( mMeshLayer->dataProvider()->dataSourceUri() );
@@ -133,7 +126,7 @@ void QgsMeshLayerProperties::syncToLayer()
 
 void QgsMeshLayerProperties::addDataset()
 {
-  if ( !mMeshLayer || !mMeshLayer->dataProvider() )
+  if ( !mMeshLayer->dataProvider() )
     return;
 
   QString fileName = QFileDialog::getOpenFileName( this );
@@ -169,15 +162,9 @@ void QgsMeshLayerProperties::apply()
   QgsProject::instance()->setDirty( true );
 }
 
-void QgsMeshLayerProperties::onCancel()
-{
-
-}
-
 void QgsMeshLayerProperties::changeCrs( const QgsCoordinateReferenceSystem &crs )
 {
-  if ( mMeshLayer )
-    mMeshLayer->setCrs( crs );
+  mMeshLayer->setCrs( crs );
 }
 
 void QgsMeshLayerProperties::updateLayerName( const QString &text )
@@ -189,9 +176,4 @@ void QgsMeshLayerProperties::syncAndRepaint()
 {
   syncToLayer();
   mMeshLayer->triggerRepaint();
-}
-
-void QgsMeshLayerProperties::showHelp()
-{
-  QgsHelp::openHelp( QStringLiteral( "working_with_mesh/mesh_properties.html" ) );
 }

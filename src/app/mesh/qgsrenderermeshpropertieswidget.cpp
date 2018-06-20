@@ -20,7 +20,7 @@
 #include "qgsmeshlayer.h"
 #include "qgsmessagelog.h"
 #include "qgsmeshrendererscalarsettingswidget.h"
-#include "qgsmeshdatasetgrouptree.h"
+#include "qgsmeshdatasetgrouptreeview.h"
 #include "qgsmeshrendereractivedatasetwidget.h"
 
 QgsRendererMeshPropertiesWidget::QgsRendererMeshPropertiesWidget( QgsMapLayer *layer, QgsMapCanvas *canvas, QWidget *parent )

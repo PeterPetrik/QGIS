@@ -30,8 +30,6 @@ class QgsMapCanvas;
 /**
  * Widget for renderer properties of the mesh, countours (scalars)
  * and vectors data associated with the mesh layer
- *
- * \since QGIS 3.4
  */
 class APP_EXPORT QgsRendererMeshPropertiesWidget : public QgsMapLayerConfigWidget, private Ui::QgsRendererMeshPropsWidgetBase
 {

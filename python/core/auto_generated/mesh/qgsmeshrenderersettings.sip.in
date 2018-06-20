@@ -74,24 +74,19 @@ Represents a mesh renderer settings for scalar datasets
 #include "qgsmeshrenderersettings.h"
 %End
   public:
-    QgsColorRampShader *colorRampShader() const;
+    QgsColorRampShader colorRampShader() const;
 %Docstring
-Returns color ramp shader function.
+Returns color ramp shader function
 %End
-    void setColorRampShader( QgsColorRampShader *shader );
+    void setColorRampShader( QgsColorRampShader shader );
 %Docstring
-Sets color ramp shader function. Takes ownership
-%End
-
-    QgsRasterMinMaxOrigin minMaxOrigin() const;
-%Docstring
-Returns raster min max origin
-%End
-    void setMinMaxOrigin( const QgsRasterMinMaxOrigin &minMaxOrigin );
-%Docstring
-Sets raster min max origin
+Sets color ramp shader function
 %End
 
+    bool isEnabled() const;
+%Docstring
+Returns whether color ramp has any items assigned
+%End
 };
 
 class QgsMeshRendererVectorSettings

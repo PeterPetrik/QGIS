@@ -24,7 +24,7 @@ QgsMeshRendererActiveDatasetWidget::QgsMeshRendererActiveDatasetWidget( QWidget 
   : QWidget( parent )
 {
   setupUi( this );
-  connect( mDatasetGroupTree, &QgsMeshDatasetGroupTree::activeGroupChanged, this, &QgsMeshRendererActiveDatasetWidget::onActiveGroupChanged );
+  connect( mDatasetGroupTreeView, &QgsMeshDatasetGroupTreeView::activeGroupChanged, this, &QgsMeshRendererActiveDatasetWidget::onActiveGroupChanged );
   connect( mDatasetSlider, &QSlider::valueChanged, this, &QgsMeshRendererActiveDatasetWidget::onActiveDatasetChanged );
   connect( mDisplayScalarsCheckBox, &QCheckBox::stateChanged, this, &QgsMeshRendererActiveDatasetWidget::onScalarChecked );
   connect( mDisplayVectorsCheckBox, &QCheckBox::stateChanged, this, &QgsMeshRendererActiveDatasetWidget::onVectorChecked );
@@ -42,7 +42,7 @@ void QgsMeshRendererActiveDatasetWidget::setLayer( QgsMeshLayer *layer )
   setEnabled( mMeshLayer );
   syncToLayer();
 
-  mDatasetGroupTree->setLayer( layer );
+  mDatasetGroupTreeView->setLayer( layer );
 }
 
 int QgsMeshRendererActiveDatasetWidget::activeScalarDataset() const
@@ -77,7 +77,7 @@ bool QgsMeshRendererActiveDatasetWidget::isTriangularMeshEnabled() const
 
 void QgsMeshRendererActiveDatasetWidget::onActiveGroupChanged()
 {
-  const QVector<int> datasets = mDatasetGroupTree->datasetsInActiveGroup();
+  const QVector<int> datasets = mDatasetGroupTreeView->datasetsInActiveGroup();
 
   mDatasetSlider->setMinimum( 0 );
   mDatasetSlider->setMaximum( datasets.size() - 1 );
@@ -87,7 +87,7 @@ void QgsMeshRendererActiveDatasetWidget::onActiveGroupChanged()
 void QgsMeshRendererActiveDatasetWidget::onActiveDatasetChanged( int value )
 {
   int datasetIndex = -1;
-  const QVector<int> datasets = mDatasetGroupTree->datasetsInActiveGroup();
+  const QVector<int> datasets = mDatasetGroupTreeView->datasetsInActiveGroup();
   if ( datasets.size() < value || !mMeshLayer || !mMeshLayer->dataProvider() )
   {
     mDisplayScalarsCheckBox->setEnabled( false );
@@ -162,7 +162,7 @@ void QgsMeshRendererActiveDatasetWidget::updateMetadata( int datasetIndex )
 
 int QgsMeshRendererActiveDatasetWidget::datasetIndex() const
 {
-  const QVector<int> datasets = mDatasetGroupTree->datasetsInActiveGroup();
+  const QVector<int> datasets = mDatasetGroupTreeView->datasetsInActiveGroup();
   int value = mDatasetSlider->value();
   int datasetIndex = -1;
   if ( value < datasets.size() )

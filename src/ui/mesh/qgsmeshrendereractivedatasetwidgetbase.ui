@@ -18,7 +18,7 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <widget class="QgsMeshDatasetGroupTree" name="mDatasetGroupTree">
+    <widget class="QgsMeshDatasetGroupTreeView" name="mDatasetGroupTreeView">
      <property name="minimumSize">
       <size>
        <width>0</width>
@@ -114,9 +114,9 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>QgsMeshDatasetGroupTree</class>
-   <extends>QTreeWidget</extends>
-   <header>mesh/qgsmeshdatasetgrouptree.h</header>
+   <class>QgsMeshDatasetGroupTreeView</class>
+   <extends>QTreeView</extends>
+   <header>mesh/qgsmeshdatasetgrouptreeview.h</header>
   </customwidget>
   <customwidget>
    <class>QgsCollapsibleGroupBox</class>

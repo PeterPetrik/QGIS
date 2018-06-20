@@ -495,12 +495,12 @@ void QgsLayerStylingWidget::updateCurrentWidgetLayer()
   }
   else if ( mCurrentLayer->type() == QgsMapLayer::MeshLayer )
   {
-    QgsMeshLayer *rlayer = qobject_cast<QgsMeshLayer *>( mCurrentLayer );
+    QgsMeshLayer *meshLayer = qobject_cast<QgsMeshLayer *>( mCurrentLayer );
     switch ( row )
     {
       case 0: // Style
       {
-        mMeshStyleWidget = new QgsRendererMeshPropertiesWidget( rlayer, mMapCanvas, mWidgetStack );
+        mMeshStyleWidget = new QgsRendererMeshPropertiesWidget( meshLayer, mMapCanvas, mWidgetStack );
 
         mMeshStyleWidget->setDockMode( true );
         connect( mMeshStyleWidget, &QgsPanelWidget::widgetChanged, this, &QgsLayerStylingWidget::autoApply );

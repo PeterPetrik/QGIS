@@ -28,8 +28,6 @@ class QgsMeshLayer;
  * A widget for setup of the mesh frame settings of
  * the mesh layer. Can be used for both native and
  * triangular mesh renderer settings.
- *
- * \since QGIS 3.4
  */
 class APP_EXPORT QgsMeshRendererMeshSettingsWidget : public QWidget, private Ui::QgsMeshRendererMeshSettingsWidgetBase
 {

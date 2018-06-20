@@ -24,7 +24,6 @@
 #include "qgis_core.h"
 #include "qgis.h"
 #include "qgscolorrampshader.h"
-#include "qgsrasterminmaxorigin.h"
 
 
 /**
@@ -72,19 +71,15 @@ class CORE_EXPORT QgsMeshRendererMeshSettings
 class CORE_EXPORT QgsMeshRendererScalarSettings
 {
   public:
-    //! Returns color ramp shader function.
-    QgsColorRampShader *colorRampShader() const;
-    //! Sets color ramp shader function. Takes ownership
-    void setColorRampShader( QgsColorRampShader *shader );
+    //! Returns color ramp shader function
+    QgsColorRampShader colorRampShader() const;
+    //! Sets color ramp shader function
+    void setColorRampShader( QgsColorRampShader shader );
 
-    //! Returns raster min max origin
-    QgsRasterMinMaxOrigin minMaxOrigin() const;
-    //! Sets raster min max origin
-    void setMinMaxOrigin( const QgsRasterMinMaxOrigin &minMaxOrigin );
-
+    //! Returns whether color ramp has any items assigned
+    bool isEnabled() const;
   private:
-    std::shared_ptr<QgsColorRampShader> mColorRampShader;
-    QgsRasterMinMaxOrigin mRasterMinMaxOrigin;
+    QgsColorRampShader mColorRampShader;
 };
 
 /**

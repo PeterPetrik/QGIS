@@ -197,8 +197,8 @@
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>643</width>
-                <height>729</height>
+                <width>261</width>
+                <height>144</height>
                </rect>
               </property>
               <layout class="QVBoxLayout" name="verticalLayout_4">
@@ -328,8 +328,8 @@ border-radius: 2px;</string>
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>643</width>
-                <height>729</height>
+                <width>100</width>
+                <height>30</height>
                </rect>
               </property>
               <layout class="QVBoxLayout" name="verticalLayout_10"/>
@@ -377,7 +377,7 @@ border-radius: 2px;</string>
          <enum>Qt::Horizontal</enum>
         </property>
         <property name="standardButtons">
-         <set>QDialogButtonBox::Apply|QDialogButtonBox::Cancel|QDialogButtonBox::Help|QDialogButtonBox::Ok</set>
+         <set>QDialogButtonBox::Apply|QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
         </property>
        </widget>
       </item>

@@ -20,11 +20,7 @@
 #include "ui_qgsmeshlayerpropertiesbase.h"
 
 #include "qgsoptionsdialogbase.h"
-
 #include "qgsguiutils.h"
-// #include "qgshelp.h"
-// #include "qgsmaplayerstylemanager.h"
-// #include "qgsmaptoolemitpoint.h"
 #include "qgis_app.h"
 
 class QgsMapLayer;
@@ -35,8 +31,6 @@ class QgsRendererMeshPropertiesWidget;
 /**
  * Property sheet for a mesh map layer.
  * Contains information, source and style tabs
- *
- * \since QGIS 3.4
  */
 class APP_EXPORT QgsMeshLayerProperties : public QgsOptionsDialogBase, private Ui::QgsMeshLayerPropertiesBase
 {
@@ -57,12 +51,8 @@ class APP_EXPORT QgsMeshLayerProperties : public QgsOptionsDialogBase, private U
 
     //!Applies the settings made in the dialog without closing the box
     void apply();
-    //! Called when cancel button is pressed
-    void onCancel();
     //! \brief Slot to update layer display name as original is edited.
     void updateLayerName( const QString &text );
-    //! Help button
-    void showHelp();
     //! Synchronize GUI state with associated mesh layer and trigger repaint
     void syncAndRepaint();
     //! Change layer coordinate reference system

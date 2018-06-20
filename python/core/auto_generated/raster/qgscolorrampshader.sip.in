@@ -54,11 +54,6 @@ Copy constructor
 %End
 
 
-    QgsColorRampShader *clone() const /Factory/;
-%Docstring
-Clones this shader, return new instance
-%End
-
     struct ColorRampItem
     {
       ColorRampItem();
@@ -97,6 +92,13 @@ Returns the color ramp type as a string.
     void setColorRampType( QgsColorRampShader::Type colorRampType );
 %Docstring
 Sets the color ramp type
+%End
+
+    bool isEmpty() const;
+%Docstring
+Whether the color ramp contains any items
+
+.. versionadded:: 3.4
 %End
 
     QgsColorRamp *sourceColorRamp() const /Factory/;

@@ -55,15 +55,7 @@ QgsMeshVectorRenderer::QgsMeshVectorRenderer( const QgsTriangularMesh &m,
   , mDataOnVertices( dataIsOnVertices )
   , mOutputSize( size )
 {
-  auto bounds = std::minmax_element( mDatasetValuesX.constBegin(), mDatasetValuesX.constEnd() );
-  mMinX = *bounds.first; //TODO del
-  mMaxX = *bounds.second;
-
-  bounds = std::minmax_element( mDatasetValuesY.constBegin(), mDatasetValuesY.constEnd() );
-  mMinY = *bounds.first; //TODO del
-  mMaxY = *bounds.second;
-
-  bounds = std::minmax_element( mDatasetValuesMag.constBegin(), mDatasetValuesMag.constEnd() );
+  auto bounds = std::minmax_element( mDatasetValuesMag.constBegin(), mDatasetValuesMag.constEnd() );
   mMinMag = *bounds.first;
   mMaxMag = *bounds.second;
 }
