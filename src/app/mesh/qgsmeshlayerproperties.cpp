@@ -53,10 +53,13 @@ QgsMeshLayerProperties::QgsMeshLayerProperties( QgsMapLayer *lyr, QgsMapCanvas *
   // switching vertical tabs between icon/text to icon-only modes (splitter collapsed to left),
   // and connecting QDialogButtonBox's accepted/rejected signals to dialog's accept/reject slots
   initOptionsBase( false );
+
   connect( lyr->styleManager(), &QgsMapLayerStyleManager::currentStyleChanged, this, &QgsMeshLayerProperties::syncAndRepaint );
 
   connect( this, &QDialog::accepted, this, &QgsMeshLayerProperties::apply );
   connect( buttonBox->button( QDialogButtonBox::Apply ), &QAbstractButton::clicked, this, &QgsMeshLayerProperties::apply );
+
+  connect( mMeshLayer, &QgsMeshLayer::dataChanged, this, &QgsMeshLayerProperties::syncAndRepaint );
 
   // update based on lyr's current state
   syncToLayer();
@@ -89,10 +92,10 @@ void QgsMeshLayerProperties::syncToLayer()
   if ( mMeshLayer->dataProvider() )
   {
     info += QStringLiteral( "<table>" );
-    info += QStringLiteral( "<tr><td>%1</td><td>%2</td><tr>" ).arg( tr( "Uri" ) ).arg( mMeshLayer->dataProvider()->dataSourceUri() );
-    info += QStringLiteral( "<tr><td>%1</td><td>%2</td><tr>" ).arg( tr( "Vertex count" ) ).arg( mMeshLayer->dataProvider()->vertexCount() );
-    info += QStringLiteral( "<tr><td>%1</td><td>%2</td><tr>" ).arg( tr( "Face count" ) ).arg( mMeshLayer->dataProvider()->faceCount() );
-    info += QStringLiteral( "<tr><td>%1</td><td>%2</td><tr>" ).arg( tr( "Dataset count" ) ).arg( mMeshLayer->dataProvider()->datasetCount() );
+    info += QStringLiteral( "<tr><td>%1: </td><td>%2</td><tr>" ).arg( tr( "Uri" ) ).arg( mMeshLayer->dataProvider()->dataSourceUri() );
+    info += QStringLiteral( "<tr><td>%1: </td><td>%2</td><tr>" ).arg( tr( "Vertex count" ) ).arg( mMeshLayer->dataProvider()->vertexCount() );
+    info += QStringLiteral( "<tr><td>%1: </td><td>%2</td><tr>" ).arg( tr( "Face count" ) ).arg( mMeshLayer->dataProvider()->faceCount() );
+    info += QStringLiteral( "<tr><td>%1: </td><td>%2</td><tr>" ).arg( tr( "Dataset count" ) ).arg( mMeshLayer->dataProvider()->datasetCount() );
     info += QStringLiteral( "</table>" );
   }
   else
@@ -122,7 +125,6 @@ void QgsMeshLayerProperties::syncToLayer()
    * Styling Tab
    */
   mRendererMeshPropertiesWidget->syncToLayer();
-
 }
 
 void QgsMeshLayerProperties::addDataset()

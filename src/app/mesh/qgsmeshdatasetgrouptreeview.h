@@ -115,6 +115,9 @@ class APP_EXPORT QgsMeshDatasetGroupTreeView : public QTreeView
     //! Returns all the dataset indexes in the active group
     QVector<int> datasetsInActiveGroup() const;
 
+    //! Synchronize widgets state with associated mesh layer
+    void syncToLayer();
+
   signals:
     //! Selected dataset group changed
     void activeGroupChanged();
@@ -123,7 +126,6 @@ class APP_EXPORT QgsMeshDatasetGroupTreeView : public QTreeView
     void onSelectionChanged( const QItemSelection &selected, const QItemSelection &deselected );
 
   private:
-    void repopulateTree();
     void extractGroups();
 
     QgsMeshDatasetGroupTreeModel mModel;

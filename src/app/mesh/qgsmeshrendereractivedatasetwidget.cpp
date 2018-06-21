@@ -174,6 +174,8 @@ int QgsMeshRendererActiveDatasetWidget::datasetIndex() const
 
 void QgsMeshRendererActiveDatasetWidget::syncToLayer()
 {
+  mDatasetGroupTreeView->syncToLayer();
+
   if ( mMeshLayer )
   {
     whileBlocking( mDisplayNativeMeshCheckBox )->setChecked( mMeshLayer->rendererNativeMeshSettings().isEnabled() );

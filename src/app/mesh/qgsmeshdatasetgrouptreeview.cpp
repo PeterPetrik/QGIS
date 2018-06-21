@@ -209,7 +209,7 @@ void QgsMeshDatasetGroupTreeView::setLayer( QgsMeshLayer *layer )
   if ( layer != mMeshLayer )
   {
     mMeshLayer = layer;
-    repopulateTree();
+    syncToLayer();
   }
 }
 
@@ -269,9 +269,8 @@ void QgsMeshDatasetGroupTreeView::extractGroups()
   }
 }
 
-void QgsMeshDatasetGroupTreeView::repopulateTree()
+void QgsMeshDatasetGroupTreeView::syncToLayer()
 {
-
   mActiveGroup.clear();
   mModel.clear();
 

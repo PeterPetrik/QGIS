@@ -33,6 +33,11 @@ QgsRendererMeshPropertiesWidget::QgsRendererMeshPropertiesWidget( QgsMapLayer *l
 
   setupUi( this );
 
+  connect( mMeshLayer,
+           &QgsMeshLayer::dataChanged,
+           this,
+           &QgsRendererMeshPropertiesWidget::syncToLayer );
+
   mMeshRendererActiveDatasetWidget->setLayer( mMeshLayer );
   mMeshRendererScalarSettingsWidget->setLayer( mMeshLayer );
   mNativeMeshSettingsWidget->setLayer( mMeshLayer, false );
