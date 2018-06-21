@@ -33,6 +33,7 @@
 #include "qgssettings.h"
 
 #include <QFileDialog>
+#include <QMessageBox>
 
 QgsMeshLayerProperties::QgsMeshLayerProperties( QgsMapLayer *lyr, QgsMapCanvas *canvas, QWidget *parent, Qt::WindowFlags fl )
   : QgsOptionsDialogBase( QStringLiteral( "MeshLayerProperties" ), parent, fl )
@@ -129,13 +130,28 @@ void QgsMeshLayerProperties::addDataset()
   if ( !mMeshLayer->dataProvider() )
     return;
 
-  QString fileName = QFileDialog::getOpenFileName( this );
-  if ( !fileName.isEmpty() )
+  QgsSettings settings;
+  QString openFileDir = settings.value( QStringLiteral( "lastMeshDatasetDir" ), QDir::homePath(), QgsSettings::App ).toString();
+  QString openFileString = QFileDialog::getOpenFileName( nullptr, tr( "Load mesh datasets" ), openFileDir, tr( "Layout mesh datasets" ) + " (*.*)" );
+
+  if ( openFileString.isEmpty() )
   {
-    bool ok = mMeshLayer->dataProvider()->addDataset( fileName );
-    QgsDebugMsg( QStringLiteral( "Dataset added %1, %2" ).arg( fileName ).arg( ok ) );
-    if ( ok )
-      syncToLayer();
+    return; //canceled by the user
+  }
+
+  QFileInfo openFileInfo( openFileString );
+  settings.setValue( QStringLiteral( "lastMeshDatasetDir" ), openFileInfo.absolutePath(), QgsSettings::App );
+  QFile datasetFile( openFileString );
+
+  bool ok = mMeshLayer->dataProvider()->addDataset( openFileString );
+  if ( ok )
+  {
+    syncToLayer();
+    QMessageBox::information( this, tr( "Load mesh datasets" ), tr( "Datasets added to the mesh layer." ) );
+  }
+  else
+  {
+    QMessageBox::warning( this, tr( "Load mesh datasets" ), tr( "Could not read mesh dataset." ) );
   }
 }
 
