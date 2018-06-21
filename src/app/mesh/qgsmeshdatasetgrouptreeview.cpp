@@ -21,22 +21,187 @@
 #include <QList>
 #include <QItemSelectionModel>
 
-static QList<QStandardItem *> prepareRow(const QString &str)
+
+QgsMeshDatasetGroupTreeItem::~QgsMeshDatasetGroupTreeItem()
 {
-    QList<QStandardItem *> rowItems;
-    rowItems << new QStandardItem(str);
-    return rowItems;
+  qDeleteAll( mChildren );
 }
+
+QgsMeshDatasetGroupTreeItem::QgsMeshDatasetGroupTreeItem( const QString &name, QgsMeshDatasetGroupTreeItem *parent )
+  : mParent( parent )
+  , mName( name )
+{
+}
+
+void QgsMeshDatasetGroupTreeItem::appendChild( QgsMeshDatasetGroupTreeItem *node )
+{
+  mChildren.append( node );
+}
+
+QgsMeshDatasetGroupTreeItem *QgsMeshDatasetGroupTreeItem::child( int row ) const
+{
+  if ( row < mChildren.count() )
+    return mChildren.at( row );
+  else
+    return nullptr;
+}
+
+int QgsMeshDatasetGroupTreeItem::columnCount() const
+{
+  return 1;
+}
+
+int QgsMeshDatasetGroupTreeItem::childCount() const
+{
+  return mChildren.count();
+}
+
+QgsMeshDatasetGroupTreeItem *QgsMeshDatasetGroupTreeItem::parentItem() const
+{
+  return mParent;
+}
+
+int QgsMeshDatasetGroupTreeItem::row() const
+{
+  if ( mParent )
+    return mParent->mChildren.indexOf( const_cast<QgsMeshDatasetGroupTreeItem *>( this ) );
+
+  return 0;
+}
+
+QVariant QgsMeshDatasetGroupTreeItem::data( int column ) const
+{
+  Q_UNUSED( column );
+  return mName;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+QgsMeshDatasetGroupTreeModel::QgsMeshDatasetGroupTreeModel( QObject *parent )
+  : QAbstractItemModel( parent )
+  ,  mRootItem( new QgsMeshDatasetGroupTreeItem( "Groups" ) )
+{
+}
+
+QgsMeshDatasetGroupTreeModel::~QgsMeshDatasetGroupTreeModel() = default;
+
+int QgsMeshDatasetGroupTreeModel::columnCount( const QModelIndex &parent ) const
+{
+  if ( parent.isValid() )
+    return static_cast<QgsMeshDatasetGroupTreeItem *>( parent.internalPointer() )->columnCount();
+  else
+    return mRootItem->columnCount();
+}
+
+QVariant QgsMeshDatasetGroupTreeModel::data( const QModelIndex &index, int role ) const
+{
+  if ( !index.isValid() )
+    return QVariant();
+
+  if ( role != Qt::DisplayRole )
+    return QVariant();
+
+  QgsMeshDatasetGroupTreeItem *item = static_cast<QgsMeshDatasetGroupTreeItem *>( index.internalPointer() );
+
+  return item->data( index.column() );
+}
+
+Qt::ItemFlags QgsMeshDatasetGroupTreeModel::flags( const QModelIndex &index ) const
+{
+  if ( !index.isValid() )
+    return Qt::NoItemFlags;
+
+  return QAbstractItemModel::flags( index );
+}
+
+QVariant QgsMeshDatasetGroupTreeModel::headerData( int section, Qt::Orientation orientation,
+    int role ) const
+{
+  if ( orientation == Qt::Horizontal && role == Qt::DisplayRole )
+    return mRootItem->data( section );
+
+  return QVariant();
+}
+
+QModelIndex QgsMeshDatasetGroupTreeModel::index( int row, int column, const QModelIndex &parent )
+const
+{
+  if ( !hasIndex( row, column, parent ) )
+    return QModelIndex();
+
+  QgsMeshDatasetGroupTreeItem *parentItem;
+
+  if ( !parent.isValid() )
+    parentItem = mRootItem.get();
+  else
+    parentItem = static_cast<QgsMeshDatasetGroupTreeItem *>( parent.internalPointer() );
+
+  QgsMeshDatasetGroupTreeItem *childItem = parentItem->child( row );
+  if ( childItem )
+    return createIndex( row, column, childItem );
+  else
+    return QModelIndex();
+}
+
+QModelIndex QgsMeshDatasetGroupTreeModel::parent( const QModelIndex &index ) const
+{
+  if ( !index.isValid() )
+    return QModelIndex();
+
+  QgsMeshDatasetGroupTreeItem *childItem = static_cast<QgsMeshDatasetGroupTreeItem *>( index.internalPointer() );
+  QgsMeshDatasetGroupTreeItem *parentItem = childItem->parentItem();
+
+  if ( parentItem == mRootItem.get() )
+    return QModelIndex();
+
+  return createIndex( parentItem->row(), 0, parentItem );
+}
+
+int QgsMeshDatasetGroupTreeModel::rowCount( const QModelIndex &parent ) const
+{
+  QgsMeshDatasetGroupTreeItem *parentItem;
+  if ( parent.column() > 0 )
+    return 0;
+
+  if ( !parent.isValid() )
+    parentItem = mRootItem.get();
+  else
+    parentItem = static_cast<QgsMeshDatasetGroupTreeItem *>( parent.internalPointer() );
+
+  return parentItem->childCount();
+}
+
+void QgsMeshDatasetGroupTreeModel::setupModelData( const QStringList &groups )
+{
+  beginResetModel();
+
+  for ( const QString &groupName : groups )
+  {
+    QgsMeshDatasetGroupTreeItem *item = new QgsMeshDatasetGroupTreeItem( groupName, mRootItem.get() );
+    mRootItem->appendChild( item );
+  }
+
+  endResetModel();
+}
+
+void QgsMeshDatasetGroupTreeModel::clear()
+{
+  mRootItem.reset( new QgsMeshDatasetGroupTreeItem( "Groups" ) );
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
 
 QgsMeshDatasetGroupTreeView::QgsMeshDatasetGroupTreeView( QWidget *parent )
   : QTreeView( parent )
 {
-  setSelectionMode(QAbstractItemView::SingleSelection) ;
+  setModel( &mModel );
+
+  setSelectionMode( QAbstractItemView::SingleSelection ) ;
   connect( selectionModel(),
            &QItemSelectionModel::selectionChanged,
            this,
            &QgsMeshDatasetGroupTreeView::onSelectionChanged
-           );
+         );
 }
 
 void QgsMeshDatasetGroupTreeView::setLayer( QgsMeshLayer *layer )
@@ -60,36 +225,35 @@ void QgsMeshDatasetGroupTreeView::onSelectionChanged( const QItemSelection &sele
 {
   Q_UNUSED( deselected );
 
-  if ( selected.isEmpty() ) {
+  if ( selected.isEmpty() )
+  {
     mActiveGroup = QString();
     return;
   }
 
-  if ( selected.first().indexes().isEmpty() ) {
+  if ( selected.first().indexes().isEmpty() )
+  {
     mActiveGroup = QString();
     return;
   }
 
   QModelIndex index = selected.first().indexes().first(); //single selection only
-  QStandardItem* item = mModel.itemFromIndex(index);
-  QString name = item->text();
-  mActiveGroup = name;
-
+  QVariant name = mModel.data( index, 0 );
+  mActiveGroup = name.toString();
   emit activeGroupChanged();
 }
 
-void QgsMeshDatasetGroupTreeView::repopulateTree()
+
+void QgsMeshDatasetGroupTreeView::extractGroups()
 {
+  // TODO replace with MDAL groups when introduced
   mGroups.clear();
-  mActiveGroup.clear();
-  mModel.clear();
 
   if ( !mMeshLayer || !mMeshLayer->dataProvider() )
     return;
 
   for ( int i = 0; i < mMeshLayer->dataProvider()->datasetCount(); ++i )
   {
-    // TODO name to metadata directly when groups are introduced in MDAL
     const QgsMeshDatasetMetadata meta = mMeshLayer->dataProvider()->datasetMetadata( i );
     QString name = meta.extraOptions()["name"];
     if ( mGroups.constFind( name ) == mGroups.constEnd() )
@@ -103,22 +267,18 @@ void QgsMeshDatasetGroupTreeView::repopulateTree()
       mGroups[name].append( i );
     }
   }
-
-  QStringList groupsSorted = mGroups.keys();
-  qSort( groupsSorted.begin(), groupsSorted.end() );
-
-  for ( int i = 0; i < groupsSorted.size(); ++i )
-  {
-    QString groupName = groupsSorted[i];
-    QVector<int> datasets = mGroups[groupName];
-    qSort( datasets );
-    mGroups[groupName] = datasets;
-    QString name = QString( "%1" ).arg( groupName );
-    QStandardItem *root = mModel.invisibleRootItem();
-    root->appendRow(prepareRow(name));
-  }
-
-  if (groupsSorted.size() > 0)
-    setCurrentIndex(mModel.index(0, 0));
 }
 
+void QgsMeshDatasetGroupTreeView::repopulateTree()
+{
+
+  mActiveGroup.clear();
+  mModel.clear();
+
+  extractGroups();
+
+  mModel.setupModelData( mGroups.keys() );
+
+  if ( mGroups.size() > 0 )
+    setCurrentIndex( mModel.index( 0, 0 ) );
+}

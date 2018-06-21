@@ -24,13 +24,80 @@
 #include <QVector>
 #include <QItemSelection>
 #include <QStandardItemModel>
+#include <QList>
+#include <memory>
 
 class QgsMeshLayer;
 
 /**
- * Tree widget for display of the mesh dataset groups.
+ * Tree item for display of the mesh dataset groups.
  * Dataset group is set of datasets with the same name,
  * but different control variable (e.g. time)
+ *
+ * Support for multiple levels, because groups can have
+ * subgroups, for example
+ *
+ * Groups:
+ *   Depth
+ *     - Maximum/Depth
+ *   Velocity
+ *   Wind speed
+ *     - Maximum/Wind Speed
+ */
+class APP_NO_EXPORT QgsMeshDatasetGroupTreeItem
+{
+  public:
+    QgsMeshDatasetGroupTreeItem( const QString &name, QgsMeshDatasetGroupTreeItem *parent = nullptr );
+    ~QgsMeshDatasetGroupTreeItem();
+
+    void appendChild( QgsMeshDatasetGroupTreeItem *node );
+    QgsMeshDatasetGroupTreeItem *child( int row ) const;
+    int columnCount() const;
+    int childCount() const;
+    QgsMeshDatasetGroupTreeItem *parentItem() const;
+    int row() const;
+    QVariant data( int column ) const;
+
+  private:
+    QgsMeshDatasetGroupTreeItem *mParent = nullptr;
+    QList< QgsMeshDatasetGroupTreeItem * > mChildren;
+
+    // Data
+    QString mName;
+};
+
+/**
+ * Item Model for QgsMeshDatasetGroupTreeItem
+ */
+class APP_NO_EXPORT QgsMeshDatasetGroupTreeModel : public QAbstractItemModel
+{
+    Q_OBJECT
+
+  public:
+    explicit QgsMeshDatasetGroupTreeModel( QObject *parent = nullptr );
+    ~QgsMeshDatasetGroupTreeModel();
+
+    QVariant data( const QModelIndex &index, int role ) const override;
+    Qt::ItemFlags flags( const QModelIndex &index ) const override;
+    QVariant headerData( int section, Qt::Orientation orientation,
+                         int role = Qt::DisplayRole ) const override;
+    QModelIndex index( int row, int column,
+                       const QModelIndex &parent = QModelIndex() ) const override;
+    QModelIndex parent( const QModelIndex &index ) const override;
+    int rowCount( const QModelIndex &parent = QModelIndex() ) const override;
+    int columnCount( const QModelIndex &parent = QModelIndex() ) const override;
+
+    //! Add groups to the model
+    void setupModelData( const QStringList &groups );
+    //! Remove all groups from the model
+    void clear();
+
+  private:
+    std::unique_ptr<QgsMeshDatasetGroupTreeItem> mRootItem;
+};
+
+/**
+ * Tree widget for display of the mesh dataset groups.
  *
  * One dataset group is selected (active)
  */
@@ -57,8 +124,9 @@ class APP_EXPORT QgsMeshDatasetGroupTreeView : public QTreeView
 
   private:
     void repopulateTree();
+    void extractGroups();
 
-    QStandardItemModel mModel;
+    QgsMeshDatasetGroupTreeModel mModel;
     QgsMeshLayer *mMeshLayer = nullptr; // not owned
     QMap<QString, QVector<int>> mGroups; // group name -> dataset indices
     QString mActiveGroup;
