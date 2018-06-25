@@ -74,7 +74,7 @@ class CORE_EXPORT QgsMeshRendererScalarSettings
     //! Returns color ramp shader function
     QgsColorRampShader colorRampShader() const;
     //! Sets color ramp shader function
-    void setColorRampShader( QgsColorRampShader shader );
+    void setColorRampShader( const QgsColorRampShader &shader );
 
     //! Returns whether color ramp has any items assigned
     bool isEnabled() const;

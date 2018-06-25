@@ -1,9 +1,9 @@
 /***************************************************************************
                          qgscolorrampshaderwidget.cpp
                          ----------------------------
-    begin                : Jun 2018 by Peter Petrik
-    copyright            : (C) 2012 by Marco Hugentobler
-    email                : marco at sourcepole dot ch
+    begin                : Jun 2018
+    copyright            : (C) 2018 by Peter Petrik
+    email                : zilolv at gmail dot com
  ***************************************************************************/
 
 /***************************************************************************
@@ -295,11 +295,12 @@ void QgsColorRampShaderWidget::classify()
     return;
   }
 
-  QgsColorRampShader *colorRampShader = new QgsColorRampShader(
-    mMin, mMax,
-    ramp.get(),
-    static_cast< QgsColorRampShader::Type >( mColorInterpolationComboBox->currentData().toInt() ),
-    static_cast< QgsColorRampShader::ClassificationMode >( mClassificationModeComboBox->currentData().toInt() ) );
+  std::unique_ptr< QgsColorRampShader > colorRampShader( new QgsColorRampShader(
+        mMin, mMax,
+        ramp.release(),
+        static_cast< QgsColorRampShader::Type >( mColorInterpolationComboBox->currentData().toInt() ),
+        static_cast< QgsColorRampShader::ClassificationMode >( mClassificationModeComboBox->currentData().toInt() ) )
+                                                       );
 
   // only for Quantile we need band and provider and extent
   colorRampShader->classifyColorRamp( mNumberOfEntriesSpinBox->value(),

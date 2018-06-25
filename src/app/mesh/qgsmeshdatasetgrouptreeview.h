@@ -47,6 +47,7 @@ class QgsMeshLayer;
 class APP_NO_EXPORT QgsMeshDatasetGroupTreeItem
 {
   public:
+    QgsMeshDatasetGroupTreeItem( QgsMeshDatasetGroupTreeItem *parent = nullptr );
     QgsMeshDatasetGroupTreeItem( const QString &name, QgsMeshDatasetGroupTreeItem *parent = nullptr );
     ~QgsMeshDatasetGroupTreeItem();
 
@@ -134,4 +135,4 @@ class APP_EXPORT QgsMeshDatasetGroupTreeView : public QTreeView
     QString mActiveGroup;
 };
 
-#endif // QGSMESHRENDERERSCALARSETTINGSWIDGET_H
+#endif // QGSMESHDATASETGROUPTREE_H

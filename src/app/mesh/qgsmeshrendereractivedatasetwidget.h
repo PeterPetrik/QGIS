@@ -71,7 +71,7 @@ class APP_EXPORT QgsMeshRendererActiveDatasetWidget : public QWidget, private Ui
     void nativeMeshEnabledChanged( bool on );
 
     //! Emitted when rendering of the triangular mesh changed
-    void triangularMeshRenderingOnChange( bool on );
+    void triangularMeshEnabledChanged( bool on );
 
     //! Emitted when any settings related to rendering changed
     void widgetChanged();

@@ -133,7 +133,7 @@ void QgsMeshRendererActiveDatasetWidget::onNativeMeshChecked( int toggle )
 void QgsMeshRendererActiveDatasetWidget::onTringularMeshChecked( int toggle )
 {
   Q_UNUSED( toggle );
-  emit triangularMeshRenderingOnChange( isTriangularMeshEnabled() );
+  emit triangularMeshEnabledChanged( isTriangularMeshEnabled() );
   emit widgetChanged();
 }
 
@@ -141,15 +141,15 @@ void QgsMeshRendererActiveDatasetWidget::updateMetadata( int datasetIndex )
 {
   if ( datasetIndex == -1 )
   {
-    mActiveDatasetMetadata->setText( QString( "N/A" ) );
+    mActiveDatasetMetadata->setText( tr( "N/A" ) );
   }
   else
   {
     const QgsMeshDatasetMetadata meta = mMeshLayer->dataProvider()->datasetMetadata( datasetIndex );
     QString msg;
     msg += QStringLiteral( "<table>" );
-    msg += QStringLiteral( "<tr><td>is on vertices</td><td>%1</td></tr>" ).arg( meta.isOnVertices() );
-    msg += QStringLiteral( "<tr><td>is vector</td><td>%1</td></tr>" ).arg( meta.isVector() );
+    msg += QStringLiteral( "<tr><td>%1</td><td>%2</td></tr>" ).arg( tr( "is on vertices" ) ).arg( meta.isOnVertices() );
+    msg += QStringLiteral( "<tr><td>%1</td><td>%2</td></tr>" ).arg( tr( "is vector" ) ).arg( meta.isVector() );
     for ( auto it = meta.extraOptions().constBegin(); it != meta.extraOptions().constEnd(); ++it )
     {
       msg += QStringLiteral( "<tr><td>%1</td><td>%2</td></tr>" ).arg( it.key() ).arg( it.value() );

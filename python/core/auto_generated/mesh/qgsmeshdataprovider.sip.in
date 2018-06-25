@@ -228,7 +228,7 @@ or read on demand
 %Docstring
 Associate dataset with the mesh
 
-emits dataChanged when successfull
+emits dataChanged when successful
 %End
 
     virtual int datasetCount() const = 0;

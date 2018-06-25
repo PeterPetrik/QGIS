@@ -12,8 +12,8 @@
  *   (at your option) any later version.                                   *
  *                                                                         *
  ***************************************************************************/
-#ifndef QGSRENDERERMESHPROPERTIESDIALOG_H
-#define QGSRENDERERMESHPROPERTIESDIALOG_H
+#ifndef QGSRENDERERMESHPROPERTIESWIDGET_H
+#define QGSRENDERERMESHPROPERTIESWIDGET_H
 
 #include <QObject>
 #include <QDialog>
@@ -43,7 +43,7 @@ class APP_EXPORT QgsRendererMeshPropertiesWidget : public QgsMapLayerConfigWidge
      * \param canvas The canvas object used
      * \param parent Parent object
      */
-    QgsRendererMeshPropertiesWidget( QgsMapLayer *layer, QgsMapCanvas *canvas, QWidget *parent = nullptr );
+    QgsRendererMeshPropertiesWidget( QgsMeshLayer *layer, QgsMapCanvas *canvas, QWidget *parent = nullptr );
     ~QgsRendererMeshPropertiesWidget()  = default;
 
   public slots:
@@ -57,4 +57,4 @@ class APP_EXPORT QgsRendererMeshPropertiesWidget : public QgsMapLayerConfigWidge
     QgsMeshLayer *mMeshLayer = nullptr; //not owned
 };
 
-#endif // QGSRENDERERMESHPROPERTIESDIALOG_H
+#endif // QGSRENDERERMESHPROPERTIESWIDGET_H

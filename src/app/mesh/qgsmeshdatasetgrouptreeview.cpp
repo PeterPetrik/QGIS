@@ -27,6 +27,11 @@ QgsMeshDatasetGroupTreeItem::~QgsMeshDatasetGroupTreeItem()
   qDeleteAll( mChildren );
 }
 
+QgsMeshDatasetGroupTreeItem::QgsMeshDatasetGroupTreeItem( QgsMeshDatasetGroupTreeItem *parent )
+  : mParent( parent )
+{
+}
+
 QgsMeshDatasetGroupTreeItem::QgsMeshDatasetGroupTreeItem( const QString &name, QgsMeshDatasetGroupTreeItem *parent )
   : mParent( parent )
   , mName( name )
@@ -79,7 +84,7 @@ QVariant QgsMeshDatasetGroupTreeItem::data( int column ) const
 
 QgsMeshDatasetGroupTreeModel::QgsMeshDatasetGroupTreeModel( QObject *parent )
   : QAbstractItemModel( parent )
-  ,  mRootItem( new QgsMeshDatasetGroupTreeItem( "Groups" ) )
+  ,  mRootItem( new QgsMeshDatasetGroupTreeItem() )
 {
 }
 
@@ -118,7 +123,7 @@ QVariant QgsMeshDatasetGroupTreeModel::headerData( int section, Qt::Orientation 
     int role ) const
 {
   if ( orientation == Qt::Horizontal && role == Qt::DisplayRole )
-    return mRootItem->data( section );
+    return tr( "Groups" );
 
   return QVariant();
 }
@@ -175,6 +180,8 @@ void QgsMeshDatasetGroupTreeModel::setupModelData( const QStringList &groups )
 {
   beginResetModel();
 
+  mRootItem.reset();
+
   for ( const QString &groupName : groups )
   {
     QgsMeshDatasetGroupTreeItem *item = new QgsMeshDatasetGroupTreeItem( groupName, mRootItem.get() );
@@ -186,7 +193,7 @@ void QgsMeshDatasetGroupTreeModel::setupModelData( const QStringList &groups )
 
 void QgsMeshDatasetGroupTreeModel::clear()
 {
-  mRootItem.reset( new QgsMeshDatasetGroupTreeItem( "Groups" ) );
+  mRootItem.reset( new QgsMeshDatasetGroupTreeItem() );
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -272,7 +279,6 @@ void QgsMeshDatasetGroupTreeView::extractGroups()
 void QgsMeshDatasetGroupTreeView::syncToLayer()
 {
   mActiveGroup.clear();
-  mModel.clear();
 
   extractGroups();
 

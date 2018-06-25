@@ -78,7 +78,7 @@ Represents a mesh renderer settings for scalar datasets
 %Docstring
 Returns color ramp shader function
 %End
-    void setColorRampShader( QgsColorRampShader shader );
+    void setColorRampShader( const QgsColorRampShader &shader );
 %Docstring
 Sets color ramp shader function
 %End

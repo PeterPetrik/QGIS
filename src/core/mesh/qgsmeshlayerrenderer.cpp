@@ -31,8 +31,8 @@
 #include "qgsmeshlayerinterpolator.h"
 #include "qgsmeshvectorrenderer.h"
 #include "qgsfillsymbollayer.h"
-
-
+#include "qgssettings.h"
+#include "qgsstyle.h"
 
 QgsMeshLayerRenderer::QgsMeshLayerRenderer( QgsMeshLayer *layer, QgsRenderContext &context )
   : QgsMapLayerRenderer( layer->id() )
@@ -65,15 +65,15 @@ void QgsMeshLayerRenderer::assignDefaultScalarShader( )
   if ( mScalarDatasetValues.isEmpty() || mRendererScalarSettings.isEnabled() )
     return; // no need for default shader, either rendering is off or we already have some shader
 
-  double vMin = *std::min_element( mScalarDatasetValues.constBegin(), mScalarDatasetValues.constEnd() );
-  double vMax = *std::max_element( mScalarDatasetValues.constBegin(), mScalarDatasetValues.constEnd() );
+  auto bounds = std::minmax_element( mScalarDatasetValues.constBegin(), mScalarDatasetValues.constEnd() );
+  double vMin = *bounds.first;
+  double vMax = *bounds.second;
 
-  QList<QgsColorRampShader::ColorRampItem> lst;
-  lst << QgsColorRampShader::ColorRampItem( vMin, Qt::blue, QString::number( vMin ) );
-  lst << QgsColorRampShader::ColorRampItem( vMax, Qt::red, QString::number( vMax ) );
-
-  QgsColorRampShader fcn( vMin, vMax );
-  fcn.setColorRampItemList( lst );
+  QgsSettings settings;
+  QString defaultPalette = settings.value( QStringLiteral( "/Raster/defaultPalette" ), "Spectral" ).toString();
+  std::unique_ptr<QgsColorRamp> colorRamp( QgsStyle::defaultStyle()->colorRamp( defaultPalette ) );
+  QgsColorRampShader fcn( vMin, vMax, colorRamp.release() );
+  fcn.classifyColorRamp( -1, QgsRectangle(), nullptr );
 
   mRendererScalarSettings.setColorRampShader( fcn );
 }

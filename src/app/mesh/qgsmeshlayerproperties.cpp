@@ -42,7 +42,7 @@ QgsMeshLayerProperties::QgsMeshLayerProperties( QgsMapLayer *lyr, QgsMapCanvas *
   Q_ASSERT( mMeshLayer );
 
   setupUi( this );
-  mRendererMeshPropertiesWidget = new QgsRendererMeshPropertiesWidget( lyr, canvas, this );
+  mRendererMeshPropertiesWidget = new QgsRendererMeshPropertiesWidget( mMeshLayer, canvas, this );
   mOptsPage_StyleContent->layout()->addWidget( mRendererMeshPropertiesWidget );
 
   connect( mLayerOrigNameLineEd, &QLineEdit::textEdited, this, &QgsMeshLayerProperties::updateLayerName );
@@ -149,7 +149,7 @@ void QgsMeshLayerProperties::addDataset()
   if ( ok )
   {
     syncToLayer();
-    QMessageBox::information( this, tr( "Load mesh datasets" ), tr( "Datasets added to the mesh layer." ) );
+    QgsDebugMsg( "datasets added to the mesh layer" );
   }
   else
   {

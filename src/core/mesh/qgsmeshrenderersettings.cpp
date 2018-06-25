@@ -54,7 +54,7 @@ QgsColorRampShader QgsMeshRendererScalarSettings::colorRampShader() const
 
 }
 
-void QgsMeshRendererScalarSettings::setColorRampShader( QgsColorRampShader shader )
+void QgsMeshRendererScalarSettings::setColorRampShader( const QgsColorRampShader &shader )
 {
   mColorRampShader = shader;
 }

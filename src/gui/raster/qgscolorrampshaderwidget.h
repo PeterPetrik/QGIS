@@ -1,9 +1,9 @@
 /***************************************************************************
                          qgscolorrampshaderwidget.h
                          --------------------------
-    begin                : Jun 2018 by Peter Petrik
-    copyright            : (C) 2012 by Marco Hugentobler
-    email                : marco at sourcepole dot ch
+    begin                : Jun 2018
+    copyright            : (C) 2018 by Peter Petrik
+    email                : zilolv at gmail dot com
  ***************************************************************************/
 
 /***************************************************************************
@@ -47,19 +47,31 @@ class GUI_EXPORT QgsColorRampShaderWidget: public QWidget, protected Ui::QgsColo
 
     QgsColorRampShaderWidget( QWidget *parent = nullptr );
 
+    //! Allows quantile classification mode for raster layers
     void initForUseWithRasterLayer();
 
+    //! Associates raster with the widget
     void setRasterBand( QgsRasterDataProvider *dp, int band, const QgsRectangle &extent );
+
+    //! Sets min max and classify color tree
     void setMinMaxAndClassify( double min, double max );
+
+    //! Sets min max
     void setMinMax( double min, double max );
 
-    //! Returns shared function used in the renderer. Caller takes ownership and deletes it.
+    //! Returns shared function used in the renderer
     QgsColorRampShader shader() const;
+    //! Sets widget state from the color ramp shader
     void setFromShader( const QgsColorRampShader &colorRampShader );
 
   signals:
+    //! color ramp tree has changed
     void minMaxChangedFromTree( double min, double max );
+
+    //! widget changed
     void widgetChanged();
+
+    //! classification mode changed
     void classificationModeChanged( QgsColorRampShader::ClassificationMode mode );
 
   public slots:

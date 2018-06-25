@@ -37,7 +37,7 @@ QgsMeshRendererVectorSettingsWidget::QgsMeshRendererVectorSettingsWidget( QWidge
            mShaftOptionsStackedWidget, &QStackedWidget::setCurrentIndex );
 
   QVector<QLineEdit *> widgets;
-  widgets << mMinMagLineEdit << mMinMagLineEdit
+  widgets << mMinMagLineEdit << mMaxMagLineEdit
           << mHeadWidthLineEdit << mHeadLengthLineEdit
           << mMinimumShaftLineEdit << mMaximumShaftLineEdit
           << mScaleShaftByFactorOfLineEdit << mShaftLengthLineEdit;
@@ -45,7 +45,6 @@ QgsMeshRendererVectorSettingsWidget::QgsMeshRendererVectorSettingsWidget( QWidge
   for ( auto widget : widgets )
   {
     connect( widget, &QLineEdit::textChanged, this, &QgsMeshRendererVectorSettingsWidget::widgetChanged );
-    connect( widget, &QLineEdit::textEdited, this, &QgsMeshRendererVectorSettingsWidget::widgetChanged );
   }
 }
 
@@ -70,8 +69,8 @@ QgsMeshRendererVectorSettings QgsMeshRendererVectorSettingsWidget::settings() co
   double val = filterValue( mMinMagLineEdit->text(), -1 );
   settings.setFilterMin( val );
 
-  val = filterValue( mMinMagLineEdit->text(), -1 );
-  settings.setFilterMin( val );
+  val = filterValue( mMaxMagLineEdit->text(), -1 );
+  settings.setFilterMax( val );
 
   // arrow head
   val = filterValue( mHeadWidthLineEdit->text(), settings.arrowHeadWidthRatio() );
@@ -139,18 +138,18 @@ void QgsMeshRendererVectorSettingsWidget::syncToLayer( )
 
 }
 
-double QgsMeshRendererVectorSettingsWidget::filterValue( const QString &text, double err_val ) const
+double QgsMeshRendererVectorSettingsWidget::filterValue( const QString &text, double errVal ) const
 {
   if ( text.isEmpty() )
-    return err_val;
+    return errVal;
 
   bool ok;
   double val = text.toDouble( &ok );
   if ( !ok )
-    return err_val;
+    return errVal;
 
   if ( val < 0 )
-    return err_val;
+    return errVal;
 
   return val;
 }

@@ -24,9 +24,9 @@ class QgsSingleBandPseudoColorRendererWidget: QgsRasterRendererWidget
     virtual QgsRasterRenderer *renderer();
 
 
-    QgsColorRampShader *shaderFunction() const;
+    QgsColorRampShader *shaderFunction() const /Factory/;
 %Docstring
-Returns shared function used in the renderer. Caller takes ownership and deletes it.
+Returns shader function used in the renderer. Caller takes ownership and deletes it.
 %End
     virtual void setMapCanvas( QgsMapCanvas *canvas );
 

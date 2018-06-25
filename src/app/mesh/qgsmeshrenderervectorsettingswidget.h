@@ -66,7 +66,7 @@ class APP_EXPORT QgsMeshRendererVectorSettingsWidget : public QWidget, private U
      * convert text to double, return err_val if
      * text is not possible to convert or the value is negative
      */
-    double filterValue( const QString &text, double err_val ) const;
+    double filterValue( const QString &text, double errVal ) const;
 
     QgsMeshLayer *mMeshLayer = nullptr; //not owned
     int mActiveDataset = -1;

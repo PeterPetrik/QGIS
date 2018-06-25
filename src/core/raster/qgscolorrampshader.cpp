@@ -59,6 +59,9 @@ QgsColorRampShader &QgsColorRampShader::operator=( const QgsColorRampShader &oth
 {
   if ( other.sourceColorRamp() )
     mSourceColorRamp.reset( other.sourceColorRamp()->clone() );
+  else
+    mSourceColorRamp.reset();
+
   mColorRampType = other.mColorRampType;
   mClassificationMode = other.mClassificationMode;
   mLUT = other.mLUT;
