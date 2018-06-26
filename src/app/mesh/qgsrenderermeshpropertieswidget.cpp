@@ -25,7 +25,7 @@
 
 QgsRendererMeshPropertiesWidget::QgsRendererMeshPropertiesWidget( QgsMeshLayer *layer, QgsMapCanvas *canvas, QWidget *parent )
   : QgsMapLayerConfigWidget( layer, canvas, parent )
-
+  , mMeshLayer( layer )
 {
   if ( !mMeshLayer )
     return;

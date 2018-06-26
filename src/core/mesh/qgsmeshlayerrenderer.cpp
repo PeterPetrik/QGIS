@@ -73,7 +73,7 @@ void QgsMeshLayerRenderer::assignDefaultScalarShader( )
   QString defaultPalette = settings.value( QStringLiteral( "/Raster/defaultPalette" ), "Spectral" ).toString();
   std::unique_ptr<QgsColorRamp> colorRamp( QgsStyle::defaultStyle()->colorRamp( defaultPalette ) );
   QgsColorRampShader fcn( vMin, vMax, colorRamp.release() );
-  fcn.classifyColorRamp( -1, QgsRectangle(), nullptr );
+  fcn.classifyColorRamp( 5, -1, QgsRectangle(), nullptr );
 
   mRendererScalarSettings.setColorRampShader( fcn );
 }

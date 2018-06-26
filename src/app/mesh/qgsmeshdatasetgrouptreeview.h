@@ -90,8 +90,6 @@ class APP_NO_EXPORT QgsMeshDatasetGroupTreeModel : public QAbstractItemModel
 
     //! Add groups to the model
     void setupModelData( const QStringList &groups );
-    //! Remove all groups from the model
-    void clear();
 
   private:
     std::unique_ptr<QgsMeshDatasetGroupTreeItem> mRootItem;

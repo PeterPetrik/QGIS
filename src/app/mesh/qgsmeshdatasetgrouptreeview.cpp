@@ -21,12 +21,6 @@
 #include <QList>
 #include <QItemSelectionModel>
 
-
-QgsMeshDatasetGroupTreeItem::~QgsMeshDatasetGroupTreeItem()
-{
-  qDeleteAll( mChildren );
-}
-
 QgsMeshDatasetGroupTreeItem::QgsMeshDatasetGroupTreeItem( QgsMeshDatasetGroupTreeItem *parent )
   : mParent( parent )
 {
@@ -36,6 +30,11 @@ QgsMeshDatasetGroupTreeItem::QgsMeshDatasetGroupTreeItem( const QString &name, Q
   : mParent( parent )
   , mName( name )
 {
+}
+
+QgsMeshDatasetGroupTreeItem::~QgsMeshDatasetGroupTreeItem()
+{
+  qDeleteAll( mChildren );
 }
 
 void QgsMeshDatasetGroupTreeItem::appendChild( QgsMeshDatasetGroupTreeItem *node )
@@ -119,9 +118,12 @@ Qt::ItemFlags QgsMeshDatasetGroupTreeModel::flags( const QModelIndex &index ) co
   return QAbstractItemModel::flags( index );
 }
 
-QVariant QgsMeshDatasetGroupTreeModel::headerData( int section, Qt::Orientation orientation,
+QVariant QgsMeshDatasetGroupTreeModel::headerData( int section,
+    Qt::Orientation orientation,
     int role ) const
 {
+  Q_UNUSED( section );
+
   if ( orientation == Qt::Horizontal && role == Qt::DisplayRole )
     return tr( "Groups" );
 
@@ -180,7 +182,7 @@ void QgsMeshDatasetGroupTreeModel::setupModelData( const QStringList &groups )
 {
   beginResetModel();
 
-  mRootItem.reset();
+  mRootItem.reset( new QgsMeshDatasetGroupTreeItem() );
 
   for ( const QString &groupName : groups )
   {
@@ -189,11 +191,6 @@ void QgsMeshDatasetGroupTreeModel::setupModelData( const QStringList &groups )
   }
 
   endResetModel();
-}
-
-void QgsMeshDatasetGroupTreeModel::clear()
-{
-  mRootItem.reset( new QgsMeshDatasetGroupTreeItem() );
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
