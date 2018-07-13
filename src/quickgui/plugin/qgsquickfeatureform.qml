@@ -280,7 +280,7 @@ Item {
       Label {
         id: fieldLabel
 
-        text: qsTr(Name) || ''
+        text: Alias || qsTr(Name) || ""
         font.bold: true
         color: ConstraintValid ? form.style.constraint.validColor : form.style.constraint.invalidColor
       }
@@ -320,7 +320,10 @@ Item {
           property var constraintValid: ConstraintValid
           property var homePath: form.project ? form.project.homePath : ""
 
-          active: widget !== 'Hidden'
+          active: {
+            console.log("!!!!! widget " + widget)
+            widget !== 'Hidden'
+          }
 
           source: form.loadWidgetFn(widget.toLowerCase())
         }
