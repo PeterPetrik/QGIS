@@ -66,6 +66,13 @@ class QUICK_EXPORT QgsQuickIdentifyKit : public QObject
      */
     Q_PROPERTY( int featuresLimit READ featuresLimit WRITE setFeaturesLimit NOTIFY featuresLimitChanged )
 
+    /**
+     * Indicator if TopDownStopAtFirst mode for QgsQuickIdentifyKit::identify() is on
+     *
+     * Default is true.
+     */
+    Q_PROPERTY( int isTopDownStopAtFirst MEMBER mIsTopDownStopAtFirst NOTIFY isTopDownStopAtFirstChanged )
+
   public:
     //! Constructor of new identify kit.
     explicit QgsQuickIdentifyKit( QObject *parent = nullptr );
@@ -122,6 +129,8 @@ class QUICK_EXPORT QgsQuickIdentifyKit : public QObject
     void searchRadiusMmChanged();
     //! \copydoc QgsQuickIdentifyKit::featuresLimit
     void featuresLimitChanged();
+    //! \copydoc QgsQuickIdentifyKit::isTopDownStopAtFirst
+    void isTopDownStopAtFirstChanged();
 
   private:
     QgsQuickMapSettings *mMapSettings = nullptr; // not owned
@@ -134,6 +143,7 @@ class QUICK_EXPORT QgsQuickIdentifyKit : public QObject
 
     double mSearchRadiusMm = 8;
     int mFeaturesLimit = 100;
+    bool mIsTopDownStopAtFirst = true;
 };
 
 #endif // QGSQUICKIDENTIFYKIT_H

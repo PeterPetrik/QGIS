@@ -280,7 +280,7 @@ Item {
       Label {
         id: fieldLabel
 
-        text: qsTr(Name) || ''
+        text: Alias || qsTr(Name) || ""
         font.bold: true
         color: ConstraintValid ? form.style.constraint.validColor : form.style.constraint.invalidColor
       }
