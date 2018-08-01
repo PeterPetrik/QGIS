@@ -320,10 +320,7 @@ Item {
           property var constraintValid: ConstraintValid
           property var homePath: form.project ? form.project.homePath : ""
 
-          active: {
-            console.log("!!!!! widget " + widget)
-            widget !== 'Hidden'
-          }
+          active: widget !== 'Hidden'
 
           source: form.loadWidgetFn(widget.toLowerCase())
         }
