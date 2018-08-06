@@ -183,6 +183,22 @@ class CORE_EXPORT QgsMeshLayer : public QgsMapLayer
     //! Returns active vector dataset
     QgsMeshDatasetIndex activeVectorDataset() const { return mActiveVectorDataset; }
 
+  signals:
+
+    /**
+     * Emitted when active scalar dataset is changed
+     *
+     * \since QGIS 3.4
+     */
+    void activeScalarDatasetChanged( QgsMeshDatasetIndex index );
+
+    /**
+     * Emitted when active vector dataset is changed
+     *
+     * \since QGIS 3.4
+     */
+    void activeVectorDatasetChanged( QgsMeshDatasetIndex index );
+
   private: // Private methods
 
     /**

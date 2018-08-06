@@ -154,6 +154,8 @@ void QgsMeshLayer::setActiveScalarDataset( QgsMeshDatasetIndex index )
     mActiveScalarDataset = QgsMeshDatasetIndex();
 
   triggerRepaint();
+
+  emit activeScalarDatasetChanged( mActiveScalarDataset );
 }
 
 void QgsMeshLayer::setActiveVectorDataset( QgsMeshDatasetIndex index )
@@ -175,6 +177,8 @@ void QgsMeshLayer::setActiveVectorDataset( QgsMeshDatasetIndex index )
   }
 
   triggerRepaint();
+
+  emit activeVectorDatasetChanged( mActiveVectorDataset );
 }
 
 void QgsMeshLayer::fillNativeMesh()
