@@ -250,8 +250,7 @@ void QgsQuickAttributeFormModelBase::flatten( QgsAttributeEditorContainer *conta
         QgsField field = mLayer->fields().at( fieldIndex );
 
         QStandardItem *item = new QStandardItem();
-        QString fieldName = mLayer->attributeDisplayName( fieldIndex );
-        item->setData( fieldName, QgsQuickAttributeFormModel::Name );
+        item->setData( mLayer->attributeDisplayName( fieldIndex ), QgsQuickAttributeFormModel::Name );
         item->setData( mAttributeModel->featureLayerPair().feature().attribute( fieldIndex ), QgsQuickAttributeFormModel::AttributeValue );
         item->setData( !mLayer->editFormConfig().readOnly( fieldIndex ), QgsQuickAttributeFormModel::AttributeEditable );
         QgsEditorWidgetSetup setup = mLayer->editorWidgetSetup( fieldIndex );
@@ -262,7 +261,7 @@ void QgsQuickAttributeFormModelBase::flatten( QgsAttributeEditorContainer *conta
         item->setData( QStringLiteral( "field" ), QgsQuickAttributeFormModel::ElementType );
         item->setData( fieldIndex, QgsQuickAttributeFormModel::FieldIndex );
         item->setData( container->isGroupBox() ? container->name() : QString(), QgsQuickAttributeFormModel::Group );
-        item->setData( fieldName != QStringLiteral( "uuid" ) && fieldName != QStringLiteral( "fid" ), QgsQuickAttributeFormModel::CurrentlyVisible );
+        item->setData( true, QgsQuickAttributeFormModel::CurrentlyVisible );
         item->setData( true, QgsQuickAttributeFormModel::ConstraintValid );
         item->setData( field.constraints().constraintDescription(), QgsQuickAttributeFormModel::ConstraintDescription );
 
