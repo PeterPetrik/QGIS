@@ -67,7 +67,7 @@ class QUICK_EXPORT QgsQuickIdentifyKit : public QObject
     Q_PROPERTY( int featuresLimit READ featuresLimit WRITE setFeaturesLimit NOTIFY featuresLimitChanged )
 
     /**
-     * Defines behavior of identify tool (See description of IdentifyMode enum).
+     * Defines behavior of the identify tool (See description of IdentifyMode enum).
      *
      * Default is TopDownAll.
      */
@@ -76,13 +76,21 @@ class QUICK_EXPORT QgsQuickIdentifyKit : public QObject
   public:
 
     /**
-     * TopDownAll - identifies from top to bottom down layer returning all identified features;
-     * TopDownStopAtFirst - identifies from top to bottom down layer while it stops on layer with
-     *  the first non empty list of identified features skipping rest layers.
+     * IdentifyMode enums used to define identify tool behavior on identifiable layers.
      */
     enum IdentifyMode
     {
+
+      /**
+       * Identification is performed from top to bottom down layers returning all
+       * identified features;
+       */
       TopDownAll = 0,
+
+      /**
+       * Identification is performed from top to bottom down layers and stops on the first layer
+       * returning non-empty list of identified features. Identification on rest layers is skipped.
+       */
       TopDownStopAtFirst
     };
     Q_ENUM( IdentifyMode )
