@@ -80,9 +80,9 @@ class QUICK_EXPORT QgsQuickIdentifyKit : public QObject
 
     enum IdentifyMode
     {
-        DefaultQgsSetting = -1,
-        TopDownStopAtFirst,
-        TopDownAll
+      DefaultQgsSetting = -1,
+      TopDownStopAtFirst,
+      TopDownAll
     };
     Q_ENUM( IdentifyMode )
 
