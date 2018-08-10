@@ -67,9 +67,9 @@ class QUICK_EXPORT QgsQuickIdentifyKit : public QObject
     Q_PROPERTY( int featuresLimit READ featuresLimit WRITE setFeaturesLimit NOTIFY featuresLimitChanged )
 
     /**
-     * Defines behavior of identify tool that result features are gathered
+     * Defines behavior of identify tool that in case of:
      * TopDownAll - identifies from top to bottom down layer returning all identified features;
-     * TopDownStopAtFirst - going from top to bottom down layer while it stops on layer with
+     * TopDownStopAtFirst - identifies from top to bottom down layer while it stops on layer with
      *  the first non empty list of identified features skipping rest layers.
      *
      * Default is TopDownAll.
