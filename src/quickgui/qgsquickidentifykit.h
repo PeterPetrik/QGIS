@@ -66,7 +66,27 @@ class QUICK_EXPORT QgsQuickIdentifyKit : public QObject
      */
     Q_PROPERTY( int featuresLimit READ featuresLimit WRITE setFeaturesLimit NOTIFY featuresLimitChanged )
 
+    /**
+     * Defines behavior of identify tool (See description of IdentifyMode enum).
+     *
+     * Default is TopDownAll.
+     */
+    Q_PROPERTY( IdentifyMode identifyMode MEMBER mIdentifyMode NOTIFY identifyModeChanged )
+
   public:
+
+    /**
+     * TopDownAll - identifies from top to bottom down layer returning all identified features;
+     * TopDownStopAtFirst - identifies from top to bottom down layer while it stops on layer with
+     *  the first non empty list of identified features skipping rest layers.
+     */
+    enum IdentifyMode
+    {
+      TopDownAll = 0,
+      TopDownStopAtFirst
+    };
+    Q_ENUM( IdentifyMode )
+
     //! Constructor of new identify kit.
     explicit QgsQuickIdentifyKit( QObject *parent = nullptr );
 
@@ -91,8 +111,10 @@ class QUICK_EXPORT QgsQuickIdentifyKit : public QObject
     /**
       * Gets the closest feature to the point within the search radius
       *
-      * If layer is nullptr, identifies the closest feature from all identifiable layers
-      * If layer is not nullptr, identifies the closest feature from given layer
+      * If layer is nullptr, identifies the closest feature from either
+      * all identifiable layers (IdentifyMode::TopDownAll) or the first layer from top to bottom layers
+      * with non-empty identified feature list (IdentifyMode::TopDownStopAtFirst)
+      * If layer is not nullptr, identifies the closest feature from given layer regardless identify mode.
       *
       * To modify search radius, use QgsQuickIdentifyKit::searchRadiusMm
       *
@@ -104,8 +126,10 @@ class QUICK_EXPORT QgsQuickIdentifyKit : public QObject
     /**
       * Gets all features in the search radius
       *
-      * If layer is nullptr, identifies features from all identifiable layers
-      * If layer is not nullptr, identifies only features from given layer
+      * If layer is nullptr, identifies features from either
+      * all identifiable layers (IdentifyMode::TopDownAll) or the first layer from top to bottom layers
+      * with non-empty identified feature list (IdentifyMode::TopDownStopAtFirst)
+      * If layer is not nullptr, identifies only features from given layer regardless identify mode.
       *
       * To limit number of results, use QgsQuickIdentifyKit::featuresLimit
       * To modify search radius, use QgsQuickIdentifyKit::searchRadiusMm
@@ -122,6 +146,8 @@ class QUICK_EXPORT QgsQuickIdentifyKit : public QObject
     void searchRadiusMmChanged();
     //! \copydoc QgsQuickIdentifyKit::featuresLimit
     void featuresLimitChanged();
+    //! \copydoc QgsQuickIdentifyKit::identifyMode
+    void identifyModeChanged();
 
   private:
     QgsQuickMapSettings *mMapSettings = nullptr; // not owned
@@ -134,6 +160,7 @@ class QUICK_EXPORT QgsQuickIdentifyKit : public QObject
 
     double mSearchRadiusMm = 8;
     int mFeaturesLimit = 100;
+    IdentifyMode mIdentifyMode = IdentifyMode::TopDownAll;
 };
 
 #endif // QGSQUICKIDENTIFYKIT_H
