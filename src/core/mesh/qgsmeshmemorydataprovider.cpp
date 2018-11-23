@@ -407,6 +407,18 @@ QgsMeshDatasetValue QgsMeshMemoryDataProvider::datasetValue( QgsMeshDatasetIndex
   }
 }
 
+QVector<QgsMeshDatasetValue> QgsMeshMemoryDataProvider::datasetValues( QgsMeshDatasetIndex index, int valueIndex, int count ) const
+{
+  QVector<QgsMeshDatasetValue> ret( count );
+
+  for ( int i = 0; i < count; ++i )
+  {
+    ret[i] = datasetValue( index, valueIndex + i );
+  }
+
+  return ret;
+}
+
 bool QgsMeshMemoryDataProvider::isFaceActive( QgsMeshDatasetIndex index, int faceIndex ) const
 {
   Q_UNUSED( index );
@@ -414,5 +426,9 @@ bool QgsMeshMemoryDataProvider::isFaceActive( QgsMeshDatasetIndex index, int fac
   return true;
 }
 
-
+QVector<bool> QgsMeshMemoryDataProvider::areFacesActive( QgsMeshDatasetIndex index, int faceIndex, int count ) const
+{
+  QVector<bool> ret( count, true );
+  return ret;
+}
 ///@endcond

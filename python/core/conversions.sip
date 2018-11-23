@@ -1,6 +1,7 @@
 /*
 This file contains code for conversion between various (often nested) mapped types
 which are not wrapped by PyQt:
+- QVector< bool >
 - QVector< QVector<TYPE> >
 - QVector< QVector< QVector<TYPE> > >
 - QList< QList<TYPE> >
@@ -26,6 +27,35 @@ which are not wrapped by PyQt:
 
 %End
 
+%MappedType QVector< bool >
+{
+%TypeHeaderCode
+#include <QVector>
+%End
+
+%ConvertFromTypeCode
+    // Create the list
+    PyObject *l = PyList_New(sipCpp->size());
+
+    if (!l)
+        return NULL;
+
+    // Set the dictionary elements.
+    for( int i = 0; i < sipCpp->size(); i++ )
+    {
+        bool t = sipCpp->at(i);
+        PyObject *tobj = sipConvertFromType(t, sipType_TYPE, sipTransferObj);
+
+        if (tobj == NULL || PyList_SetItem(l, i, tobj) < 0)
+        {
+            Py_DECREF(tobj);
+            Py_DECREF(l);
+            return NULL;
+        }
+    }
+
+    return l;
+%End
 
 template <TYPE>
 %MappedType QVector< QVector<TYPE> >

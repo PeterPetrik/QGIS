@@ -336,10 +336,18 @@ class CORE_EXPORT QgsMeshDatasetSourceInterface SIP_ABSTRACT
 
     /**
      * \brief Returns vector/scalar value associated with the index from the dataset
+     * To read multiple continuous values, use QgsMeshDatasetSourceInterface::datasetValues()
      *
      * See QgsMeshDatasetMetadata::isVector() to check if the returned value is vector or scalar
      */
     virtual QgsMeshDatasetValue datasetValue( QgsMeshDatasetIndex index, int valueIndex ) const = 0;
+
+    /**
+     * \brief Returns N vector/scalar values from the index from the dataset
+     *
+     * See QgsMeshDatasetMetadata::isVector() to check if the returned value is vector or scalar
+     */
+    virtual QVector<QgsMeshDatasetValue> datasetValues( QgsMeshDatasetIndex index, int valueIndex, int count ) const = 0;
 
     /**
      * \brief Returns whether the face is active for particular dataset
@@ -352,6 +360,11 @@ class CORE_EXPORT QgsMeshDatasetSourceInterface SIP_ABSTRACT
      *  V3 ---- V4 ---- V6-----V8
      */
     virtual bool isFaceActive( QgsMeshDatasetIndex index, int faceIndex ) const = 0;
+
+    /**
+     * \brief Returns whether the faces are active for particular dataset
+     */
+    virtual QVector<bool> areFacesActive( QgsMeshDatasetIndex index, int faceIndex, int count ) const = 0;
 };
 
 
