@@ -209,3 +209,71 @@ bool QgsMeshDatasetMetadata::isValid() const
 {
   return mIsValid;
 }
+
+QgsMeshDataBlock::QgsMeshDataBlock()
+  : mType( ActiveFlagInteger )
+  , mCount( 0 )
+{
+}
+
+QgsMeshDataBlock::QgsMeshDataBlock( QgsMeshDataBlock::DataType type, int count )
+  : mType( type )
+  , mCount( count )
+{
+  switch ( type )
+  {
+    case ActiveFlagInteger:
+      mBuffer = new int [count];
+      break;
+    case ScalarDouble:
+      mBuffer = new double [count];
+      break;
+    case Vector2DDouble:
+      mBuffer = new double [2 * count];
+      break;
+  }
+}
+
+QgsMeshDataBlock::DataType QgsMeshDataBlock::type() const
+{
+  return mType;
+}
+
+int QgsMeshDataBlock::count() const
+{
+  return mCount;
+}
+
+bool QgsMeshDataBlock::isValid() const
+{
+  return mCount > 0;
+}
+
+QgsMeshDatasetValue QgsMeshDataBlock::value( int index ) const
+{
+  assert( ActiveFlagInteger != mType );
+  double *buf = static_cast<double *>( mBuffer );
+  QgsMeshDatasetValue val;
+  if ( ScalarDouble == mType )
+  {
+    val.set( buf[index] );
+  }
+  else
+  {
+    val.setX( buf[2 * index] );
+    val.setY( buf[2 * index + 1] );
+  }
+
+  return val;
+}
+
+bool QgsMeshDataBlock::active( int index ) const
+{
+  assert( ActiveFlagInteger == mType );
+  return bool( static_cast<int *>( mBuffer )[index] );
+}
+
+void *QgsMeshDataBlock::buffer()
+{
+  return mBuffer;
+}

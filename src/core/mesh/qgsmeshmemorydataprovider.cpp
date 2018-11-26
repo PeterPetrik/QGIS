@@ -17,6 +17,7 @@
 ///@cond PRIVATE
 
 #include "qgsmeshmemorydataprovider.h"
+#include <cstring>
 
 static const QString TEXT_PROVIDER_KEY = QStringLiteral( "mesh_memory" );
 static const QString TEXT_PROVIDER_DESCRIPTION = QStringLiteral( "Mesh memory provider" );
@@ -407,15 +408,23 @@ QgsMeshDatasetValue QgsMeshMemoryDataProvider::datasetValue( QgsMeshDatasetIndex
   }
 }
 
-QVector<QgsMeshDatasetValue> QgsMeshMemoryDataProvider::datasetValues( QgsMeshDatasetIndex index, int valueIndex, int count ) const
+QgsMeshDataBlock QgsMeshMemoryDataProvider::datasetValues( QgsMeshDatasetIndex index, int valueIndex, int count ) const
 {
-  QVector<QgsMeshDatasetValue> ret( count );
+  bool isScalar = mDatasetGroups[index.group()].isScalar;
+  QgsMeshDataBlock ret( isScalar ? QgsMeshDataBlock::ScalarDouble : QgsMeshDataBlock::Vector2DDouble, count );
+  double *buf = static_cast<double *>( ret.buffer() );
 
   for ( int i = 0; i < count; ++i )
   {
-    ret[i] = datasetValue( index, valueIndex + i );
+    QgsMeshDatasetValue val = datasetValue( index, valueIndex + i );
+    if ( isScalar )
+      buf[i] = val.x();
+    else
+    {
+      buf[2 * i] = val.x();
+      buf[2 * i + 1] = val.y();
+    }
   }
-
   return ret;
 }
 
@@ -426,9 +435,10 @@ bool QgsMeshMemoryDataProvider::isFaceActive( QgsMeshDatasetIndex index, int fac
   return true;
 }
 
-QVector<bool> QgsMeshMemoryDataProvider::areFacesActive( QgsMeshDatasetIndex index, int faceIndex, int count ) const
+QgsMeshDataBlock QgsMeshMemoryDataProvider::areFacesActive( QgsMeshDatasetIndex index, int faceIndex, int count ) const
 {
-  QVector<bool> ret( count, true );
+  QgsMeshDataBlock ret( QgsMeshDataBlock::ActiveFlagInteger, count );
+  memset( ret.buffer(), 1, static_cast<size_t>( count ) );
   return ret;
 }
 ///@endcond

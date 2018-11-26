@@ -124,6 +124,77 @@ Returns y value
 
 };
 
+class QgsMeshDataBlock
+{
+%Docstring
+
+QgsMeshDataBlock is a block that can be used to retreive a block of
+active flag (e.g. face's active integer flag)
+scalars (e.g. scalar dataset double values)
+vectors (e.g. vector dataset doubles x,y values)
+
+std.numeric_limits<double>.quiet_NaN() represents NODATA value
+
+.. versionadded:: 3.6
+%End
+
+%TypeHeaderCode
+#include "qgsmeshdataprovider.h"
+%End
+  public:
+    enum DataType
+    {
+      ActiveFlagInteger,
+      ScalarDouble,
+      Vector2DDouble,
+    };
+
+    QgsMeshDataBlock();
+%Docstring
+Constructs an invalid block
+%End
+
+    QgsMeshDataBlock( DataType type, int count );
+%Docstring
+Constructs a new block
+%End
+
+    DataType type() const;
+%Docstring
+Type of data stored in the block
+%End
+
+    int count() const;
+%Docstring
+Number of items stored in the block
+%End
+
+    bool isValid() const;
+%Docstring
+Whether the block is valid
+%End
+
+    QgsMeshDatasetValue value( int index ) const;
+%Docstring
+Returns a value represented by the index
+For active flag the behaviour is undefined
+%End
+
+    bool active( int index ) const;
+%Docstring
+Returns a value for active flag by the index
+For scalar and vector 2d the behaviour is undefined
+%End
+
+    void *buffer();
+%Docstring
+Returns internal buffer to the array
+The buffer is already allocated
+Use to retreive data from MDAL provider
+%End
+
+};
+
 class QgsMeshDatasetGroupMetadata
 {
 %Docstring
@@ -364,7 +435,7 @@ To read multiple continuous values, use :py:func:`QgsMeshDatasetSourceInterface.
 See QgsMeshDatasetMetadata.isVector() to check if the returned value is vector or scalar
 %End
 
-    virtual QVector<QgsMeshDatasetValue> datasetValues( QgsMeshDatasetIndex index, int valueIndex, int count ) const = 0;
+    virtual QgsMeshDataBlock datasetValues( QgsMeshDatasetIndex index, int valueIndex, int count ) const = 0;
 %Docstring
 Returns N vector/scalar values from the index from the dataset
 
@@ -383,7 +454,7 @@ V1 ---- V2 ---- V5-----V7
 V3 ---- V4 ---- V6-----V8
 %End
 
-    virtual QVector<bool> areFacesActive( QgsMeshDatasetIndex index, int faceIndex, int count ) const = 0;
+    virtual QgsMeshDataBlock areFacesActive( QgsMeshDatasetIndex index, int faceIndex, int count ) const = 0;
 %Docstring
 Returns whether the faces are active for particular dataset
 %End
