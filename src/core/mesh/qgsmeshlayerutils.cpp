@@ -23,6 +23,20 @@
 
 ///@cond PRIVATE
 
+QVector<double> QgsMeshLayerUtils::calculateMagnitudes( const QgsMeshDataBlock &block )
+{
+  Q_ASSERT( QgsMeshDataBlock::ActiveFlagInteger != block.type() );
+  int count = block.count();
+  QVector<double> ret( count );
+
+  for ( int i = 0; i < count; ++i )
+  {
+    double mag = block.value( i ).scalar();
+    ret[i] = mag;
+  }
+  return ret;
+}
+
 void QgsMeshLayerUtils::calculateMinimumMaximum( double &min, double &max, const QVector<double> &arr )
 {
   bool found = false;

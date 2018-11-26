@@ -26,6 +26,7 @@
 
 class QgsMeshDataProvider;
 class QgsMeshDatasetIndex;
+class QgsMeshDataBlock;
 
 #include <QVector>
 #include <QSize>
@@ -42,6 +43,13 @@ class QgsMeshDatasetIndex;
 class CORE_EXPORT QgsMeshLayerUtils
 {
   public:
+
+    /**
+     * Calculates magnitude values from the given QgsMeshDataBlock.
+     *
+     * \since QGIS 3.6
+     */
+    static QVector<double> calculateMagnitudes( const QgsMeshDataBlock &block );
 
     /**
      * Calculates min/max values from the given vector of values.

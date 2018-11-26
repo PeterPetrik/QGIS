@@ -125,6 +125,7 @@ class CORE_EXPORT QgsMeshDatasetValue
  * scalars (e.g. scalar dataset double values)
  * vectors (e.g. vector dataset doubles x,y values)
  *
+ * data are implicitely shared, so the class can be quickly copied
  * std::numeric_limits<double>::quiet_NaN() represents NODATA value
  *
  * \since QGIS 3.6
@@ -175,9 +176,9 @@ class CORE_EXPORT QgsMeshDataBlock
     void *buffer();
 
   private:
-    void *mBuffer = nullptr;
+    QVector<double> mDoubleBuffer;
+    QVector<int> mIntegerBuffer;
     DataType mType;
-    int mCount;
 };
 
 /**

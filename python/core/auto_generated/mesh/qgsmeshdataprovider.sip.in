@@ -133,6 +133,7 @@ active flag (e.g. face's active integer flag)
 scalars (e.g. scalar dataset double values)
 vectors (e.g. vector dataset doubles x,y values)
 
+data are implicitely shared, so the class can be quickly copied
 std.numeric_limits<double>.quiet_NaN() represents NODATA value
 
 .. versionadded:: 3.6

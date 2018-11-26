@@ -212,24 +212,22 @@ bool QgsMeshDatasetMetadata::isValid() const
 
 QgsMeshDataBlock::QgsMeshDataBlock()
   : mType( ActiveFlagInteger )
-  , mCount( 0 )
 {
 }
 
 QgsMeshDataBlock::QgsMeshDataBlock( QgsMeshDataBlock::DataType type, int count )
   : mType( type )
-  , mCount( count )
 {
   switch ( type )
   {
     case ActiveFlagInteger:
-      mBuffer = new int [count];
+      mIntegerBuffer.resize( count );
       break;
     case ScalarDouble:
-      mBuffer = new double [count];
+      mDoubleBuffer.resize( count );
       break;
     case Vector2DDouble:
-      mBuffer = new double [2 * count];
+      mDoubleBuffer.resize( 2 * count );
       break;
   }
 }
@@ -241,27 +239,34 @@ QgsMeshDataBlock::DataType QgsMeshDataBlock::type() const
 
 int QgsMeshDataBlock::count() const
 {
-  return mCount;
+  switch ( mType )
+  {
+    case ActiveFlagInteger:
+      return mIntegerBuffer.size();
+    case ScalarDouble:
+      return mDoubleBuffer.size();
+    case Vector2DDouble:
+      return static_cast<int>( mDoubleBuffer.size() / 2.0 );
+  }
 }
 
 bool QgsMeshDataBlock::isValid() const
 {
-  return mCount > 0;
+  return count() > 0;
 }
 
 QgsMeshDatasetValue QgsMeshDataBlock::value( int index ) const
 {
   assert( ActiveFlagInteger != mType );
-  double *buf = static_cast<double *>( mBuffer );
   QgsMeshDatasetValue val;
   if ( ScalarDouble == mType )
   {
-    val.set( buf[index] );
+    val.set( mDoubleBuffer[index] );
   }
   else
   {
-    val.setX( buf[2 * index] );
-    val.setY( buf[2 * index + 1] );
+    val.setX( mDoubleBuffer[2 * index] );
+    val.setY( mDoubleBuffer[2 * index + 1] );
   }
 
   return val;
@@ -270,10 +275,17 @@ QgsMeshDatasetValue QgsMeshDataBlock::value( int index ) const
 bool QgsMeshDataBlock::active( int index ) const
 {
   assert( ActiveFlagInteger == mType );
-  return bool( static_cast<int *>( mBuffer )[index] );
+  return bool( mIntegerBuffer[index] );
 }
 
 void *QgsMeshDataBlock::buffer()
 {
-  return mBuffer;
+  if ( ActiveFlagInteger == mType )
+  {
+    return mIntegerBuffer.data();
+  }
+  else
+  {
+    return mDoubleBuffer.data();
+  }
 }
