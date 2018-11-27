@@ -258,18 +258,20 @@ bool QgsMeshDataBlock::isValid() const
 QgsMeshDatasetValue QgsMeshDataBlock::value( int index ) const
 {
   assert( ActiveFlagInteger != mType );
-  QgsMeshDatasetValue val;
+
   if ( ScalarDouble == mType )
   {
-    val.set( mDoubleBuffer[index] );
+    QgsMeshDatasetValue val(mDoubleBuffer[index]);
+    return val;
   }
   else
   {
-    val.setX( mDoubleBuffer[2 * index] );
-    val.setY( mDoubleBuffer[2 * index + 1] );
+    QgsMeshDatasetValue val(
+          mDoubleBuffer[2 * index],
+          mDoubleBuffer[2 * index + 1]
+    );
+    return val;
   }
-
-  return val;
 }
 
 bool QgsMeshDataBlock::active( int index ) const

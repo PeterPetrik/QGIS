@@ -170,12 +170,7 @@ void QgsMeshLayerRenderer::copyVectorDatasetValues( QgsMeshLayer *layer )
                                0,
                                count );
 
-      mVectorDatasetValuesMag.resize( count );
-      for ( int i = 0; i < count; ++i )
-      {
-        double mag = mVectorDatasetValues.value( i ).scalar();
-        mVectorDatasetValuesMag[i] = mag;
-      }
+      mVectorDatasetValuesMag = QgsMeshLayerUtils::calculateMagnitudes( mVectorDatasetValues );
     }
 
     QgsMeshLayerUtils::calculateMinimumMaximum( mVectorDatasetMagMinimum, mVectorDatasetMagMaximum, mVectorDatasetValuesMag );

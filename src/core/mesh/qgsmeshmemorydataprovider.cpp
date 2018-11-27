@@ -437,8 +437,10 @@ bool QgsMeshMemoryDataProvider::isFaceActive( QgsMeshDatasetIndex index, int fac
 
 QgsMeshDataBlock QgsMeshMemoryDataProvider::areFacesActive( QgsMeshDatasetIndex index, int faceIndex, int count ) const
 {
+  Q_UNUSED( index );
+  Q_UNUSED( faceIndex );
   QgsMeshDataBlock ret( QgsMeshDataBlock::ActiveFlagInteger, count );
-  memset( ret.buffer(), 1, static_cast<size_t>( count ) );
+  memset( ret.buffer(), 1, static_cast<size_t>( count ) * sizeof(int) );
   return ret;
 }
 ///@endcond
