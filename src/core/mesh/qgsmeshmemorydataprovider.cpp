@@ -313,7 +313,7 @@ QVector<QgsMeshFace> QgsMeshMemoryDataProvider::faces( ) const
 
 QgsRectangle QgsMeshMemoryDataProvider::extent() const
 {
-  QgsMeshLayerUtils::calculateExtent( mVertices );
+  return QgsMeshLayerUtils::calculateExtent( mVertices );
 }
 
 bool QgsMeshMemoryDataProvider::addDataset( const QString &uri )
