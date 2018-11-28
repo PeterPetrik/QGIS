@@ -177,17 +177,8 @@ void QgsMeshLayer::fillNativeMesh()
   if ( !( dataProvider() && dataProvider()->isValid() ) )
     return;
 
-  mNativeMesh->vertices.resize( dataProvider()->vertexCount() );
-  for ( int i = 0; i < dataProvider()->vertexCount(); ++i )
-  {
-    mNativeMesh->vertices[i] = dataProvider()->vertex( i );
-  }
-
-  mNativeMesh->faces.resize( dataProvider()->faceCount() );
-  for ( int i = 0; i < dataProvider()->faceCount(); ++i )
-  {
-    mNativeMesh->faces[i] = dataProvider()->face( i );
-  }
+  mNativeMesh->vertices = dataProvider()->vertices();
+  mNativeMesh->faces = dataProvider()->faces();
 }
 
 void QgsMeshLayer::onDatasetGroupsAdded( int count )

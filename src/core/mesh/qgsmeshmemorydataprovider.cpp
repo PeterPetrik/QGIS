@@ -17,6 +17,7 @@
 ///@cond PRIVATE
 
 #include "qgsmeshmemorydataprovider.h"
+#include "qgsmeshlayerutils.h"
 #include <cstring>
 
 static const QString TEXT_PROVIDER_KEY = QStringLiteral( "mesh_memory" );
@@ -300,16 +301,19 @@ int QgsMeshMemoryDataProvider::faceCount() const
   return mFaces.size();
 }
 
-QgsMeshVertex QgsMeshMemoryDataProvider::vertex( int index ) const
+QVector<QgsMeshVertex> QgsMeshMemoryDataProvider::vertices( ) const
 {
-  Q_ASSERT( vertexCount() > index );
-  return mVertices[index];
+  return mVertices;
 }
 
-QgsMeshFace QgsMeshMemoryDataProvider::face( int index ) const
+QVector<QgsMeshFace> QgsMeshMemoryDataProvider::faces( ) const
 {
-  Q_ASSERT( faceCount() > index );
-  return mFaces[index];
+  return mFaces;
+}
+
+QgsRectangle QgsMeshMemoryDataProvider::extent() const
+{
+  QgsMeshLayerUtils::calculateExtent( mVertices );
 }
 
 bool QgsMeshMemoryDataProvider::addDataset( const QString &uri )
@@ -440,7 +444,7 @@ QgsMeshDataBlock QgsMeshMemoryDataProvider::areFacesActive( QgsMeshDatasetIndex 
   Q_UNUSED( index );
   Q_UNUSED( faceIndex );
   QgsMeshDataBlock ret( QgsMeshDataBlock::ActiveFlagInteger, count );
-  memset( ret.buffer(), 1, static_cast<size_t>( count ) * sizeof(int) );
+  memset( ret.buffer(), 1, static_cast<size_t>( count ) * sizeof( int ) );
   return ret;
 }
 ///@endcond

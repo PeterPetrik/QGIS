@@ -58,23 +58,6 @@ QgsMeshDataProvider::QgsMeshDataProvider( const QString &uri, const QgsDataProvi
 {
 }
 
-
-QgsRectangle QgsMeshDataProvider::extent() const
-{
-  QgsRectangle rec;
-  rec.setMinimal();
-  for ( int i = 0; i < vertexCount(); ++i )
-  {
-    QgsMeshVertex v = vertex( i );
-    rec.setXMinimum( std::min( rec.xMinimum(), v.x() ) );
-    rec.setYMinimum( std::min( rec.yMinimum(), v.y() ) );
-    rec.setXMaximum( std::max( rec.xMaximum(), v.x() ) );
-    rec.setYMaximum( std::max( rec.yMaximum(), v.y() ) );
-  }
-  return rec;
-
-}
-
 QgsMeshDatasetValue::QgsMeshDatasetValue( double x, double y )
   : mX( x ), mY( y )
 {}
@@ -261,14 +244,14 @@ QgsMeshDatasetValue QgsMeshDataBlock::value( int index ) const
 
   if ( ScalarDouble == mType )
   {
-    QgsMeshDatasetValue val(mDoubleBuffer[index]);
+    QgsMeshDatasetValue val( mDoubleBuffer[index] );
     return val;
   }
   else
   {
     QgsMeshDatasetValue val(
-          mDoubleBuffer[2 * index],
-          mDoubleBuffer[2 * index + 1]
+      mDoubleBuffer[2 * index],
+      mDoubleBuffer[2 * index + 1]
     );
     return val;
   }

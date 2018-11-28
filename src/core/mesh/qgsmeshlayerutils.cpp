@@ -17,11 +17,23 @@
 
 #include "qgsmeshlayerutils.h"
 
-#include "qgsmeshdataprovider.h"
-
 #include <limits>
 
 ///@cond PRIVATE
+
+QgsRectangle QgsMeshLayerUtils::calculateExtent( const QVector<QgsMeshVertex> &vertices )
+{
+  QgsRectangle rec;
+  rec.setMinimal();
+  for ( const QgsMeshVertex &v : vertices )
+  {
+    rec.setXMinimum( std::min( rec.xMinimum(), v.x() ) );
+    rec.setYMinimum( std::min( rec.yMinimum(), v.y() ) );
+    rec.setXMaximum( std::max( rec.xMaximum(), v.x() ) );
+    rec.setYMaximum( std::max( rec.yMaximum(), v.y() ) );
+  }
+  return rec;
+}
 
 QVector<double> QgsMeshLayerUtils::calculateMagnitudes( const QgsMeshDataBlock &block )
 {

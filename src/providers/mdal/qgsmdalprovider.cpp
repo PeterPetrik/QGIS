@@ -82,26 +82,75 @@ int QgsMdalProvider::faceCount() const
     return 0;
 }
 
-QgsMeshVertex QgsMdalProvider::vertex( int index ) const
+QVector<QgsMeshVertex> QgsMdalProvider::vertices( ) const
 {
-  Q_ASSERT( index < vertexCount() );
-  double x = MDAL_M_vertexXCoordinatesAt( mMeshH, index );
-  double y = MDAL_M_vertexYCoordinatesAt( mMeshH, index );
-  QgsMeshVertex vertex( x, y );
-  return vertex;
+  const int bufferSize = 1000;
+  QVector<QgsMeshVertex> ret( vertexCount() );
+  QVector<double> buffer( bufferSize * 3 );
+  MeshVerticesIteratorH it = MDAL_M_readVertices( mMeshH );
+  int vertexIndex = 0;
+  while ( vertexIndex < vertexCount() )
+  {
+    int verticesRead = MDAL_M_vertices( it, bufferSize, buffer.data() );
+    if ( verticesRead == 0 )
+      break;
+    for ( int i = 0; i < verticesRead; i++ )
+    {
+      QgsMeshVertex vertex( buffer[3 * i],  buffer[3 * i + 1],  buffer[3 * i + 2] );
+      ret[vertexIndex + i] = vertex;
+    }
+    vertexIndex += verticesRead;
+  }
+  MDAL_M_CloseMeshVerticesIterator( it );
+  return ret;
 }
 
-QgsMeshFace QgsMdalProvider::face( int index ) const
+QVector<QgsMeshFace> QgsMdalProvider::faces( ) const
 {
-  Q_ASSERT( index < faceCount() );
-  QgsMeshFace face;
-  int n_face_vertices = MDAL_M_faceVerticesCountAt( mMeshH, index );
-  for ( int j = 0; j < n_face_vertices; ++j )
+  const int maxFaces = 250;
+  const int bufferSize = 1000; // most usually we have quads
+  int facesCount = faceCount();
+
+  QVector<QgsMeshFace> ret( facesCount );
+  QVector<int> faceVerticesStartIndexBuffer( maxFaces + 1 );
+  QVector<int> facesVertexIndicesBuffer( bufferSize );
+
+  MeshFacesIteratorH it = MDAL_M_readFaces( mMeshH );
+  int faceIndex = 0;
+  while ( faceIndex < facesCount )
   {
-    int vertex_index = MDAL_M_faceVerticesIndexAt( mMeshH, index, j );
-    face.push_back( vertex_index );
+    int facesRead = MDAL_M_faces( it,
+                                  maxFaces,
+                                  faceVerticesStartIndexBuffer.data(),
+                                  bufferSize,
+                                  facesVertexIndicesBuffer.data() );
+    if ( facesRead == 0 )
+      break;
+
+    for ( int i = 0; i < facesRead; i++ )
+    {
+      QgsMeshFace face;
+      int startIndex = faceVerticesStartIndexBuffer[i];
+      int endIndex = faceVerticesStartIndexBuffer[i + 1 ];
+      for ( int j = startIndex; j < endIndex; ++j )
+      {
+        int vertexIndex = facesVertexIndicesBuffer[j];
+        face.push_back( vertexIndex );
+      }
+      ret[faceIndex + i] = face;
+    }
+    faceIndex += facesRead;
   }
-  return face;
+  MDAL_M_CloseMeshFacesIterator( it );
+  return ret;
+}
+
+QgsRectangle QgsMdalProvider::extent() const
+{
+  double xMin, yMin, xMax, yMax;
+  MDAL_M_extent( mMeshH, &xMin, &xMax, &yMin, &yMax );
+  QgsRectangle ret( xMin, yMin, xMax, yMax );
+  return ret;
 }
 
 /*----------------------------------------------------------------------------------------------*/

@@ -326,13 +326,15 @@ class CORE_EXPORT QgsMeshDataSourceInterface SIP_ABSTRACT
 
     /**
      * Returns the mesh vertex at index
+     * \since QGIS 3.6
      */
-    virtual QgsMeshVertex vertex( int index ) const = 0;
+    virtual QVector<QgsMeshVertex> vertices() const = 0;
 
     /**
      * Returns the mesh face at index
+     * \since QGIS 3.6
      */
-    virtual QgsMeshFace face( int index ) const = 0;
+    virtual QVector<QgsMeshFace> faces( ) const = 0;
 };
 
 /**
@@ -449,12 +451,6 @@ class CORE_EXPORT QgsMeshDataProvider: public QgsDataProvider, public QgsMeshDat
   public:
     //! Ctor
     QgsMeshDataProvider( const QString &uri, const QgsDataProvider::ProviderOptions &options );
-
-    /**
-     * Returns the extent of the layer
-     * \returns QgsRectangle containing the extent of the layer
-     */
-    QgsRectangle extent() const override;
 
   signals:
     //! Emitted when some new dataset groups have been added

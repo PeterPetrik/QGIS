@@ -350,14 +350,18 @@ Returns number of faces in the native mesh
 :return: Number of faces in the mesh
 %End
 
-    virtual QgsMeshVertex vertex( int index ) const = 0;
+    virtual QVector<QgsMeshVertex> vertices() const = 0;
 %Docstring
 Returns the mesh vertex at index
+
+.. versionadded:: 3.6
 %End
 
-    virtual QgsMeshFace face( int index ) const = 0;
+    virtual QVector<QgsMeshFace> faces( ) const = 0;
 %Docstring
 Returns the mesh face at index
+
+.. versionadded:: 3.6
 %End
 };
 
@@ -483,14 +487,6 @@ Responsible for reading native mesh data
     QgsMeshDataProvider( const QString &uri, const QgsDataProvider::ProviderOptions &options );
 %Docstring
 Ctor
-%End
-
-    virtual QgsRectangle extent() const;
-
-%Docstring
-Returns the extent of the layer
-
-:return: QgsRectangle containing the extent of the layer
 %End
 
   signals:

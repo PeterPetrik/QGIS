@@ -23,10 +23,7 @@
 #include "qgis_core.h"
 #include "qgsrectangle.h"
 #include "qgsmaptopixel.h"
-
-class QgsMeshDataProvider;
-class QgsMeshDatasetIndex;
-class QgsMeshDataBlock;
+#include "qgsmeshdataprovider.h"
 
 #include <QVector>
 #include <QSize>
@@ -43,6 +40,11 @@ class QgsMeshDataBlock;
 class CORE_EXPORT QgsMeshLayerUtils
 {
   public:
+
+    /**
+     * Calculates extent of the vertices
+     */
+    static QgsRectangle calculateExtent( const QVector<QgsMeshVertex> &vertices );
 
     /**
      * Calculates magnitude values from the given QgsMeshDataBlock.

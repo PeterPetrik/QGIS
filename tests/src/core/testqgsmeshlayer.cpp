@@ -127,20 +127,23 @@ void TestQgsMeshLayer::test_read_mesh()
     QVERIFY( dp->isValid() );
 
     QCOMPARE( 5, dp->vertexCount() );
-    QCOMPARE( QgsMeshVertex( 1000.0, 2000.0 ), dp->vertex( 0 ) );
-    QCOMPARE( QgsMeshVertex( 2000.0, 2000.0 ), dp->vertex( 1 ) );
-    QCOMPARE( QgsMeshVertex( 3000.0, 2000.0 ), dp->vertex( 2 ) );
-    QCOMPARE( QgsMeshVertex( 2000.0, 3000.0 ), dp->vertex( 3 ) );
-    QCOMPARE( QgsMeshVertex( 1000.0, 3000.0 ), dp->vertex( 4 ) );
+    QVector<QgsMeshVertex> vertices = dp->vertices();
+    QCOMPARE( QgsMeshVertex( 1000.0, 2000.0 ), vertices.at( 0 ) );
+    QCOMPARE( QgsMeshVertex( 2000.0, 2000.0 ), vertices.at( 1 ) );
+    QCOMPARE( QgsMeshVertex( 3000.0, 2000.0 ), vertices.at( 2 ) );
+    QCOMPARE( QgsMeshVertex( 2000.0, 3000.0 ), vertices.at( 3 ) );
+    QCOMPARE( QgsMeshVertex( 1000.0, 3000.0 ), vertices.at( 4 ) );
 
     QCOMPARE( 2, dp->faceCount() );
+    QVector<QgsMeshFace> faces = dp->faces();
+
     QgsMeshFace f1;
     f1 << 0 << 1 << 3 << 4;
-    QCOMPARE( f1, dp->face( 0 ) );
+    QCOMPARE( f1, faces.at( 0 ) );
 
     QgsMeshFace f2;
     f2 << 1 << 2 << 3;
-    QCOMPARE( f2, dp->face( 1 ) );
+    QCOMPARE( f2, faces.at( 1 ) );
   }
 }
 

@@ -87,9 +87,9 @@ class QgsMeshMemoryDataProvider: public QgsMeshDataProvider
 
     int vertexCount() const override;
     int faceCount() const override;
-    QgsMeshVertex vertex( int index ) const override;
-    QgsMeshFace face( int index ) const override;
-
+    QVector<QgsMeshVertex> vertices( ) const override;
+    QVector<QgsMeshFace> faces( ) const override;
+    QgsRectangle extent() const override;
 
     /**
      * Adds dataset to a mesh in-memory data provider from data string

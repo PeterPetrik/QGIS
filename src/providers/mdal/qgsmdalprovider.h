@@ -53,8 +53,8 @@ class QgsMdalProvider : public QgsMeshDataProvider
 
     int vertexCount() const override;
     int faceCount() const override;
-    QgsMeshVertex vertex( int index ) const override;
-    QgsMeshFace face( int index ) const override;
+    QVector<QgsMeshVertex> vertices( ) const override;
+    QVector<QgsMeshFace> faces( ) const override;
 
     bool addDataset( const QString &uri ) override;
     QStringList extraDatasets() const override;
@@ -68,6 +68,7 @@ class QgsMdalProvider : public QgsMeshDataProvider
     QgsMeshDataBlock datasetValues( QgsMeshDatasetIndex index, int valueIndex, int count ) const override;
     bool isFaceActive( QgsMeshDatasetIndex index, int faceIndex ) const override;
     QgsMeshDataBlock areFacesActive( QgsMeshDatasetIndex index, int faceIndex, int count ) const override;
+    QgsRectangle extent() const override;
 
   private:
     MeshH mMeshH;
