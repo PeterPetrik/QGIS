@@ -132,11 +132,16 @@ void TestQgsMeshLayer::test_read_mesh()
 
     QCOMPARE( 5, dp->vertexCount() );
     const QVector<QgsMeshVertex> vertices = mesh.vertices;
-    QCOMPARE( QgsMeshVertex( 1000.0, 2000.0 ), vertices.at( 0 ) );
-    QCOMPARE( QgsMeshVertex( 2000.0, 2000.0 ), vertices.at( 1 ) );
-    QCOMPARE( QgsMeshVertex( 3000.0, 2000.0 ), vertices.at( 2 ) );
-    QCOMPARE( QgsMeshVertex( 2000.0, 3000.0 ), vertices.at( 3 ) );
-    QCOMPARE( QgsMeshVertex( 1000.0, 3000.0 ), vertices.at( 4 ) );
+    QCOMPARE( 1000.0, vertices.at( 0 ).x() );
+    QCOMPARE( 2000.0, vertices.at( 1 ).x() );
+    QCOMPARE( 3000.0, vertices.at( 2 ).x() );
+    QCOMPARE( 2000.0, vertices.at( 3 ).x() );
+    QCOMPARE( 1000.0, vertices.at( 4 ).x() );
+    QCOMPARE( 2000.0, vertices.at( 0 ).y() );
+    QCOMPARE( 2000.0, vertices.at( 1 ).y() );
+    QCOMPARE( 2000.0, vertices.at( 2 ).y() );
+    QCOMPARE( 3000.0, vertices.at( 3 ).y() );
+    QCOMPARE( 3000.0, vertices.at( 4 ).y() );
 
     QCOMPARE( 2, dp->faceCount() );
     const QVector<QgsMeshFace> faces = mesh.faces;

@@ -94,7 +94,7 @@ void QgsMdalProvider::populateMesh( QgsMesh *mesh ) const
 
 QVector<QgsMeshVertex> QgsMdalProvider::vertices( ) const
 {
-  const int bufferSize = 2000;
+  const int bufferSize = std::min(vertexCount(), 1000);
   QVector<QgsMeshVertex> ret( vertexCount() );
   QVector<double> buffer( bufferSize * 3 );
   MeshVertexIteratorH it = MDAL_M_vertexIterator( mMeshH );
@@ -106,7 +106,11 @@ QVector<QgsMeshVertex> QgsMdalProvider::vertices( ) const
       break;
     for ( int i = 0; i < verticesRead; i++ )
     {
-      QgsMeshVertex vertex( buffer[3 * i],  buffer[3 * i + 1],  buffer[3 * i + 2] );
+      QgsMeshVertex vertex(
+          buffer[3 * i],
+          buffer[3 * i + 1],
+          buffer[3 * i + 2]
+      );
       ret[vertexIndex + i] = vertex;
     }
     vertexIndex += verticesRead;
@@ -117,7 +121,7 @@ QVector<QgsMeshVertex> QgsMdalProvider::vertices( ) const
 
 QVector<QgsMeshFace> QgsMdalProvider::faces( ) const
 {
-  const int faceOffsetsBufferLen = 1000;
+  const int faceOffsetsBufferLen = std::min(faceCount(), 1000);
   const int vertexIndicesBufferLen = faceOffsetsBufferLen * 4; // most usually we have quads
   int facesCount = faceCount();
 
