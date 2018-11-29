@@ -251,6 +251,8 @@ Constructs an empty metadata object
     QgsMeshDatasetGroupMetadata( const QString &name,
                                  bool isScalar,
                                  bool isOnVertices,
+                                 double minimum,
+                                 double maximum,
                                  const QMap<QString, QString> &extraOptions );
 %Docstring
 Constructs a valid metadata object
@@ -258,6 +260,8 @@ Constructs a valid metadata object
 :param name: name of the dataset group
 :param isScalar: dataset contains scalar data, specifically the y-value of QgsMeshDatasetValue is NaN
 :param isOnVertices: dataset values are defined on mesh's vertices. If false, values are defined on faces.
+:param minimum: minimum value (magnitude for vectors) present among all group's dataset values
+:param maximum: maximum value (magnitude for vectors) present among all group's dataset values
 :param extraOptions: dataset's extra options stored by the provider. Usually contains the name, time value, time units, data file vendor, ...
 %End
 
@@ -286,6 +290,16 @@ Returns whether dataset group has scalar data
 Returns whether dataset group data is defined on vertices or faces
 %End
 
+    double minimum() const;
+%Docstring
+Returns minimum scalar value/vector magnitude present for whole dataset group
+%End
+
+    double maximum() const;
+%Docstring
+Returns maximum scalar value/vector magnitude present for whole dataset group
+%End
+
 };
 
 class QgsMeshDatasetMetadata
@@ -312,7 +326,10 @@ Constructs an empty metadata object
 %End
 
     QgsMeshDatasetMetadata( double time,
-                            bool isValid );
+                            bool isValid,
+                            double minimum,
+                            double maximum
+                          );
 %Docstring
 Constructs a valid metadata object
 
@@ -329,6 +346,10 @@ Returns the time value for this dataset
 %Docstring
 Returns whether dataset is valid
 %End
+
+    double minimum() const;
+
+    double maximum() const;
 
 };
 

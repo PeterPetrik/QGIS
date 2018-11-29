@@ -67,6 +67,8 @@ struct CORE_NO_EXPORT QgsMeshLayerRendererCache
   QVector<double> mVectorDatasetValuesMag;
   double mVectorDatasetMagMinimum = std::numeric_limits<double>::quiet_NaN();
   double mVectorDatasetMagMaximum = std::numeric_limits<double>::quiet_NaN();
+  double mVectorDatasetGroupMagMinimum = std::numeric_limits<double>::quiet_NaN();
+  double mVectorDatasetGroupMagMaximum = std::numeric_limits<double>::quiet_NaN();
   bool mVectorDataOnVertices = true;
 };
 
@@ -119,6 +121,8 @@ class QgsMeshLayerRenderer : public QgsMapLayerRenderer
     QVector<double> mVectorDatasetValuesMag;
     double mVectorDatasetMagMinimum = std::numeric_limits<double>::quiet_NaN();
     double mVectorDatasetMagMaximum = std::numeric_limits<double>::quiet_NaN();
+    double mVectorDatasetGroupMagMinimum = std::numeric_limits<double>::quiet_NaN();
+    double mVectorDatasetGroupMagMaximum = std::numeric_limits<double>::quiet_NaN();
     bool mVectorDataOnVertices = true;
 
     // rendering context

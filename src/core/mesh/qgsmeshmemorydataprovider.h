@@ -34,6 +34,8 @@ struct QgsMeshMemoryDataset
   QVector<QgsMeshDatasetValue> values;
   double time = -1;
   bool valid = false;
+  double minimum = std::numeric_limits<double>::quiet_NaN();
+  double maximum = std::numeric_limits<double>::quiet_NaN();
 };
 
 struct QgsMeshMemoryDatasetGroup
@@ -43,6 +45,8 @@ struct QgsMeshMemoryDatasetGroup
   QString name;
   bool isScalar = true;
   bool isOnVertices = true;
+  double minimum = std::numeric_limits<double>::quiet_NaN();
+  double maximum = std::numeric_limits<double>::quiet_NaN();
 };
 
 /**
@@ -137,7 +141,12 @@ class QgsMeshMemoryDataProvider: public QgsMeshDataProvider
     static QString providerDescription();
     //! Provider factory
     static QgsMeshMemoryDataProvider *createProvider( const QString &uri, const QgsDataProvider::ProviderOptions &options );
+
   private:
+    void calculateMinMaxForDatasetGroup( QgsMeshMemoryDatasetGroup &grp ) const;
+    void calculateMinMaxForDataset( QgsMeshMemoryDataset &dataset ) const;
+    QgsRectangle calculateExtent( ) const;
+
     bool splitMeshSections( const QString &uri );
     bool addMeshVertices( const QString &def );
     bool addMeshFaces( const QString &def );

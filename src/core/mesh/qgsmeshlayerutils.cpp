@@ -21,20 +21,6 @@
 
 ///@cond PRIVATE
 
-QgsRectangle QgsMeshLayerUtils::calculateExtent( const QVector<QgsMeshVertex> &vertices )
-{
-  QgsRectangle rec;
-  rec.setMinimal();
-  for ( const QgsMeshVertex &v : vertices )
-  {
-    rec.setXMinimum( std::min( rec.xMinimum(), v.x() ) );
-    rec.setYMinimum( std::min( rec.yMinimum(), v.y() ) );
-    rec.setXMaximum( std::max( rec.xMaximum(), v.x() ) );
-    rec.setYMaximum( std::max( rec.yMaximum(), v.y() ) );
-  }
-  return rec;
-}
-
 QVector<double> QgsMeshLayerUtils::calculateMagnitudes( const QgsMeshDataBlock &block )
 {
   Q_ASSERT( QgsMeshDataBlock::ActiveFlagInteger != block.type() );
@@ -47,99 +33,6 @@ QVector<double> QgsMeshLayerUtils::calculateMagnitudes( const QgsMeshDataBlock &
     ret[i] = mag;
   }
   return ret;
-}
-
-void QgsMeshLayerUtils::calculateMinimumMaximum( double &min, double &max, const QVector<double> &arr )
-{
-  bool found = false;
-
-  min = std::numeric_limits<double>::max();
-  max = std::numeric_limits<double>::min();
-
-  for ( const double val : arr )
-  {
-    if ( !std::isnan( val ) )
-    {
-      found = true;
-      if ( val < min )
-        min = val;
-      if ( val > max )
-        max = val;
-    }
-  }
-
-  if ( !found )
-  {
-    min = std::numeric_limits<double>::quiet_NaN();
-    max = std::numeric_limits<double>::quiet_NaN();
-  }
-}
-
-void QgsMeshLayerUtils::calculateMinMaxForDatasetGroup( double &min, double &max, QgsMeshDataProvider *provider, int groupIndex )
-{
-  if ( groupIndex < 0 || !provider || groupIndex >= provider->datasetGroupCount() )
-  {
-    min = std::numeric_limits<double>::quiet_NaN();
-    max = std::numeric_limits<double>::quiet_NaN();
-    return;
-  }
-
-  min = std::numeric_limits<double>::max();
-  max = std::numeric_limits<double>::min();
-
-  int count = provider->datasetCount( groupIndex );
-  for ( int i = 0; i < count; ++i )
-  {
-    double dMin, dMax;
-    calculateMinMaxForDataset( dMin, dMax, provider, QgsMeshDatasetIndex( groupIndex, i ) );
-    min = std::min( min, dMin );
-    max = std::max( max, dMax );
-  }
-}
-
-void QgsMeshLayerUtils::calculateMinMaxForDataset( double &min, double &max, QgsMeshDataProvider *provider, QgsMeshDatasetIndex index )
-{
-  if ( !index.isValid() || !provider )
-  {
-    min = std::numeric_limits<double>::quiet_NaN();
-    max = std::numeric_limits<double>::quiet_NaN();
-    return;
-  }
-
-  const QgsMeshDatasetGroupMetadata metadata = provider->datasetGroupMetadata( index );
-  bool onVertices = metadata.dataType() == QgsMeshDatasetGroupMetadata::DataOnVertices;
-  int count;
-  if ( onVertices )
-    count = provider->vertexCount();
-  else
-    count = provider->faceCount();
-
-  bool firstIteration = true;
-  for ( int i = 0; i < count; ++i )
-  {
-    double v = provider->datasetValue( index, i ).scalar();
-
-    if ( std::isnan( v ) )
-      continue;
-    if ( firstIteration )
-    {
-      firstIteration = false;
-      min = v;
-      max = v;
-    }
-    else
-    {
-      if ( v < min )
-      {
-        min = v;
-      }
-      if ( v > max )
-      {
-        max = v;
-      }
-    }
-  }
-
 }
 
 void QgsMeshLayerUtils::boundingBoxToScreenRectangle( const QgsMapToPixel &mtp,

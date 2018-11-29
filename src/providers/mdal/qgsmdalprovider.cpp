@@ -94,7 +94,7 @@ void QgsMdalProvider::populateMesh( QgsMesh *mesh ) const
 
 QVector<QgsMeshVertex> QgsMdalProvider::vertices( ) const
 {
-  const int bufferSize = std::min(vertexCount(), 1000);
+  const int bufferSize = std::min( vertexCount(), 1000 );
   QVector<QgsMeshVertex> ret( vertexCount() );
   QVector<double> buffer( bufferSize * 3 );
   MeshVertexIteratorH it = MDAL_M_vertexIterator( mMeshH );
@@ -107,9 +107,9 @@ QVector<QgsMeshVertex> QgsMdalProvider::vertices( ) const
     for ( int i = 0; i < verticesRead; i++ )
     {
       QgsMeshVertex vertex(
-          buffer[3 * i],
-          buffer[3 * i + 1],
-          buffer[3 * i + 2]
+        buffer[3 * i],
+        buffer[3 * i + 1],
+        buffer[3 * i + 2]
       );
       ret[vertexIndex + i] = vertex;
     }
@@ -121,7 +121,7 @@ QVector<QgsMeshVertex> QgsMdalProvider::vertices( ) const
 
 QVector<QgsMeshFace> QgsMdalProvider::faces( ) const
 {
-  const int faceOffsetsBufferLen = std::min(faceCount(), 1000);
+  const int faceOffsetsBufferLen = std::min( faceCount(), 1000 );
   const int vertexIndicesBufferLen = faceOffsetsBufferLen * 4; // most usually we have quads
   int facesCount = faceCount();
 
@@ -221,6 +221,8 @@ QgsMeshDatasetGroupMetadata QgsMdalProvider::datasetGroupMetadata( int groupInde
   bool isScalar = MDAL_G_hasScalarData( group );
   bool isOnVertices = MDAL_G_isOnVertices( group );
   QString name = MDAL_G_name( group );
+  double min, max;
+  MDAL_G_minimumMaximum( group, &min, &max );
 
   QMap<QString, QString> metadata;
   int n = MDAL_G_metadataCount( group );
@@ -235,6 +237,8 @@ QgsMeshDatasetGroupMetadata QgsMdalProvider::datasetGroupMetadata( int groupInde
     name,
     isScalar,
     isOnVertices,
+    min,
+    max,
     metadata
   );
 
@@ -253,10 +257,14 @@ QgsMeshDatasetMetadata QgsMdalProvider::datasetMetadata( QgsMeshDatasetIndex ind
 
   bool isValid = MDAL_D_isValid( dataset );
   double time = MDAL_D_time( dataset );
+  double min, max;
+  MDAL_D_minimumMaximum( dataset, &min, &max );
 
   QgsMeshDatasetMetadata meta(
     time,
-    isValid
+    isValid,
+    min,
+    max
   );
 
   return meta;

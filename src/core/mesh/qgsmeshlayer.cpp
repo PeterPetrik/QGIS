@@ -214,8 +214,9 @@ static QgsColorRamp *_createDefaultColorRamp()
 
 void QgsMeshLayer::assignDefaultStyleToDatasetGroup( int groupIndex )
 {
-  double groupMin, groupMax;
-  QgsMeshLayerUtils::calculateMinMaxForDatasetGroup( groupMin, groupMax, mDataProvider, groupIndex );
+  const QgsMeshDatasetGroupMetadata metadata = mDataProvider->datasetGroupMetadata( groupIndex );
+  double groupMin = metadata.minimum();
+  double groupMax = metadata.maximum();
 
   QgsColorRampShader fcn( groupMin, groupMax, _createDefaultColorRamp() );
   fcn.classifyColorRamp( 5, -1, QgsRectangle(), nullptr );

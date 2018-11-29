@@ -127,14 +127,17 @@ bool QgsMeshDatasetValue::operator==( const QgsMeshDatasetValue &other ) const
   return equal;
 }
 
-QgsMeshDatasetGroupMetadata::QgsMeshDatasetGroupMetadata(
-  const QString &name,
-  bool isScalar,
-  bool isOnVertices,
-  const QMap<QString, QString> &extraOptions )
+QgsMeshDatasetGroupMetadata::QgsMeshDatasetGroupMetadata( const QString &name,
+    bool isScalar,
+    bool isOnVertices,
+    double minimum,
+    double maximum,
+    const QMap<QString, QString> &extraOptions )
   : mName( name )
-  ,  mIsScalar( isScalar )
+  , mIsScalar( isScalar )
   , mIsOnVertices( isOnVertices )
+  , mMinimumValue( minimum )
+  , mMaximumValue( maximum )
   , mExtraOptions( extraOptions )
 {
 }
@@ -154,8 +157,6 @@ bool QgsMeshDatasetGroupMetadata::isScalar() const
   return mIsScalar;
 }
 
-
-
 QString QgsMeshDatasetGroupMetadata::name() const
 {
   return mName;
@@ -164,6 +165,16 @@ QString QgsMeshDatasetGroupMetadata::name() const
 QgsMeshDatasetGroupMetadata::DataType QgsMeshDatasetGroupMetadata::dataType() const
 {
   return ( mIsOnVertices ) ? DataType::DataOnVertices : DataType::DataOnFaces;
+}
+
+double QgsMeshDatasetGroupMetadata::minimum() const
+{
+  return mMinimumValue;
+}
+
+double QgsMeshDatasetGroupMetadata::maximum() const
+{
+  return mMaximumValue;
 }
 
 int QgsMeshDatasetSourceInterface::datasetCount( QgsMeshDatasetIndex index ) const
@@ -177,9 +188,13 @@ QgsMeshDatasetGroupMetadata QgsMeshDatasetSourceInterface::datasetGroupMetadata(
 }
 
 QgsMeshDatasetMetadata::QgsMeshDatasetMetadata( double time,
-    bool isValid )
+    bool isValid,
+    double minimum,
+    double maximum )
   : mTime( time )
   , mIsValid( isValid )
+  , mMinimumValue( minimum )
+  , mMaximumValue( maximum )
 {
 }
 
@@ -191,6 +206,16 @@ double QgsMeshDatasetMetadata::time() const
 bool QgsMeshDatasetMetadata::isValid() const
 {
   return mIsValid;
+}
+
+double QgsMeshDatasetMetadata::minimum() const
+{
+  return mMinimumValue;
+}
+
+double QgsMeshDatasetMetadata::maximum() const
+{
+  return mMaximumValue;
 }
 
 QgsMeshDataBlock::QgsMeshDataBlock()

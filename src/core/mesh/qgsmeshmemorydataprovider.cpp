@@ -313,7 +313,7 @@ void QgsMeshMemoryDataProvider::populateMesh( QgsMesh *mesh ) const
 
 QgsRectangle QgsMeshMemoryDataProvider::extent() const
 {
-  return QgsMeshLayerUtils::calculateExtent( mVertices );
+  return calculateExtent( );
 }
 
 bool QgsMeshMemoryDataProvider::addDataset( const QString &uri )
@@ -331,6 +331,7 @@ bool QgsMeshMemoryDataProvider::addDataset( const QString &uri )
                         QStringLiteral( "Mesh Memory Provider" ) ) );
   }
 
+  calculateMinMaxForDatasetGroup( group );
   mDatasetGroups.push_back( group );
 
   if ( valid )
@@ -369,6 +370,8 @@ QgsMeshDatasetGroupMetadata QgsMeshMemoryDataProvider::datasetGroupMetadata( int
       mDatasetGroups[groupIndex].name,
       mDatasetGroups[groupIndex].isScalar,
       mDatasetGroups[groupIndex].isOnVertices,
+      mDatasetGroups[groupIndex].minimum,
+      mDatasetGroups[groupIndex].maximum,
       mDatasetGroups[groupIndex].metadata
     );
     return metadata;
@@ -388,7 +391,9 @@ QgsMeshDatasetMetadata QgsMeshMemoryDataProvider::datasetMetadata( QgsMeshDatase
     const QgsMeshMemoryDatasetGroup &grp = mDatasetGroups.at( index.group() );
     QgsMeshDatasetMetadata metadata(
       grp.datasets[index.dataset()].time,
-      grp.datasets[index.dataset()].valid
+      grp.datasets[index.dataset()].valid,
+      grp.datasets[index.dataset()].minimum,
+      grp.datasets[index.dataset()].maximum
     );
     return metadata;
   }
@@ -446,5 +451,76 @@ QgsMeshDataBlock QgsMeshMemoryDataProvider::areFacesActive( QgsMeshDatasetIndex 
   QgsMeshDataBlock ret( QgsMeshDataBlock::ActiveFlagInteger, count );
   memset( ret.buffer(), 1, static_cast<size_t>( count ) * sizeof( int ) );
   return ret;
+}
+
+void QgsMeshMemoryDataProvider::calculateMinMaxForDatasetGroup( QgsMeshMemoryDatasetGroup &grp ) const
+{
+  double min = std::numeric_limits<double>::max();
+  double max = std::numeric_limits<double>::min();
+
+  int count = grp.datasets.size();
+  for ( int i = 0; i < count; ++i )
+  {
+    calculateMinMaxForDataset( grp.datasets[i] );
+    min = std::min( min, grp.datasets[i].minimum );
+    max = std::max( max, grp.datasets[i].maximum );
+  }
+
+  grp.minimum = min;
+  grp.maximum = max;
+}
+
+void QgsMeshMemoryDataProvider::calculateMinMaxForDataset( QgsMeshMemoryDataset &dataset ) const
+{
+  double min = std::numeric_limits<double>::max();
+  double max = std::numeric_limits<double>::min();
+
+  if ( !dataset.valid )
+  {
+    return;
+  }
+
+  bool firstIteration = true;
+  for ( int i = 0; i < dataset.values.size(); ++i )
+  {
+    double v = dataset.values[i].scalar();
+
+    if ( std::isnan( v ) )
+      continue;
+    if ( firstIteration )
+    {
+      firstIteration = false;
+      min = v;
+      max = v;
+    }
+    else
+    {
+      if ( v < min )
+      {
+        min = v;
+      }
+      if ( v > max )
+      {
+        max = v;
+      }
+    }
+  }
+
+  dataset.minimum = min;
+  dataset.maximum = max;
+}
+
+QgsRectangle QgsMeshMemoryDataProvider::calculateExtent() const
+{
+  QgsRectangle rec;
+  rec.setMinimal();
+  for ( const QgsMeshVertex &v : mVertices )
+  {
+    rec.setXMinimum( std::min( rec.xMinimum(), v.x() ) );
+    rec.setYMinimum( std::min( rec.yMinimum(), v.y() ) );
+    rec.setXMaximum( std::max( rec.xMaximum(), v.x() ) );
+    rec.setYMaximum( std::max( rec.yMaximum(), v.y() ) );
+  }
+  return rec;
 }
 ///@endcond

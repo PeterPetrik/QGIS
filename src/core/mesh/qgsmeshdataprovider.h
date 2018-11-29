@@ -236,11 +236,15 @@ class CORE_EXPORT QgsMeshDatasetGroupMetadata
      * \param name name of the dataset group
      * \param isScalar dataset contains scalar data, specifically the y-value of QgsMeshDatasetValue is NaN
      * \param isOnVertices dataset values are defined on mesh's vertices. If false, values are defined on faces.
+     * \param minimum minimum value (magnitude for vectors) present among all group's dataset values
+     * \param maximum maximum value (magnitude for vectors) present among all group's dataset values
      * \param extraOptions dataset's extra options stored by the provider. Usually contains the name, time value, time units, data file vendor, ...
      */
     QgsMeshDatasetGroupMetadata( const QString &name,
                                  bool isScalar,
                                  bool isOnVertices,
+                                 double minimum,
+                                 double maximum,
                                  const QMap<QString, QString> &extraOptions );
 
     /**
@@ -268,10 +272,22 @@ class CORE_EXPORT QgsMeshDatasetGroupMetadata
      */
     DataType dataType() const;
 
+    /**
+     * \brief Returns minimum scalar value/vector magnitude present for whole dataset group
+     */
+    double minimum() const;
+
+    /**
+     * \brief Returns maximum scalar value/vector magnitude present for whole dataset group
+     */
+    double maximum() const;
+
   private:
     QString mName;
     bool mIsScalar = false;
     bool mIsOnVertices = false;
+    double mMinimumValue = std::numeric_limits<double>::quiet_NaN();
+    double mMaximumValue = std::numeric_limits<double>::quiet_NaN();
     QMap<QString, QString> mExtraOptions;
 };
 
@@ -298,7 +314,10 @@ class CORE_EXPORT QgsMeshDatasetMetadata
      * \param isValid dataset is loadad and valid for fetching the data
      */
     QgsMeshDatasetMetadata( double time,
-                            bool isValid );
+                            bool isValid,
+                            double minimum,
+                            double maximum
+                          );
 
     /**
      * \brief Returns the time value for this dataset
@@ -310,9 +329,15 @@ class CORE_EXPORT QgsMeshDatasetMetadata
      */
     bool isValid() const;
 
+    double minimum() const;
+
+    double maximum() const;
+
   private:
     double mTime = std::numeric_limits<double>::quiet_NaN();
     bool mIsValid = false;
+    double mMinimumValue = std::numeric_limits<double>::quiet_NaN();
+    double mMaximumValue = std::numeric_limits<double>::quiet_NaN();
 };
 
 /**

@@ -113,7 +113,9 @@ void QgsMeshLayerRenderer::copyScalarDatasetValues( QgsMeshLayer *layer )
                                     0,
                                     mNativeMesh.faces.count() );
 
-    QgsMeshLayerUtils::calculateMinimumMaximum( mScalarDatasetMinimum, mScalarDatasetMaximum, mScalarDatasetValues );
+    const QgsMeshDatasetMetadata datasetMetadata = layer->dataProvider()->datasetMetadata( datasetIndex );
+    mScalarDatasetMinimum = datasetMetadata.minimum();
+    mScalarDatasetMaximum = datasetMetadata.maximum();
   }
 
   // update cache
@@ -140,6 +142,8 @@ void QgsMeshLayerRenderer::copyVectorDatasetValues( QgsMeshLayer *layer )
     mVectorDatasetValuesMag = cache->mVectorDatasetValuesMag;
     mVectorDatasetMagMinimum = cache->mVectorDatasetMagMinimum;
     mVectorDatasetMagMaximum = cache->mVectorDatasetMagMaximum;
+    mVectorDatasetGroupMagMinimum = cache->mVectorDatasetMagMinimum;
+    mVectorDatasetGroupMagMaximum = cache->mVectorDatasetMagMaximum;
     mVectorDataOnVertices = cache->mVectorDataOnVertices;
     return;
   }
@@ -158,6 +162,9 @@ void QgsMeshLayerRenderer::copyVectorDatasetValues( QgsMeshLayer *layer )
     else
     {
       mVectorDataOnVertices = metadata.dataType() == QgsMeshDatasetGroupMetadata::DataOnVertices;
+      mVectorDatasetGroupMagMinimum = metadata.minimum();
+      mVectorDatasetGroupMagMaximum = metadata.maximum();
+
       int count;
       if ( mVectorDataOnVertices )
         count = mNativeMesh.vertices.count();
@@ -171,9 +178,11 @@ void QgsMeshLayerRenderer::copyVectorDatasetValues( QgsMeshLayer *layer )
                                count );
 
       mVectorDatasetValuesMag = QgsMeshLayerUtils::calculateMagnitudes( mVectorDatasetValues );
-    }
 
-    QgsMeshLayerUtils::calculateMinimumMaximum( mVectorDatasetMagMinimum, mVectorDatasetMagMaximum, mVectorDatasetValuesMag );
+      const QgsMeshDatasetMetadata datasetMetadata = layer->dataProvider()->datasetMetadata( datasetIndex );
+      mVectorDatasetMagMinimum = datasetMetadata.minimum();
+      mVectorDatasetMagMaximum = datasetMetadata.maximum();
+    }
   }
 
   // update cache
@@ -183,6 +192,8 @@ void QgsMeshLayerRenderer::copyVectorDatasetValues( QgsMeshLayer *layer )
   cache->mVectorDatasetValuesMag = mVectorDatasetValuesMag;
   cache->mVectorDatasetMagMinimum = mVectorDatasetMagMinimum;
   cache->mVectorDatasetMagMaximum = mVectorDatasetMagMaximum;
+  cache->mVectorDatasetGroupMagMinimum = mVectorDatasetMagMinimum;
+  cache->mVectorDatasetGroupMagMaximum = mVectorDatasetMagMaximum;
   cache->mVectorDataOnVertices = mVectorDataOnVertices;
 }
 
