@@ -18,6 +18,7 @@
 #include <string>
 
 #include "qgsmdalprovider.h"
+#include "qgstriangularmesh.h"
 
 #ifdef HAVE_GUI
 #include "qgssourceselectprovider.h"
@@ -82,9 +83,18 @@ int QgsMdalProvider::faceCount() const
     return 0;
 }
 
+void QgsMdalProvider::populateMesh( QgsMesh *mesh ) const
+{
+  if ( mesh )
+  {
+    mesh->faces = faces();
+    mesh->vertices = vertices();
+  }
+}
+
 QVector<QgsMeshVertex> QgsMdalProvider::vertices( ) const
 {
-  const int bufferSize = 1000;
+  const int bufferSize = 2000;
   QVector<QgsMeshVertex> ret( vertexCount() );
   QVector<double> buffer( bufferSize * 3 );
   MeshVertexIteratorH it = MDAL_M_vertexIterator( mMeshH );
@@ -107,8 +117,8 @@ QVector<QgsMeshVertex> QgsMdalProvider::vertices( ) const
 
 QVector<QgsMeshFace> QgsMdalProvider::faces( ) const
 {
-  const int faceOffsetsBufferLen = 250;
-  const int vertexIndicesBufferLen = 1000; // most usually we have quads
+  const int faceOffsetsBufferLen = 1000;
+  const int vertexIndicesBufferLen = faceOffsetsBufferLen * 4; // most usually we have quads
   int facesCount = faceCount();
 
   QVector<QgsMeshFace> ret( facesCount );

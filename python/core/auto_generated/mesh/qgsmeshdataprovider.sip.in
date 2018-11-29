@@ -53,6 +53,28 @@ typedef QgsPoint QgsMeshVertex;
 
 typedef QVector<int> QgsMeshFace;
 
+struct QgsMesh
+{
+  int vertexCount() const;
+%Docstring
+Returns number of vertices
+%End
+  int faceCount() const;
+%Docstring
+Returns number of faces
+%End
+
+  QgsMeshVertex vertex( int index ) const;
+%Docstring
+Returns a vertex at the index
+%End
+  QgsMeshFace face( int index ) const;
+%Docstring
+Returns a face at the index
+%End
+
+};
+
 class QgsMeshDatasetValue
 {
 %Docstring
@@ -350,16 +372,9 @@ Returns number of faces in the native mesh
 :return: Number of faces in the mesh
 %End
 
-    virtual QVector<QgsMeshVertex> vertices() const = 0;
+    virtual void populateMesh( QgsMesh *mesh ) const = 0;
 %Docstring
-Returns the mesh vertex at index
-
-.. versionadded:: 3.6
-%End
-
-    virtual QVector<QgsMeshFace> faces( ) const = 0;
-%Docstring
-Returns the mesh face at index
+Populates the mesh vertices and faces
 
 .. versionadded:: 3.6
 %End

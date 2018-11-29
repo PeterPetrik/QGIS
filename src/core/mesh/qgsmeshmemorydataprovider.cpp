@@ -18,6 +18,7 @@
 
 #include "qgsmeshmemorydataprovider.h"
 #include "qgsmeshlayerutils.h"
+#include "qgstriangularmesh.h"
 #include <cstring>
 
 static const QString TEXT_PROVIDER_KEY = QStringLiteral( "mesh_memory" );
@@ -301,14 +302,13 @@ int QgsMeshMemoryDataProvider::faceCount() const
   return mFaces.size();
 }
 
-QVector<QgsMeshVertex> QgsMeshMemoryDataProvider::vertices( ) const
+void QgsMeshMemoryDataProvider::populateMesh( QgsMesh *mesh ) const
 {
-  return mVertices;
-}
-
-QVector<QgsMeshFace> QgsMeshMemoryDataProvider::faces( ) const
-{
-  return mFaces;
+  if ( mesh )
+  {
+    mesh->faces = mFaces;
+    mesh->vertices = mVertices;
+  }
 }
 
 QgsRectangle QgsMeshMemoryDataProvider::extent() const

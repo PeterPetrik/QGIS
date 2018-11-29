@@ -274,3 +274,27 @@ void *QgsMeshDataBlock::buffer()
     return mDoubleBuffer.data();
   }
 }
+
+QgsMeshVertex QgsMesh::vertex( int index ) const
+{
+  if ( index < vertices.size() )
+    return vertices[index];
+  return QgsMeshVertex();
+}
+
+QgsMeshFace QgsMesh::face( int index ) const
+{
+  if ( index < faces.size() )
+    return faces[index];
+  return QgsMeshFace();
+}
+
+int QgsMesh::vertexCount() const
+{
+  return vertices.size();
+}
+
+int QgsMesh::faceCount() const
+{
+  return faces.size();
+}

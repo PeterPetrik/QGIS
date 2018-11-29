@@ -25,6 +25,7 @@
 #include "qgsapplication.h"
 #include "qgsproviderregistry.h"
 #include "qgsproject.h"
+#include "qgstriangularmesh.h"
 
 /**
  * \ingroup UnitTests
@@ -126,8 +127,11 @@ void TestQgsMeshLayer::test_read_mesh()
     QVERIFY( dp != nullptr );
     QVERIFY( dp->isValid() );
 
+    QgsMesh mesh;
+    dp->populateMesh( &mesh );
+
     QCOMPARE( 5, dp->vertexCount() );
-    QVector<QgsMeshVertex> vertices = dp->vertices();
+    const QVector<QgsMeshVertex> vertices = mesh.vertices;
     QCOMPARE( QgsMeshVertex( 1000.0, 2000.0 ), vertices.at( 0 ) );
     QCOMPARE( QgsMeshVertex( 2000.0, 2000.0 ), vertices.at( 1 ) );
     QCOMPARE( QgsMeshVertex( 3000.0, 2000.0 ), vertices.at( 2 ) );
@@ -135,8 +139,7 @@ void TestQgsMeshLayer::test_read_mesh()
     QCOMPARE( QgsMeshVertex( 1000.0, 3000.0 ), vertices.at( 4 ) );
 
     QCOMPARE( 2, dp->faceCount() );
-    QVector<QgsMeshFace> faces = dp->faces();
-
+    const QVector<QgsMeshFace> faces = mesh.faces;
     QgsMeshFace f1;
     f1 << 0 << 1 << 3 << 4;
     QCOMPARE( f1, faces.at( 0 ) );

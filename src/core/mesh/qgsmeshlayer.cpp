@@ -177,8 +177,7 @@ void QgsMeshLayer::fillNativeMesh()
   if ( !( dataProvider() && dataProvider()->isValid() ) )
     return;
 
-  mNativeMesh->vertices = dataProvider()->vertices();
-  mNativeMesh->faces = dataProvider()->faces();
+  dataProvider()->populateMesh( mNativeMesh.get() );
 }
 
 void QgsMeshLayer::onDatasetGroupsAdded( int count )

@@ -68,6 +68,31 @@ typedef QVector<int> QgsMeshFace;
 /**
  * \ingroup core
  *
+ *  Mesh - vertices and faces
+ *
+ * \since QGIS 3.6
+ */
+struct CORE_EXPORT QgsMesh
+{
+  //! Returns number of vertices
+  int vertexCount() const;
+  //! Returns number of faces
+  int faceCount() const;
+
+  //! Returns a vertex at the index
+  QgsMeshVertex vertex( int index ) const;
+  //! Returns a face at the index
+  QgsMeshFace face( int index ) const;
+
+  //! vertices
+  QVector<QgsMeshVertex> vertices SIP_SKIP;
+  //! faces
+  QVector<QgsMeshFace> faces SIP_SKIP;
+};
+
+/**
+ * \ingroup core
+ *
  * QgsMeshDatasetValue represents single dataset value
  *
  * could be scalar or vector. Nodata values are represented by NaNs.
@@ -325,16 +350,10 @@ class CORE_EXPORT QgsMeshDataSourceInterface SIP_ABSTRACT
     virtual int faceCount() const = 0;
 
     /**
-     * Returns the mesh vertex at index
+     * Populates the mesh vertices and faces
      * \since QGIS 3.6
      */
-    virtual QVector<QgsMeshVertex> vertices() const = 0;
-
-    /**
-     * Returns the mesh face at index
-     * \since QGIS 3.6
-     */
-    virtual QVector<QgsMeshFace> faces( ) const = 0;
+    virtual void populateMesh( QgsMesh *mesh ) const = 0;
 };
 
 /**
