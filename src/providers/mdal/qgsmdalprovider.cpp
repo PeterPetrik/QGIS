@@ -319,7 +319,7 @@ QgsMeshDataBlock QgsMdalProvider::areFacesActive( QgsMeshDatasetIndex index, int
 
   QgsMeshDataBlock ret( QgsMeshDataBlock::ActiveFlagInteger, count );
 
-  int valRead = MDAL_D_data( dataset, faceIndex, count, MDAL_DataType::ACTIVE_BOOL, ret.buffer() );
+  int valRead = MDAL_D_data( dataset, faceIndex, count, MDAL_DataType::ACTIVE_INTEGER, ret.buffer() );
   if ( valRead != count )
     return ret;
 

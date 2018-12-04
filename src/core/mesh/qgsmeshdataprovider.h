@@ -150,8 +150,11 @@ class CORE_EXPORT QgsMeshDatasetValue
  * scalars (e.g. scalar dataset double values)
  * vectors (e.g. vector dataset doubles x,y values)
  *
- * data are implicitely shared, so the class can be quickly copied
+ * data are implicitly shared, so the class can be quickly copied
  * std::numeric_limits<double>::quiet_NaN() represents NODATA value
+ *
+ * Data can be accessed all at once with buffer() (faster) or
+ * value by value (slower) with active() or value()
  *
  * \since QGIS 3.6
  */
@@ -195,10 +198,27 @@ class CORE_EXPORT QgsMeshDataBlock
 
     /**
      * Returns internal buffer to the array
-     * The buffer is already allocated
-     * Use to retreive data from MDAL provider
+     *
+     * The buffer is already allocated with size:
+     * count() * sizeof(int) for ActiveFlagInteger
+     * count() * sizeof(double) for ScalarDouble
+     * count() * 2 * sizeof(double) for Vector2DDouble
+     *
+     * Primary usage of the function is to write/populate
+     * data to the block by data provider.
      */
-    void *buffer();
+    void *buffer() SIP_SKIP;
+
+    /**
+     * Returns internal buffer to the array for fast
+     * values reading
+     *
+     * The buffer is allocated with size:
+     * count() * sizeof(int) for ActiveFlagInteger
+     * count() * sizeof(double) for ScalarDouble
+     * count() * 2 * sizeof(double) for Vector2DDouble
+     */
+    const void *constBuffer() const SIP_SKIP;
 
   private:
     QVector<double> mDoubleBuffer;
@@ -329,8 +349,14 @@ class CORE_EXPORT QgsMeshDatasetMetadata
      */
     bool isValid() const;
 
+    /**
+     * \brief Returns minimum scalar value/vector magnitude present for the dataset
+     */
     double minimum() const;
 
+    /**
+     * \brief Returns maxium scalar value/vector magnitude present for the dataset
+     */
     double maximum() const;
 
   private:
@@ -448,7 +474,8 @@ class CORE_EXPORT QgsMeshDatasetSourceInterface SIP_ABSTRACT
      * \brief Returns vector/scalar value associated with the index from the dataset
      * To read multiple continuous values, use QgsMeshDatasetSourceInterface::datasetValues()
      *
-     * See QgsMeshDatasetMetadata::isVector() to check if the returned value is vector or scalar
+     * See QgsMeshDatasetMetadata::isVector() or QgsMeshDataBlock::type()
+     * to check if the returned value is vector or scalar
      */
     virtual QgsMeshDatasetValue datasetValue( QgsMeshDatasetIndex index, int valueIndex ) const = 0;
 
@@ -456,6 +483,8 @@ class CORE_EXPORT QgsMeshDatasetSourceInterface SIP_ABSTRACT
      * \brief Returns N vector/scalar values from the index from the dataset
      *
      * See QgsMeshDatasetMetadata::isVector() to check if the returned value is vector or scalar
+     *
+     * \since QGIS 3.6
      */
     virtual QgsMeshDataBlock datasetValues( QgsMeshDatasetIndex index, int valueIndex, int count ) const = 0;
 
@@ -473,6 +502,8 @@ class CORE_EXPORT QgsMeshDatasetSourceInterface SIP_ABSTRACT
 
     /**
      * \brief Returns whether the faces are active for particular dataset
+     *
+     * \since QGIS 3.6
      */
     virtual QgsMeshDataBlock areFacesActive( QgsMeshDatasetIndex index, int faceIndex, int count ) const = 0;
 };

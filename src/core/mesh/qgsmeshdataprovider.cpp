@@ -265,20 +265,17 @@ bool QgsMeshDataBlock::isValid() const
 
 QgsMeshDatasetValue QgsMeshDataBlock::value( int index ) const
 {
-  assert( ActiveFlagInteger != mType );
-
-  if ( ScalarDouble == mType )
+  switch ( mType )
   {
-    QgsMeshDatasetValue val( mDoubleBuffer[index] );
-    return val;
-  }
-  else
-  {
-    QgsMeshDatasetValue val(
-      mDoubleBuffer[2 * index],
-      mDoubleBuffer[2 * index + 1]
-    );
-    return val;
+    case ActiveFlagInteger:
+      return QgsMeshDatasetValue();
+    case ScalarDouble:
+      return QgsMeshDatasetValue( mDoubleBuffer[index] );
+    case Vector2DDouble:
+      return QgsMeshDatasetValue(
+               mDoubleBuffer[2 * index],
+               mDoubleBuffer[2 * index + 1]
+             );
   }
 }
 
@@ -300,16 +297,28 @@ void *QgsMeshDataBlock::buffer()
   }
 }
 
+const void *QgsMeshDataBlock::constBuffer() const
+{
+  if ( ActiveFlagInteger == mType )
+  {
+    return mIntegerBuffer.constData();
+  }
+  else
+  {
+    return mDoubleBuffer.constData();
+  }
+}
+
 QgsMeshVertex QgsMesh::vertex( int index ) const
 {
-  if ( index < vertices.size() )
+  if ( index < vertices.size() && index >= 0 )
     return vertices[index];
   return QgsMeshVertex();
 }
 
 QgsMeshFace QgsMesh::face( int index ) const
 {
-  if ( index < faces.size() )
+  if ( index < faces.size() && index >= 0 )
     return faces[index];
   return QgsMeshFace();
 }
