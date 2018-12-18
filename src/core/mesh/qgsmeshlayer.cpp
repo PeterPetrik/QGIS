@@ -103,8 +103,17 @@ QgsMesh *QgsMeshLayer::nativeMesh() SIP_SKIP
   return mNativeMesh.get();
 }
 
+const QgsMesh *QgsMeshLayer::nativeMesh() const SIP_SKIP
+{
+  return mNativeMesh.get();
+}
 
 QgsTriangularMesh *QgsMeshLayer::triangularMesh() SIP_SKIP
+{
+  return mTriangularMesh.get();
+}
+
+const QgsTriangularMesh *QgsMeshLayer::triangularMesh() const SIP_SKIP
 {
   return mTriangularMesh.get();
 }

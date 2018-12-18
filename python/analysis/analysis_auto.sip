@@ -1,5 +1,6 @@
 // Include auto-generated SIP files
 %Include auto_generated/qgsanalysis.sip
+%Include auto_generated/mesh/qgsmeshcalculator.sip
 %Include auto_generated/raster/qgsalignraster.sip
 %Include auto_generated/raster/qgsaspectfilter.sip
 %Include auto_generated/raster/qgsderivativefilter.sip

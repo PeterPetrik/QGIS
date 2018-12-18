@@ -141,8 +141,14 @@ class CORE_EXPORT QgsMeshLayer : public QgsMapLayer
     //! Returns native mesh (nullptr before rendering)
     QgsMesh *nativeMesh() SIP_SKIP;
 
+    //! Returns native mesh (nullptr before rendering)
+    const QgsMesh *nativeMesh() const SIP_SKIP;
+
     //! Returns triangular mesh (nullptr before rendering)
     QgsTriangularMesh *triangularMesh() SIP_SKIP;
+
+    //! Returns triangular mesh (nullptr before rendering)
+    const QgsTriangularMesh *triangularMesh() const SIP_SKIP;
 
     //! Returns native mesh (nullptr before rendering)
     QgsMeshLayerRendererCache *rendererCache() SIP_SKIP;

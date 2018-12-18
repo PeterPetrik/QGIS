@@ -28,6 +28,7 @@
 class QMutex;
 class QgsCoordinateTransform;
 class QgsCoordinateReferenceSystem;
+class QgsMeshMemoryDatasetGroup;
 
 /**
   \brief Data provider for MDAL layers.
@@ -69,6 +70,13 @@ class QgsMdalProvider : public QgsMeshDataProvider
     bool isFaceActive( QgsMeshDatasetIndex index, int faceIndex ) const override;
     QgsMeshDataBlock areFacesActive( QgsMeshDatasetIndex index, int faceIndex, int count ) const override;
     QgsRectangle extent() const override;
+
+    bool persistDatasetGroup( const QString &path,
+                              const QgsMeshDatasetGroupMetadata &meta,
+                              const QVector<QgsMeshDataBlock> &datasetValues,
+                              const QVector<QgsMeshDataBlock> &datasetActive,
+                              const QVector<double> &times
+                            ) override;
 
     /**
      * Returns file filters for meshes and datasets to be used in Open File Dialogs
