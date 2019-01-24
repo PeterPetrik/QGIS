@@ -93,7 +93,10 @@ class QgsMeshLayerRenderer : public QgsMapLayerRenderer
 
   private:
     void renderMesh();
-    void renderMesh( const QgsMeshRendererMeshSettings &settings, const QVector<QgsMeshFace> &faces, const QList<int> facesInExtent );
+    void renderMesh( const QgsMeshRendererMeshSettings &settings,
+                     const QVector<QgsMeshFace> &faces,
+                     const QList<int> trianglesInExtent,
+                     bool areNativeIndexes );
     void renderScalarDataset();
     void renderVectorDataset();
     void copyScalarDatasetValues( QgsMeshLayer *layer );

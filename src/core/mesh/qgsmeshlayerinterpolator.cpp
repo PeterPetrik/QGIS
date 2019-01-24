@@ -76,12 +76,11 @@ QgsRasterBlock *QgsMeshLayerInterpolator::block( int, const QgsRectangle &extent
 
   const QVector<QgsMeshFace> &triangles = mTriangularMesh.triangles();
   const QVector<QgsMeshVertex> &vertices = mTriangularMesh.vertices();
+  const QVector<int> &verticesToNativeVertices = mTriangularMesh.verticesToNativeVertices();
+  const QVector<int> &trianglesToNativeFaces = mTriangularMesh.trianglesToNativeFaces();
+  const QList<int> trianglesInExtent = mTriangularMesh.faceIndexesForRectangle( extent );
 
-  // currently expecting that triangulation does not add any new extra vertices on the way
-  if ( mDataOnVertices )
-    Q_ASSERT( mDatasetValues.count() == mTriangularMesh.vertices().count() );
-
-  for ( int i = 0; i < triangles.size(); ++i )
+  for ( int i : trianglesInExtent )
   {
     if ( feedback && feedback->isCanceled() )
       break;
@@ -94,16 +93,13 @@ QgsRasterBlock *QgsMeshLayerInterpolator::block( int, const QgsRectangle &extent
     const int v1 = face[0], v2 = face[1], v3 = face[2];
     const QgsPoint p1 = vertices[v1], p2 = vertices[v2], p3 = vertices[v3];
 
-    const int nativeFaceIndex = mTriangularMesh.trianglesToNativeFaces()[i];
+    const int nativeFaceIndex = trianglesToNativeFaces[i];
     const bool isActive = mActiveFaceFlagValues.active( nativeFaceIndex );
     if ( !isActive )
       continue;
 
-    QgsRectangle bbox = QgsMeshLayerUtils::triangleBoundingBox( p1, p2, p3 );
-    if ( !extent.intersects( bbox ) )
-      continue;
-
     // Get the BBox of the element in pixels
+    QgsRectangle bbox = QgsMeshLayerUtils::triangleBoundingBox( p1, p2, p3 );
     int topLim, bottomLim, leftLim, rightLim;
     QgsMeshLayerUtils::boundingBoxToScreenRectangle( mContext.mapToPixel(), mOutputSize, bbox, leftLim, rightLim, topLim, bottomLim );
 
@@ -116,22 +112,26 @@ QgsRasterBlock *QgsMeshLayerInterpolator::block( int, const QgsRectangle &extent
         double val;
         const QgsPointXY p = mContext.mapToPixel().toMapCoordinates( k, j );
         if ( mDataOnVertices )
+        {
+          const int nativeVertexIndex1 = verticesToNativeVertices[v1];
+          const int nativeVertexIndex2 = verticesToNativeVertices[v2];
+          const int nativeVertexIndex3 = verticesToNativeVertices[v3];
           val = QgsMeshLayerUtils::interpolateFromVerticesData(
                   p1,
                   p2,
                   p3,
-                  mDatasetValues[v1],
-                  mDatasetValues[v2],
-                  mDatasetValues[v3],
+                  mDatasetValues[nativeVertexIndex1],
+                  mDatasetValues[nativeVertexIndex2],
+                  mDatasetValues[nativeVertexIndex3],
                   p );
+        }
         else
         {
-          int face = mTriangularMesh.trianglesToNativeFaces()[i];
           val = QgsMeshLayerUtils::interpolateFromFacesData(
                   p1,
                   p2,
                   p3,
-                  mDatasetValues[face],
+                  mDatasetValues[nativeFaceIndex],
                   p
                 );
         }

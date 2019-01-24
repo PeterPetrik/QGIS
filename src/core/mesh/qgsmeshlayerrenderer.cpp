@@ -217,7 +217,9 @@ void QgsMeshLayerRenderer::renderMesh()
   {
     renderMesh( mRendererSettings.triangularMeshSettings(),
                 mTriangularMesh.triangles(),
-                trianglesInExtent );
+                trianglesInExtent,
+                false
+              );
   }
 
   // native mesh
@@ -227,11 +229,15 @@ void QgsMeshLayerRenderer::renderMesh()
                                            mTriangularMesh.trianglesToNativeFaces() );
     renderMesh( mRendererSettings.nativeMeshSettings(),
                 mNativeMesh.faces,
-                nativeFacesInExtent );
+                nativeFacesInExtent,
+                true );
   }
 };
 
-void QgsMeshLayerRenderer::renderMesh( const QgsMeshRendererMeshSettings &settings, const QVector<QgsMeshFace> &faces, const QList<int> facesInExtent )
+void QgsMeshLayerRenderer::renderMesh( const QgsMeshRendererMeshSettings &settings,
+                                       const QVector<QgsMeshFace> &faces,
+                                       const QList<int> facesInExtent,
+                                       bool areNativeIndexes )
 {
   Q_ASSERT( settings.isEnabled() );
 
@@ -251,7 +257,9 @@ void QgsMeshLayerRenderer::renderMesh( const QgsMeshRendererMeshSettings &settin
   pen.setColor( settings.color() );
   painter->setPen( pen );
 
-  const QVector<QgsMeshVertex> &vertices = mTriangularMesh.vertices(); //Triangular mesh vertices contains also native mesh vertices
+  const QVector<QgsMeshVertex> &vertices = mTriangularMesh.vertices();
+  const QVector<int> &verticesToNativeVertices = mTriangularMesh.verticesToNativeVertices();
+
   QSet<QPair<int, int>> drawnEdges;
 
   for ( const int i : facesInExtent )
@@ -265,8 +273,15 @@ void QgsMeshLayerRenderer::renderMesh( const QgsMeshRendererMeshSettings &settin
 
     for ( int j = 0; j < face.size(); ++j )
     {
-      const int startVertexId = face[j];
-      const int endVertexId = face[( j + 1 ) % face.size()];
+      // get vertex indexes in triangular/transformed mesh
+      int startVertexId = face[j];
+      int endVertexId = face[( j + 1 ) % face.size()];
+      if ( areNativeIndexes )
+      {
+        startVertexId = verticesToNativeVertices[startVertexId];
+        endVertexId = verticesToNativeVertices[endVertexId];
+      }
+
       const QPair<int, int> thisEdge( startVertexId, endVertexId );
       const QPair<int, int> thisEdgeReversed( endVertexId, startVertexId );
       if ( drawnEdges.contains( thisEdge ) || drawnEdges.contains( thisEdgeReversed ) )

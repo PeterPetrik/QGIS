@@ -238,10 +238,8 @@ void QgsMeshVectorRenderer::drawVectorDataOnVertices( const QList<int> &triangle
 {
   const QVector<QgsMeshVertex> &vertices = mTriangularMesh.vertices();
   const QVector<QgsMeshFace> &triangles = mTriangularMesh.triangles();
+  const QVector<int> &verticesToNativeVertices = mTriangularMesh.verticesToNativeVertices();
   QSet<int> drawnVertices;
-
-  // currently expecting that triangulation does not add any new extra vertices on the way
-  Q_ASSERT( mDatasetValuesMag.count() == vertices.count() );
 
   for ( int triangleIndex : trianglesInExtent )
   {
@@ -256,16 +254,14 @@ void QgsMeshVectorRenderer::drawVectorDataOnVertices( const QList<int> &triangle
       drawnVertices.insert( i );
 
       const QgsMeshVertex &vertex = vertices.at( i );
-      if ( !mBufferedExtent.contains( vertex ) )
-        continue;
-
-      const QgsMeshDatasetValue val = mDatasetValues.value( i );
+      const int nativeVertexIndex = verticesToNativeVertices[i];
+      const QgsMeshDatasetValue val = mDatasetValues.value( nativeVertexIndex );
       double xVal = val.x();
       double yVal = val.y();
       if ( nodataValue( xVal, yVal ) )
         continue;
 
-      double V = mDatasetValuesMag[i];  // pre-calculated magnitude
+      double V = mDatasetValuesMag[nativeVertexIndex];  // pre-calculated magnitude
       QgsPointXY lineStart = mContext.mapToPixel().transform( vertex.x(), vertex.y() );
 
       drawVectorArrow( lineStart, xVal, yVal, V );
@@ -284,9 +280,12 @@ void QgsMeshVectorRenderer::drawVectorDataOnFaces( const QList<int> &trianglesIn
       break;
 
     QgsPointXY center = centroids.at( i );
-    if ( !mBufferedExtent.contains( center ) )
+
+    // not all centroids are quaranteed that exist in the map CRS
+    if ( std::isnan( center.x() ) || std::isnan( center.y() ) )
       continue;
 
+    // i is native index
     const QgsMeshDatasetValue val = mDatasetValues.value( i );
     double xVal = val.x();
     double yVal = val.y();
@@ -307,6 +306,7 @@ void QgsMeshVectorRenderer::drawVectorDataOnGrid( const QList<int> &trianglesInE
 
   const QVector<QgsMeshFace> &triangles = mTriangularMesh.triangles();
   const QVector<QgsMeshVertex> &vertices = mTriangularMesh.vertices();
+  const QVector<int> &verticesToNativeVertices = mTriangularMesh.verticesToNativeVertices();
 
   for ( const int i : trianglesInExtent )
   {
@@ -344,9 +344,12 @@ void QgsMeshVectorRenderer::drawVectorDataOnGrid( const QList<int> &trianglesInE
 
         if ( mDataOnVertices )
         {
-          const auto val1 = mDatasetValues.value( v1 );
-          const auto val2 = mDatasetValues.value( v2 );
-          const auto val3 = mDatasetValues.value( v3 );
+          const auto nativeVertexIndex1 = verticesToNativeVertices[v1];
+          const auto nativeVertexIndex2 = verticesToNativeVertices[v2];
+          const auto nativeVertexIndex3 = verticesToNativeVertices[v3];
+          const auto val1 = mDatasetValues.value( nativeVertexIndex1 );
+          const auto val2 = mDatasetValues.value( nativeVertexIndex2 );
+          const auto val3 = mDatasetValues.value( nativeVertexIndex3 );
           val.setX(
             QgsMeshLayerUtils::interpolateFromVerticesData(
               p1, p2, p3,

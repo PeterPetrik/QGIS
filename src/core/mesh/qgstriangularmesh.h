@@ -93,18 +93,53 @@ class CORE_EXPORT QgsTriangularMesh
     /**
      * Returns vertices in map coordinate system
      *
-     * The list of consist of vertices from native mesh (0-N) and
-     * extra vertices needed to create triangles (N+1 - len)
+     * Vertices used in triangles in map CRS.
+     *
+     * \note number of vertices is equal or lower
+     * than number of vertices in the native mesh
+     * and all vertices in triangular mesh have
+     * equivalent vertex in the native mesh that
+     * can be used for data retrieval
+     *
+     * \see verticesToNativeVertices()
      */
     const QVector<QgsMeshVertex> &vertices() const ;
-    //! Returns triangles
+
+    /**
+     * Returns triangles
+     *
+     * \note number of triangles differs from number
+     * faces in the native mesh
+     * \see trianglesToNativeFaces()
+     */
     const QVector<QgsMeshFace> &triangles() const ;
 
-    //! Returns centroids of the native faces in map CRS
+    /**
+     * Returns centroids of the native faces in map CRS
+     *
+     * Size of the returned array equals to nativeMesh.faces.size()
+     *
+     * If it is not possible to calculate centroid for native face
+     * in map CRS (e.g. invalid transformation), the returned
+     * QgsMeshVertex has both x and y set to quiet_NaN()
+     */
     const QVector<QgsMeshVertex> &centroids() const ;
 
-    //! Returns mapping between triangles and original faces
+    /**
+     * Returns mapping between triangles and original faces
+     *
+     * Size of the returned array equals to triangles().size()
+     */
     const QVector<int> &trianglesToNativeFaces() const ;
+
+    /**
+     * Returns mapping between vertices and original vertices
+     *
+     * Size of the returned array equals to vertices().size()
+     *
+     * \since QGIS 3.6
+     */
+    const QVector<int> &verticesToNativeVertices() const ;
 
     /**
      * Finds index of triangle at given point
@@ -139,13 +174,30 @@ class CORE_EXPORT QgsTriangularMesh
      *
      * Skips the input face if it is not possible to triangulate
      * with the given algorithm (e.g. only 2 vertices, polygon with holes)
+     *
+     * Also (partially) skips the faces that contain vertices that are
+     * marked as invalid in native mesh.
      */
-    void triangulate( const QgsMeshFace &face, int nativeIndex );
+    void triangulate( const QgsMeshFace &face, int nativeIndex, const QVector<int> &nativeVerticesToVertices );
+
+    /**
+     * Transforms native mesh vertices to map CRS
+       Returns indexes of native mesh vertices that failed to be
+       transformed to map CRS.
+     */
+    QVector<int> transformVertices( QgsMesh *nativeMesh );
+
+    /**
+     * Calculate centroid for face. If faces that contain vertices that are
+     * marked as invalid, add vertex with both x and y set to quiet_NaN()
+     */
+    void calculateCentroid( const QgsMeshFace &face, int nativeIndex, const QVector<int> &nativeVerticesToVertices );
 
     // vertices: map CRS; 0-N ... native vertices, N+1 - len ... extra vertices
     // faces are derived triangles
     QgsMesh mTriangularMesh;
-    QVector<int> mTrianglesToNativeFaces; //len(mTrianglesToNativeFaces) == len(mTriangles). Mapping derived -> native
+    QVector<int> mTrianglesToNativeFaces; //len(mTrianglesToNativeFaces) == len(mTriangularMesh.faces). Mapping derived -> native
+    QVector<int> mVerticesToNativeVertices; //len(mTrianglesToNativeFaces) == len(mTriangularMesh.vertices). Mapping derived -> native
 
     // centroids of the native faces in map CRS
     QVector<QgsMeshVertex> mNativeMeshFaceCentroids;
