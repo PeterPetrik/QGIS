@@ -129,78 +129,55 @@ def get_metatiles(extent, zoom, size=4):
 
 
 class DirectoryWriter:
-    def __init__(self, folder):
+    def __init__(self, folder, format, quality):
         self.folder = folder
+        self.format = format
+        self.quality = quality
 
-    def writeTile(self, tile, image, format, quality):
+    def writeTile(self, tile, image):
         directory = os.path.join(self.folder, str(tile.z), str(tile.x))
         os.makedirs(directory, exist_ok=True)
-        path = os.path.join(directory, '{}.{}'.format(tile.y, format.lower()))
-        image.save(path, format, quality)
+        path = os.path.join(directory, '{}.{}'.format(tile.y, self.format.lower()))
+        image.save(path, self.format, self.quality)
         return path
 
+    def finish(self):
+        pass
 
 class MBTilesWriter:
-    def __init__(self, filename, extent, min_zoom, max_zoom):
+    def __init__(self, filename, format, quality, extent, min_zoom, max_zoom):
+        if format == 'JPG':
+            format = 'JPEG'
         base_dir = os.path.dirname(filename)
         os.makedirs(base_dir, exist_ok=True)
-        print(filename)
         self.filename = filename
         self.extent = extent
         self.tile_width = 256
         self.tile_height = 256
         driver = gdal.GetDriverByName('MBTiles')
-        ds = driver.Create(filename, 256, 256, 4, options=['TILE_FORMAT=PNG', 'ZLEVEL=9'])
+        ds = driver.Create(filename, 256, 256, 4, options=['TILE_FORMAT=%s' % format, 'ZLEVEL=8', 'QUALITY=%s' % quality])
         ds = None
         sqlite_driver = ogr.GetDriverByName('SQLite')
         ds = sqlite_driver.Open(filename, 1)
         ds.ExecuteSQL("INSERT INTO metadata(name, value) VALUES ('{}', '{}');".format('minzoom', min_zoom))
         ds.ExecuteSQL("INSERT INTO metadata(name, value) VALUES ('{}', '{}');".format('maxzoom', max_zoom))
-        ds.ExecuteSQL("INSERT INTO metadata(name, value) VALUES ('{}', '{}');".format('bounds', ','.join(map(str, extent))))
+        ds.ExecuteSQL("INSERT INTO metadata(name, value) VALUES ('{}', '');".format('bounds'))
         ds = None
-        self._zoom = None
+        self._first_tile = None
 
     def _initZoom(self, first_tile):
-        # ex1 = first_tile.extent()
-        # ex2 = last_tile.extent()
-        # ds = sqlite_driver.Open(self.filename, 1)
-        # bbox2 = [
-        #     min(ex1[0], ex1[2], ex2[0], ex2[2]),
-        #     min(ex1[1], ex1[3], ex2[1], ex2[3]),
-        #     max(ex1[0], ex1[2], ex2[0], ex2[2]),
-        #     max(ex1[1], ex1[3], ex2[1], ex2[3])
-        # ]
-        # ds.ExecuteSQL("INSERT INTO metadata(name, value) VALUES ('{}', '{}');".format('bounds', ','.join(map(str, bbox2))))
-        # ds = None
+        first_tile_extent = first_tile.extent()
+        sqlite_driver = ogr.GetDriverByName('SQLite')
+        ds = sqlite_driver.Open(self.filename, 1)
+        zoom_extent = [first_tile_extent[0], -89.95, 180, first_tile_extent[3]]
+        ds.ExecuteSQL("UPDATE metadata SET value='{}' WHERE name='bounds'".format(','.join(map(str, zoom_extent))))
+        ds = None
 
-        # aoi = src_to_dest.transform(self.extent)
-
-        def calc_offset_x(ex):
-            w = abs(ex[0] - ex[2])
-            return round(self.tile_width / (w / (ex[0] - self.extent[0])))
-
-        def calc_offset_y(ex):
-            h = abs(ex[1] - ex[3])
-            return round(self.tile_height / (h / (self.extent[3] - ex[3])))
-
-        shift_x = calc_offset_x(first_tile.extent())
-        shift_y = calc_offset_y(first_tile.extent())
-        print("shift:", shift_x, shift_y)
-        # open_options=[
-        #     'ZOOM_LEVEL=%s' % zoom,
-        #     'MINX=%s' % aoi.xMinimum(),
-        #     'MINY=%s' % aoi.yMinimum(),
-        #     'MAXX=%s' % aoi.xMaximum(),
-        #     'MAXY=%s' % aoi.yMaximum()
-        # ]
         self._zoomDs = gdal.OpenEx(self.filename, 1, open_options=['ZOOM_LEVEL=%s' % first_tile.z])
-        self._zoom = first_tile.z
         self._first_tile = first_tile
-        self._shift_x = shift_x
-        self._shift_y = shift_y
 
-    def writeTile(self, tile, image, format, quality):
-        if self._zoom != tile.z:
+    def writeTile(self, tile, image):
+        if self._first_tile != tile:
             self._initZoom(tile)
 
         data = QByteArray()
@@ -218,9 +195,13 @@ class MBTilesWriter:
 
         xoff = (tile.x - self._first_tile.x) * self.tile_width
         yoff = (tile.y - self._first_tile.y) * self.tile_height
-        # print("Tile", tile.x, tile.y)
-        # print("WriteRaster", self._shift_x + xoff, self._shift_y + yoff)
-        self._zoomDs.WriteRaster(self._shift_x + xoff, self._shift_y + yoff, self.tile_width, self.tile_height, data)
+        self._zoomDs.WriteRaster(xoff, yoff, self.tile_width, self.tile_height, data)
+
+    def finish(self):
+        sqlite_driver = ogr.GetDriverByName('SQLite')
+        ds = sqlite_driver.Open(self.filename, 1)
+        ds.ExecuteSQL("UPDATE metadata SET value='{}' WHERE name='bounds'".format(','.join(map(str, self.extent))))
+        ds = None
 
 
 class TilesXYZ(QgisAlgorithm):
@@ -300,8 +281,8 @@ class TilesXYZ(QgisAlgorithm):
         lab_buffer_px = 100
         progress = 0
 
-        writer1 = DirectoryWriter(output_dir)
-        writer2 = MBTilesWriter(os.path.join(output_dir, '%s.mbtiles' % name), bbox, min_zoom, max_zoom)
+        writer1 = DirectoryWriter(output_dir, img_format, 80)
+        writer2 = MBTilesWriter(os.path.join(output_dir, '%s.mbtiles' % name), img_format, 80, bbox, min_zoom, max_zoom)
 
         for zoom in range(min_zoom, max_zoom + 1):
             feedback.pushConsoleInfo("Generating tiles for zoom level: {}".format(zoom))
@@ -333,36 +314,34 @@ class TilesXYZ(QgisAlgorithm):
 
 
                 # Fill areas outside output's extent
-                # metatile_extent = metatile.extent()
-                # _, _, tile = metatile.tiles[0]
-                # if metatile_extent[0] < bbox[0]:
-                #     print("Left-most Metatile")
-                #     _, _, tile = metatile.tiles[0]
-                #     tile_extent = tile.extent()
-                #     offsetX = bbox[0] - metatile_extent[0]
-                #     offsetX = round(tile_width * (offsetX / (tile_extent[2] - tile_extent[0])))
-                #     painter.fillRect(0, 0, offsetX, image.height(), Qt.red)
-                # if metatile_extent[3] > bbox[3]:
-                #     print("Top-most Metatile")
-                #     _, _, tile = metatile.tiles[0]
-                #     tile_extent = tile.extent()
-                #     offsetY = metatile_extent[3] - bbox[3]
-                #     offsetY = round(tile_height * (offsetY / (tile_extent[3] - tile_extent[1])))
-                #     print("offsetY", offsetY)
-                #     painter.fillRect(0, 0, image.width(), offsetY, Qt.red)
+                metatile_extent = metatile.extent()
+                _, _, tile = metatile.tiles[0]
+                if metatile_extent[0] < bbox[0]:
+                    _, _, tile = metatile.tiles[0]
+                    tile_extent = tile.extent()
+                    offsetX = bbox[0] - metatile_extent[0]
+                    offsetX = round(tile_width * (offsetX / (tile_extent[2] - tile_extent[0])))
+                    painter.fillRect(0, 0, offsetX, image.height(), Qt.red)
+                if metatile_extent[3] > bbox[3]:
+                    _, _, tile = metatile.tiles[0]
+                    tile_extent = tile.extent()
+                    offsetY = metatile_extent[3] - bbox[3]
+                    offsetY = round(tile_height * (offsetY / (tile_extent[3] - tile_extent[1])))
+                    painter.fillRect(0, 0, image.width(), offsetY, Qt.red)
                 painter.end()
 
                 # For analysing metatiles (labels, etc.)
-                # QDir().mkpath(os.path.join(output_dir, str(zoom)))
-                # image.save(os.path.join(output_dir, str(zoom), "metatile_{}.png".format(i)), img_format, 80)
+                QDir().mkpath(os.path.join(output_dir, str(zoom)))
+                image.save(os.path.join(output_dir, str(zoom), "metatile_{}.png".format(i)), )
 
                 progress += 1
                 feedback.setProgress(100 * (progress / metatiles_count))
                 for r, c, tile in metatile.tiles:
                     tile_img = image.copy(tile_width * r, tile_height * c, tile_width, tile_height)
-
-                    writer1.writeTile(tile, tile_img, img_format, 80)
-                    writer2.writeTile(tile, tile_img, img_format, 80)
+                    writer1.writeTile(tile, tile_img)
+                    writer2.writeTile(tile, tile_img)
+        writer1.finish()
+        writer2.finish()
 
         return {}
 
