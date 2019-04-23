@@ -1,0 +1,375 @@
+# -*- coding: utf-8 -*-
+
+"""
+***************************************************************************
+    TilesXYZ.py
+    ---------------------
+    Date                 : April 2019
+    Copyright            : (C) 2019 by Lutra Consulting Limited
+    Email                : marcel.dancak@lutraconsulting.co.uk
+***************************************************************************
+*                                                                         *
+*   This program is free software; you can redistribute it and/or modify  *
+*   it under the terms of the GNU General Public License as published by  *
+*   the Free Software Foundation; either version 2 of the License, or     *
+*   (at your option) any later version.                                   *
+*                                                                         *
+***************************************************************************
+"""
+
+__author__ = 'Marcel Dancak'
+__date__ = 'April 2019'
+__copyright__ = '(C) 2019 by Lutra Consulting Limited'
+
+# This will get replaced with a git SHA1 when you do a git archive
+
+__revision__ = '$Format:%H$'
+
+import os
+import math
+from uuid import uuid4
+
+import ogr
+import gdal
+from qgis.PyQt.QtCore import QVariant, QSize, Qt, QDir, QByteArray, QBuffer
+from qgis.PyQt.QtGui import QColor, QImage, QPainter
+from qgis.core import (QgsExpression,
+                       QgsExpressionContext,
+                       QgsExpressionContextUtils,
+                       QgsFeatureSink,
+                       QgsField,
+                       QgsDistanceArea,
+                       QgsProcessing,
+                       QgsProcessingParameterEnum,
+                       QgsProcessingParameterNumber,
+                       QgsProcessingParameterBoolean,
+                       QgsProcessingParameterString,
+                       QgsProcessingParameterExtent,
+
+                       QgsProcessingOutputFile,
+                       QgsProcessingParameterFileDestination,
+                       QgsProcessingParameterFolderDestination,
+                       QgsProcessingException,
+
+                       QgsProject,
+                       QgsGeometry,
+                       QgsRectangle,
+                       QgsMapSettings,
+                       QgsCoordinateTransform,
+                       QgsCoordinateReferenceSystem,
+                       QgsMapRendererCustomPainterJob)
+from processing.algs.qgis.QgisAlgorithm import QgisAlgorithm
+
+
+# https://wiki.openstreetmap.org/wiki/Slippy_map_tilenames
+def deg2num(lat_deg, lon_deg, zoom):
+    lat_rad = math.radians(lat_deg)
+    n = 2.0 ** zoom
+    xtile = int((lon_deg + 180.0) / 360.0 * n)
+    ytile = int((1.0 - math.log(math.tan(lat_rad) + (1 / math.cos(lat_rad))) / math.pi) / 2.0 * n)
+    return (xtile, ytile)
+
+def num2deg(xtile, ytile, zoom):
+    n = 2.0 ** zoom
+    lon_deg = xtile / n * 360.0 - 180.0
+    lat_rad = math.atan(math.sinh(math.pi * (1 - 2 * ytile / n)))
+    lat_deg = math.degrees(lat_rad)
+    return (lat_deg, lon_deg)
+
+
+class Tile:
+    def __init__(self, x, y, z):
+        self.x = x
+        self.y = y
+        self.z = z
+
+    def extent(self):
+        lat1, lon1 = num2deg(self.x, self.y, self.z)
+        lat2, lon2 = num2deg(self.x + 1, self.y + 1, self.z)
+        return [lon1, lat2, lon2, lat1]
+
+
+class MetaTile:
+    def __init__(self):
+        self.tiles = []
+
+    def add_tile(self, row, column, tile):
+        self.tiles.append((row, column, tile))
+
+    def rows(self):
+        return max([r for r, _, _ in self.tiles]) + 1
+
+    def columns(self):
+        return max([c for _, c, _ in self.tiles]) + 1
+
+    def extent(self):
+        _, _, first = self.tiles[0]
+        _, _, last = self.tiles[-1]
+        lat1, lon1 = num2deg(first.x, first.y, first.z)
+        lat2, lon2 = num2deg(last.x + 1, last.y + 1, first.z)
+        return [lon1, lat2, lon2, lat1]
+
+
+def get_metatiles(extent, zoom, size=4):
+    west_edge, south_edge, east_edge, north_edge = extent
+    left_tile, top_tile = deg2num(north_edge, west_edge, zoom)
+    right_tile, bottom_tile = deg2num(south_edge, east_edge, zoom)
+
+    metatiles = {}
+    for i, x in enumerate(range(left_tile, right_tile + 1)):
+        for j, y in enumerate(range(top_tile, bottom_tile + 1)):
+            meta_key = '{}:{}'.format(int(i / size), int(j / size))
+            if meta_key not in metatiles:
+                metatiles[meta_key] = MetaTile()
+            metatile = metatiles[meta_key]
+            metatile.add_tile(i % size, j % size, Tile(x, y, zoom))
+
+    # TODO: retrun metatiles.values()
+    return metatiles
+
+
+class DirectoryWriter:
+    def __init__(self, folder):
+        self.folder = folder
+
+    def writeTile(self, tile, image, format, quality):
+        directory = os.path.join(self.folder, str(tile.z), str(tile.x))
+        os.makedirs(directory, exist_ok=True)
+        path = os.path.join(directory, '{}.{}'.format(tile.y, format.lower()))
+        image.save(path, format, quality)
+        return path
+
+
+class MBTilesWriter:
+    def __init__(self, filename, extent, min_zoom, max_zoom):
+        base_dir = os.path.dirname(filename)
+        os.makedirs(base_dir, exist_ok=True)
+        print(filename)
+        self.filename = filename
+        self.extent = extent
+        self.tile_width = 256
+        self.tile_height = 256
+        driver = gdal.GetDriverByName('MBTiles')
+        ds = driver.Create(filename, 256, 256, 4, options=['TILE_FORMAT=PNG', 'ZLEVEL=9'])
+        ds = None
+        sqlite_driver = ogr.GetDriverByName('SQLite')
+        ds = sqlite_driver.Open(filename, 1)
+        ds.ExecuteSQL("INSERT INTO metadata(name, value) VALUES ('{}', '{}');".format('minzoom', min_zoom))
+        ds.ExecuteSQL("INSERT INTO metadata(name, value) VALUES ('{}', '{}');".format('maxzoom', max_zoom))
+        ds.ExecuteSQL("INSERT INTO metadata(name, value) VALUES ('{}', '{}');".format('bounds', ','.join(map(str, extent))))
+        ds = None
+        self._zoom = None
+
+    def _initZoom(self, first_tile):
+        # ex1 = first_tile.extent()
+        # ex2 = last_tile.extent()
+        # ds = sqlite_driver.Open(self.filename, 1)
+        # bbox2 = [
+        #     min(ex1[0], ex1[2], ex2[0], ex2[2]),
+        #     min(ex1[1], ex1[3], ex2[1], ex2[3]),
+        #     max(ex1[0], ex1[2], ex2[0], ex2[2]),
+        #     max(ex1[1], ex1[3], ex2[1], ex2[3])
+        # ]
+        # ds.ExecuteSQL("INSERT INTO metadata(name, value) VALUES ('{}', '{}');".format('bounds', ','.join(map(str, bbox2))))
+        # ds = None
+
+        # aoi = src_to_dest.transform(self.extent)
+
+        def calc_offset_x(ex):
+            w = abs(ex[0] - ex[2])
+            return round(self.tile_width / (w / (ex[0] - self.extent[0])))
+
+        def calc_offset_y(ex):
+            h = abs(ex[1] - ex[3])
+            return round(self.tile_height / (h / (self.extent[3] - ex[3])))
+
+        shift_x = calc_offset_x(first_tile.extent())
+        shift_y = calc_offset_y(first_tile.extent())
+        print("shift:", shift_x, shift_y)
+        # open_options=[
+        #     'ZOOM_LEVEL=%s' % zoom,
+        #     'MINX=%s' % aoi.xMinimum(),
+        #     'MINY=%s' % aoi.yMinimum(),
+        #     'MAXX=%s' % aoi.xMaximum(),
+        #     'MAXY=%s' % aoi.yMaximum()
+        # ]
+        self._zoomDs = gdal.OpenEx(self.filename, 1, open_options=['ZOOM_LEVEL=%s' % first_tile.z])
+        self._zoom = first_tile.z
+        self._first_tile = first_tile
+        self._shift_x = shift_x
+        self._shift_y = shift_y
+
+    def writeTile(self, tile, image, format, quality):
+        if self._zoom != tile.z:
+            self._initZoom(tile)
+
+        data = QByteArray()
+        buff = QBuffer(data)
+        image.save(buff, "PNG")
+
+        mmap_name = "/vsimem/" + uuid4().hex
+        img_data = data.data()
+
+        gdal.FileFromMemBuffer(mmap_name, img_data)
+        gdal_dataset = gdal.Open(mmap_name)
+        data = gdal_dataset.ReadRaster(0, 0, self.tile_width, self.tile_height)
+        gdal_dataset = None
+        gdal.Unlink(mmap_name)
+
+        xoff = (tile.x - self._first_tile.x) * self.tile_width
+        yoff = (tile.y - self._first_tile.y) * self.tile_height
+        # print("Tile", tile.x, tile.y)
+        # print("WriteRaster", self._shift_x + xoff, self._shift_y + yoff)
+        self._zoomDs.WriteRaster(self._shift_x + xoff, self._shift_y + yoff, self.tile_width, self.tile_height, data)
+
+
+class TilesXYZ(QgisAlgorithm):
+    NAME = 'NAME'
+    EXTENT = 'EXTENT'
+    ZOOM_MIN = 'ZOOM_MIN'
+    ZOOM_MAX = 'ZOOM_MAX'
+    FORMAT = 'FORMAT'
+    OUTPUT_DIRECTORY = 'OUTPUT_DIRECTORY'
+
+    def group(self):
+        return self.tr('Raster tools')
+
+    def groupId(self):
+        return 'rastertools'
+
+    def initAlgorithm(self, config=None):
+        self.addParameter(QgsProcessingParameterString(self.NAME, self.tr('Name'), defaultValue='Test'))
+        self.addParameter(QgsProcessingParameterFolderDestination(self.OUTPUT_DIRECTORY,
+                                                                  self.tr('Output directory'),
+                                                                  defaultValue='/home/marcel/tiles'))
+
+        self.addParameter(QgsProcessingParameterExtent(self.EXTENT, self.tr('Extent')))
+        self.addParameter(QgsProcessingParameterNumber(self.ZOOM_MIN, self.tr('Minimum zoom'), defaultValue=12))
+        self.addParameter(QgsProcessingParameterNumber(self.ZOOM_MAX,
+                                                       self.tr('Maximum zoom'), defaultValue=12))
+        self.formats = ['PNG', 'JPG']
+        self.addParameter(QgsProcessingParameterEnum(self.FORMAT, self.tr('Format'), self.formats, defaultValue='PNG'))
+
+
+    def name(self):
+        return 'tilesxyz'
+
+    def displayName(self):
+        return self.tr('Tiles XYZ generator')
+
+    def processAlgorithm(self, parameters, context, feedback):
+        feedback.setProgress(1)
+
+        name = self.parameterAsString(parameters, self.NAME, context)
+        output_dir = self.parameterAsString(parameters, self.OUTPUT_DIRECTORY, context)
+        extent = self.parameterAsExtent(parameters, self.EXTENT, context)
+        min_zoom = self.parameterAsInt(parameters, self.ZOOM_MIN, context)
+        max_zoom = self.parameterAsInt(parameters, self.ZOOM_MAX, context)
+        img_format = self.formats[self.parameterAsEnum(parameters, self.FORMAT, context)]
+        tile_width = 256
+        tile_height = 256
+
+        project = QgsProject.instance()
+        layers = [item.layer() for item in project.layerTreeRoot().findLayers() if item.itemVisibilityChecked()]
+
+        wgs_crs = QgsCoordinateReferenceSystem('EPSG:4326')
+        dest_crs = QgsCoordinateReferenceSystem('EPSG:3857')
+
+        src_to_wgs = QgsCoordinateTransform(project.crs(), wgs_crs, context.transformContext())
+        wgs_to_dest = QgsCoordinateTransform(wgs_crs, dest_crs, context.transformContext())
+        src_to_dest = QgsCoordinateTransform(project.crs(), dest_crs, context.transformContext())
+
+        settings = QgsMapSettings()
+        settings.setOutputImageFormat(QImage.Format_ARGB32_Premultiplied)
+        settings.setDestinationCrs(dest_crs)
+        settings.setLayers(layers)
+        image = QImage(tile_width, tile_height, QImage.Format_ARGB32_Premultiplied)
+        settings.setOutputDpi(image.logicalDpiX())
+
+        output_dir = os.path.join(output_dir, name)
+        bbox = src_to_wgs.transform(extent)
+        bbox = [bbox.xMinimum(), bbox.yMinimum(), bbox.xMaximum(), bbox.yMaximum()]
+
+        all_metatiles = {}
+        metatiles_count = 0
+        for zoom in range(min_zoom, max_zoom + 1):
+            metatiles = get_metatiles(bbox, zoom, 4)
+            all_metatiles[zoom] = list(metatiles.values())
+            metatiles_count += len(all_metatiles[zoom])
+
+        lab_buffer_px = 100
+        progress = 0
+
+        writer1 = DirectoryWriter(output_dir)
+        writer2 = MBTilesWriter(os.path.join(output_dir, '%s.mbtiles' % name), bbox, min_zoom, max_zoom)
+
+        for zoom in range(min_zoom, max_zoom + 1):
+            feedback.pushConsoleInfo("Generating tiles for zoom level: {}".format(zoom))
+
+            for i, metatile in enumerate(all_metatiles[zoom]):
+                size = QSize(tile_width * metatile.rows(), tile_height * metatile.columns())
+                extent = QgsRectangle(*metatile.extent())
+                settings.setExtent(wgs_to_dest.transform(extent))
+                settings.setOutputSize(size)
+
+                label_area = QgsRectangle(settings.extent())
+                lab_buffer = label_area.width() * (lab_buffer_px / size.width())
+                label_area.set(
+                    label_area.xMinimum() + lab_buffer,
+                    label_area.yMinimum() + lab_buffer,
+                    label_area.xMaximum() - lab_buffer,
+                    label_area.yMaximum() - lab_buffer
+                )
+                settings.setLabelBoundaryGeometry(QgsGeometry.fromRect(label_area))
+
+                image = QImage(size, QImage.Format_ARGB32_Premultiplied)
+                image.fill(Qt.transparent)
+                dpm = settings.outputDpi() / 25.4 * 1000
+                image.setDotsPerMeterX(dpm)
+                image.setDotsPerMeterY(dpm)
+                painter = QPainter(image)
+                job = QgsMapRendererCustomPainterJob(settings, painter)
+                job.renderSynchronously()
+
+
+                # Fill areas outside output's extent
+                # metatile_extent = metatile.extent()
+                # _, _, tile = metatile.tiles[0]
+                # if metatile_extent[0] < bbox[0]:
+                #     print("Left-most Metatile")
+                #     _, _, tile = metatile.tiles[0]
+                #     tile_extent = tile.extent()
+                #     offsetX = bbox[0] - metatile_extent[0]
+                #     offsetX = round(tile_width * (offsetX / (tile_extent[2] - tile_extent[0])))
+                #     painter.fillRect(0, 0, offsetX, image.height(), Qt.red)
+                # if metatile_extent[3] > bbox[3]:
+                #     print("Top-most Metatile")
+                #     _, _, tile = metatile.tiles[0]
+                #     tile_extent = tile.extent()
+                #     offsetY = metatile_extent[3] - bbox[3]
+                #     offsetY = round(tile_height * (offsetY / (tile_extent[3] - tile_extent[1])))
+                #     print("offsetY", offsetY)
+                #     painter.fillRect(0, 0, image.width(), offsetY, Qt.red)
+                painter.end()
+
+                # For analysing metatiles (labels, etc.)
+                # QDir().mkpath(os.path.join(output_dir, str(zoom)))
+                # image.save(os.path.join(output_dir, str(zoom), "metatile_{}.png".format(i)), img_format, 80)
+
+                progress += 1
+                feedback.setProgress(100 * (progress / metatiles_count))
+                for r, c, tile in metatile.tiles:
+                    tile_img = image.copy(tile_width * r, tile_height * c, tile_width, tile_height)
+
+                    writer1.writeTile(tile, tile_img, img_format, 80)
+                    writer2.writeTile(tile, tile_img, img_format, 80)
+
+        return {}
+
+    def checkParameterValues(self, parameters, context):
+        min_zoom = self.parameterAsInt(parameters, self.ZOOM_MIN, context)
+        max_zoom = self.parameterAsInt(parameters, self.ZOOM_MAX, context)
+        if max_zoom < min_zoom:
+            return False, self.tr('Invalid zoom levels range.')
+
+        return super().checkParameterValues(parameters, context)
