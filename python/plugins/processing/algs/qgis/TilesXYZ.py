@@ -31,26 +31,17 @@ from uuid import uuid4
 
 import ogr
 import gdal
-from qgis.PyQt.QtCore import QVariant, QSize, Qt, QDir, QByteArray, QBuffer
+from qgis.PyQt.QtCore import QSize, Qt, QByteArray, QBuffer
 from qgis.PyQt.QtGui import QColor, QImage, QPainter
-from qgis.core import (QgsExpression,
-                       QgsExpressionContext,
-                       QgsExpressionContextUtils,
-                       QgsFeatureSink,
-                       QgsField,
-                       QgsDistanceArea,
-                       QgsProcessing,
+from qgis.core import (QgsProcessingException,
                        QgsProcessingParameterEnum,
                        QgsProcessingParameterNumber,
                        QgsProcessingParameterBoolean,
                        QgsProcessingParameterString,
                        QgsProcessingParameterExtent,
-
                        QgsProcessingOutputFile,
                        QgsProcessingParameterFileDestination,
                        QgsProcessingParameterFolderDestination,
-                       QgsProcessingException,
-
                        QgsProject,
                        QgsGeometry,
                        QgsRectangle,
@@ -129,10 +120,10 @@ def get_metatiles(extent, zoom, size=4):
 
 
 class DirectoryWriter:
-    def __init__(self, folder, format, quality):
+    def __init__(self, folder, tile_params):
         self.folder = folder
-        self.format = format
-        self.quality = quality
+        self.format = tile_params.get("format", "PNG")
+        self.quality = tile_params.get("quality", -1)
 
     def writeTile(self, tile, image):
         directory = os.path.join(self.folder, str(tile.z), str(tile.x))
@@ -145,39 +136,52 @@ class DirectoryWriter:
         pass
 
 class MBTilesWriter:
-    def __init__(self, filename, format, quality, extent, min_zoom, max_zoom):
-        if format == 'JPG':
-            format = 'JPEG'
+    def __init__(self, filename, tile_params, extent, min_zoom, max_zoom):
         base_dir = os.path.dirname(filename)
         os.makedirs(base_dir, exist_ok=True)
         self.filename = filename
         self.extent = extent
-        self.tile_width = 256
-        self.tile_height = 256
+        self.tile_width = tile_params.get("width", 256)
+        self.tile_height = tile_params.get("height", 256)
+        tile_format = tile_params["format"]
+        if tile_format == 'JPG':
+            tile_format = 'JPEG'
+            options = ['QUALITY=%s' % tile_params.get("quality", 75)]
+        else:
+            options = ['ZLEVEL=8']
         driver = gdal.GetDriverByName('MBTiles')
-        ds = driver.Create(filename, 256, 256, 4, options=['TILE_FORMAT=%s' % format, 'ZLEVEL=8', 'QUALITY=%s' % quality])
+        ds = driver.Create(filename, 1, 1, 1, options=['TILE_FORMAT=%s' % tile_format] + options)
         ds = None
         sqlite_driver = ogr.GetDriverByName('SQLite')
         ds = sqlite_driver.Open(filename, 1)
         ds.ExecuteSQL("INSERT INTO metadata(name, value) VALUES ('{}', '{}');".format('minzoom', min_zoom))
         ds.ExecuteSQL("INSERT INTO metadata(name, value) VALUES ('{}', '{}');".format('maxzoom', max_zoom))
+        # will be set properly after writing all tiles
         ds.ExecuteSQL("INSERT INTO metadata(name, value) VALUES ('{}', '');".format('bounds'))
         ds = None
-        self._first_tile = None
+        self._zoom = None
 
     def _initZoom(self, first_tile):
         first_tile_extent = first_tile.extent()
         sqlite_driver = ogr.GetDriverByName('SQLite')
         ds = sqlite_driver.Open(self.filename, 1)
-        zoom_extent = [first_tile_extent[0], -89.95, 180, first_tile_extent[3]]
+        zoom_extent = [
+            first_tile_extent[0],
+            # extend with height of 1 tile, but do not exceed -89.98 to stay in valid range (gdal)
+            max(-89.98, self.extent[1] - (first_tile_extent[3] - first_tile_extent[1])),
+            # extend with width of 1 tile, do not exceed 180
+            min(180, self.extent[2] + (first_tile_extent[2] - first_tile_extent[0])),
+            first_tile_extent[3]
+        ]
         ds.ExecuteSQL("UPDATE metadata SET value='{}' WHERE name='bounds'".format(','.join(map(str, zoom_extent))))
         ds = None
 
         self._zoomDs = gdal.OpenEx(self.filename, 1, open_options=['ZOOM_LEVEL=%s' % first_tile.z])
         self._first_tile = first_tile
+        self._zoom = first_tile.z
 
     def writeTile(self, tile, image):
-        if self._first_tile != tile:
+        if tile.z != self._zoom:
             self._initZoom(tile)
 
         data = QByteArray()
@@ -236,7 +240,7 @@ class TilesXYZ(QgisAlgorithm):
         return 'tilesxyz'
 
     def displayName(self):
-        return self.tr('Tiles XYZ generator')
+        return self.tr('Generate XYZ tiles')
 
     def processAlgorithm(self, parameters, context, feedback):
         feedback.setProgress(1)
@@ -281,8 +285,14 @@ class TilesXYZ(QgisAlgorithm):
         lab_buffer_px = 100
         progress = 0
 
-        writer1 = DirectoryWriter(output_dir, img_format, 80)
-        writer2 = MBTilesWriter(os.path.join(output_dir, '%s.mbtiles' % name), img_format, 80, bbox, min_zoom, max_zoom)
+        tile_params = {
+            "format": img_format,
+            "quality": 75,
+            "width": tile_width,
+            "height": tile_height
+        }
+        writer1 = DirectoryWriter(output_dir, tile_params)
+        writer2 = MBTilesWriter(os.path.join(output_dir, '%s.mbtiles' % name), tile_params, bbox, min_zoom, max_zoom)
 
         for zoom in range(min_zoom, max_zoom + 1):
             feedback.pushConsoleInfo("Generating tiles for zoom level: {}".format(zoom))
@@ -314,24 +324,24 @@ class TilesXYZ(QgisAlgorithm):
 
 
                 # Fill areas outside output's extent
-                metatile_extent = metatile.extent()
-                _, _, tile = metatile.tiles[0]
-                if metatile_extent[0] < bbox[0]:
-                    _, _, tile = metatile.tiles[0]
-                    tile_extent = tile.extent()
-                    offsetX = bbox[0] - metatile_extent[0]
-                    offsetX = round(tile_width * (offsetX / (tile_extent[2] - tile_extent[0])))
-                    painter.fillRect(0, 0, offsetX, image.height(), Qt.red)
-                if metatile_extent[3] > bbox[3]:
-                    _, _, tile = metatile.tiles[0]
-                    tile_extent = tile.extent()
-                    offsetY = metatile_extent[3] - bbox[3]
-                    offsetY = round(tile_height * (offsetY / (tile_extent[3] - tile_extent[1])))
-                    painter.fillRect(0, 0, image.width(), offsetY, Qt.red)
+                # metatile_extent = metatile.extent()
+                # _, _, tile = metatile.tiles[0]
+                # if metatile_extent[0] < bbox[0]:
+                #     _, _, tile = metatile.tiles[0]
+                #     tile_extent = tile.extent()
+                #     offsetX = bbox[0] - metatile_extent[0]
+                #     offsetX = round(tile_width * (offsetX / (tile_extent[2] - tile_extent[0])))
+                #     painter.fillRect(0, 0, offsetX, image.height(), Qt.transparent)
+                # if metatile_extent[3] > bbox[3]:
+                #     _, _, tile = metatile.tiles[0]
+                #     tile_extent = tile.extent()
+                #     offsetY = metatile_extent[3] - bbox[3]
+                #     offsetY = round(tile_height * (offsetY / (tile_extent[3] - tile_extent[1])))
+                #     painter.fillRect(0, 0, image.width(), offsetY, Qt.transparent)
                 painter.end()
 
                 # For analysing metatiles (labels, etc.)
-                QDir().mkpath(os.path.join(output_dir, str(zoom)))
+                os.makedirs(os.path.join(output_dir, str(zoom)), exist_ok=True)
                 image.save(os.path.join(output_dir, str(zoom), "metatile_{}.png".format(i)), )
 
                 progress += 1
