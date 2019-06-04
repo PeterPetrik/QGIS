@@ -36,10 +36,30 @@ void QgsDataItemGuiContext::setMessageBar( QgsMessageBar *messageBar )
 
 void QgsDataItemGuiProvider::populateContextMenu( QgsDataItem *, QMenu *, const QList<QgsDataItem *> &, QgsDataItemGuiContext )
 {
-
 }
 
 bool QgsDataItemGuiProvider::handleDoubleClick( QgsDataItem *, QgsDataItemGuiContext )
 {
+  return false;
+}
+
+QWidget *QgsDataItemGuiProvider::paramWidget( QgsDataItem *item, QgsDataItemGuiContext context )
+{
+  Q_UNUSED( item );
+  Q_UNUSED( context );
+  return nullptr;
+}
+
+bool QgsDataItemGuiProvider::acceptDrop( QgsDataItem *item, QgsDataItemGuiContext context )
+{
+  Q_UNUSED( item );
+  Q_UNUSED( context );
+  return true;
+}
+
+bool QgsDataItemGuiProvider::handleDrop( QgsDataItem *item, QgsDataItemGuiContext context, const QMimeData *data, Qt::DropAction action )
+{
+  Q_UNUSED( item );
+  Q_UNUSED( context );
   return false;
 }

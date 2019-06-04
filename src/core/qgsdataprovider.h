@@ -29,8 +29,6 @@
 #include "qgslayermetadata.h"
 #include "qgserror.h"
 
-typedef int dataCapabilities_t(); // SIP_SKIP
-
 class QgsRectangle;
 class QgsCoordinateReferenceSystem;
 

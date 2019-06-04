@@ -17,11 +17,14 @@
 #define QGSDATAITEMGUIPROVIDER_H
 
 #include "qgis_gui.h"
+#include "qgis_sip.h"
 #include <QList>
+#include <QWidget>
+#include <QMimeData>
+#include <QString>
+#include <QMenu>
 
-class QString;
 class QgsDataItem;
-class QMenu;
 class QgsMessageBar;
 
 /**
@@ -114,12 +117,31 @@ class GUI_EXPORT QgsDataItemGuiProvider
                                       const QList<QgsDataItem *> &selectedItems, QgsDataItemGuiContext context );
 
     /**
+     *
+     * \since QGIS 3.10
+     */
+    virtual QWidget *paramWidget( QgsDataItem *item, QgsDataItemGuiContext context ) SIP_FACTORY;
+
+    /**
      * Called when a user double clicks on an \a item. Providers should return TRUE
      * if the double-click was handled and do not want other providers to handle the
      * double-click, and to prevent the default double-click behavior for items.
      */
     virtual bool handleDoubleClick( QgsDataItem *item, QgsDataItemGuiContext context );
 
+    /**
+     * Providers should return TRUE if the drops are handled
+     * \since QGIS 3.10
+     */
+    virtual bool acceptDrop( QgsDataItem *item, QgsDataItemGuiContext context );
+
+    /**
+     * Called when a user drops on an \a item. Providers should return TRUE
+     * if the drop was handled and do not want other providers to handle the
+     * drop, and to prevent the default drop behavior for items.
+     * \since QGIS 3.10
+     */
+    virtual bool handleDrop( QgsDataItem *item, QgsDataItemGuiContext context, const QMimeData *data, Qt::DropAction action );
 };
 
 #endif // QGSDATAITEMGUIPROVIDER_H

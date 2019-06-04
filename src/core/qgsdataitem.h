@@ -22,7 +22,6 @@
 #include <QFileSystemWatcher>
 #include <QFutureWatcher>
 #include <QIcon>
-#include <QLibrary>
 #include <QObject>
 #include <QPixmap>
 #include <QString>
@@ -169,6 +168,9 @@ class CORE_EXPORT QgsDataItem : public QObject
      * Returns whether the item accepts drag and dropped layers - e.g. for importing a dataset to a provider.
      * Subclasses should override this and handleDrop() to accept dropped layers.
      * \see handleDrop()
+     * \see QgsDataItemGuiProvider::handleDrop()
+     *
+     * \deprecated QGIS 3.10
      */
     virtual bool acceptDrop() { return false; }
 
@@ -176,6 +178,9 @@ class CORE_EXPORT QgsDataItem : public QObject
      * Attempts to process the mime data dropped on this item. Subclasses must override this and acceptDrop() if they
      * accept dropped layers.
      * \see acceptDrop()
+     * \see QgsDataItemGuiProvider::handleDrop()
+     *
+     * \deprecated QGIS 3.10
      */
     virtual bool handleDrop( const QMimeData * /*data*/, Qt::DropAction /*action*/ ) { return false; }
 

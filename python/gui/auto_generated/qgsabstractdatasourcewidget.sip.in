@@ -122,12 +122,12 @@ Emitted when the ok/add buttons should be enabled/disabled
 
   protected:
 
-    QgsAbstractDataSourceWidget( QWidget *parent /TransferThis/ = 0, Qt::WindowFlags fl = QgsGuiUtils::ModalDialogFlags, QgsProviderRegistry::WidgetMode widgetMode = QgsProviderRegistry::WidgetMode::None );
+    QgsAbstractDataSourceWidget( QWidget *parent /TransferThis/ = 0, Qt::WindowFlags fl = QgsGuiUtils::ModalDialogFlags, QgsProviderGuiMetadata::WidgetMode widgetMode = QgsProviderGuiMetadata::WidgetMode::None );
 %Docstring
 Constructor
 %End
 
-    QgsProviderRegistry::WidgetMode widgetMode() const;
+    QgsProviderGuiMetadata::WidgetMode widgetMode() const;
 %Docstring
 Returns the widget mode
 %End

@@ -99,6 +99,13 @@ and contains accessors for useful objects like the application message bar.
 The base class method has no effect.
 %End
 
+    virtual QWidget *paramWidget( QgsDataItem *item, QgsDataItemGuiContext context ) /Factory/;
+%Docstring
+
+
+.. versionadded:: 3.10
+%End
+
     virtual bool handleDoubleClick( QgsDataItem *item, QgsDataItemGuiContext context );
 %Docstring
 Called when a user double clicks on an ``item``. Providers should return ``True``
@@ -106,6 +113,21 @@ if the double-click was handled and do not want other providers to handle the
 double-click, and to prevent the default double-click behavior for items.
 %End
 
+    virtual bool acceptDrop( QgsDataItem *item, QgsDataItemGuiContext context );
+%Docstring
+Providers should return ``True`` if the drops are handled
+
+.. versionadded:: 3.10
+%End
+
+    virtual bool handleDrop( QgsDataItem *item, QgsDataItemGuiContext context, const QMimeData *data, Qt::DropAction action );
+%Docstring
+Called when a user drops on an ``item``. Providers should return ``True``
+if the drop was handled and do not want other providers to handle the
+drop, and to prevent the default drop behavior for items.
+
+.. versionadded:: 3.10
+%End
 };
 
 /************************************************************************

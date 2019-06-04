@@ -153,6 +153,10 @@ Returns whether the item accepts drag and dropped layers - e.g. for importing a 
 Subclasses should override this and handleDrop() to accept dropped layers.
 
 .. seealso:: :py:func:`handleDrop`
+
+.. seealso:: :py:func:`QgsDataItemGuiProvider.handleDrop`
+
+.. deprecated:: QGIS 3.10
 %End
 
     virtual bool handleDrop( const QMimeData * /*data*/, Qt::DropAction /*action*/ );
@@ -161,6 +165,10 @@ Attempts to process the mime data dropped on this item. Subclasses must override
 accept dropped layers.
 
 .. seealso:: :py:func:`acceptDrop`
+
+.. seealso:: :py:func:`QgsDataItemGuiProvider.handleDrop`
+
+.. deprecated:: QGIS 3.10
 %End
 
     virtual bool handleDoubleClick();

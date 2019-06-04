@@ -22,12 +22,25 @@
 #include "qgis_sip.h"
 #include "qgis_gui.h"
 
-#include "qgsproviderregistry.h"
+#include "qgsproviderguimetadata.h"
 #include "qgsguiutils.h"
 #include <QDialog>
 #include <QDialogButtonBox>
 
 class QgsMapCanvas;
+
+/**
+ * \ingroup gui
+ * Different ways a source select dialog can be used
+ * (embedded is for the data source manager dialog)
+ * \since QGIS 3.10
+ */
+enum class QgsAbstractDataSourceWidgetMode SIP_MONKEYPATCH_SCOPEENUM_UNNEST( QgsAbstractDataSourceWidget, WidgetMode ) : int
+{
+  None,
+  Embedded,
+  Manager,
+};
 
 /**
  * \ingroup gui
@@ -128,10 +141,10 @@ class GUI_EXPORT QgsAbstractDataSourceWidget : public QDialog
   protected:
 
     //! Constructor
-    QgsAbstractDataSourceWidget( QWidget *parent SIP_TRANSFERTHIS = nullptr, Qt::WindowFlags fl = QgsGuiUtils::ModalDialogFlags, QgsProviderRegistry::WidgetMode widgetMode = QgsProviderRegistry::WidgetMode::None );
+    QgsAbstractDataSourceWidget( QWidget *parent SIP_TRANSFERTHIS = nullptr, Qt::WindowFlags fl = QgsGuiUtils::ModalDialogFlags, QgsAbstractDataSourceWidgetMode widgetMode = QgsAbstractDataSourceWidgetMode::None );
 
     //! Returns the widget mode
-    QgsProviderRegistry::WidgetMode widgetMode() const;
+    QgsAbstractDataSourceWidgetMode widgetMode() const;
 
     //! Returns the map canvas (can be NULLPTR)
     const QgsMapCanvas *mapCanvas() const;
@@ -144,7 +157,7 @@ class GUI_EXPORT QgsAbstractDataSourceWidget : public QDialog
 
   private:
     QPushButton *mAddButton  = nullptr;
-    QgsProviderRegistry::WidgetMode mWidgetMode;
+    QgsAbstractDataSourceWidgetMode mWidgetMode;
     QgsMapCanvas const *mMapCanvas = nullptr;
 
 };

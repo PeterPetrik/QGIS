@@ -25,15 +25,17 @@
 #include <QLibrary>
 #include <QString>
 
+#include "qgsvectorlayerexporter.h"
 #include "qgsdataprovider.h"
 #include "qgis_core.h"
 #include "qgis_sip.h"
 
-
 class QgsProviderMetadata;
 class QgsVectorLayer;
 class QgsCoordinateReferenceSystem;
-
+class QgsDataItemProvider;
+class QgsDataItem;
+class QgsRasterDataProvider;
 
 /**
  * \ingroup core
@@ -53,18 +55,6 @@ class CORE_EXPORT QgsProviderRegistry
 {
 
   public:
-
-    /**
-     * Different ways a source select dialog can be used
-     * (embedded is for the data source manager dialog)
-     */
-    enum WidgetMode
-    {
-      None,
-      Embedded,
-      Manager,
-    };
-
     //! Means of accessing canonical single instance
     static QgsProviderRegistry *instance( const QString &pluginPath = QString() );
 
@@ -75,6 +65,8 @@ class CORE_EXPORT QgsProviderRegistry
      *
      * If the provider uses direct provider function pointers instead of a library an empty string will
      * be returned.
+     *
+     * \deprecated QGIS 3.10
      */
     QString library( const QString &providerKey ) const;
 
@@ -101,8 +93,45 @@ class CORE_EXPORT QgsProviderRegistry
                                      const QgsDataProvider::ProviderOptions &options = QgsDataProvider::ProviderOptions() ) SIP_FACTORY;
 
     /**
+     * create empty vector layer
+     * \since QGIS 3.10
+     */
+    QgsVectorLayerExporter::ExportError createEmptyLayer(
+      const QString &providerKey,
+      const QString &uri,
+      const QgsFields &fields,
+      QgsWkbTypes::Type wkbType,
+      const QgsCoordinateReferenceSystem &srs,
+      bool overwrite,
+      QMap<int, int> &oldToNewAttrIdxMap,
+      QString &errorMessage,
+      const QMap<QString, QVariant> *options );
+
+    /**
+     * create raster  data provider
+     * \since QGIS 3.10
+     */
+    virtual QgsRasterDataProvider *createRasterDataProvider(
+      const QString &providerKey,
+      const QString &uri,
+      const QString &format,
+      int nBands,
+      Qgis::DataType type,
+      int width, int height,
+      double *geoTransform,
+      const QgsCoordinateReferenceSystem &crs,
+      const QStringList &createOptions = QStringList() );
+
+    /**
+     * list of raster pyramid resampling methods
+     * \since QGIS 3.10
+     */
+    QList<QPair<QString, QString> > *pyramidResamplingMethods( const QString &providerKey );
+
+    /**
      * Returns the provider capabilities
         \param providerKey identifier of the provider
+        \returns QgsDataProvider::DataCapability
         \since QGIS 2.6
      */
     int providerCapabilities( const QString &providerKey ) const;
@@ -118,14 +147,57 @@ class CORE_EXPORT QgsProviderRegistry
     QVariantMap decodeUri( const QString &providerKey, const QString &uri );
 
     /**
-     * Returns a new widget for selecting layers from a provider.
-     * Either the \a parent widget must be set or the caller becomes
-     * responsible for deleting the returned widget.
+      * Returns list of data item providers of provider
+      * \since QGIS 3.10
+      */
+    QList< QgsDataItemProvider * > *dataItemProviders( const QString &providerKey ) const;
+
+    /**
+     * Interface for data provider functions related to CRUD for layer styles
+     *
+     * return -1 means not implemented
+     * \since QGIS 3.10
      */
-    QWidget *createSelectionWidget( const QString &providerKey,
-                                    QWidget *parent = nullptr,
-                                    Qt::WindowFlags fl = Qt::WindowFlags(),
-                                    QgsProviderRegistry::WidgetMode widgetMode = QgsProviderRegistry::WidgetMode::None );
+    int listStyles( const QString &providerKey, const QString &uri, QStringList &ids, QStringList &names,
+                    QStringList &descriptions, QString &errCause );
+
+    /**
+     * Interface for data provider functions related to CRUD for layer styles
+     * \since QGIS 3.10
+     */
+    QString getStyleById( const QString &providerKey,  const QString &uri, QString styleId, QString &errCause );
+
+    /**
+     * Interface for data provider functions related to CRUD for layer styles
+     * \since QGIS 3.10
+     */
+    bool deleteStyleById( const QString &providerKey,  const QString &uri, QString styleId, QString &errCause );
+
+    /**
+     * Interface for data provider functions related to CRUD for layer styles
+     * \since QGIS 3.10
+     */
+    bool saveStyle( const QString &providerKey,  const QString &uri, const QString &qmlStyle, const QString &sldStyle,
+                    const QString &styleName, const QString &styleDescription,
+                    const QString &uiFileContent, bool useAsDefault, QString &errCause );
+
+    /**
+     * Interface for data provider functions related to CRUD for layer styles
+     * \since QGIS 3.10
+     */
+    QString loadStyle( const QString &providerKey,  const QString &uri, QString &errCause );
+
+    /**
+     * Interface for data provider functions related to data management (databases)
+     * \since QGIS 3.10
+     */
+    bool createDb( const QString &providerKey, const QString &dbPath, QString &errCause );
+
+    /**
+     * Interface for data provider functions related to data management (databases)
+     * \since QGIS 3.10
+     */
+    QgsTransaction *createTransaction( const QString &providerKey, const QString &connString );
 
     /**
      * Gets pointer to provider function
@@ -133,9 +205,10 @@ class CORE_EXPORT QgsProviderRegistry
      * \param functionName name of function
      * \returns pointer to function or NULLPTR on error. If the provider uses direct provider
      * function pointers instead of a library NULLPTR will be returned.
+     *
+     * \deprecated QGIS 3.10
      */
-    QFunctionPointer function( const QString &providerKey,
-                               const QString &functionName );
+    QFunctionPointer function( const QString &providerKey, const QString &functionName );
 
     /**
      * Returns a new QLibrary for the specified \a providerKey. Ownership of the returned
@@ -143,6 +216,8 @@ class CORE_EXPORT QgsProviderRegistry
      *
      * If the provider uses direct provider function pointers instead of a library NULLPTR will
      * be returned.
+     *
+     * \deprecated QGIS 3.10
      */
     QLibrary *createProviderLibrary( const QString &providerKey ) const SIP_FACTORY;
 
@@ -216,8 +291,6 @@ class CORE_EXPORT QgsProviderRegistry
     virtual QString directoryDrivers() const;
     //! Returns a string containing the available protocol drivers
     virtual QString protocolDrivers() const;
-
-    void registerGuis( QWidget *widget );
 
     /**
      * \brief register a new vector data provider from its \a providerMetadata

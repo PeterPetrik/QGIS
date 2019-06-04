@@ -21,10 +21,25 @@
 
 
 #include <QString>
+#include <QVariantMap>
+#include <QMap>
+#include <QList>
+#include <memory>
+#include <QPair>
+
 #include "qgis_sip.h"
 #include "qgsdataprovider.h"
 #include "qgis_core.h"
 #include <functional>
+#include "qgsvectorlayerexporter.h"
+#include "qgsfields.h"
+
+class QgsDataItem;
+class QgsDataItemProvider;
+class QgsTransaction;
+
+class QgsRasterDataProvider;
+
 
 /**
  * \ingroup core
@@ -50,15 +65,32 @@ class CORE_EXPORT QgsProviderMetadata
     /**
      * Typedef for data provider creation function.
      * \since QGIS 3.0
+     * \deprecated QGIS 3.10
      */
     SIP_SKIP typedef std::function < QgsDataProvider*( const QString &, const QgsDataProvider::ProviderOptions & ) > CreateDataProviderFunction;
 
+    /**
+     * Constructor for provider metadata
+     * \param provider key
+     * \param provider description
+     * \param provider plugin library name
+     *
+     * \deprecated QGIS 3.10
+     */
     QgsProviderMetadata( const QString &_key, const QString &_description, const QString &_library );
+
+    /**
+     * Constructor for provider metadata
+     * \param _key provider key
+     * \param _description provider description
+     */
+    QgsProviderMetadata( const QString &_key, const QString &_description );
 
     /**
      * Metadata for provider with direct provider creation function pointer, where
      * no library is involved.
      * \since QGIS 3.0
+     * \deprecated QGIS 3.10
      */
 #ifndef SIP_RUN
     QgsProviderMetadata( const QString &key, const QString &description, const QgsProviderMetadata::CreateDataProviderFunction &createFunc );
@@ -104,24 +136,29 @@ class CORE_EXPORT QgsProviderMetadata
     % End
 #endif
 
+    //! dtor
+    virtual ~QgsProviderMetadata();
+
     /**
      * This returns the unique key associated with the provider
-
-        This key string is used for the associative container in QgsProviderRegistry
+     *
+     * This key string is used for the associative container in QgsProviderRegistry
      */
     QString key() const;
 
     /**
      * This returns descriptive text for the provider
-
-        This is used to provide a descriptive list of available data providers.
+     *
+     * This is used to provide a descriptive list of available data providers.
      */
     QString description() const;
 
     /**
      * This returns the library file name
-
-        This is used to QLibrary calls to load the data provider.
+     *
+     * This is used to QLibrary calls to load the data provider (only for dynamically loaded libraries)
+     *
+     * \deprecated QGIS 3.10
      */
     QString library() const;
 
@@ -130,23 +167,166 @@ class CORE_EXPORT QgsProviderMetadata
      * by the provider.
      * \note not available in Python bindings
      * \since QGIS 3.0
+     * \deprecated QGIS 3.10
      */
     SIP_SKIP CreateDataProviderFunction createFunction() const;
+
+    /**
+      * Initialize the provider
+      * \since QGIS 3.10
+      */
+    virtual void initProvider();
+
+    /**
+     * Cleanup the provider
+     * \since QGIS 3.10
+     */
+    virtual void cleanupProvider();
+
+    /**
+     * Builds the list of vector file filter strings
+     *
+     * Queries for a list of supported vector formats
+     * Suitable for use in a QFileDialog::getOpenFileNames() call.
+     *
+     * \since QGIS 3.10
+     */
+    virtual QString fileVectorFilters( );
+
+    /**
+     * Builds the list of raster file filter strings
+     *
+     * Queries for a list of supported raster formats
+     * Suitable for use in a QFileDialog::getOpenFileNames() call.
+     *
+     * \since QGIS 3.10
+     */
+    virtual QString fileRasterFilters( );
+
+    /**
+     * Builds the list of mesh file filter strings
+     *
+     * Queries for a list of supported mesh formats; one list to be used for meshes
+     * and also one for datasets. Suitable for use in a
+     * QFileDialog::getOpenFileNames() call.
+     *
+     * \since QGIS 3.10
+     */
+    virtual void fileMeshFilters( QString &mesh, QString &datasets );
+
+    /**
+     * Class factory to return a pointer to a newly created QgsDataProvider object
+     * \since QGIS 3.0
+     */
+    virtual QgsDataProvider *createProvider( const QString *uri, const QgsDataProvider::ProviderOptions &options );
+
+    /**
+     * Interface for data provider function related to vector layers
+     * \since QGIS 3.10
+     */
+    virtual QgsVectorLayerExporter::ExportError createEmptyLayer(
+      const QString &uri,
+      const QgsFields &fields,
+      QgsWkbTypes::Type wkbType,
+      const QgsCoordinateReferenceSystem &srs,
+      bool overwrite,
+      QMap<int, int> &oldToNewAttrIdxMap,
+      QString &errorMessage,
+      const QMap<QString, QVariant> *options );
+
+    /**
+     * Interface for data provider function related to raster layers
+     * \since QGIS 3.10
+     */
+    virtual QgsRasterDataProvider *createRasterDataProvider(
+      const QString &uri,
+      const QString &format,
+      int nBands,
+      Qgis::DataType type,
+      int width,
+      int height,
+      double *geoTransform,
+      const QgsCoordinateReferenceSystem &crs,
+      const QStringList &createOptions = QStringList() );
+
+    /**
+     * Interface for data provider function related to raster layers
+     * \since QGIS 3.10
+     */
+    virtual QList<QPair<QString, QString> > *pyramidResamplingMethods();
+
+    /**
+     * Decode URI
+     * \since QGIS 3.10
+     */
+    virtual QVariantMap decodeUri( const QString &uri );
+
+    /**
+     * Data item providers
+     * \see QgsProviderGuiMetadata::dataItemGuiProviders()
+     * \since QGIS 3.10
+     */
+    virtual QList< QgsDataItemProvider * > *dataItemProviders() const;
+
+    /**
+     * Interface for data provider functions related to CRUD for layer styles
+     * \since QGIS 3.10
+     */
+    virtual int listStyles( const QString &uri, QStringList &ids, QStringList &names,
+                            QStringList &descriptions, QString &errCause );
+
+    /**
+     * Interface for data provider functions related to CRUD for layer styles
+     * \since QGIS 3.10
+     */
+    virtual QString getStyleById( const QString &uri, QString styleId, QString &errCause );
+
+    /**
+     * Interface for data provider functions related to CRUD for layer styles
+     * \since QGIS 3.10
+     */
+    virtual bool deleteStyleById( const QString &uri, QString styleId, QString &errCause );
+
+    /**
+     * Interface for data provider functions related to CRUD for layer styles
+     * \since QGIS 3.10
+     */
+    virtual bool saveStyle( const QString &uri, const QString &qmlStyle, const QString &sldStyle,
+                            const QString &styleName, const QString &styleDescription,
+                            const QString &uiFileContent, bool useAsDefault, QString &errCause );
+
+    /**
+     * Interface for data provider functions related to CRUD for layer styles
+     * \since QGIS 3.10
+     */
+    virtual QString loadStyle( const QString &uri, QString &errCause );
+
+    /**
+     * Interface for data provider functions related to data management (databases)
+     * \since QGIS 3.10
+     */
+    virtual bool createDb( const QString &dbPath, QString &errCause );
+
+    /**
+     * Interface for data provider functions related to data management (databases)
+     * \since QGIS 3.10
+     */
+    virtual QgsTransaction *createTransaction( const QString &connString );
+
 
   private:
 
     /// unique key for data provider
-    QString key_;
+    QString mKey;
 
     /// associated terse description
-    QString description_;
+    QString mDescription;
 
     /// file path
-    QString library_;
+    /// deprecated QGIS 3.10
+    QString mLibrary;
 
-    CreateDataProviderFunction mCreateFunc = nullptr;
-
+    CreateDataProviderFunction mCreateFunction = nullptr;
 };
 
 #endif //QGSPROVIDERMETADATA_H
-
