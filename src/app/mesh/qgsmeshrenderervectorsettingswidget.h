@@ -20,12 +20,12 @@
 #include "qgis_app.h"
 #include "qgsmeshrenderersettings.h"
 #include "qgsmeshdataprovider.h"
+#include "qgsmeshdatasetgrouptreeview.h"
 
 #include <memory>
 #include <QWidget>
 
 class QgsMeshLayer;
-
 /**
  * A widget for setup of the vector dataset renderer settings of
  * a mesh layer. The layer must be connected and an active dataset
@@ -59,6 +59,27 @@ class APP_EXPORT QgsMeshRendererVectorSettingsWidget : public QWidget, private U
     //! Mesh rendering settings changed
     void widgetChanged();
 
+  private slots:
+    void onSymbologyChanged( int currentIndex )
+    {
+      if ( currentIndex == QgsMeshRendererVectorSettings::Arrows )
+      {
+        for ( auto w : mArrowSettingsWidget )
+          w->show();
+
+        for ( auto w : mStreamlineSettingWidget )
+          w->hide();
+      }
+
+      if ( currentIndex == QgsMeshRendererVectorSettings::Streamlines )
+      {
+        for ( auto w : mArrowSettingsWidget )
+          w->hide();
+
+        for ( auto w : mStreamlineSettingWidget )
+          w->show();
+      }
+    }
   private:
 
     /**
@@ -69,6 +90,12 @@ class APP_EXPORT QgsMeshRendererVectorSettingsWidget : public QWidget, private U
 
     QgsMeshLayer *mMeshLayer = nullptr; //not owned
     int mActiveDatasetGroup = -1;
+
+    QList<QWidget *> mArrowSettingsWidget;
+    QList<QWidget *> mStreamlineSettingWidget;
+
+
 };
+
 
 #endif // QGSMESHRENDERERVECTORSETTINGSWIDGET_H

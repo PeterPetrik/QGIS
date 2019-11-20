@@ -33,6 +33,7 @@ class QgsMeshLayer;
 #include "qgsmeshlayer.h"
 #include "qgssymbol.h"
 #include "qgsmeshdataprovider.h"
+#include "qgsmeshtracerenderer.h" //TODO : dispach this file in two files : one with renderer the other one with fields
 
 class QgsRenderContext;
 
@@ -66,6 +67,7 @@ struct CORE_NO_EXPORT QgsMeshLayerRendererCache
 
   // vector dataset
   QgsMeshDatasetIndex mActiveVectorDatasetIndex;
+  QgsMeshDatasetIndex mScalarWeightDatasetIndex;
   QgsMeshDataBlock mVectorDatasetValues;
   QVector<double> mVectorDatasetValuesMag;
   double mVectorDatasetMagMinimum = std::numeric_limits<double>::quiet_NaN();
@@ -73,7 +75,11 @@ struct CORE_NO_EXPORT QgsMeshLayerRendererCache
   double mVectorDatasetGroupMagMinimum = std::numeric_limits<double>::quiet_NaN();
   double mVectorDatasetGroupMagMaximum = std::numeric_limits<double>::quiet_NaN();
   bool mVectorDataOnVertices = true;
+  QVector<double> mVectorScalarWeightDataSetValues;
+  bool mVectorScalarWeightDataSetValuesOnVertices = true;
+
 };
+
 
 ///@endcond
 
@@ -111,6 +117,9 @@ class QgsMeshLayerRenderer : public QgsMapLayerRenderer
 
     // copy from mesh layer
     QgsTriangularMesh mTriangularMesh;
+
+    // copy from mesh layer
+    QgsRectangle mLayerExtent;
 
     // copy of the scalar dataset
     QVector<double> mScalarDatasetValues;

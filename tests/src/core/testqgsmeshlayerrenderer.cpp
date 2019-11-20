@@ -222,7 +222,8 @@ void TestQgsMeshRenderer::test_vertex_vector_dataset_rendering()
 
   QgsMeshRendererSettings rendererSettings = mMemoryLayer->rendererSettings();
   QgsMeshRendererVectorSettings settings = rendererSettings.vectorSettings( ds.group() );
-  settings.setMinShaftLength( 15 );
+  QgsMeshRendererVectorArrowSettings arrowSettings = settings.arrowSettings();
+  arrowSettings.setMinShaftLength( 15 );
   rendererSettings.setVectorSettings( ds.group(), settings );
   rendererSettings.setActiveVectorDataset( ds );
   mMemoryLayer->setRendererSettings( rendererSettings );
@@ -294,9 +295,10 @@ void TestQgsMeshRenderer::test_face_vector_on_user_grid()
 
   QgsMeshRendererSettings rendererSettings = mMemoryLayer->rendererSettings();
   QgsMeshRendererVectorSettings settings = rendererSettings.vectorSettings( ds.group() );
-  settings.setOnUserDefinedGrid( true );
-  settings.setUserGridCellWidth( 30 );
-  settings.setUserGridCellHeight( 20 );
+  QgsMeshRendererVectorArrowSettings arrowSettings = settings.arrowSettings();
+  arrowSettings.setOnUserDefinedGrid( true );
+  arrowSettings.setUserGridCellWidth( 30 );
+  arrowSettings.setUserGridCellHeight( 20 );
   settings.setLineWidth( 0.8 );
   rendererSettings.setVectorSettings( ds.group(), settings );
   rendererSettings.setActiveVectorDataset( ds );
@@ -313,9 +315,10 @@ void TestQgsMeshRenderer::test_vertex_vector_on_user_grid()
 
   QgsMeshRendererSettings rendererSettings = mMemoryLayer->rendererSettings();
   QgsMeshRendererVectorSettings settings = rendererSettings.vectorSettings( ds.group() );
-  settings.setOnUserDefinedGrid( true );
-  settings.setUserGridCellWidth( 60 );
-  settings.setUserGridCellHeight( 40 );
+  QgsMeshRendererVectorArrowSettings arrowSettings = settings.arrowSettings();
+  arrowSettings.setOnUserDefinedGrid( true );
+  arrowSettings.setUserGridCellWidth( 60 );
+  arrowSettings.setUserGridCellHeight( 40 );
   settings.setLineWidth( 0.9 );
   rendererSettings.setVectorSettings( ds.group(), settings );
   rendererSettings.setActiveVectorDataset( ds );

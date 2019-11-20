@@ -149,11 +149,14 @@ Reads configuration from the given DOM element
 
 };
 
-class QgsMeshRendererVectorSettings
+
+
+
+class QgsMeshRendererVectorArrowSettings
 {
 %Docstring
 
-Represents a mesh renderer settings for vector datasets
+Represents a mesh renderer settings for vector datasets displayed with arrows
 
 .. note::
 
@@ -177,55 +180,8 @@ Represents a mesh renderer settings for vector datasets
       Fixed
     };
 
-    double lineWidth() const;
-%Docstring
-Returns line width of the arrow (in millimeters)
-%End
-    void setLineWidth( double lineWidth );
-%Docstring
-Sets line width of the arrow in pixels (in millimeters)
-%End
 
-    QColor color() const;
-%Docstring
-Returns color used for drawing arrows
-%End
-    void setColor( const QColor &color );
-%Docstring
-Sets color used for drawing arrows
-%End
-
-    double filterMin() const;
-%Docstring
-Returns filter value for vector magnitudes.
-
-If magnitude of the vector is lower than this value, the vector is not
-drawn. -1 represents that filtering is not active.
-%End
-
-    void setFilterMin( double filterMin );
-%Docstring
-Sets filter value for vector magnitudes.
-
-.. seealso:: :py:func:`filterMin`
-%End
-
-    double filterMax() const;
-%Docstring
-Returns filter value for vector magnitudes.
-
-If magnitude of the vector is higher than this value, the vector is not
-drawn. -1 represents that filtering is not active.
-%End
-
-    void setFilterMax( double filterMax );
-%Docstring
-Sets filter value for vector magnitudes.
-
-.. seealso:: :py:func:`filterMax`
-%End
-
-    QgsMeshRendererVectorSettings::ArrowScalingMethod shaftLengthMethod() const;
+    QgsMeshRendererVectorArrowSettings::ArrowScalingMethod shaftLengthMethod() const;
 %Docstring
 Returns method used for drawing arrows
 %End
@@ -344,6 +300,167 @@ Reads configuration from the given DOM element
 
 };
 
+class QgsMeshRendererVectorStreamlineSettings
+{
+%Docstring
+
+Represents a streamline renderer settings for vector datasets displayed by streamlines
+
+.. note::
+
+   The API is considered EXPERIMENTAL and can be changed without a notice
+
+.. versionadded:: 3.12
+%End
+
+%TypeHeaderCode
+#include "qgsmeshrenderersettings.h"
+%End
+  public:
+    enum SeedingStartPointsMethod
+    {
+      Gridded,
+      OnBorder,
+      Random,
+    };
+
+    SeedingStartPointsMethod seedingMethod() const;
+%Docstring
+Returns the method used for seeding start points of strealines
+%End
+    void setSeedingMethod( const SeedingStartPointsMethod &seedingMethod );
+%Docstring
+Sets the method used for seeding start points of strealines
+%End
+    double seedingDensity() const;
+%Docstring
+Return the density used for seeding start points
+%End
+    void setSeedingDensity( double seedingDensity );
+%Docstring
+Sets the density used for seeding start points
+%End
+
+    void readXml( const QDomElement &elem );
+%Docstring
+Reads configuration from the given DOM element
+%End
+    QDomElement writeXml( QDomDocument &doc ) const;
+%Docstring
+Writes configuration to a new DOM element
+%End
+
+};
+
+
+class QgsMeshRendererVectorSettings
+{
+%Docstring
+
+Represents a streamline renderer settings for vector datasets
+
+.. note::
+
+   The API is considered EXPERIMENTAL and can be changed without a notice
+
+.. versionadded:: 3.12
+%End
+
+%TypeHeaderCode
+#include "qgsmeshrenderersettings.h"
+%End
+  public:
+    enum Symbology
+    {
+      //!Displying vctor dataset with arrows
+      Arrows,
+      //!Displying vctor dataset with streamlines
+      Streamlines
+    };
+
+
+    double lineWidth() const;
+%Docstring
+Returns line width of the arrow (in millimeters)
+%End
+    void setLineWidth( double lineWidth );
+%Docstring
+Sets line width of the arrow in pixels (in millimeters)
+%End
+
+    QColor color() const;
+%Docstring
+Returns color used for drawing arrows
+%End
+    void setColor( const QColor &color );
+%Docstring
+Sets color used for drawing arrows
+%End
+
+    double filterMin() const;
+%Docstring
+Returns filter value for vector magnitudes.
+
+If magnitude of the vector is lower than this value, the vector is not
+drawn. -1 represents that filtering is not active.
+%End
+
+    void setFilterMin( double filterMin );
+%Docstring
+Sets filter value for vector magnitudes.
+
+.. seealso:: :py:func:`filterMin`
+%End
+
+    double filterMax() const;
+%Docstring
+Returns filter value for vector magnitudes.
+
+If magnitude of the vector is higher than this value, the vector is not
+drawn. -1 represents that filtering is not active.
+%End
+
+    void setFilterMax( double filterMax );
+%Docstring
+Sets filter value for vector magnitudes.
+
+.. seealso:: :py:func:`filterMax`
+%End
+
+    Symbology displayingMethod() const;
+%Docstring
+Returns the displaying method used to render vector datasets
+%End
+    void setDisplayingMethod( const Symbology &displayingMethod );
+%Docstring
+Sets the displaying method used to render vector datasets
+%End
+
+    QgsMeshRendererVectorArrowSettings arrowSettings() const;
+%Docstring
+Returns settings for vector rendered with arrows
+%End
+    void setArrowsSettings( const QgsMeshRendererVectorArrowSettings &arrowSettings );
+
+    QgsMeshRendererVectorStreamlineSettings streamLinesSettings() const;
+%Docstring
+Returns settings for vector rednered with streamlines
+%End
+    void setStreamLinesSettings( const QgsMeshRendererVectorStreamlineSettings &streamLinesSettings );
+
+
+    QDomElement writeXml( QDomDocument &doc ) const;
+%Docstring
+Writes configuration to a new DOM element
+%End
+    void readXml( const QDomElement &elem );
+%Docstring
+Reads configuration from the given DOM element
+%End
+
+
+};
+
 
 class QgsMeshRendererSettings
 {
@@ -427,6 +544,8 @@ Reads configuration from the given DOM element
 %End
 
 };
+
+
 
 /************************************************************************
  * This file has been generated automatically from                      *
