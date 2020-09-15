@@ -295,7 +295,7 @@ void QgsMeshStreamField::updateSize( const QgsRenderContext &renderContext )
 
 
   QgsRectangle fieldInterestZoneInDeviceCoordinates = QgsMeshLayerUtils::boundingBoxToScreenRectangle( deviceMapToPixel, interestZoneExtent );
-  mFieldTopLeftInDeviceCoordinates = QPoint( int( fieldInterestZoneInDeviceCoordinates.xMinimum() ), int( fieldInterestZoneInDeviceCoordinates.yMaximum() ) );
+  mFieldTopLeftInDeviceCoordinates = QPoint( int( fieldInterestZoneInDeviceCoordinates.xMinimum() ), int( fieldInterestZoneInDeviceCoordinates.yMinimum() ) );
   int fieldWidthInDeviceCoordinate = int( fieldInterestZoneInDeviceCoordinates.width() );
   int fieldHeightInDeviceCoordinate = int ( fieldInterestZoneInDeviceCoordinates.height() );
 
@@ -318,10 +318,9 @@ void QgsMeshStreamField::updateSize( const QgsRenderContext &renderContext )
     mFieldSize.setHeight( fieldHeight );
   }
 
-
   double mapUnitPerFieldPixel;
   if ( interestZoneExtent.width() > 0 )
-    mapUnitPerFieldPixel = interestZoneExtent.width() / fieldWidthInDeviceCoordinate * mFieldResolution;
+    mapUnitPerFieldPixel = deviceMapToPixel.mapUnitsPerPixel() * mFieldResolution * mFieldSize.width() / ( fieldWidthInDeviceCoordinate / mFieldResolution ) ;
   else
     mapUnitPerFieldPixel = 1e-8;
 
@@ -364,9 +363,7 @@ bool QgsMeshStreamField::isValid() const
 
 void QgsMeshStreamField::addTrace( QgsPointXY startPoint )
 {
-  QPoint sp;
-  sp = mMapToFieldPixel.transform( startPoint ).toQPointF().toPoint();
-  addTrace( sp );
+  addTrace( mMapToFieldPixel.transform( startPoint ).toQPointF().toPoint() );
 }
 
 
@@ -463,7 +460,7 @@ void QgsMeshStreamField::addTrace( QPoint startPixel )
     /* nondimensional value :  Vu=2 when the particle need dt=1 to go through a pixel with the mMagMax magnitude
      * The nondimensional size of the side of a pixel is 2
      */
-    vector = vector.rotateBy( mMapToFieldPixel.mapRotation() * M_DEG2RAD );
+    vector = vector.rotateBy( -mMapToFieldPixel.mapRotation() * M_DEG2RAD );
     QgsVector vu = vector / mMaximumMagnitude * 2;
     data.magnitude = vector.length();
 
