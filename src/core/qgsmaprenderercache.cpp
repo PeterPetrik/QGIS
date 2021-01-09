@@ -99,6 +99,23 @@ bool QgsMapRendererCache::init( const QgsRectangle &extent, double scale )
   return false;
 }
 
+bool QgsMapRendererCache::updateParameters( const QgsRectangle &extent, double scale )
+{
+  QMutexLocker lock( &mMutex );
+
+  // check whether the params are the same
+  if ( extent == mExtent &&
+       qgsDoubleNear( scale, mScale ) )
+    return true;
+
+  // set new params
+
+  mExtent = extent;
+  mScale = scale;
+
+  return false;
+}
+
 void QgsMapRendererCache::setCacheImage( const QString &cacheKey, const QImage &image, const QList<QgsMapLayer *> &dependentLayers )
 {
   QMutexLocker lock( &mMutex );
@@ -127,6 +144,21 @@ void QgsMapRendererCache::setCacheImage( const QString &cacheKey, const QImage &
 
 bool QgsMapRendererCache::hasCacheImage( const QString &cacheKey ) const
 {
+  QMutexLocker lock( &mMutex );
+  if ( mCachedImages.contains( cacheKey ) )
+  {
+    const CacheParameters params = mCachedImages[cacheKey];
+    return ( params.cachedExtent == mExtent &&
+             qgsDoubleNear( params.cachedScale, mScale ) );
+  }
+  else
+  {
+    return false;
+  }
+}
+
+bool QgsMapRendererCache::hasAnyCacheImage( const QString &cacheKey ) const
+{
   return mCachedImages.contains( cacheKey );
 }
 
@@ -134,6 +166,26 @@ QImage QgsMapRendererCache::cacheImage( const QString &cacheKey ) const
 {
   QMutexLocker lock( &mMutex );
   return mCachedImages.value( cacheKey ).cachedImage;
+}
+
+QImage QgsMapRendererCache::transformedCacheImage( const QString &cacheKey, const QgsRectangle &extent, double scale ) const
+{
+  QMutexLocker lock( &mMutex );
+  const CacheParameters params = mCachedImages.value( cacheKey );
+
+  if ( params.cachedExtent == mExtent &&
+       qgsDoubleNear( params.cachedScale, mScale ) )
+  {
+    return params.cachedImage;
+  }
+  else
+  {
+    QImage prevImage = params.cachedImage;
+
+
+    //TODO do math to shift/scale!
+    return prevImage;
+  }
 }
 
 QList< QgsMapLayer * > QgsMapRendererCache::dependentLayers( const QString &cacheKey ) const

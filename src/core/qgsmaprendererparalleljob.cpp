@@ -210,7 +210,7 @@ QgsLabelingResults *QgsMapRendererParallelJob::takeLabelingResults()
 QImage QgsMapRendererParallelJob::renderedImage()
 {
   if ( mStatus == RenderingLayers )
-    return composeImage( mSettings, mLayerJobs, mLabelJob );
+    return composeImage( mSettings, mLayerJobs, mLabelJob, mCache );
   else
     return mFinalImage; // when rendering labels or idle
 }
