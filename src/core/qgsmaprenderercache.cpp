@@ -17,6 +17,11 @@
 
 #include "qgsmaplayer.h"
 #include "qgsmaplayerlistutils.h"
+#include "qgsapplication.h"
+
+#include <QImage>
+#include <QPainter>
+#include <algorithm>
 
 QgsMapRendererCache::QgsMapRendererCache()
 {
@@ -99,19 +104,20 @@ bool QgsMapRendererCache::init( const QgsRectangle &extent, double scale )
   return false;
 }
 
-bool QgsMapRendererCache::updateParameters( const QgsRectangle &extent, double scale )
+bool QgsMapRendererCache::updateParameters( const QgsRectangle &extent, const QgsMapToPixel &mtp )
 {
   QMutexLocker lock( &mMutex );
 
   // check whether the params are the same
   if ( extent == mExtent &&
-       qgsDoubleNear( scale, mScale ) )
+       mtp.transform() == mMtp.transform() )
     return true;
 
   // set new params
 
   mExtent = extent;
-  mScale = scale;
+  mScale = 0.0;
+  mMtp = mtp;
 
   return false;
 }
@@ -122,6 +128,8 @@ void QgsMapRendererCache::setCacheImage( const QString &cacheKey, const QImage &
 
   CacheParameters params;
   params.cachedImage = image;
+  params.cachedExtent = mExtent;
+  params.cachedMtp = mMtp;
 
   // connect to the layer to listen to layer's repaintRequested() signals
   const auto constDependentLayers = dependentLayers;
@@ -149,7 +157,7 @@ bool QgsMapRendererCache::hasCacheImage( const QString &cacheKey ) const
   {
     const CacheParameters params = mCachedImages[cacheKey];
     return ( params.cachedExtent == mExtent &&
-             qgsDoubleNear( params.cachedScale, mScale ) );
+             params.cachedMtp.transform() == mMtp.transform() );
   }
   else
   {
@@ -168,23 +176,48 @@ QImage QgsMapRendererCache::cacheImage( const QString &cacheKey ) const
   return mCachedImages.value( cacheKey ).cachedImage;
 }
 
-QImage QgsMapRendererCache::transformedCacheImage( const QString &cacheKey, const QgsRectangle &extent, double scale ) const
+QImage QgsMapRendererCache::transformedCacheImage( const QString &cacheKey, const QgsRectangle &extent, const QgsMapToPixel &mtp ) const
 {
   QMutexLocker lock( &mMutex );
   const CacheParameters params = mCachedImages.value( cacheKey );
 
   if ( params.cachedExtent == mExtent &&
-       qgsDoubleNear( params.cachedScale, mScale ) )
+       mtp.transform() == mMtp.transform() )
   {
     return params.cachedImage;
   }
   else
   {
-    QImage prevImage = params.cachedImage;
+    QgsRectangle intersection = mExtent.intersect( extent );
+    if ( intersection.isNull() )
+      return QImage();
 
+    // Calculate target rect
+    const QgsPointXY topleftE = mtp.transform( QgsPointXY( extent.xMinimum(), extent.yMaximum() ) );
+    const QgsPointXY bottomRightE = mtp.transform( QgsPointXY( extent.xMaximum(), extent.yMinimum() ) );
+    const QRectF rectE( topleftE.toQPointF(), bottomRightE.toQPointF() );
 
-    //TODO do math to shift/scale!
-    return prevImage;
+    // Calculate target rect
+    const QgsPointXY topleftT = mtp.transform( QgsPointXY( intersection.xMinimum(), intersection.yMaximum() ) );
+    const QgsPointXY bottomRightT = mtp.transform( QgsPointXY( intersection.xMaximum(), intersection.yMinimum() ) );
+    const QRectF targetRect( topleftT.toQPointF(), bottomRightT.toQPointF() );
+
+    // Calculate source rect
+    const QgsPointXY topleftS = params.cachedMtp.transform( QgsPointXY( intersection.xMinimum(), intersection.yMaximum() ) );
+    const QgsPointXY bottomRightS = params.cachedMtp.transform( QgsPointXY( intersection.xMaximum(), intersection.yMinimum() ) );
+    const QRectF sourceRect( topleftS.toQPointF(), bottomRightS.toQPointF() );
+
+    // Draw image
+    const QImage cachedImage = params.cachedImage;
+
+    QImage ret( cachedImage.width(), cachedImage.height(), cachedImage.format() );
+    ret.fill( 0 );
+    QPainter painter;
+    painter.begin( &ret );
+    painter.drawImage( targetRect, cachedImage, sourceRect );
+    qDebug() << "Smarter: E: " << rectE << "I:" << cachedImage.width() << cachedImage.height() << "S:" << sourceRect << " T:" << targetRect;
+
+    return ret;
   }
 }
 

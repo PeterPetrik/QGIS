@@ -73,7 +73,7 @@ class CORE_EXPORT QgsMapRendererCache : public QObject
      *
      * \since QGIS 3.18
      */
-    bool updateParameters( const QgsRectangle &extent, double scale );
+    bool updateParameters( const QgsRectangle &extent, const QgsMapToPixel &mtp );
 
     /**
      * Set the cached \a image for a particular \a cacheKey. The \a cacheKey usually
@@ -127,7 +127,7 @@ class CORE_EXPORT QgsMapRendererCache : public QObject
      *
      * \since QGIS 3.18
      */
-    QImage transformedCacheImage( const QString &cacheKey, const QgsRectangle &extent, double scale ) const;
+    QImage transformedCacheImage( const QString &cacheKey, const QgsRectangle &extent, const QgsMapToPixel &mtp ) const;
 
     /**
      * Returns a list of map layers on which an image in the cache depends.
@@ -159,7 +159,7 @@ class CORE_EXPORT QgsMapRendererCache : public QObject
       QImage cachedImage;
       QgsWeakMapLayerPointerList dependentLayers;
       QgsRectangle cachedExtent;
-      double cachedScale = 0;
+      QgsMapToPixel cachedMtp;
     };
 
     //! Invalidate cache contents (without locking)
@@ -172,7 +172,9 @@ class CORE_EXPORT QgsMapRendererCache : public QObject
 
     mutable QMutex mMutex;
     QgsRectangle mExtent;
-    double mScale = 0;
+    QgsMapToPixel mMtp;
+
+    double mScale; //DEPRECATED
 
     //! Map of cache key to cache parameters
     QMap<QString, CacheParameters> mCachedImages;

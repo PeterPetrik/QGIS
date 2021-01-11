@@ -320,7 +320,7 @@ LayerRenderJobs QgsMapRendererJob::prepareJobs( QPainter *painter, QgsLabelingEn
 
   if ( mCache )
   {
-    bool cacheValid = mCache->updateParameters( mSettings.visibleExtent(), mSettings.scale() );
+    bool cacheValid = mCache->updateParameters( mSettings.visibleExtent(), mSettings.mapToPixel() );
     Q_UNUSED( cacheValid )
     QgsDebugMsgLevel( QStringLiteral( "CACHE VALID: %1" ).arg( cacheValid ), 4 );
   }
@@ -850,7 +850,7 @@ QImage QgsMapRendererJob::layerImageToBeComposed(
   {
     if ( cache && cache->hasAnyCacheImage( job.layer->id() ) )
     {
-      return cache->transformedCacheImage( job.layer->id(), settings.visibleExtent(), settings.scale() );
+      return cache->transformedCacheImage( job.layer->id(), settings.visibleExtent(), settings.mapToPixel() );
     }
     else
       return QImage();
