@@ -68,7 +68,12 @@ QgsRasterLayerRenderer::QgsRasterLayerRenderer( QgsRasterLayer *layer, QgsRender
   , mProviderCapabilities( static_cast<QgsRasterDataProvider::Capability>( layer->dataProvider()->capabilities() ) )
   , mFeedback( new QgsRasterLayerRendererFeedback( this ) )
 {
-  mCanComposeImage = false;
+  if ( !( rendererContext.flags() & QgsRenderContext::RenderPreviewJob )
+       && !( rendererContext.flags() & QgsRenderContext::Render3DMap ) )
+  {
+    // do not use smart canvas updates for raster tiles and 3d
+    mCanComposeImage = false;
+  }
 
   QgsMapToPixel mapToPixel = rendererContext.mapToPixel();
   if ( rendererContext.mapToPixel().mapRotation() )
@@ -233,7 +238,9 @@ QgsRasterLayerRenderer::QgsRasterLayerRenderer( QgsRasterLayer *layer, QgsRender
   if ( rasterRenderer
        && !( rendererContext.flags() & QgsRenderContext::RenderPreviewJob )
        && !( rendererContext.flags() & QgsRenderContext::Render3DMap ) )
+  {
     layer->refreshRendererIfNeeded( rasterRenderer, rendererContext.extent() );
+  }
 
   const QgsRasterLayerTemporalProperties *temporalProperties = qobject_cast< const QgsRasterLayerTemporalProperties * >( layer->temporalProperties() );
   if ( temporalProperties->isActive() && renderContext()->isTemporal() )

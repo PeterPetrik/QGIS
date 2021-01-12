@@ -176,7 +176,14 @@ QImage QgsMapRendererCache::cacheImage( const QString &cacheKey ) const
   return mCachedImages.value( cacheKey ).cachedImage;
 }
 
-QImage QgsMapRendererCache::transformedCacheImage( const QString &cacheKey, const QgsRectangle &extent, const QgsMapToPixel &mtp ) const
+static QPointF _transform( const QgsMapToPixel &mtp, const QgsPointXY &point, double scale )
+{
+  qreal x = point.x(), y = point.y();
+  mtp.transformInPlace( x, y );
+  return QPointF( x, y ) * scale;
+}
+
+QImage QgsMapRendererCache::transformedCacheImage( const QString &cacheKey, const QgsMapToPixel &mtp ) const
 {
   QMutexLocker lock( &mMutex );
   const CacheParameters params = mCachedImages.value( cacheKey );
@@ -188,35 +195,30 @@ QImage QgsMapRendererCache::transformedCacheImage( const QString &cacheKey, cons
   }
   else
   {
-    QgsRectangle intersection = mExtent.intersect( extent );
+    QgsRectangle intersection = mExtent.intersect( params.cachedExtent );
     if ( intersection.isNull() )
       return QImage();
 
     // Calculate target rect
-    const QgsPointXY topleftE = mtp.transform( QgsPointXY( extent.xMinimum(), extent.yMaximum() ) );
-    const QgsPointXY bottomRightE = mtp.transform( QgsPointXY( extent.xMaximum(), extent.yMinimum() ) );
-    const QRectF rectE( topleftE.toQPointF(), bottomRightE.toQPointF() );
-
-    // Calculate target rect
-    const QgsPointXY topleftT = mtp.transform( QgsPointXY( intersection.xMinimum(), intersection.yMaximum() ) );
-    const QgsPointXY bottomRightT = mtp.transform( QgsPointXY( intersection.xMaximum(), intersection.yMinimum() ) );
-    const QRectF targetRect( topleftT.toQPointF(), bottomRightT.toQPointF() );
+    const QPointF ulT = _transform( mtp, QgsPointXY( intersection.xMinimum(), intersection.yMaximum() ), 1.0 );
+    const QPointF lrT = _transform( mtp, QgsPointXY( intersection.xMaximum(), intersection.yMinimum() ), 1.0 );
+    const QRectF targetRect( ulT.x(), ulT.y(), lrT.x() - ulT.x(), lrT.y() - ulT.y() );
 
     // Calculate source rect
-    const QgsPointXY topleftS = params.cachedMtp.transform( QgsPointXY( intersection.xMinimum(), intersection.yMaximum() ) );
-    const QgsPointXY bottomRightS = params.cachedMtp.transform( QgsPointXY( intersection.xMaximum(), intersection.yMinimum() ) );
-    const QRectF sourceRect( topleftS.toQPointF(), bottomRightS.toQPointF() );
+    const QPointF ulS = _transform( params.cachedMtp, QgsPointXY( intersection.xMinimum(), intersection.yMaximum() ),  params.cachedImage.devicePixelRatio() );
+    const QPointF lrS = _transform( params.cachedMtp, QgsPointXY( intersection.xMaximum(), intersection.yMinimum() ),  params.cachedImage.devicePixelRatio() );
+    const QRectF sourceRect( ulS.x(), ulS.y(), lrS.x() - ulS.x(), lrS.y() - ulS.y() );
 
     // Draw image
-    const QImage cachedImage = params.cachedImage;
-
-    QImage ret( cachedImage.width(), cachedImage.height(), cachedImage.format() );
-    ret.fill( 0 );
+    QImage ret( params.cachedImage.size(), params.cachedImage.format() );
+    ret.setDevicePixelRatio( params.cachedImage.devicePixelRatio() );
+    ret.setDotsPerMeterX( params.cachedImage.dotsPerMeterX() );
+    ret.setDotsPerMeterY( params.cachedImage.dotsPerMeterY() );
+    ret.fill( Qt::transparent );
     QPainter painter;
     painter.begin( &ret );
-    painter.drawImage( targetRect, cachedImage, sourceRect );
-    qDebug() << "Smarter: E: " << rectE << "I:" << cachedImage.width() << cachedImage.height() << "S:" << sourceRect << " T:" << targetRect;
-
+    painter.drawImage( targetRect, params.cachedImage, sourceRect );
+    painter.end();
     return ret;
   }
 }

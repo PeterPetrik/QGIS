@@ -127,7 +127,7 @@ class CORE_EXPORT QgsMapRendererCache : public QObject
      *
      * \since QGIS 3.18
      */
-    QImage transformedCacheImage( const QString &cacheKey, const QgsRectangle &extent, const QgsMapToPixel &mtp ) const;
+    QImage transformedCacheImage( const QString &cacheKey, const QgsMapToPixel &mtp ) const;
 
     /**
      * Returns a list of map layers on which an image in the cache depends.

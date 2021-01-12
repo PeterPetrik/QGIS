@@ -107,7 +107,7 @@ Returns a null image if it is not cached.
 .. seealso:: :py:func:`hasCacheImage`
 %End
 
-    QImage transformedCacheImage( const QString &cacheKey, const QgsRectangle &extent, const QgsMapToPixel &mtp ) const;
+    QImage transformedCacheImage( const QString &cacheKey, const QgsMapToPixel &mtp ) const;
 %Docstring
 Returns the cached image for the specified ``cacheKey`` transformed
 to the particular extent and scale.

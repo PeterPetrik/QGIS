@@ -850,7 +850,7 @@ QImage QgsMapRendererJob::layerImageToBeComposed(
   {
     if ( cache && cache->hasAnyCacheImage( job.layer->id() ) )
     {
-      return cache->transformedCacheImage( job.layer->id(), settings.visibleExtent(), settings.mapToPixel() );
+      return cache->transformedCacheImage( job.layer->id(), settings.mapToPixel() );
     }
     else
       return QImage();
