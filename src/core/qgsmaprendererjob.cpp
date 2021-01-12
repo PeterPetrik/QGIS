@@ -55,7 +55,7 @@ bool LayerRenderJob::imageCanBeComposed() const
   {
     if ( renderer )
     {
-      return renderer->canComposeImage();
+      return renderer->isReadyToCompose();
     }
     else
     {

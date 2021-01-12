@@ -116,7 +116,7 @@ class CORE_EXPORT QgsMapLayerRenderer
      *
      * \since QGIS 3.18
      */
-    bool canComposeImage() const { return mCanComposeImage; }
+    bool isReadyToCompose() const { return mReadyToCompose; }
 
   protected:
     QStringList mErrors;
@@ -138,7 +138,7 @@ class CORE_EXPORT QgsMapLayerRenderer
      *
      * \since QGIS 3.18
      */
-    bool mCanComposeImage = true;
+    bool mReadyToCompose = true;
 
   private:
 

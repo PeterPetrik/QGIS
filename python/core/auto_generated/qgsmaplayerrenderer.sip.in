@@ -96,7 +96,7 @@ Returns the render context associated with the renderer.
 %End
 
 
-    bool canComposeImage() const;
+    bool isReadyToCompose() const;
 %Docstring
 Returns whether the renderer already drawn (at
 least partially) some data to resulting image

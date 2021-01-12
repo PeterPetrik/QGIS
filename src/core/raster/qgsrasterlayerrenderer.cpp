@@ -68,13 +68,6 @@ QgsRasterLayerRenderer::QgsRasterLayerRenderer( QgsRasterLayer *layer, QgsRender
   , mProviderCapabilities( static_cast<QgsRasterDataProvider::Capability>( layer->dataProvider()->capabilities() ) )
   , mFeedback( new QgsRasterLayerRendererFeedback( this ) )
 {
-  if ( !( rendererContext.flags() & QgsRenderContext::RenderPreviewJob )
-       && !( rendererContext.flags() & QgsRenderContext::Render3DMap ) )
-  {
-    // do not use smart canvas updates for raster tiles and 3d
-    mCanComposeImage = false;
-  }
-
   QgsMapToPixel mapToPixel = rendererContext.mapToPixel();
   if ( rendererContext.mapToPixel().mapRotation() )
   {
@@ -339,7 +332,7 @@ bool QgsRasterLayerRenderer::render()
   }
 
   QgsDebugMsgLevel( QStringLiteral( "total raster draw time (ms):     %1" ).arg( time.elapsed(), 5 ), 4 );
-  mCanComposeImage = true;
+  mReadyToCompose = true;
 
   return true;
 }
