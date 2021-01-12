@@ -174,7 +174,7 @@ class CORE_EXPORT QgsMapRendererCache : public QObject
     QgsRectangle mExtent;
     QgsMapToPixel mMtp;
 
-    double mScale; //DEPRECATED
+    double mScale = -1.0; //DEPRECATED
 
     //! Map of cache key to cache parameters
     QMap<QString, CacheParameters> mCachedImages;

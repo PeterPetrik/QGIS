@@ -100,6 +100,7 @@ bool QgsMapRendererCache::init( const QgsRectangle &extent, double scale )
   // set new params
   mExtent = extent;
   mScale = scale;
+  mMtp = QgsMapToPixel::fromScale( scale, QgsUnitTypes::DistanceUnit::DistanceUnknownUnit );
 
   return false;
 }
@@ -116,7 +117,7 @@ bool QgsMapRendererCache::updateParameters( const QgsRectangle &extent, const Qg
   // set new params
 
   mExtent = extent;
-  mScale = 0.0;
+  mScale = 1.0;
   mMtp = mtp;
 
   return false;
